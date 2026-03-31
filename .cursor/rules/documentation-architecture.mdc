@@ -1,0 +1,37 @@
+---
+description: Documentation architecture — Divio four-quadrant system for categorizing and writing different doc types
+alwaysApply: true
+---
+
+# Documentation Architecture (Divio Four-Quadrant System)
+
+Source: Divio Documentation System (diataxis.fr)
+
+## The Four Types — Never Mix Them
+
+| Type | Orientation | Analogy | Voice |
+|------|------------|---------|-------|
+| **Tutorial** | Learning | Cooking class | "Follow me step by step" |
+| **How-to Guide** | Problem-solving | Cookbook recipe | "Here's how to achieve X" |
+| **Reference** | Information | Encyclopedia | "X is defined as…" |
+| **Explanation** | Understanding | Essay / article | "The reason X works this way is…" |
+
+## How This Maps to croktile-tutorial
+
+| Directory | Type | Write It As |
+|-----------|------|-------------|
+| `tutorial/` | Tutorial | Step-by-step lessons. Guide the reader through building something. |
+| `optimization/` | How-to Guide | Goal-oriented case studies. Assume the reader knows the basics. |
+| `documentation/` | Reference | Factual descriptions of Choreo constructs. Concise, scannable, complete. |
+| `advanced/` | Explanation | Design rationales and trade-off discussions. Discursive prose is OK here. |
+
+## Common Mistakes to Avoid
+
+- **Do not put tutorials in Reference.** Reference pages describe *what* something is, not *how* to learn it step by step.
+- **Do not write marketing copy in Reference.** Phrases like "easy-to-use" or "powerful abstraction" belong nowhere in a reference page. State facts.
+- **Do not mix Explanation into Tutorial.** If you need to explain a design decision mid-tutorial, link to an Explanation page instead.
+- **Reference pages must be scannable.** Use tables, definition lists, and short paragraphs — not long narrative blocks.
+
+## When Writing a New Page
+
+Ask: "Is this page teaching, guiding, describing, or explaining?" Write accordingly. If the answer is "more than one", split the page.

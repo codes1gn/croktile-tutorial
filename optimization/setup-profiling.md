@@ -1,15 +1,12 @@
 # Setting Up: TimerOption, TFLOPS, and HW Efficiency
 
-This page is the preamble for the Level 1 performance optimization guide. Before you read the case studies, you need a repeatable way to **measure** kernels: how Choreo times code, how to turn milliseconds into TFLOPS, and how to compare results against hardware peak. The matmul benchmarks in the Choreo tree all follow the same pattern, so once you understand this setup, every example speaks the same language.
+This page is the shared measurement contract for the optimization walkthroughs. You will see the same ideas in every matmul host program: Choreo wraps the kernel in `choreo::timing` with a `choreo::TimerOption`, prints mean milliseconds, then derives TFLOPS and sometimes efficiency vs peak. Once that pipeline is familiar, you can read each case study as an A/B story on the same yardstick.
 
 ## How `choreo::timing` Works
 
-Benchmarks wrap the kernel under test in `choreo::timing` and pass a `choreo::TimerOption`:
+`TimerOption` carries **`warmup`** and **`repeat`**. Warmup runs are executed but excluded from the average so caches, TLBs, and steady-state behavior settle first. The timed runs are averaged; the reported value is **mean elapsed time in milliseconds**.
 
-- **`warmup`** — number of runs that are executed but **not** included in the average. This lets caches, TLBs, and steady-state behavior settle before measurement.
-- **`repeat`** — number of timed iterations. The reported value is the **mean** elapsed time over these runs, in **milliseconds**.
-
-Typical host code reads optional overrides from the environment, then calls timing on a lambda that launches the kernel and synchronizes the device:
+Host code often reads overrides from the environment, then times a lambda that launches the kernel and synchronizes:
 
 ```cpp
 int warmup = 10;
@@ -25,21 +22,19 @@ auto avg_ms = choreo::timing([&]() { matmul(lhs_d, rhs_d, res_d); cudaDeviceSync
 std::cout << "Timing avg ms: " << avg_ms << "\n";
 ```
 
-The lambda should include whatever you need for a fair wall-clock measurement — usually the kernel launch plus `cudaDeviceSynchronize()` so the GPU has finished before the timer stops.
+Include whatever belongs in a fair wall-clock slice—typically the launch plus `cudaDeviceSynchronize()` so the GPU has finished before the timer stops.
 
 ## From Average Milliseconds to TFLOPS
 
-For a **dense** matrix multiply `C = A × B` with shapes `(M, K)` and `(K, N)`, the canonical floating-point operation count is:
+For dense `C = A × B` with shapes `(M, K)` and `(K, N)`:
 
 `FLOPs = 2 * M * N * K`
 
-Each output element involves `K` multiply-add pairs, hence the factor of two. **Sparse** variants (for example structured sparsity) use the same idea but count **effective** multiply-adds for the nonzeros; when the benchmark already defines a FLOP count, **double** it if the formula counts MACs as one op instead of two — match whatever the specific `matmul_*` host program documents.
+Each output element does `K` multiply-add pairs, hence the factor of two. Sparse variants count **effective** multiply-adds for nonzeros; if a benchmark documents FLOPs differently (e.g. MACs counted as one op), align with that host program rather than forcing this formula everywhere.
 
-Given average time `avg_ms`, convert seconds to TFLOPS:
+With average time `avg_ms`:
 
 `TFLOPS = (FLOPs / (avg_ms / 1000.0)) / 1e12`
-
-In code:
 
 ```cpp
 double flops = 2.0 * double(M) * double(N) * double(K);
@@ -49,40 +44,34 @@ std::cout << "TFLOPS: " << tflops << "\n";
 
 ## Hardware Efficiency (Percent of Peak)
 
-Throughput alone is hard to interpret without a ceiling. Benchmarks often print **efficiency** as TFLOPS divided by a documented peak for the GPU and precision, times 100:
+Throughput needs a ceiling. Many benchmarks print efficiency as TFLOPS divided by a documented GPU peak for that precision, times 100:
 
 ```cpp
 double eff = (tflops / H800_PCIE_PEAK_F16_TFLOPS) * 100.0;
 std::cout << "HW efficiency: " << eff << "%\n";
 ```
 
-Reference peaks used in the Choreo matmul benchmarks for **H800 PCIe**:
+Reference peaks used in Choreo matmul benchmarks for **H800 PCIe**:
 
 | Constant | Value (TFLOPS) | Use |
 | -------- | ------------- | --- |
-| `H800_PCIE_PEAK_F16_TFLOPS` | 1513 | FP16 dense / similar workloads |
-| `H800_PCIE_PEAK_F8_TFLOPS` | 3026 | FP8 dense / similar workloads |
+| `H800_PCIE_PEAK_F16_TFLOPS` | 1513 | FP16 dense and similar |
+| `H800_PCIE_PEAK_F8_TFLOPS` | 3026 | FP8 dense and similar |
 
-These are **theoretical** peaks; real kernels rarely sit at 100%. The point is to compare **before and after** an optimization on the same formula and peak constant, not to treat the percentage as an absolute grade.
+Those numbers are theoretical peaks; real kernels rarely sit at 100%. Use the same peak constant before and after a change so you are comparing apples to apples, not treating the percentage as a final grade.
 
-## Environment Variables
+## Environment, Compile, and Run
 
 | Variable | Default | Effect |
 | -------- | ------- | ------ |
-| `CHOREO_TIMING_WARMUP` | `10` | Warmup iterations (non-negative; `0` means no warmup). |
+| `CHOREO_TIMING_WARMUP` | `10` | Warmup iterations (non-negative; `0` disables warmup). |
 | `CHOREO_TIMING_REPEAT` | `500` | Timed iterations (must be positive to take effect). |
-| `CHOREO_DISABLE_TIMING` | unset | Set to `1` to skip timing (useful when you only want compile or correctness checks). |
-| `CHOREO_SKIP_VERIFY` | unset | Set to `1` to skip numerical verification (see below). |
+| `CHOREO_DISABLE_TIMING` | unset | Set to `1` to skip timing (compile or correctness only). |
+| `CHOREO_SKIP_VERIFY` | unset | Set to `1` to skip numerical verification (faster iteration when you trust the math). |
 
-## Compile and Run Workflow
+Verification compares the kernel against a reference and adds host work. For timing-focused runs after layout or precision are stable, `export CHOREO_SKIP_VERIFY=1` keeps the measurement focused on the device path. Turn verification back on when you change data layout, precision, or tiling.
 
-Performance `.co` files are built and executed through the Choreo driver. A typical pattern:
-
-1. Invoke `choreo` with **`-gs`** (generate script), **`-t cute`**, the target **`-arch`**, and any codegen flags.
-2. Point **`-o`** at a shell script path (often under `/tmp`).
-3. Run that script with **`--execute`** to compile and run the generated host + device code.
-
-Example:
+Performance `.co` files are built through the Choreo driver: pass **`-gs`** (generate script), **`-t cute`**, **`-arch`**, and codegen flags; **`-o`** points at a shell script (often under `/tmp`); run that script with **`--execute`** to compile and run. Keep flags fixed when you are hunting regressions—change one knob at a time.
 
 ```bash
 ./choreo -gs -t cute -arch=sm_90a --use-warpspec --stmatrix \
@@ -90,34 +79,6 @@ Example:
   -o /tmp/matmul.cute.result && bash /tmp/matmul.cute.result --execute
 ```
 
-Adjust the `.co` path and architecture for your benchmark. The important habit is: **same flags for A/B comparisons** — change one knob at a time when you are hunting regressions.
+SM90-class matmul command lines often include flags such as **`--use-warpspec`**, **`--stmatrix`**, **`--hoist-offset`**, **`--hoist-scale`**, **`--ptx-barrier`**, **`--tma-cluster-aware`**, and **`--wgmma-wait-depth=N`**. Exact semantics live in Choreo’s CLI help; copy the recipe from the benchmark you are reproducing, then vary flags deliberately.
 
-## Common Codegen Flags
-
-These flags show up frequently in SM90-class matmul builds. Exact semantics live in Choreo’s CLI help and docs; treat this table as a **quick map** of what to look for when reading benchmark command lines.
-
-| Flag | Role (high level) |
-| ---- | ----------------- |
-| `--use-warpspec` | Enable warp-specialized codegen paths where applicable. |
-| `--stmatrix` | Use `stmatrix`-related lowering for shared-memory matrix fragments where supported. |
-| `--hoist-offset` | Hoist offset calculations to reduce per-iteration work. |
-| `--hoist-scale` | Hoist scale-related address or indexing work similarly. |
-| `--ptx-barrier` | Influence barrier lowering in the PTX pipeline. |
-| `--tma-cluster-aware` | Cluster-aware behavior for TMA-oriented kernels. |
-| `--wgmma-wait-depth=N` | Tune wait-depth for WGMMA pipelines (`N` is an integer). |
-
-Not every benchmark needs every flag. Copy the flags from the reference `matmul_*` recipe you are reproducing, then vary them deliberately.
-
-## Verification vs Timing-Only Runs
-
-Correctness checks compare the kernel output against a reference implementation. They add host-side work and can dominate short dev cycles. For **timing-focused** iterations where you already trust the math, set:
-
-```bash
-export CHOREO_SKIP_VERIFY=1
-```
-
-so the run measures the kernel path without verification overhead. Turn verification back on when you change data layout, precision, or tiling — a fast wrong answer is still wrong.
-
----
-
-With `TimerOption`, TFLOPS, efficiency against peak, and the compile-and-run loop in place, you can read the optimization case studies as a series of controlled experiments: same measurement harness, different kernels and flags.
+With warmup/repeat, TFLOPS, efficiency, env vars, and the compile-and-run loop in hand, the case studies read as one measurement harness and many controlled kernel experiments.

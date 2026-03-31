@@ -77,9 +77,7 @@ int main() {
 
 The host side is unchanged in spirit from earlier chapters: allocate `spandata`, fill inputs, call `matmul` with `.view()`, and check results. The new skills are all in the `__co__` body.
 
-### Running the bundled test
-
-The Choreo tree ships this kernel as `tests/gpu/end2end/matmul-pipelined-2.co`. Your local checkout may use a different driver command, but the idea is the same as in Chapter 1: invoke the compiler on the `.co` file, then run the generated host binary so it prints `Test Passed` after the reference check. Pipelining does not change the observable result—only the schedule under the hood—so the verification loop in `main` stays a straightforward triply nested scalar matmul against `res`.
+**Running the bundled test.** The Choreo tree ships this kernel as `tests/gpu/end2end/matmul-pipelined-2.co`. Your local checkout may use a different driver command, but the idea is the same as in Chapter 1: invoke the compiler on the `.co` file, then run the generated host binary so it prints `Test Passed` after the reference check. Pipelining does not change the observable result—only the schedule under the hood—so the verification loop in `main` stays a straightforward triply nested scalar matmul against `res`.
 
 ## Parallel Granularity: `: block` and `: thread`
 
@@ -245,10 +243,6 @@ The new syntax—**`with tile_k in 16`**, **`foreach tile_k(1:)`**, **`dma.any`*
 
 ## What to Take Away
 
-- Sequential DMA-then-compute leaves either memory or math idle; **pipelining** hides transfer latency behind useful work.
-- **Double buffering** needs two names for two buffers; **`swap`** rotates those names without moving data.
-- **`dma.any`** plus later assignment gives you a placeholder future so the swap pattern type-checks from the first iteration.
-- **`foreach tile_k(1:)`** separates **prologue** (tile 0 only loaded) from **steady state** (load next, compute previous).
-- **`=> shared`** stages tiles where the whole block can see them—natural for tiled matmul.
+Sequential DMA-then-compute leaves either memory or math idle; pipelining hides transfer latency behind useful work. Double buffering needs two names for two buffers, and `swap` rotates those names without moving data. The placeholder future `dma.any` lets the swap pattern type-check from the very first iteration, while `foreach tile_k(1:)` separates the prologue (tile 0 only loaded) from the steady state (load next, compute previous). Staging tiles with `=> shared` keeps them visible to the whole block—a natural fit for tiled matmul.
 
 In the next chapter you will push data movement further toward hardware-specific fast paths (TMA and swizzled layouts). The mental model you built here—prologue, steady state, epilogue, and explicit futures—carries over directly: you are still describing **who** moves **which** tile **when**, only with richer primitives underneath.

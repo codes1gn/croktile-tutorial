@@ -1,0 +1,53 @@
+---
+description: Voice and tone guidelines for all documentation content — controls person, voice, and register
+globs: "**/*.md"
+alwaysApply: false
+---
+
+# Voice & Tone
+
+Sources: Google Developer Documentation Style Guide, Grafana Writers' Toolkit
+
+## Person and Pronouns
+
+- Use **second person** ("you", "your") to address the reader directly.
+- Do NOT use "we" or "our" — it blurs who is acting (the reader? the authors? the library?).
+- Exception: "we" is acceptable in commit messages, changelogs, or team-internal notes — never in reader-facing prose.
+
+```markdown
+<!-- BAD -->
+We can now configure the DMA pipeline.
+Let's take a look at the kernel output.
+Our next step is to define the shape.
+
+<!-- GOOD -->
+You can now configure the DMA pipeline.
+Look at the kernel output.
+Your next step is to define the shape.
+```
+
+## Active Voice
+
+- Default to **active voice** — make clear who or what performs the action.
+- Passive voice is acceptable only when the actor is truly irrelevant or unknown.
+
+```markdown
+<!-- BAD (passive) -->
+The buffer is allocated by the runtime.
+The kernel was launched with 128 threads.
+
+<!-- GOOD (active) -->
+The runtime allocates the buffer.
+You launch the kernel with 128 threads.
+```
+
+## Register
+
+- Sound like a **knowledgeable colleague** — friendly, direct, technically precise.
+- Do NOT sound like a press release, a sales pitch, or an academic paper.
+- Avoid exclamation marks in technical prose.
+- Avoid buzzwords, marketing language ("revolutionary", "cutting-edge", "seamlessly"), and superlatives ("the best", "the fastest") unless backed by benchmarks.
+
+## Filler Phrases to Delete
+
+Remove on sight: "please note that", "it should be noted that", "it is important to mention", "at this time", "in order to" (→ "to"), "as a matter of fact", "basically", "actually", "simply", "just".

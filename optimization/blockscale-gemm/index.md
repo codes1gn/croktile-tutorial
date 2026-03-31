@@ -1,6 +1,6 @@
 # Block-Scaled GEMM FP8 (E4M3): Case Study
 
-This case study traces **FP8 E4M3 matrix multiply with per-block scaling** on **Hopper SM90a**, measured on **H800 PCIe** (114 SMs). Operand values use the narrow **e4m3** format; **FP16** holds the accumulator. Along **K**, each block of values (here aligned with **128**-element tiles) carries **FP32 scale factors** for the left and right operands so inner products can be reconstructed at useful accuracy without abandoning FP8 storage bandwidth.
+This walkthrough follows **FP8 E4M3 matrix multiply with per-block scaling** on **Hopper SM90a**, measured on **H800 PCIe** (114 SMs). Operands are **e4m3**; the accumulator stays in **FP16**. Along **K**, each block aligned with **128**-element tiles carries **FP32 scale factors** for left and right operands so inner products stay useful after quantization without giving up FP8 bandwidth.
 
 **Reference peak (headline)**
 
@@ -9,7 +9,7 @@ This case study traces **FP8 E4M3 matrix multiply with per-block scaling** on **
 | H800 PCIe FP8 tensor peak | **3026 TFLOPS** |
 | Problem shapes (reported) | **2048³**, **4096³** |
 
-**End-to-end results (from AI-tune 2026-03-22)**
+**End-to-end results (AI-tune 2026-03-22)**
 
 | Variant | TFLOPS @2048³ | TFLOPS @4096³ | HW eff @4096³ | Notes |
 |---------|---------------|---------------|---------------|--------|
@@ -19,12 +19,12 @@ This case study traces **FP8 E4M3 matrix multiply with per-block scaling** on **
 | iter053 | — | 610 | 20.2% | N256 + **L2 256B promotion** on RHS TMA |
 | **iter066** | — | **621** | **20.5%** | **+56% @4k vs baseline** — N256 + L2 + **prefetch `scale_a`** |
 
-Absolute efficiency vs **3026 TFLOPS** stays modest because blockscaled GEMM does **extra scale traffic and fused math** beyond a plain FP8 GEMM; the interesting story is **relative gain** from scheduling, tile geometry, cache hints, and scale prefetch.
+Efficiency vs **3026 TFLOPS** stays modest because blockscaled GEMM pays extra scale traffic and fused math compared with a plain FP8 GEMM; the interesting part is **relative gain** from scheduling, tile geometry, cache hints, and scale prefetch.
 
 **How to read the series**
 
-1. [Baseline and block-scaling background](baseline-analysis.md) — why per-block scales exist, how the baseline kernel is structured, and what the first throughput numbers imply.
-2. [Optimization patterns](pattern-optimizations.md) — TMA overlap, N256 tiles, L2 promotion, scale prefetch, and how **Choreo** sources in `benchmark/performance/blockscale_gemm/` and `blockscale_gemm_v2/` explore scale **DMA to shared memory** and layout variants.
+1. [Baseline and block-scaling background](baseline-analysis.md) — why per-block scales exist, how the baseline kernel is wired, and what the first throughput numbers mean in context.
+2. [Optimization patterns](pattern-optimizations.md) — TMA overlap, N256 tiles, L2 promotion, scale prefetch, and how sources under `benchmark/performance/blockscale_gemm/` and `blockscale_gemm_v2/` explore scale **DMA to shared memory** and layout variants.
 
 **Compile and run (Cute backend example)**
 

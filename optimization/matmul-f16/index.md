@@ -1,31 +1,17 @@
-# Dense GEMM FP16: Optimization Case Study
+# Dense GEMM FP16: optimization case study
 
-This case study walks a Hopper (SM90a) half-precision matrix multiply from the Choreo benchmark baseline to near–cuBLAS-class throughput on **H800 PCIe** (114 SMs). The narrative is intentionally linear: establish a measured baseline, read the hardware story from TFLOPS and occupancy, then apply patterns from the Lv0 tutorial—[warp specialization](../../tutorial/ch06-warpspec.md), [multi-stage pipelining](../../tutorial/ch03-pipeline.md), and [persistent tiling](../../tutorial/ch07-persistent.md)—only when profiling supports them.
+You take a Hopper (SM90a) half-precision GEMM from the Choreo benchmark baseline to throughput in the same band as cuBLAS on **H800 PCIe** (114 SMs). The path is deliberate: measure first, infer the limiter from TFLOPS and occupancy math, then pull in tutorial ideas—[warp specialization](../../tutorial/ch06-warpspec.md), [pipelining](../../tutorial/ch03-pipeline.md), [persistent tiling](../../tutorial/ch07-persistent.md)—only when the numbers justify them.
 
-**Numbers that anchor the story**
+**Anchor numbers** (8192³ unless noted): baseline **208.7** TFLOPS (1p1c, WN=128, four stages); best shipped **382.5** TFLOPS (1p2c split-output, WN=152, non-persistent); **+83%** vs. that baseline on the same problem. Marketing peak for this class is often quoted around **1513** TFLOPS FP16 tensor; **cuBLAS** on this stack sits near **~380** TFLOPS—that is the bar the tuned kernels aim at.
 
-| Milestone | TFLOPS | Setting |
-|-----------|--------|---------|
-| Baseline (main) | 208.7 | 8192³, 1 producer / 1 consumer (1p1c), WN=128, 4 stages |
-| Best shipped | **382.5** | 8192³, 1p2c split-output, WN=152, non-persistent |
-| Improvement | **+83%** | Same problem size vs. baseline |
+**Read order**
 
-Hardware context: **1513 TFLOPS** is a common FP16 tensor peak headline for this class of GPU; **cuBLAS** on this stack lands near **~380 TFLOPS**, which is the practical ceiling the hand-tuned kernels chase.
+1. [Baseline and profiling](baseline-analysis.md) — where **208.7** comes from and why it is schedule-bound, not “missing WGMMA.”
+2. [Optimization patterns](pattern-optimizations.md) — how WN, stage depth, 1p2c split-output, launch mode, and compiler flags line up with the measured jumps.
+3. [AI-tune last mile](aitune-last-mile.md) — shipped checkpoints (iter048, iter050, iter057, iter061), repro commands, and the WN sweep / occupancy cliff.
 
-**How to read the series**
+Full iteration tables: `choreo/benchmark/performance/matmul/README_matmul_f16_aitune_2026-03-23.md`. Representative sources: `matmul_f16_dyn_sm90.co`, `matmul_f16_dyn_sm90_warpspec_1p1c.co`, `matmul_f16_dyn_sm90_warpspec_1p2c.co`, and dated `*_iter048_*`, `*_iter050_*`, `*_iter057_*`, `*_iter061_*` builds.
 
-1. [Baseline and profiling](baseline-analysis.md) — what the default `matmul_f16_dyn_sm90.co` and early warpspec kernels are doing wrong at 8192³.
-2. [Optimization patterns](pattern-optimizations.md) — tile width (WN), pipeline depth (stages), split-output 1p2c, compiler flags (`stmatrix`, `ptx-barrier`, TMA cluster awareness), and when each pattern wins.
-3. [AI-tune last mile](aitune-last-mile.md) — sweep methodology at 8192³, the WN=168 occupancy cliff, and shipped kernels (iter048, iter050, iter057, iter061).
+**Before you start** — You should already be comfortable with [TMA and swizzle](../../tutorial/ch04-tma-swizzle.md) and [WGMMA](../../tutorial/ch05-mma.md): why **`tma.copy`** and **`mma.load.swiz`** agree on layout.
 
-Source of truth for raw iteration tables: `choreo/benchmark/performance/matmul/README_matmul_f16_aitune_2026-03-23.md`.
-
-Representative `.co` sources in the Choreo tree include `benchmark/performance/matmul/matmul_f16_dyn_sm90.co` (dynamic-tile baseline), `matmul_f16_dyn_sm90_warpspec_1p1c.co`, `matmul_f16_dyn_sm90_warpspec_1p2c.co`, and the dated AI-tune variants (`*_iter048_*`, `*_iter050_*`, `*_iter057_*`, `*_iter061_*`).
-
-**Prerequisites**
-
-Skim [TMA and swizzle](../../tutorial/ch04-tma-swizzle.md) and [WGMMA](../../tutorial/ch05-mma.md) before Ch6—the case study assumes you already know **why** operand layouts match between **`tma.copy`** and **`mma.load.swiz`**.
-
-**Method**
-
-Each chapter follows the same loop: quote **TFLOPS** at a fixed problem size, name the **limiter** (occupancy, pipeline bubbles, output contention), apply **one** pattern, re-measure. No pattern is adopted on intuition alone.
+**Method** — Each step: quote TFLOPS at a fixed size, name the limiter (occupancy, pipeline bubbles, output contention), change one thing, re-measure.

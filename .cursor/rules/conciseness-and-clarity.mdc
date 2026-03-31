@@ -1,0 +1,65 @@
+---
+description: Conciseness and clarity rules — eliminate filler, shorten sentences, prefer simple words
+globs: "**/*.md"
+alwaysApply: false
+---
+
+# Conciseness & Clarity
+
+Sources: Draft.dev Style Guide, Elastic Docs Style Guide, Refactoring English
+
+## Sentence Length
+
+- Target **under 25 words** per sentence. Split longer sentences.
+- One idea per sentence. If a sentence has "and" joining two unrelated clauses, split it.
+
+## Paragraph Length
+
+- Keep paragraphs **under 7 lines**. Dense walls of text lose readers.
+- Break at logical boundaries — a new concept or step deserves a new paragraph.
+
+## Word Choice — Prefer Simple
+
+| Avoid | Prefer |
+|-------|--------|
+| utilize | use |
+| in order to | to |
+| assist | help |
+| attempt | try |
+| commence | start / begin |
+| terminate | end / stop |
+| subsequent | next |
+| prior to | before |
+| facilitate | help / enable |
+| leverage | use |
+
+## Words to Avoid in Technical Prose
+
+- **"easy" / "simple" / "straightforward" / "trivial"** — these invalidate readers who find it hard. State what it does, not how hard it is.
+- **"just"** — implies the step is obvious. Cut it.
+- **"obviously" / "clearly" / "of course"** — if it were obvious, you wouldn't need to write it.
+
+```markdown
+<!-- BAD -->
+You can simply configure the DMA by just passing the shape descriptor.
+This is straightforward — obviously, the kernel needs a tile size.
+
+<!-- GOOD -->
+Configure the DMA by passing the shape descriptor.
+The kernel requires a tile size.
+```
+
+## Eliminate Redundancy
+
+- Do not repeat the same concept in consecutive sentences with different wording.
+- Each paragraph must add new information. If removing a paragraph changes nothing, remove it.
+
+## Put Conditions Before Instructions
+
+```markdown
+<!-- BAD -->
+Run `make test` if you want to verify the build.
+
+<!-- GOOD -->
+To verify the build, run `make test`.
+```

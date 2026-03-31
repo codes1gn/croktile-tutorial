@@ -1,0 +1,59 @@
+---
+description: Technical formatting conventions — code elements, headings, lists, spelling, and visual consistency
+globs: "**/*.md"
+alwaysApply: false
+---
+
+# Technical Formatting
+
+Sources: Microsoft Writing Style Guide, Elastic Docs Style Guide
+
+## Spelling and Language
+
+- Use **American English** consistently. No British variants.
+  - "optimization" not "optimisation"
+  - "color" not "colour"
+  - "behavior" not "behaviour"
+
+## Headings
+
+- Use **sentence case** for all headings: capitalize only the first word and proper nouns.
+  - "Configure the DMA pipeline" not "Configure The DMA Pipeline"
+- Headings must be descriptive — a reader scanning headings alone should understand the page structure.
+
+## Code Elements in Prose
+
+| Element | Format | Example |
+|---------|--------|---------|
+| Class / struct names | backtick code | `TiledMma`, `SharedMemory` |
+| Function / method names | backtick code with `()` | `make_tiled_copy()`, `partition()` |
+| Variable names | backtick code | `tile_size`, `smem_buf` |
+| File names | backtick code | `matmul.cu`, `Makefile` |
+| CLI commands | backtick code | `nvcc -o kernel kernel.cu` |
+| Keyword / language constructs | backtick code | `__global__`, `template` |
+| New domain terms (first use) | **bold** on first use, then plain | **Warp Specialization** |
+| UI elements | **bold** | **Settings > Build** |
+
+## Lists
+
+- Use **numbered lists** for sequential steps.
+- Use **bulleted lists** for unordered items.
+- Every list must have **at least 2 items**.
+- Maintain **parallel grammatical structure** within a list.
+
+```markdown
+<!-- BAD (not parallel) -->
+- Configure the tile size
+- The DMA pipeline should be set up
+- Running the kernel
+
+<!-- GOOD (parallel: all imperative) -->
+- Configure the tile size
+- Set up the DMA pipeline
+- Run the kernel
+```
+
+## Numbers
+
+- Spell out one through nine in prose. Use numerals for 10 and above.
+- Always use numerals for measurements, versions, and performance data: "4 KB", "SM90", "1.2 TFLOPS".

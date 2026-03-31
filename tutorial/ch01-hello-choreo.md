@@ -18,7 +18,7 @@ The key insight is that in traditional CUDA, you write one monolithic kernel tha
 
 ## A Complete Example: Element-Wise Addition
 
-Let's look at the full program. It adds two `[6, 17, 128]` arrays of 32-bit integers element by element:
+Look at the full program. It adds two `[6, 17, 128]` arrays of 32-bit integers element by element:
 
 ```choreo
 // Device Program
@@ -77,7 +77,7 @@ choreo ele_add.co -o ele_add
 ./ele_add
 ```
 
-You should see `Test Passed`. Now let's walk through each part.
+You should see `Test Passed`. Now walk through each part.
 
 ## The Host Program: Preparing and Verifying Data
 
@@ -112,9 +112,9 @@ In Choreo programs, the device function operates on whatever data chunk the tile
 
 ## The Tileflow Program: Line by Line
 
-This is the heart of the program. Let's go through it step by step.
+This is the heart of the program. Here is a step-by-step walkthrough.
 
-### Function Signature
+**Function signature.**
 
 ```choreo
 __co__ s32 [6, 17, 128] ele_add(s32 [6, 17, 128] lhs, s32 [6, 17, 128] rhs) {
@@ -122,7 +122,7 @@ __co__ s32 [6, 17, 128] ele_add(s32 [6, 17, 128] lhs, s32 [6, 17, 128] rhs) {
 
 The `__co__` prefix marks this as a Choreo function. Unlike regular C++ functions, Choreo functions carry shape information in their signature: both inputs and the return value have the shape `[6, 17, 128]` with element type `s32` (signed 32-bit integer).
 
-### Output Buffer
+**Output buffer.**
 
 ```choreo
 s32 [lhs.span] output;
@@ -130,7 +130,7 @@ s32 [lhs.span] output;
 
 This declares the output buffer. The expression `lhs.span` copies the shape from `lhs`, so `output` automatically has shape `[6, 17, 128]`. This is a convenient pattern — if the input shape changes, the output follows.
 
-### Parallel Execution
+**Parallel execution.**
 
 ```choreo
 parallel p by 6 {
@@ -140,7 +140,7 @@ parallel p by 6 {
 
 `parallel p by 6` launches 6 parallel threads of execution. The variable `p` ranges from 0 to 5 and identifies each thread. If you are coming from CUDA, think of `p` as a block index — the code inside runs concurrently across 6 instances.
 
-### Tiling with `with` and `foreach`
+**Tiling with `with` and `foreach`.**
 
 ```choreo
 with index in [17, 4] {
@@ -159,7 +159,7 @@ for (int x = 0; x < 17; x++)
 
 So each parallel thread runs 17 × 4 = 68 iterations.
 
-### DMA: Moving Data
+**DMA: Moving Data.**
 
 ```choreo
 lhs_load = dma.copy lhs.chunkat(p, index) => local;
@@ -174,7 +174,7 @@ This is the DMA statement — the operation that actually moves data. Let's unpa
 
 The same pattern is used for `rhs`. After both DMA copies complete, the data chunk is available in local memory.
 
-### Calling the Device Kernel
+**Calling the device kernel.**
 
 ```choreo
 local s32 [lhs_load.span] l1_out;
@@ -187,7 +187,7 @@ The `call` statement invokes the device function `kernel`. Notice the accessors:
 - `lhs_load.data` extracts the raw pointer from the DMA future.
 - `|lhs_load.span|` computes the total number of elements in the chunk (the "span volume").
 
-### Storing Results Back
+**Storing results back.**
 
 ```choreo
 dma.copy l1_out => output.chunkat(p, index);
@@ -209,15 +209,6 @@ The `-es` flag stops after transpilation, letting you inspect the generated CUDA
 
 ## What You Have Learned
 
-In this chapter, you have seen:
-
-- The three-part structure of a Choreo program: host, device, and tileflow.
-- The `__co__` prefix for Choreo functions, with typed, shaped inputs and outputs.
-- `parallel ... by` for launching parallel execution.
-- `with ... in` and `foreach` for tiling loops.
-- `dma.copy ... => ...` for moving data between memory levels.
-- `chunkat` for carving data into tiles based on parallel and loop indices.
-- `call` for invoking device functions on local data.
-- `make_spanview` for connecting host arrays to Choreo's type system.
+In this chapter, you have seen the three-part structure of a Choreo program (host, device, and tileflow); the `__co__` prefix for Choreo functions, with typed, shaped inputs and outputs; `parallel ... by` for launching parallel execution; and `with ... in` and `foreach` for tiling loops. You have also seen how `dma.copy ... => ...` moves data between memory levels, how `chunkat` carves data into tiles based on parallel and loop indices, how `call` invokes device functions on local data, and how `make_spanview` connects host arrays to Choreo's type system.
 
 In the [next chapter](ch02-data-movement.md), we move from element-wise operations to matrix multiplication, and see how these same concepts apply to a more realistic kernel.

@@ -1,0 +1,60 @@
+---
+description: GPU and systems programming documentation patterns — domain-specific writing conventions for Choreo/CUDA content
+globs: "**/*.md"
+alwaysApply: false
+---
+
+# GPU Documentation Patterns
+
+Sources: NVIDIA CUDA Programming Guide, AMD Composable Kernel docs, croktile-tutorial best practices
+
+## Progressive Complexity
+
+- Start from **sequential / CPU-style** thinking, then introduce GPU parallelism.
+- Each chapter or section should build on the previous — never assume knowledge that hasn't been taught yet.
+- When introducing a GPU concept (TMA, MMA, warp specialization), first give a **one-sentence intuition**, then the formal definition, then code.
+
+```markdown
+<!-- Pattern: intuition → definition → code -->
+Tensor Memory Accelerator (TMA) lets the hardware handle
+multi-dimensional memory copies without manual index math.
+
+Formally, TMA is an SM90+ unit that performs asynchronous,
+tile-shaped global-to-shared-memory transfers described by
+a tensor descriptor.
+
+```choreo
+auto tma = make_tma_copy(gmem_tensor, smem_layout);
+```
+```
+
+## Hardware Context
+
+- Always state the **target architecture** when behavior is arch-dependent: "On SM90+ …", "This requires Hopper or later."
+- When showing performance numbers, state the **GPU model, clock, and memory bandwidth** used for measurement.
+- Use a consistent table format for benchmark results.
+
+## Code Examples
+
+- Show **complete, compilable snippets** when introducing a new concept — not fragments.
+- Annotate the **non-obvious parts** of each snippet. Skip comments on lines that are self-explanatory.
+- When optimizing, always show **before vs. after** with measured performance delta.
+
+## Terminology Consistency
+
+Use these terms consistently (do not alternate synonyms):
+
+| Preferred | Avoid |
+|-----------|-------|
+| shared memory | SMEM, shmem (use only in code identifiers) |
+| global memory | GMEM, device memory (unless distinguishing from host) |
+| warp | wavefront (unless discussing AMD) |
+| thread block | CTA (use CTA only in low-level PTX context) |
+| tile | chunk, block (ambiguous with thread block) |
+| kernel | device function (only for `__device__` specifically) |
+
+## Performance Discussion
+
+- Always provide **absolute numbers** (TFLOPS, GB/s) alongside percentages.
+- State the **theoretical peak** and compute **efficiency** (achieved / peak).
+- When comparing approaches, use a table with columns: Variant, TFLOPS, Efficiency (%), Key Change.

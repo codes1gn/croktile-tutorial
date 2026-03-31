@@ -1,0 +1,82 @@
+---
+description: Vale linter setup and configuration for automated prose quality checking
+alwaysApply: false
+---
+
+# Vale Linter Integration
+
+Source: vale.sh (errata-ai/vale)
+
+## What Vale Does
+
+Vale is a CLI prose linter that enforces style rules on Markdown, RST, and other markup. It checks for passive voice, weasel words, jargon, spelling inconsistencies, and custom rules — all defined in YAML. It runs offline, is fast (Go-based), and integrates with CI.
+
+## Setup for This Project
+
+### 1. Install Vale
+
+```bash
+# macOS
+brew install vale
+
+# Linux (snap)
+snap install vale
+
+# Or download from https://github.com/errata-ai/vale/releases
+```
+
+### 2. Create `.vale.ini` at project root
+
+```ini
+StylesPath = .vale/styles
+MinAlertLevel = suggestion
+
+Packages = Google, write-good
+
+[*.md]
+BasedOnStyles = Vale, Google, write-good
+```
+
+### 3. Sync packages
+
+```bash
+vale sync
+```
+
+### 4. Run
+
+```bash
+vale docs/ tutorial/ documentation/ optimization/ advanced/
+```
+
+## Recommended Rule Packages
+
+| Package | Focus |
+|---------|-------|
+| `Google` | Google developer docs style (second person, active voice, no jargon) |
+| `write-good` | Weasel words, passive voice, wordy phrases |
+| `Microsoft` | Microsoft style guide rules |
+| `alex` | Inclusive / non-discriminatory language |
+| `Readability` | Flesch-Kincaid, Gunning Fog readability scores |
+
+## Custom Rules for Choreo
+
+Create `.vale/styles/Choreo/` for project-specific rules:
+
+- **Spelling.yml** — enforce "optimization" not "optimisation", "behavior" not "behaviour"
+- **Terminology.yml** — flag inconsistent GPU terms ("SMEM" → suggest "shared memory")
+- **NoMarketingSpeak.yml** — flag "easy-to-use", "seamless", "powerful", "revolutionary"
+
+## CI Integration
+
+Add to `.github/workflows/deploy-docs.yml`:
+
+```yaml
+- name: Lint prose
+  uses: errata-ai/vale-action@v2
+  with:
+    files: docs/ tutorial/ documentation/ optimization/ advanced/
+    reporter: github-check
+```
+
+This blocks PRs that introduce style violations.

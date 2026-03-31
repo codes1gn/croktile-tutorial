@@ -1,0 +1,44 @@
+---
+description: Tutorial chapter structure rules — learning objectives, prerequisites, step-by-step, expected output
+globs: "tutorial/**/*.md"
+alwaysApply: false
+---
+
+# Tutorial Structure
+
+Sources: Divio Documentation System, Refactoring English (Michael Lynch), GitHub Docs Tutorial Content Type
+
+## Every Chapter Must Have
+
+1. **Title that promises a clear outcome** — "Build a Tiled MatMul Kernel", not "Chapter 5".
+2. **Prerequisites block** — what the reader must know or have completed before starting.
+3. **Learning objectives** — 2-4 bullet points stating what the reader will learn.
+4. **Step-by-step body** — each step is a heading, with code and explanation.
+5. **Expected output** — show what the reader should see after running their code.
+6. **Next steps** — 2-3 links to related chapters or deeper topics.
+
+## Step-by-Step Rules
+
+- Show **every command, file change, and code edit** needed to complete the step.
+- Code snippets must be **copy-pasteable** — no pseudo-code in tutorial steps.
+- Use **long-form CLI flags** (`--output` not `-o`) for clarity.
+- After each code block, **explain what it does and why** — don't assume the reader sees the connection.
+- If a step has a common failure mode, add a **Troubleshooting** callout.
+
+## Explain the "Why"
+
+At each step, answer: "Why are we doing this?" and "What would happen if we didn't?"
+
+```markdown
+<!-- BAD -->
+Set the tile size to 128.
+
+<!-- GOOD -->
+Set the tile size to 128. This matches the SM's shared memory bank width,
+avoiding bank conflicts that would halve throughput.
+```
+
+## Scope
+
+- Each chapter teaches **one concept**. If a chapter covers two unrelated ideas, split it.
+- A tutorial chapter should be completable in **15–30 minutes**.

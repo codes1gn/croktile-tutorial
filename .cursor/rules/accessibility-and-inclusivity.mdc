@@ -1,0 +1,68 @@
+---
+description: Accessibility and inclusivity guidelines — alt text, inclusive language, device-agnostic instructions
+globs: "**/*.md"
+alwaysApply: false
+---
+
+# Accessibility & Inclusivity
+
+Sources: Elastic Docs Style Guide, Google Developer Documentation Style Guide
+
+## Images and Media
+
+- Every image **must** have descriptive alt text that conveys the information the image provides.
+- Alt text for diagrams should describe what the diagram shows, not just its title.
+- Screenshots of terminal output should be accompanied by a text-based code block with the same content.
+
+```markdown
+<!-- BAD -->
+![](pipeline.png)
+
+<!-- GOOD -->
+![Data flow from global memory through TMA into shared memory tiles](pipeline.png)
+```
+
+## Inclusive Language
+
+| Avoid | Prefer |
+|-------|--------|
+| blacklist / whitelist | blocklist / allowlist |
+| master / slave | primary / replica, leader / follower |
+| sanity check | quick check, smoke test, validation |
+| dummy | placeholder, sample |
+| he / she (generic) | they |
+| man-hours | person-hours, engineering hours |
+| crippled | degraded, limited |
+
+## Device-Agnostic Instructions
+
+- Use **"select"** instead of "click" (works for mouse, touch, keyboard).
+- Use **"enter"** instead of "type" when describing text input.
+- Use **"press"** for keyboard shortcuts: "Press `Ctrl+S`."
+
+## Directional Language
+
+- Avoid "above", "below", "left", "right" — the layout may differ on mobile, RTL languages, or screen readers.
+- Use "previous", "following", "earlier in this section" instead.
+
+```markdown
+<!-- BAD -->
+As shown in the diagram above…
+See the table on the right.
+
+<!-- GOOD -->
+As shown in the preceding diagram…
+See the following table.
+```
+
+## Links
+
+- Link text must describe the destination — never use "click here" or "this link".
+
+```markdown
+<!-- BAD -->
+For more info, click [here](memory.md).
+
+<!-- GOOD -->
+For details, see [Memory model in Choreo](memory.md).
+```
