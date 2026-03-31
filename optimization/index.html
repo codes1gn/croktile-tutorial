@@ -772,17 +772,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting Started
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#case-studies" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2763,17 +2752,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting Started
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#case-studies" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2892,19 +2870,18 @@
 
 
 <h1 id="performance-tuning-demos">Performance Tuning Demos<a class="headerlink" href="#performance-tuning-demos" title="Permanent link">&para;</a></h1>
-<p>This section presents real-world kernel optimization case studies. Each case starts from a working baseline, profiles it to identify bottlenecks, and applies optimization patterns to push performance toward hardware peak.</p>
-<h2 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
-<p>Before diving into individual cases, read the profiling setup section — it covers the tooling and methodology used throughout:</p>
+<p>When we say <strong>performance tuning</strong> in this tutorial, we mean the same thing you would do on a real kernel: start from something that runs correctly, measure it with a stable harness, read the numbers against hardware limits, then change one axis at a time and watch what moves. The Choreo matmul benchmarks all share that rhythm—warmup and repeat counts, TFLOPS from FLOPs and mean time, efficiency vs a documented peak—so the case studies below are comparable experiments, not one-off demos.</p>
+<p>Before you open a specific kernel, skim how timing and reporting work in the tree:</p>
 <ul>
 <li><a href="setup-profiling/">Setting Up: TimerOption, TFLOPS, and HW Efficiency</a></li>
 </ul>
 <h2 id="case-studies">Case Studies<a class="headerlink" href="#case-studies" title="Permanent link">&para;</a></h2>
 <h3 id="dense-gemm-fp16"><a href="matmul-f16/">Dense GEMM FP16</a><a class="headerlink" href="#dense-gemm-fp16" title="Permanent link">&para;</a></h3>
-<p>Optimizing a half-precision matrix multiply from ~208 TFLOPS to 382+ TFLOPS on H800 PCIe. Covers warp specialization, multi-stage pipelining, split-output, persistent kernels, and tile scheduling strategies.</p>
+<p>Half-precision matrix multiply from about <strong>208 TFLOPS</strong> to <strong>382+ TFLOPS</strong> on H800 PCIe. Warp specialization, multi-stage pipelining, split-output, persistent kernels, and tile scheduling.</p>
 <h3 id="sparse-gemm-fp16-and-fp8-e4m3"><a href="gemm-sp/">Sparse GEMM: FP16 and FP8 E4M3</a><a class="headerlink" href="#sparse-gemm-fp16-and-fp8-e4m3" title="Permanent link">&para;</a></h3>
-<p>Structured 2:4 sparse GEMM on <strong>4096×8192×8192</strong>: FP16 from <strong>368</strong> to <strong>655 TFLOPS</strong> (iter143), FP8 E4M3 from <strong>671</strong> to <strong>1127 TFLOPS</strong> (iter068). Covers metadata/TMA staging, warp specialization, 3-stage pipelines, barrier tuning, and the <code>.co</code>-to-<code>.cu</code> boundary.</p>
+<p>Structured 2:4 sparse GEMM at <strong>4096×8192×8192</strong>: FP16 <strong>368 → 655 TFLOPS</strong> (iter143), FP8 E4M3 <strong>671 → 1127 TFLOPS</strong> (iter068). Metadata and TMA staging, warp specialization, three-stage pipelines, barrier tuning, and the <code>.co</code>-to-<code>.cu</code> boundary.</p>
 <h3 id="block-scaled-gemm-fp8"><a href="blockscale-gemm/">Block-Scaled GEMM FP8</a><a class="headerlink" href="#block-scaled-gemm-fp8" title="Permanent link">&para;</a></h3>
-<p>FP8 GEMM with per-block scaling factors. Covers scale DMA staging, warp-specialized blockscale pipelines, and transposed scale patterns.</p>
+<p>FP8 E4M3 with per-block scaling: baseline <strong>314.2 TFLOPS @2048³</strong> and <strong>397.9 @4096³</strong>, best shipped kernel <strong>iter066</strong> at <strong>621 @4096³</strong> (<strong>+56%</strong>). Scale DMA staging, warp-specialized blockscale pipelines, and transposed scale layouts.</p>
 
 
 

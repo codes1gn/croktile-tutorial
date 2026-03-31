@@ -833,43 +833,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#environment-variables" class="md-nav__link">
+  <a href="#environment-compile-and-run" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Environment Variables
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#compile-and-run-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Compile and Run Workflow
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#common-codegen-flags" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Common Codegen Flags
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#verification-vs-timing-only-runs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Verification vs Timing-Only Runs
+        Environment, Compile, and Run
       
     </span>
   </a>
@@ -2812,43 +2779,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#environment-variables" class="md-nav__link">
+  <a href="#environment-compile-and-run" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Environment Variables
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#compile-and-run-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Compile and Run Workflow
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#common-codegen-flags" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Common Codegen Flags
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#verification-vs-timing-only-runs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Verification vs Timing-Only Runs
+        Environment, Compile, and Run
       
     </span>
   </a>
@@ -2924,14 +2858,10 @@
 
 
 <h1 id="setting-up-timeroption-tflops-and-hw-efficiency">Setting Up: TimerOption, TFLOPS, and HW Efficiency<a class="headerlink" href="#setting-up-timeroption-tflops-and-hw-efficiency" title="Permanent link">&para;</a></h1>
-<p>This page is the preamble for the Level 1 performance optimization guide. Before you read the case studies, you need a repeatable way to <strong>measure</strong> kernels: how Choreo times code, how to turn milliseconds into TFLOPS, and how to compare results against hardware peak. The matmul benchmarks in the Choreo tree all follow the same pattern, so once you understand this setup, every example speaks the same language.</p>
+<p>This page is the shared measurement contract for the optimization walkthroughs. You will see the same ideas in every matmul host program: Choreo wraps the kernel in <code>choreo::timing</code> with a <code>choreo::TimerOption</code>, prints mean milliseconds, then derives TFLOPS and sometimes efficiency vs peak. Once that pipeline is familiar, you can read each case study as an A/B story on the same yardstick.</p>
 <h2 id="how-choreotiming-works">How <code>choreo::timing</code> Works<a class="headerlink" href="#how-choreotiming-works" title="Permanent link">&para;</a></h2>
-<p>Benchmarks wrap the kernel under test in <code>choreo::timing</code> and pass a <code>choreo::TimerOption</code>:</p>
-<ul>
-<li><strong><code>warmup</code></strong> — number of runs that are executed but <strong>not</strong> included in the average. This lets caches, TLBs, and steady-state behavior settle before measurement.</li>
-<li><strong><code>repeat</code></strong> — number of timed iterations. The reported value is the <strong>mean</strong> elapsed time over these runs, in <strong>milliseconds</strong>.</li>
-</ul>
-<p>Typical host code reads optional overrides from the environment, then calls timing on a lambda that launches the kernel and synchronizes the device:</p>
+<p><code>TimerOption</code> carries <strong><code>warmup</code></strong> and <strong><code>repeat</code></strong>. Warmup runs are executed but excluded from the average so caches, TLBs, and steady-state behavior settle first. The timed runs are averaged; the reported value is <strong>mean elapsed time in milliseconds</strong>.</p>
+<p>Host code often reads overrides from the environment, then times a lambda that launches the kernel and synchronizes:</p>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">warmup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
 <span class="kt">int</span><span class="w"> </span><span class="n">repeat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">500</span><span class="p">;</span>
 <span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">warmup_env</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;CHOREO_TIMING_WARMUP&quot;</span><span class="p">);</span>
@@ -2944,24 +2874,23 @@
 <span class="k">auto</span><span class="w"> </span><span class="n">avg_ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">choreo</span><span class="o">::</span><span class="n">timing</span><span class="p">([</span><span class="o">&amp;</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">matmul</span><span class="p">(</span><span class="n">lhs_d</span><span class="p">,</span><span class="w"> </span><span class="n">rhs_d</span><span class="p">,</span><span class="w"> </span><span class="n">res_d</span><span class="p">);</span><span class="w"> </span><span class="n">cudaDeviceSynchronize</span><span class="p">();</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="n">topt</span><span class="p">);</span>
 <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Timing avg ms: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">avg_ms</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
 </code></pre></div>
-<p>The lambda should include whatever you need for a fair wall-clock measurement — usually the kernel launch plus <code>cudaDeviceSynchronize()</code> so the GPU has finished before the timer stops.</p>
+<p>Include whatever belongs in a fair wall-clock slice—typically the launch plus <code>cudaDeviceSynchronize()</code> so the GPU has finished before the timer stops.</p>
 <h2 id="from-average-milliseconds-to-tflops">From Average Milliseconds to TFLOPS<a class="headerlink" href="#from-average-milliseconds-to-tflops" title="Permanent link">&para;</a></h2>
-<p>For a <strong>dense</strong> matrix multiply <code>C = A × B</code> with shapes <code>(M, K)</code> and <code>(K, N)</code>, the canonical floating-point operation count is:</p>
+<p>For dense <code>C = A × B</code> with shapes <code>(M, K)</code> and <code>(K, N)</code>:</p>
 <p><code>FLOPs = 2 * M * N * K</code></p>
-<p>Each output element involves <code>K</code> multiply-add pairs, hence the factor of two. <strong>Sparse</strong> variants (for example structured sparsity) use the same idea but count <strong>effective</strong> multiply-adds for the nonzeros; when the benchmark already defines a FLOP count, <strong>double</strong> it if the formula counts MACs as one op instead of two — match whatever the specific <code>matmul_*</code> host program documents.</p>
-<p>Given average time <code>avg_ms</code>, convert seconds to TFLOPS:</p>
+<p>Each output element does <code>K</code> multiply-add pairs, hence the factor of two. Sparse variants count <strong>effective</strong> multiply-adds for nonzeros; if a benchmark documents FLOPs differently (e.g. MACs counted as one op), align with that host program rather than forcing this formula everywhere.</p>
+<p>With average time <code>avg_ms</code>:</p>
 <p><code>TFLOPS = (FLOPs / (avg_ms / 1000.0)) / 1e12</code></p>
-<p>In code:</p>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">flops</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2.0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kt">double</span><span class="p">(</span><span class="n">M</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kt">double</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kt">double</span><span class="p">(</span><span class="n">K</span><span class="p">);</span>
 <span class="kt">double</span><span class="w"> </span><span class="n">tflops</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">flops</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="n">avg_ms</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1000.0</span><span class="p">))</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e12</span><span class="p">;</span>
 <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;TFLOPS: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">tflops</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="hardware-efficiency-percent-of-peak">Hardware Efficiency (Percent of Peak)<a class="headerlink" href="#hardware-efficiency-percent-of-peak" title="Permanent link">&para;</a></h2>
-<p>Throughput alone is hard to interpret without a ceiling. Benchmarks often print <strong>efficiency</strong> as TFLOPS divided by a documented peak for the GPU and precision, times 100:</p>
+<p>Throughput needs a ceiling. Many benchmarks print efficiency as TFLOPS divided by a documented GPU peak for that precision, times 100:</p>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">eff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">tflops</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">H800_PCIE_PEAK_F16_TFLOPS</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">100.0</span><span class="p">;</span>
 <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;HW efficiency: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">eff</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;%</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
 </code></pre></div>
-<p>Reference peaks used in the Choreo matmul benchmarks for <strong>H800 PCIe</strong>:</p>
+<p>Reference peaks used in Choreo matmul benchmarks for <strong>H800 PCIe</strong>:</p>
 <table>
 <thead>
 <tr>
@@ -2974,17 +2903,17 @@
 <tr>
 <td><code>H800_PCIE_PEAK_F16_TFLOPS</code></td>
 <td>1513</td>
-<td>FP16 dense / similar workloads</td>
+<td>FP16 dense and similar</td>
 </tr>
 <tr>
 <td><code>H800_PCIE_PEAK_F8_TFLOPS</code></td>
 <td>3026</td>
-<td>FP8 dense / similar workloads</td>
+<td>FP8 dense and similar</td>
 </tr>
 </tbody>
 </table>
-<p>These are <strong>theoretical</strong> peaks; real kernels rarely sit at 100%. The point is to compare <strong>before and after</strong> an optimization on the same formula and peak constant, not to treat the percentage as an absolute grade.</p>
-<h2 id="environment-variables">Environment Variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h2>
+<p>Those numbers are theoretical peaks; real kernels rarely sit at 100%. Use the same peak constant before and after a change so you are comparing apples to apples, not treating the percentage as a final grade.</p>
+<h2 id="environment-compile-and-run">Environment, Compile, and Run<a class="headerlink" href="#environment-compile-and-run" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -2997,7 +2926,7 @@
 <tr>
 <td><code>CHOREO_TIMING_WARMUP</code></td>
 <td><code>10</code></td>
-<td>Warmup iterations (non-negative; <code>0</code> means no warmup).</td>
+<td>Warmup iterations (non-negative; <code>0</code> disables warmup).</td>
 </tr>
 <tr>
 <td><code>CHOREO_TIMING_REPEAT</code></td>
@@ -3007,76 +2936,23 @@
 <tr>
 <td><code>CHOREO_DISABLE_TIMING</code></td>
 <td>unset</td>
-<td>Set to <code>1</code> to skip timing (useful when you only want compile or correctness checks).</td>
+<td>Set to <code>1</code> to skip timing (compile or correctness only).</td>
 </tr>
 <tr>
 <td><code>CHOREO_SKIP_VERIFY</code></td>
 <td>unset</td>
-<td>Set to <code>1</code> to skip numerical verification (see below).</td>
+<td>Set to <code>1</code> to skip numerical verification (faster iteration when you trust the math).</td>
 </tr>
 </tbody>
 </table>
-<h2 id="compile-and-run-workflow">Compile and Run Workflow<a class="headerlink" href="#compile-and-run-workflow" title="Permanent link">&para;</a></h2>
-<p>Performance <code>.co</code> files are built and executed through the Choreo driver. A typical pattern:</p>
-<ol>
-<li>Invoke <code>choreo</code> with <strong><code>-gs</code></strong> (generate script), <strong><code>-t cute</code></strong>, the target <strong><code>-arch</code></strong>, and any codegen flags.</li>
-<li>Point <strong><code>-o</code></strong> at a shell script path (often under <code>/tmp</code>).</li>
-<li>Run that script with <strong><code>--execute</code></strong> to compile and run the generated host + device code.</li>
-</ol>
-<p>Example:</p>
+<p>Verification compares the kernel against a reference and adds host work. For timing-focused runs after layout or precision are stable, <code>export CHOREO_SKIP_VERIFY=1</code> keeps the measurement focused on the device path. Turn verification back on when you change data layout, precision, or tiling.</p>
+<p>Performance <code>.co</code> files are built through the Choreo driver: pass <strong><code>-gs</code></strong> (generate script), <strong><code>-t cute</code></strong>, <strong><code>-arch</code></strong>, and codegen flags; <strong><code>-o</code></strong> points at a shell script (often under <code>/tmp</code>); run that script with <strong><code>--execute</code></strong> to compile and run. Keep flags fixed when you are hunting regressions—change one knob at a time.</p>
 <div class="highlight"><pre><span></span><code>./choreo<span class="w"> </span>-gs<span class="w"> </span>-t<span class="w"> </span>cute<span class="w"> </span>-arch<span class="o">=</span>sm_90a<span class="w"> </span>--use-warpspec<span class="w"> </span>--stmatrix<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>benchmark/performance/matmul/matmul_f16_dyn_sm90.co<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-o<span class="w"> </span>/tmp/matmul.cute.result<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>bash<span class="w"> </span>/tmp/matmul.cute.result<span class="w"> </span>--execute
 </code></pre></div>
-<p>Adjust the <code>.co</code> path and architecture for your benchmark. The important habit is: <strong>same flags for A/B comparisons</strong> — change one knob at a time when you are hunting regressions.</p>
-<h2 id="common-codegen-flags">Common Codegen Flags<a class="headerlink" href="#common-codegen-flags" title="Permanent link">&para;</a></h2>
-<p>These flags show up frequently in SM90-class matmul builds. Exact semantics live in Choreo’s CLI help and docs; treat this table as a <strong>quick map</strong> of what to look for when reading benchmark command lines.</p>
-<table>
-<thead>
-<tr>
-<th>Flag</th>
-<th>Role (high level)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>--use-warpspec</code></td>
-<td>Enable warp-specialized codegen paths where applicable.</td>
-</tr>
-<tr>
-<td><code>--stmatrix</code></td>
-<td>Use <code>stmatrix</code>-related lowering for shared-memory matrix fragments where supported.</td>
-</tr>
-<tr>
-<td><code>--hoist-offset</code></td>
-<td>Hoist offset calculations to reduce per-iteration work.</td>
-</tr>
-<tr>
-<td><code>--hoist-scale</code></td>
-<td>Hoist scale-related address or indexing work similarly.</td>
-</tr>
-<tr>
-<td><code>--ptx-barrier</code></td>
-<td>Influence barrier lowering in the PTX pipeline.</td>
-</tr>
-<tr>
-<td><code>--tma-cluster-aware</code></td>
-<td>Cluster-aware behavior for TMA-oriented kernels.</td>
-</tr>
-<tr>
-<td><code>--wgmma-wait-depth=N</code></td>
-<td>Tune wait-depth for WGMMA pipelines (<code>N</code> is an integer).</td>
-</tr>
-</tbody>
-</table>
-<p>Not every benchmark needs every flag. Copy the flags from the reference <code>matmul_*</code> recipe you are reproducing, then vary them deliberately.</p>
-<h2 id="verification-vs-timing-only-runs">Verification vs Timing-Only Runs<a class="headerlink" href="#verification-vs-timing-only-runs" title="Permanent link">&para;</a></h2>
-<p>Correctness checks compare the kernel output against a reference implementation. They add host-side work and can dominate short dev cycles. For <strong>timing-focused</strong> iterations where you already trust the math, set:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">CHOREO_SKIP_VERIFY</span><span class="o">=</span><span class="m">1</span>
-</code></pre></div>
-<p>so the run measures the kernel path without verification overhead. Turn verification back on when you change data layout, precision, or tiling — a fast wrong answer is still wrong.</p>
-<hr />
-<p>With <code>TimerOption</code>, TFLOPS, efficiency against peak, and the compile-and-run loop in place, you can read the optimization case studies as a series of controlled experiments: same measurement harness, different kernels and flags.</p>
+<p>SM90-class matmul command lines often include flags such as <strong><code>--use-warpspec</code></strong>, <strong><code>--stmatrix</code></strong>, <strong><code>--hoist-offset</code></strong>, <strong><code>--hoist-scale</code></strong>, <strong><code>--ptx-barrier</code></strong>, <strong><code>--tma-cluster-aware</code></strong>, and <strong><code>--wgmma-wait-depth=N</code></strong>. Exact semantics live in Choreo’s CLI help; copy the recipe from the benchmark you are reproducing, then vary flags deliberately.</p>
+<p>With warmup/repeat, TFLOPS, efficiency, env vars, and the compile-and-run loop in hand, the case studies read as one measurement harness and many controlled kernel experiments.</p>
 
 
 

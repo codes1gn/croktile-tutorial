@@ -599,32 +599,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-persistent-kernels" class="md-nav__link">
+  <a href="#fixed-launch-and-tile-striping" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why persistent kernels?
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#fixed-launch-count-parallel-block_id-by-num_sms-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fixed launch count: parallel block_id by NUM_SMS : block
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#linearizing-tiles-and-striping-them-across-ctas" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Linearizing tiles and striping them across CTAs
+        Fixed launch and tile striping
       
     </span>
   </a>
@@ -640,114 +618,13 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="tile_iter, block_id, and the # operator">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#why-the-loop-bound-is-cdivtotal_tiles-num_sms" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why the loop bound is cdiv(total_tiles, NUM_SMS)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-if-guard-out-of-range-tile_id" class="md-nav__link">
+  <a href="#the-if-guard-and-step-on-subspan" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The if guard: out-of-range tile_id
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="The if guard: out-of-range tile_id">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#what-stays-outside-the-if" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What stays outside the if
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#stepmatmul_warp_m-matmul_tile_k-on-subspan" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        .step(MATMUL_WARP_M, MATMUL_TILE_K) on subspan
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label=".step(MATMUL_WARP_M, MATMUL_TILE_K) on subspan">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#when-step-differs-from-the-subspan-shape" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        When .step differs from the subspan shape
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#putting-the-inner-loop-in-context" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Putting the inner loop in context
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Putting the inner loop in context">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#data-dependent-grid-versus-persistent-launch-recap" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Data-dependent grid versus persistent launch (recap)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tile-scheduling-variants-in-the-repo" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tile scheduling variants in the repo
+        The if guard and .step on subspan
       
     </span>
   </a>
@@ -755,10 +632,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#choosing-num_sms-and-partial-output-tiles" class="md-nav__link">
+  <a href="#the-inner-loop-in-context" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Choosing NUM_SMS and partial output tiles
+        The inner loop in context
       
     </span>
   </a>
@@ -766,21 +643,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#checklist-evolving-a-matmul-to-persistent-form" class="md-nav__link">
+  <a href="#tile-scheduling-variants-and-num_sms" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Checklist: evolving a matmul to persistent form
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary
+        Tile scheduling variants and NUM_SMS
       
     </span>
   </a>
@@ -2891,32 +2757,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-persistent-kernels" class="md-nav__link">
+  <a href="#fixed-launch-and-tile-striping" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why persistent kernels?
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#fixed-launch-count-parallel-block_id-by-num_sms-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fixed launch count: parallel block_id by NUM_SMS : block
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#linearizing-tiles-and-striping-them-across-ctas" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Linearizing tiles and striping them across CTAs
+        Fixed launch and tile striping
       
     </span>
   </a>
@@ -2932,114 +2776,13 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="tile_iter, block_id, and the # operator">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#why-the-loop-bound-is-cdivtotal_tiles-num_sms" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why the loop bound is cdiv(total_tiles, NUM_SMS)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-if-guard-out-of-range-tile_id" class="md-nav__link">
+  <a href="#the-if-guard-and-step-on-subspan" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The if guard: out-of-range tile_id
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="The if guard: out-of-range tile_id">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#what-stays-outside-the-if" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What stays outside the if
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#stepmatmul_warp_m-matmul_tile_k-on-subspan" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        .step(MATMUL_WARP_M, MATMUL_TILE_K) on subspan
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label=".step(MATMUL_WARP_M, MATMUL_TILE_K) on subspan">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#when-step-differs-from-the-subspan-shape" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        When .step differs from the subspan shape
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#putting-the-inner-loop-in-context" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Putting the inner loop in context
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Putting the inner loop in context">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#data-dependent-grid-versus-persistent-launch-recap" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Data-dependent grid versus persistent launch (recap)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tile-scheduling-variants-in-the-repo" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tile scheduling variants in the repo
+        The if guard and .step on subspan
       
     </span>
   </a>
@@ -3047,10 +2790,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#choosing-num_sms-and-partial-output-tiles" class="md-nav__link">
+  <a href="#the-inner-loop-in-context" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Choosing NUM_SMS and partial output tiles
+        The inner loop in context
       
     </span>
   </a>
@@ -3058,21 +2801,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#checklist-evolving-a-matmul-to-persistent-form" class="md-nav__link">
+  <a href="#tile-scheduling-variants-and-num_sms" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Checklist: evolving a matmul to persistent form
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary
+        Tile scheduling variants and NUM_SMS
       
     </span>
   </a>
@@ -3149,22 +2881,10 @@
 
 <h1 id="persistent-matmul-if-guards-step-and-tile-iteration">Persistent Matmul: if-guards, step, and Tile Iteration<a class="headerlink" href="#persistent-matmul-if-guards-step-and-tile-iteration" title="Permanent link">&para;</a></h1>
 <p>In Chapter 4 you saw a Hopper-style FP16 matrix multiply whose <strong>grid</strong> was sized directly from the problem: one CUDA <strong>thread block</strong> (CTA) per output tile, via <code>parallel {block_m, block_n} by [cdiv(M, ...), cdiv(N, ...)] : block</code>. That pattern is easy to reason about: each block owns one <strong><code>MATMUL_WARP_M × MATMUL_WARP_N</code></strong> region of the output, loads K-panels with TMA, accumulates with WGMMA, and stores the result. Chapter 6 added <strong>warp specialization</strong> inside that story—different warps playing different roles in a pipelined loop.</p>
-<p>This chapter changes the <strong>launch geometry</strong>. Instead of spawning as many CTAs as there are output tiles, we launch a <strong>fixed</strong> number of blocks—here, one per streaming multiprocessor (SM)—and let each block <strong>iterate</strong> over many tiles in software. That is the <strong>persistent kernel</strong> pattern: a small, steady pool of CTAs that keeps working until the whole output is covered.</p>
-<p>By the end of this chapter, you should understand:</p>
-<ul>
-<li>Why a fixed CTA count can use hardware more efficiently when the tile grid is large</li>
-<li>How to <strong>linearize</strong> output tiles and assign them to blocks with <code>tile_iter # block_id</code></li>
-<li>Why an <strong><code>if (tile_id &lt; total_tiles)</code></strong> guard is required when <code>total_tiles</code> is not divisible by the CTA count</li>
-<li>What <strong><code>.step(M, K)</code></strong> on <strong><code>subspan</code></strong> means when stride should be spelled explicitly</li>
-<li>How <strong>integer division and remainder</strong> recover <strong><code>(block_m, block_n)</code></strong> from a linear <strong><code>tile_id</code></strong></li>
-<li>How <strong><code>NUM_SMS</code></strong> relates to the GPU you target and why <strong><code>cdiv(total_tiles, NUM_SMS)</code></strong> is the shared loop bound</li>
-</ul>
-<hr />
-<h2 id="why-persistent-kernels">Why persistent kernels?<a class="headerlink" href="#why-persistent-kernels" title="Permanent link">&para;</a></h2>
-<p>Suppose <strong><code>M</code></strong> and <strong><code>N</code></strong> are large enough that the number of output tiles <strong><code>tiles_m * tiles_n</code></strong> is <strong>much larger</strong> than the number of SMs on your GPU. With a <strong>data-dependent</strong> grid—one CTA per tile—the hardware schedules tiles in <strong>waves</strong>. After each wave finishes, a new wave starts. In the <strong>last</strong> wave, only <strong>some</strong> SMs have work; the rest sit idle. That <strong>tail</strong> underutilizes the chip.</p>
-<p>A <strong>persistent</strong> layout flips the picture: you launch <strong><code>NUM_SMS</code></strong> blocks (or another fixed count you choose), and <strong>every</strong> block stays busy across <strong>many</strong> logical tiles. Work is <strong>striped</strong> across CTAs so that block <strong><code>b</code></strong> handles tiles <strong><code>b</code>, <code>b + NUM_SMS</code>, <code>b + 2 * NUM_SMS</code>, ...</strong>. As long as there is another tile assigned to that block, it keeps going; you avoid the “almost empty final wave” problem at the <strong>grid</strong> level because you never asked for <strong><code>total_tiles</code></strong> separate CTAs in the first place.</p>
-<p>The tradeoff is <strong>software complexity</strong>: you need a loop over tile indices, a mapping from a <strong>linear</strong> tile id back to <strong><code>(block_m, block_n)</code></strong>, and a guard for <strong>padding</strong> iterations when the striping does not divide evenly. Choreo’s tileflow makes that explicit and readable.</p>
-<p>The reference for this chapter is the <strong>static persistent</strong> FP16 matmul on SM90 in Choreo’s benchmarks: <code>choreo/benchmark/performance/matmul/matmul_f16_dyn_persis_sta_sm90.co</code>. The <strong>tileflow</strong> body below matches that kernel’s structure (constants are discussed in the next section).</p>
+<p>This chapter changes the <strong>launch geometry</strong>. Instead of spawning as many CTAs as there are output tiles, you launch a <strong>fixed</strong> number of blocks—here, one per streaming multiprocessor (SM)—and let each block <strong>iterate</strong> over many tiles in software. That is the <strong>persistent kernel</strong> pattern: a small, steady pool of CTAs that keeps working until the whole output is covered.</p>
+<p>When <strong><code>tiles_m * tiles_n</code></strong> dwarfs the SM count, a data-dependent grid schedules work in <strong>waves</strong>; the last wave leaves some SMs idle while others finish (<strong>tail underutilization</strong>). A fixed CTA count stripes logical tiles across blocks so each worker keeps pulling work as long as another tile is assigned to it.</p>
+<p>You will <strong>linearize</strong> output tiles and assign them with <strong><code>tile_iter # block_id</code></strong>, guard out-of-range work with <strong><code>if (tile_id &lt; total_tiles)</code></strong>, and spell strides with <strong><code>.step(M, K)</code></strong> on <strong><code>subspan</code></strong> when you want them explicit. <strong>Integer division and remainder</strong> recover <strong><code>(block_m, block_n)</code></strong> from a linear <strong><code>tile_id</code></strong>. <strong><code>NUM_SMS</code></strong> sets the launch width, and <strong><code>cdiv(total_tiles, NUM_SMS)</code></strong> is the shared outer loop bound every block uses.</p>
+<p>The reference for this chapter is the <strong>static persistent</strong> FP16 matmul on SM90 in Choreo’s benchmarks: <code>choreo/benchmark/performance/matmul/matmul_f16_dyn_persis_sta_sm90.co</code>. The <strong>tileflow</strong> body below matches that kernel’s structure (constants follow the listing).</p>
 <div class="highlight"><pre><span></span><code>__co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
   int total_tiles = cdiv(M, MATMUL_WARP_M) * cdiv(N, MATMUL_WARP_N);
 
@@ -3204,19 +2924,19 @@
 <li><strong><code>MATMUL_WARP_M = 64</code></strong>, <strong><code>MATMUL_WARP_N = 128</code></strong>, <strong><code>MATMUL_TILE_K = 64</code></strong>, <strong><code>MATMUL_WARP_K = 16</code></strong>, <strong><code>MATMUL_SWIZ = 128</code></strong></li>
 </ul>
 <p>The <strong>inner</strong> K-loop, TMA + WGMMA structure, and <strong><code>parallel ... : group-4</code></strong> warpgroup are the same ideas as Chapter 4 and Chapter 5; what is new is the <strong>outer</strong> <code>parallel block_id by NUM_SMS</code>, the <strong><code>foreach tile_iter</code></strong>, the <strong><code>#</code></strong> composition, <strong><code>if</code></strong>, <strong><code>.step</code></strong>, and the arithmetic that maps <strong><code>tile_id</code></strong> to <strong><code>block_m</code> / <code>block_n</code></strong>.</p>
-<hr />
-<h2 id="fixed-launch-count-parallel-block_id-by-num_sms-block">Fixed launch count: <code>parallel block_id by NUM_SMS : block</code><a class="headerlink" href="#fixed-launch-count-parallel-block_id-by-num_sms-block" title="Permanent link">&para;</a></h2>
-<p>Earlier matmul chapters used a <strong>two-dimensional</strong> parallel over <strong><code>block_m</code></strong> and <strong><code>block_n</code></strong>, with bounds derived from <strong><code>M</code></strong> and <strong><code>N</code></strong>. Here we use a <strong>one-dimensional</strong> parallel over <strong><code>block_id</code></strong>:</p>
+<h2 id="fixed-launch-and-tile-striping">Fixed launch and tile striping<a class="headerlink" href="#fixed-launch-and-tile-striping" title="Permanent link">&para;</a></h2>
+<p>Suppose <strong><code>M</code></strong> and <strong><code>N</code></strong> are large enough that <strong><code>tiles_m * tiles_n</code></strong> is <strong>much larger</strong> than the number of SMs on your GPU. With a <strong>data-dependent</strong> grid—one CTA per tile—the hardware schedules tiles in <strong>waves</strong>. After each wave finishes, a new wave starts. In the <strong>last</strong> wave, only <strong>some</strong> SMs have work; the rest sit idle. That <strong>tail</strong> underutilizes the chip.</p>
+<p>A <strong>persistent</strong> layout flips the picture: you launch <strong><code>NUM_SMS</code></strong> blocks (or another fixed count you choose), and <strong>every</strong> block stays busy across <strong>many</strong> logical tiles. Work is <strong>striped</strong> across CTAs so that block <strong><code>b</code></strong> handles tiles <strong><code>b</code>, <code>b + NUM_SMS</code>, <code>b + 2 * NUM_SMS</code>, ...</strong>.</p>
+<p>You avoid the “almost empty final wave” problem at the <strong>grid</strong> level because you never asked for <strong><code>total_tiles</code></strong> separate CTAs in the first place. The tradeoff is <strong>software complexity</strong>: you need a loop over tile indices, a mapping from a <strong>linear</strong> tile id back to <strong><code>(block_m, block_n)</code></strong>, and a guard for <strong>padding</strong> iterations when striping does not divide evenly. Choreo’s tileflow makes that explicit and readable.</p>
+<p>Earlier matmul chapters used a <strong>two-dimensional</strong> parallel over <strong><code>block_m</code></strong> and <strong><code>block_n</code></strong>, with bounds derived from <strong><code>M</code></strong> and <strong><code>N</code></strong>. Here you use a <strong>one-dimensional</strong> parallel over <strong><code>block_id</code></strong>:</p>
 <div class="highlight"><pre><span></span><code>parallel block_id by NUM_SMS : block {
 </code></pre></div>
-<p>This means: launch exactly <strong><code>NUM_SMS</code></strong> thread blocks. The index <strong><code>block_id</code></strong> runs from <strong><code>0</code></strong> to <strong><code>NUM_SMS - 1</code></strong>. It is <strong>not</strong> tied to a single output tile anymore; it is simply <strong>which</strong> persistent worker you are in the pool.</p>
+<p>This launches exactly <strong><code>NUM_SMS</code></strong> thread blocks. The index <strong><code>block_id</code></strong> runs from <strong><code>0</code></strong> to <strong><code>NUM_SMS - 1</code></strong>. It is <strong>not</strong> tied to a single output tile anymore; it names <strong>which</strong> persistent worker you are in the pool.</p>
 <p>Contrast that with:</p>
 <div class="highlight"><pre><span></span><code>parallel {block_m, block_n} by [cdiv(M, MATMUL_WARP_M), cdiv(N, MATMUL_WARP_N)] : block {
 </code></pre></div>
 <p>In the data-dependent version, <strong>grid size grows with problem size</strong>. In the persistent version, <strong>grid size is fixed</strong> (here, <strong><code>NUM_SMS</code></strong>), and <strong>problem size</strong> shows up in <strong><code>total_tiles</code></strong> and the <strong>inner</strong> loop count instead.</p>
-<hr />
-<h2 id="linearizing-tiles-and-striping-them-across-ctas">Linearizing tiles and striping them across CTAs<a class="headerlink" href="#linearizing-tiles-and-striping-them-across-ctas" title="Permanent link">&para;</a></h2>
-<p>We treat the <strong><code>tiles_m × tiles_n</code></strong> output grid as a single sequence of <strong><code>total_tiles</code></strong> tiles, numbered <strong><code>0 .. total_tiles - 1</code></strong> in <strong>row-major</strong> order over <strong><code>(block_m, block_n)</code></strong>:</p>
+<p>You treat the <strong><code>tiles_m × tiles_n</code></strong> output grid as a single sequence of <strong><code>total_tiles</code></strong> tiles, numbered <strong><code>0 .. total_tiles - 1</code></strong> in <strong>row-major</strong> order over <strong><code>(block_m, block_n)</code></strong>:</p>
 <div class="highlight"><pre><span></span><code>int total_tiles = cdiv(M, MATMUL_WARP_M) * cdiv(N, MATMUL_WARP_N);
 </code></pre></div>
 <p>So <strong><code>tile_id = 0</code></strong> corresponds to <strong><code>(block_m, block_n) = (0, 0)</code></strong>, then <strong><code>(0, 1)</code></strong>, …, then <strong><code>(1, 0)</code></strong>, and so on—exactly the order implied by:</p>
@@ -3224,46 +2944,34 @@
 block_n = tile_id % cdiv(N, MATMUL_WARP_N);
 </code></pre></div>
 <p>Here <strong><code>cdiv(N, MATMUL_WARP_N)</code></strong> is the number of tiles along <strong>N</strong>; dividing by it recovers the row index <strong><code>block_m</code></strong>, and the remainder is the column index <strong><code>block_n</code></strong>. This is ordinary integer <strong>tileflow</strong> arithmetic: it tells TMA and the output store <strong>which</strong> logical output tile this iteration is responsible for.</p>
-<p>Each persistent CTA does not own a contiguous chunk of that sequence. Instead, CTA <strong><code>b</code></strong> processes <strong><code>tile_id</code></strong> values <strong><code>b</code>, b + NUM_SMS, b + 2 * NUM_SMS, ...<code>**—a **stride-</code>NUM_SMS<code>** walk through the linearized list. That is how **</code>NUM_SMS`</strong> workers share the load evenly in the steady state.</p>
-<hr />
+<p>Each persistent CTA does not own a contiguous chunk of that sequence. CTA <strong><code>b</code></strong> processes <strong><code>tile_id</code></strong> values <strong><code>b</code>, b + NUM_SMS, b + 2 * NUM_SMS, ...<code>**—a **stride-</code>NUM_SMS<code>** walk through the linearized list. That is how **</code>NUM_SMS`</strong> workers share the load evenly in the steady state.</p>
 <h2 id="tile_iter-block_id-and-the-operator"><code>tile_iter</code>, <code>block_id</code>, and the <code>#</code> operator<a class="headerlink" href="#tile_iter-block_id-and-the-operator" title="Permanent link">&para;</a></h2>
 <p>The loop:</p>
 <div class="highlight"><pre><span></span><code>foreach {tile_iter} in [cdiv(total_tiles, NUM_SMS)] {
   tile_id = tile_iter # block_id;
 </code></pre></div>
 <p>does two things at once.</p>
-<p>First, <strong><code>tile_iter</code></strong> counts <strong>which pass</strong> this CTA is on: <strong><code>0</code></strong>, <strong><code>1</code></strong>, …, up to <strong><code>cdiv(total_tiles, NUM_SMS) - 1</code></strong>. The upper bound uses <strong><code>cdiv</code></strong> (ceiling division) so that if <strong><code>total_tiles</code></strong> is not a multiple of <strong><code>NUM_SMS</code></strong>, we still iterate enough times for the <strong>last</strong> few tiles to be reached by <strong>some</strong> block.</p>
-<p>Second, <strong><code>tile_id = tile_iter # block_id</code></strong> <strong>composes</strong> the pass index with the <strong>block index</strong> to form the <strong>global linear tile id</strong> for this iteration. Read <strong><code>#</code></strong> here as “combine <strong><code>tile_iter</code></strong> and <strong><code>block_id</code></strong> into the <strong><code>tile_id</code></strong> that this striping scheme assigns to this block at this step.” In other words, for block <strong><code>block_id</code></strong>, iteration <strong><code>tile_iter</code></strong> handles the tile at position <strong><code>tile_iter * NUM_SMS + block_id</code></strong> in the linear ordering—matching the stride-<strong><code>NUM_SMS</code></strong> picture above.</p>
-<p>If you are coming from CUDA C, this is the same algebra you would write by hand for persistent kernels; Choreo just makes the <strong>iteration space</strong> and <strong>composition</strong> part of the tileflow language.</p>
-<h3 id="why-the-loop-bound-is-cdivtotal_tiles-num_sms">Why the loop bound is <code>cdiv(total_tiles, NUM_SMS)</code><a class="headerlink" href="#why-the-loop-bound-is-cdivtotal_tiles-num_sms" title="Permanent link">&para;</a></h3>
-<p>You might first guess that each block should iterate <strong><code>total_tiles / NUM_SMS</code></strong> times. That only works when <strong><code>total_tiles</code></strong> divides evenly by <strong><code>NUM_SMS</code></strong>. In general, <strong>some</strong> blocks must run <strong>one more</strong> pass than others so that <strong>all</strong> tiles <strong><code>0 .. total_tiles - 1</code></strong> appear in the table exactly once.</p>
-<p>Using <strong><code>cdiv(total_tiles, NUM_SMS)</code></strong> as the <strong>shared</strong> bound is the standard fix: it is the <strong>maximum</strong>, over all blocks, of how many <strong><code>tile_iter</code></strong> steps that block needs before every valid <strong><code>tile_id</code></strong> for that block has been visited. Blocks that would otherwise “finish early” still execute the extra iterations, but those iterations hit <strong><code>tile_id &gt;= total_tiles</code></strong> and <strong>skip</strong> the <strong><code>if</code></strong> body—cheap compared to launching <strong><code>total_tiles</code></strong> separate kernels or using divergent grid sizes per block (which CUDA does not offer at launch granularity anyway).</p>
-<hr />
-<h2 id="the-if-guard-out-of-range-tile_id">The <code>if</code> guard: out-of-range <code>tile_id</code><a class="headerlink" href="#the-if-guard-out-of-range-tile_id" title="Permanent link">&para;</a></h2>
-<p>Because <strong><code>foreach {tile_iter} in [cdiv(total_tiles, NUM_SMS)]</code></strong> may run <strong>one extra</strong> iteration for some blocks when <strong><code>total_tiles</code></strong> is not divisible by <strong><code>NUM_SMS</code></strong>, some combinations <strong><code>(tile_iter, block_id)</code></strong> produce a <strong><code>tile_id</code></strong> that is <strong>past the end</strong> of the real tile list—<strong><code>tile_id &gt;= total_tiles</code></strong>.</p>
-<p>The guard:</p>
+<p><strong><code>tile_iter</code></strong> counts <strong>which pass</strong> this CTA is on: <strong><code>0</code></strong>, <strong><code>1</code></strong>, …, up to <strong><code>cdiv(total_tiles, NUM_SMS) - 1</code></strong>. The upper bound uses <strong><code>cdiv</code></strong> (ceiling division) so that if <strong><code>total_tiles</code></strong> is not a multiple of <strong><code>NUM_SMS</code></strong>, you still iterate enough times for the <strong>last</strong> few tiles to be reached by <strong>some</strong> block.</p>
+<p>You might first guess <strong><code>total_tiles / NUM_SMS</code></strong> passes per block; that only works when <strong><code>total_tiles</code></strong> divides evenly by <strong><code>NUM_SMS</code></strong>. In general, <strong>some</strong> blocks must run <strong>one more</strong> pass than others so that <strong>all</strong> tiles <strong><code>0 .. total_tiles - 1</code></strong> appear exactly once. <strong><code>cdiv(total_tiles, NUM_SMS)</code></strong> is the <strong>maximum</strong>, over all blocks, of how many <strong><code>tile_iter</code></strong> steps each block needs. Blocks that would otherwise finish early still run the extra iterations; those iterations hit <strong><code>tile_id &gt;= total_tiles</code></strong> and <strong>skip</strong> the <strong><code>if</code></strong> body. That is cheap compared to launching <strong><code>total_tiles</code></strong> separate CTAs or trying to use divergent grid sizes per block—CUDA does not offer that at launch granularity anyway.</p>
+<p>Second, <strong><code>tile_id = tile_iter # block_id</code></strong> <strong>composes</strong> the pass index with the <strong>block index</strong> to form the <strong>global linear tile id</strong> for this iteration. Read <strong><code>#</code></strong> as “combine <strong><code>tile_iter</code></strong> and <strong><code>block_id</code></strong> into the <strong><code>tile_id</code></strong> this striping scheme assigns to this block at this step.” For block <strong><code>block_id</code></strong>, iteration <strong><code>tile_iter</code></strong> handles the tile at position <strong><code>tile_iter * NUM_SMS + block_id</code></strong> in the linear ordering—matching the stride-<strong><code>NUM_SMS</code></strong> picture above.</p>
+<p>If you are coming from CUDA C, this is the same algebra you would write by hand; Choreo makes the <strong>iteration space</strong> and <strong>composition</strong> part of the tileflow language.</p>
+<h2 id="the-if-guard-and-step-on-subspan">The <code>if</code> guard and <code>.step</code> on <code>subspan</code><a class="headerlink" href="#the-if-guard-and-step-on-subspan" title="Permanent link">&para;</a></h2>
+<p>Because <strong><code>foreach {tile_iter} in [cdiv(total_tiles, NUM_SMS)]</code></strong> may run <strong>one extra</strong> iteration for some blocks when <strong><code>total_tiles</code></strong> is not divisible by <strong><code>NUM_SMS</code></strong>, some pairs <strong><code>(tile_iter, block_id)</code></strong> yield <strong><code>tile_id &gt;= total_tiles</code></strong>. The guard:</p>
 <div class="highlight"><pre><span></span><code>if (tile_id &lt; total_tiles) {
   ...
 }
 </code></pre></div>
-<p>skips <strong>all</strong> TMA, MMA, and store work for those <strong>padding</strong> iterations. Shared memory is still <strong>declared</strong> at block scope (outside the <code>if</code>), but only <strong>valid</strong> tiles execute the body. Without this guard, you would index <strong><code>block_m</code> / <code>block_n</code></strong> and global tensors <strong>out of range</strong> for bogus <strong><code>tile_id</code></strong> values.</p>
-<p>This is a central pattern in persistent tileflow: <strong>round up</strong> the iteration count for simplicity, then <strong>predicate</strong> the real work.</p>
-<h3 id="what-stays-outside-the-if">What stays outside the <code>if</code><a class="headerlink" href="#what-stays-outside-the-if" title="Permanent link">&para;</a></h3>
-<p>In the listing at the top of the chapter, <strong><code>shared</code></strong> buffers are declared <strong>once per CTA</strong>, <strong>outside</strong> the <strong><code>if</code></strong>. That matches how you would allocate SMEM in CUDA: <strong>one</strong> allocation per thread block, reused for <strong>every</strong> logical tile that block processes. Only the <strong>contents</strong> and the <strong>global indices</strong> change per iteration.</p>
-<p>If you later add <strong>warp-specialized</strong> producers and consumers (Chapter 6), you will still want <strong>persistent</strong> outer loops to sit <strong>outside</strong> role-specific inner regions so that <strong>all</strong> warps agree on how many <strong>tile</strong> iterations the block performs—even when only some warps participate in a given stage.</p>
-<hr />
-<h2 id="stepmatmul_warp_m-matmul_tile_k-on-subspan"><code>.step(MATMUL_WARP_M, MATMUL_TILE_K)</code> on <code>subspan</code><a class="headerlink" href="#stepmatmul_warp_m-matmul_tile_k-on-subspan" title="Permanent link">&para;</a></h2>
+<p>skips <strong>all</strong> TMA, MMA, and store work for those <strong>padding</strong> iterations. <strong>Shared</strong> buffers stay <strong>declared</strong> at block scope (outside the <strong><code>if</code></strong>), but only <strong>valid</strong> tiles execute the body. Without this guard, you would index <strong><code>block_m</code> / <code>block_n</code></strong> and global tensors <strong>out of range</strong> for bogus <strong><code>tile_id</code></strong> values. This is a central persistent pattern: <strong>round up</strong> the iteration count for simplicity, then <strong>predicate</strong> the real work.</p>
+<p>In the listing at the top of the chapter, <strong><code>shared</code></strong> buffers are declared <strong>once per CTA</strong>, <strong>outside</strong> the <strong><code>if</code></strong>. That matches CUDA SMEM usage: <strong>one</strong> allocation per thread block, reused for <strong>every</strong> logical tile that block processes. Only <strong>contents</strong> and <strong>global indices</strong> change per iteration. If you add <strong>warp-specialized</strong> producers and consumers (Chapter 6), you still want <strong>persistent</strong> outer loops <strong>outside</strong> role-specific inner regions so <strong>all</strong> warps agree on how many <strong>tile</strong> iterations the block performs—even when only some warps participate in a given stage.</p>
 <p>The TMA lines use <strong><code>subspan</code></strong> with an explicit <strong><code>.step</code></strong>:</p>
 <div class="highlight"><pre><span></span><code>lhs.subspan(MATMUL_WARP_M, MATMUL_TILE_K).step(MATMUL_WARP_M, MATMUL_TILE_K).at(block_m, iv_k)
 rhs.subspan(MATMUL_WARP_N, MATMUL_TILE_K).step(MATMUL_WARP_N, MATMUL_TILE_K).at(block_n, iv_k)
 </code></pre></div>
-<p>Conceptually, <strong><code>subspan</code></strong> picks a <strong>tile shape</strong> (rows × columns in the tensor’s index space), <strong><code>.at(block_m, iv_k)</code></strong> (or <strong><code>block_n</code></strong>) anchors that tile in the <strong>global</strong> matrix, and <strong><code>.step</code></strong> states the <strong>stride</strong> between successive tiles along those dimensions when the stride might differ from the <strong>visible</strong> tile size or when you want the compiler and reader to see the layout spelled out.</p>
-<p>In earlier chapters, <strong><code>subspan</code></strong> often appeared <strong>without</strong> <strong><code>.step</code></strong>, relying on the <strong>default</strong> that stride matches the tile extent. Here, <strong><code>.step(MATMUL_WARP_M, MATMUL_TILE_K)</code></strong> matches the <strong>M × K</strong> tile shape for LHS (and similarly for RHS along <strong>N × K</strong>). For this symmetric case the numeric stride equals the subspan size, but writing <strong><code>.step</code></strong> makes the <strong>intent</strong> obvious: “this is the hop between adjacent tiles in index space,” which matters when you start varying layouts or reading kernels that use non-default strides.</p>
-<p>The <strong>store</strong> path still uses <strong><code>output.subspan(MATMUL_WARP_M, MATMUL_WARP_N).at(block_m, block_n)</code></strong> without an explicit <strong><code>.step</code></strong> in the snippet—consistent with Chapter 4’s style when the default is clear.</p>
-<h3 id="when-step-differs-from-the-subspan-shape">When <code>.step</code> differs from the subspan shape<a class="headerlink" href="#when-step-differs-from-the-subspan-shape" title="Permanent link">&para;</a></h3>
-<p>The persistent matmul uses <strong>equal</strong> step and tile size along each axis, which is the common case for <strong>dense</strong> GEMM tiles that abut without gaps. Other kernels use <strong><code>.step</code></strong> to express <strong>non-contiguous</strong> tiling: for example, a subspan might cover <strong>64</strong> elements along K while the <strong>next</strong> tile in the sequence starts <strong>128</strong> elements away because of <strong>padding</strong>, <strong>interleaving</strong>, or a <strong>blocked storage</strong> format. Treat <strong><code>.step</code></strong> as part of the <strong>view</strong> you hand to TMA: it tells the copy <strong>how indices advance</strong> when you move <strong><code>iv_k</code></strong> or <strong><code>block_m</code></strong> by one in the logical loop, not only how big one tile is.</p>
-<hr />
-<h2 id="putting-the-inner-loop-in-context">Putting the inner loop in context<a class="headerlink" href="#putting-the-inner-loop-in-context" title="Permanent link">&para;</a></h2>
+<p>Conceptually, <strong><code>subspan</code></strong> picks a <strong>tile shape</strong>, and <strong><code>.at(block_m, iv_k)</code></strong> (or <strong><code>block_n</code></strong>) anchors that tile in the <strong>global</strong> matrix. <strong><code>.step</code></strong> states the <strong>stride</strong> between successive tiles along those dimensions when the stride might differ from the visible tile size or when you want the layout spelled out for the compiler and reader.</p>
+<p>Earlier chapters often used <strong><code>subspan</code></strong> <strong>without</strong> <strong><code>.step</code></strong>, relying on the <strong>default</strong> that stride matches the tile extent. Here <strong><code>.step(MATMUL_WARP_M, MATMUL_TILE_K)</code></strong> matches the <strong>M × K</strong> tile shape for LHS (and similarly for RHS along <strong>N × K</strong>). For this symmetric case the numeric stride equals the subspan size, but <strong><code>.step</code></strong> makes the intent obvious: “this is the hop between adjacent tiles in index space,” which matters when you vary layouts or read kernels with non-default strides.</p>
+<p>The <strong>store</strong> path still uses <strong><code>output.subspan(MATMUL_WARP_M, MATMUL_WARP_N).at(block_m, block_n)</code></strong> without an explicit <strong><code>.step</code></strong> in the snippet—consistent with Chapter 4 when the default is clear.</p>
+<p>The persistent matmul uses <strong>equal</strong> step and tile size along each axis—the common case for <strong>dense</strong> GEMM tiles that abut without gaps. Other kernels use <strong><code>.step</code></strong> for <strong>non-contiguous</strong> tiling: for example, a subspan might cover <strong>64</strong> elements along K while the <strong>next</strong> tile starts <strong>128</strong> elements away because of <strong>padding</strong>, <strong>interleaving</strong>, or <strong>blocked storage</strong>. Treat <strong><code>.step</code></strong> as part of the <strong>view</strong> you hand to TMA: it tells the copy <strong>how indices advance</strong> when you move <strong><code>iv_k</code></strong> or <strong><code>block_m</code></strong> by one in the logical loop, not only how big one tile is.</p>
+<h2 id="the-inner-loop-in-context">The inner loop in context<a class="headerlink" href="#the-inner-loop-in-context" title="Permanent link">&para;</a></h2>
 <p>Inside the <strong><code>if</code></strong>, the body is intentionally familiar:</p>
 <ol>
 <li><strong><code>mma.fill.f16</code></strong> seeds the accumulator <strong><code>mc</code></strong>.</li>
@@ -3271,8 +2979,7 @@ rhs.subspan(MATMUL_WARP_N, MATMUL_TILE_K).step(MATMUL_WARP_N, MATMUL_TILE_K).at(
 <li><strong><code>foreach iv_warp</code></strong> with <strong><code>parallel ... : group-4</code></strong> runs <strong>WGMMA</strong> (<code>mma.load.swiz</code>, <strong><code>mma.row.row</code></strong>) over <strong><code>MATMUL_WARP_K</code></strong> chunks along K.</li>
 <li><strong><code>mma.store</code></strong> then <strong><code>tma.copy</code></strong> commits <strong><code>output_s</code></strong> to <strong><code>output</code></strong> at <strong><code>(block_m, block_n)</code></strong>.</li>
 </ol>
-<p>So the <strong>only</strong> structural difference from the one-tile-per-CTA kernel is the <strong>wrapper</strong>: fixed <strong><code>parallel block_id</code></strong>, <strong><code>foreach tile_iter</code></strong>, <strong><code>tile_id = tile_iter # block_id</code></strong>, <strong><code>if (tile_id &lt; total_tiles)</code></strong>, and the <strong>linear-to-2D</strong> mapping. The <strong>tensor-core pipeline</strong> itself is unchanged.</p>
-<h3 id="data-dependent-grid-versus-persistent-launch-recap">Data-dependent grid versus persistent launch (recap)<a class="headerlink" href="#data-dependent-grid-versus-persistent-launch-recap" title="Permanent link">&para;</a></h3>
+<p>The <strong>only</strong> structural difference from the one-tile-per-CTA kernel is the <strong>wrapper</strong>: fixed <strong><code>parallel block_id</code></strong>, <strong><code>foreach tile_iter</code></strong>, <strong><code>tile_id = tile_iter # block_id</code></strong>, <strong><code>if (tile_id &lt; total_tiles)</code></strong>, and the <strong>linear-to-2D</strong> mapping. The <strong>tensor-core pipeline</strong> itself is unchanged.</p>
 <table>
 <thead>
 <tr>
@@ -3304,38 +3011,34 @@ rhs.subspan(MATMUL_WARP_N, MATMUL_TILE_K).step(MATMUL_WARP_N, MATMUL_TILE_K).at(
 </tr>
 </tbody>
 </table>
-<p>Neither style changes the <strong>correctness</strong> of the multiply; both should match a reference GEMM modulo floating-point associativity. The persistent form is an <strong>occupancy and scheduling</strong> choice, especially attractive when <strong><code>total_tiles &gt;&gt; NUM_SMS</code></strong>.</p>
-<hr />
-<h2 id="tile-scheduling-variants-in-the-repo">Tile scheduling variants in the repo<a class="headerlink" href="#tile-scheduling-variants-in-the-repo" title="Permanent link">&para;</a></h2>
-<p>The benchmark directory also ships <strong>persistent</strong> matmuls that change <strong>how</strong> linear <strong><code>tile_id</code></strong> maps to <strong><code>(block_m, block_n)</code></strong>—or equivalently, how tiles are <strong>ordered</strong> in memory and time—for example:</p>
+<p>Neither style changes <strong>correctness</strong> of the multiply; both should match a reference GEMM modulo floating-point associativity. The persistent form is an <strong>occupancy and scheduling</strong> choice, especially attractive when <strong><code>total_tiles &gt;&gt; NUM_SMS</code></strong>.</p>
+<p>The table is a compact recap: same tensor-core work, different <strong>wrapper</strong> and <strong>launch</strong> story.</p>
+<h2 id="tile-scheduling-variants-and-num_sms">Tile scheduling variants and <code>NUM_SMS</code><a class="headerlink" href="#tile-scheduling-variants-and-num_sms" title="Permanent link">&para;</a></h2>
+<p>The benchmark directory also ships <strong>persistent</strong> matmuls that change <strong>how</strong> linear <strong><code>tile_id</code></strong> maps to <strong><code>(block_m, block_n)</code></strong>—or how tiles are <strong>ordered</strong> in memory and time—for example:</p>
 <ul>
 <li><strong><code>matmul_f16_dyn_persis_colmajor_sm90.co</code></strong> — column-major (or otherwise reordered) traversal</li>
 <li><strong><code>matmul_f16_dyn_persis_swizzle_sm90.co</code></strong> — <strong>swizzle</strong>-style reordering of tile ids for locality or load balance</li>
 <li><strong><code>matmul_f16_dyn_persis_hilbert_sm90.co</code></strong> — <strong>Hilbert curve</strong>–style space-filling traversal</li>
 </ul>
 <p>The <strong>launch</strong> and <strong><code>if</code>-guard</strong> ideas stay the same; what changes is the <strong>formula</strong> that turns <strong><code>tile_id</code></strong> into <strong><code>block_m</code></strong> and <strong><code>block_n</code></strong> (and sometimes the goal—e.g., spreading traffic across DRAM channels or reducing L2 thrash). When you read those files, compare their <strong><code>tile_id</code></strong> mapping to the simple row-major <strong><code>/</code></strong> and <strong><code>%</code></strong> shown here.</p>
-<p>SM86 variants of the same names (e.g. <strong><code>matmul_f16_dyn_persis_colmajor_sm86.co</code></strong>) adapt the <strong>same scheduling ideas</strong> to an earlier architecture’s tensor and copy instructions; the <strong>persistent loop skeleton</strong> is still the right mental model.</p>
-<hr />
-<h2 id="choosing-num_sms-and-partial-output-tiles">Choosing <code>NUM_SMS</code> and partial output tiles<a class="headerlink" href="#choosing-num_sms-and-partial-output-tiles" title="Permanent link">&para;</a></h2>
-<p>The benchmark pins <strong><code>NUM_SMS</code></strong> to <strong>114</strong> for <strong>H800 PCIe</strong> because that matches the <strong>SM count</strong> of the SKU under test. In your own port, you might set <strong><code>NUM_SMS</code></strong> from a <strong>runtime query</strong> (driver API) or a <strong>compile-time</strong> constant for a <strong>family</strong> of GPUs. The persistent pattern still works if you launch <strong>fewer</strong> CTAs than SMs—some SMs simply stay idle—or <strong>more</strong> CTAs than SMs (multiple blocks per SM over time), though the sweet spot is usually <strong>close to</strong> the hardware SM count so you <strong>fill</strong> the machine without inventing gratuitous oversubscription.</p>
-<p><strong><code>total_tiles</code></strong> already accounts for <strong>partial</strong> tiles at the <strong>bottom</strong> and <strong>right</strong> of the <strong><code>M × N</code></strong> output because <strong><code>cdiv(M, MATMUL_WARP_M)</code></strong> and <strong><code>cdiv(N, MATMUL_WARP_N)</code></strong> count tiles the same way the data-dependent grid did. TMA and the store still target <strong><code>MATMUL_WARP_M × MATMUL_WARP_N</code></strong> logical tiles; the <strong>global</strong> tensor shapes <strong><code>M</code></strong>, <strong><code>N</code></strong>, <strong><code>K</code></strong> remain <strong>symbolic</strong> in the tileflow, and the generated code must respect <strong>tail</strong> elements exactly as in the non-persistent kernel. The <strong>persistent</strong> layer does not change <strong>edge</strong> behavior—it only changes <strong>how many</strong> CTAs iterate <strong>which</strong> <strong><code>(block_m, block_n)</code></strong> pairs.</p>
-<hr />
-<h2 id="checklist-evolving-a-matmul-to-persistent-form">Checklist: evolving a matmul to persistent form<a class="headerlink" href="#checklist-evolving-a-matmul-to-persistent-form" title="Permanent link">&para;</a></h2>
-<p>If you already have a <strong>working</strong> tile-per-CTA Hopper matmul, you can migrate it mechanically:</p>
+<p>SM86 variants of the same names (e.g. <strong><code>matmul_f16_dyn_persis_colmajor_sm86.co</code></strong>) adapt the <strong>same scheduling ideas</strong> to an earlier architecture’s tensor and copy instructions; the <strong>persistent loop skeleton</strong> remains the right mental model.</p>
+<p>The benchmark pins <strong><code>NUM_SMS</code></strong> to <strong>114</strong> for <strong>H800 PCIe</strong> to match that SKU’s <strong>SM count</strong>. In your own port, you might set <strong><code>NUM_SMS</code></strong> from a <strong>runtime</strong> driver query or a <strong>compile-time</strong> constant for a <strong>family</strong> of GPUs.</p>
+<p>The persistent pattern still works if you launch <strong>fewer</strong> CTAs than SMs—some SMs stay idle—or <strong>more</strong> CTAs than SMs (multiple blocks per SM over time), though the sweet spot is usually <strong>close to</strong> the hardware SM count so you <strong>fill</strong> the machine without gratuitous oversubscription.</p>
+<p><strong><code>total_tiles</code></strong> already accounts for <strong>partial</strong> tiles at the <strong>bottom</strong> and <strong>right</strong> of <strong><code>M × N</code></strong> because <strong><code>cdiv(M, MATMUL_WARP_M)</code></strong> and <strong><code>cdiv(N, MATMUL_WARP_N)</code></strong> count tiles the same way the data-dependent grid did. TMA and the store still target <strong><code>MATMUL_WARP_M × MATMUL_WARP_N</code></strong> logical tiles; <strong><code>M</code></strong>, <strong><code>N</code></strong>, <strong><code>K</code></strong> stay <strong>symbolic</strong> in the tileflow, and generated code must respect <strong>tail</strong> elements as in the non-persistent kernel.</p>
+<p>The <strong>persistent</strong> layer does not change <strong>edge</strong> behavior—it only changes <strong>how many</strong> CTAs iterate <strong>which</strong> <strong><code>(block_m, block_n)</code></strong> pairs.</p>
+<p>If you already have a <strong>working</strong> tile-per-CTA Hopper matmul, you can migrate it mechanically. Keep a reference build so you can regression-test numerically; mistakes in <strong><code>#</code></strong> or the guard often surface as wrong answers or out-of-bounds stores.</p>
 <ol>
-<li><strong>Compute</strong> <strong><code>total_tiles</code></strong> from <strong><code>M</code></strong>, <strong><code>N</code></strong>, and your output tile sizes (same <strong><code>cdiv</code></strong> products you used for the grid extents).</li>
+<li><strong>Compute</strong> <strong><code>total_tiles</code></strong> from <strong><code>M</code></strong>, <strong><code>N</code></strong>, and your output tile sizes (same <strong><code>cdiv</code></strong> products you used for grid extents).</li>
 <li><strong>Replace</strong> <strong><code>parallel {block_m, block_n} by [...]</code></strong> with <strong><code>parallel block_id by NUM_SMS</code></strong> (tune <strong><code>NUM_SMS</code></strong> to your target GPU).</li>
 <li><strong>Wrap</strong> the former body in <strong><code>foreach {tile_iter} in [cdiv(total_tiles, NUM_SMS)]</code></strong>, set <strong><code>tile_id = tile_iter # block_id</code></strong>, and add <strong><code>if (tile_id &lt; total_tiles)</code></strong>.</li>
 <li><strong>Derive</strong> <strong><code>block_m</code></strong> and <strong><code>block_n</code></strong> from <strong><code>tile_id</code></strong> with <strong><code>/</code></strong> and <strong><code>%</code></strong> (or swap in a <strong>swizzle / Hilbert</strong> mapping from the other benchmarks).</li>
 <li><strong>Keep</strong> <strong><code>shared</code></strong> declarations at <strong>block</strong> scope; <strong>reuse</strong> SMEM across tile iterations.</li>
 <li><strong>Optional:</strong> add <strong><code>.step(...)</code></strong> on <strong><code>subspan</code></strong> TMA sources if you want strides explicit or non-default.</li>
 </ol>
-<p>After that, <strong>re-run</strong> numerical verification (same as any refactor): persistent kernels are easy to get <strong>almost</strong> right and still write <strong>past the end</strong> of <strong><code>output</code></strong> if the guard or mapping is off by one.</p>
-<p>When debugging, print or log <strong><code>total_tiles</code></strong>, <strong><code>cdiv(total_tiles, NUM_SMS)</code></strong>, and—for a single block—<strong><code>block_id</code></strong> and the sequence of <strong><code>tile_id</code></strong> values across <strong><code>tile_iter</code></strong>. If any <strong><code>tile_id</code></strong> appears <strong>twice</strong> or <strong>skips</strong> a valid id, the <strong><code>#</code></strong> schedule or the loop bound is wrong; if invalid ids are <strong>not</strong> skipped by the guard, you will see <strong>memory faults</strong> or <strong>garbage</strong> in untouched regions of <strong><code>output</code></strong>.</p>
-<hr />
-<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
-<p>Persistent matmul kernels launch a <strong>fixed</strong> number of CTAs—<strong><code>parallel block_id by NUM_SMS : block</code></strong>—and <strong>loop</strong> over logical output tiles. <strong><code>total_tiles</code></strong> counts <strong><code>tiles_m * tiles_n</code></strong>; each CTA advances by <strong><code>NUM_SMS</code></strong> in the linearized order via <strong><code>tile_id = tile_iter # block_id</code></strong>. <strong><code>if (tile_id &lt; total_tiles)</code></strong> drops <strong>padding</strong> iterations when <strong><code>total_tiles</code></strong> is not a multiple of <strong><code>NUM_SMS</code></strong>. <strong><code>.step(...)</code></strong> on <strong><code>subspan</code></strong> documents (and can generalize) the <strong>stride</strong> between tiles in global memory. Inside the guard, <strong>integer division and remainder</strong> recover <strong><code>block_m</code></strong> and <strong><code>block_n</code></strong>, and the <strong>TMA + WGMMA + store</strong> path matches the non-persistent Hopper matmul you already know from earlier chapters.</p>
-<p>Next, Chapter 8 widens the story to <strong>multiple warpgroups</strong> and <strong>multiple accumulators</strong> so a single output tile can engage more SM throughput at once—building on the same TMA and WGMMA core you now know how to <strong>schedule</strong> across the machine with persistent CTAs.</p>
+<p><strong>Pitfall:</strong> wrong <strong><code>#</code></strong> scheduling, loop bounds, or guards produce kernels that are <strong>almost</strong> right—duplicate or skipped <strong><code>tile_id</code></strong> values, or writes past <strong><code>output</code></strong>. Re-run numerical checks as for any refactor.</p>
+<p>If something is off, verify <strong><code>total_tiles</code></strong>, <strong><code>cdiv(total_tiles, NUM_SMS)</code></strong>, and—for one block—the sequence of <strong><code>tile_id</code></strong> over <strong><code>tile_iter</code></strong>. Duplicates or gaps mean the schedule or bound is wrong. Unguarded invalid ids show up as faults or garbage outside the true output region.</p>
+<p>Persistent matmul kernels launch a <strong>fixed</strong> pool of CTAs—<strong><code>parallel block_id by NUM_SMS : block</code></strong>—and <strong>loop</strong> over logical output tiles with <strong><code>total_tiles</code></strong>, <strong><code>tile_iter # block_id</code></strong>, and <strong><code>if (tile_id &lt; total_tiles)</code></strong> for padding. <strong><code>.step(...)</code></strong> on <strong><code>subspan</code></strong> documents (and can generalize) stride between tiles. Inside the guard, the <strong>TMA + WGMMA + store</strong> path matches the non-persistent Hopper matmul from earlier chapters.</p>
+<p>Chapter 8 widens the story to <strong>multiple warpgroups</strong> and <strong>multiple accumulators</strong> so a single output tile can use more SM throughput. You will build on the same TMA and WGMMA core, now that you know how to <strong>schedule</strong> it across the machine with persistent CTAs.</p>
 
 
 

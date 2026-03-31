@@ -517,23 +517,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Full Example: Pipelined Matmul">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#running-the-bundled-test" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Running the bundled test
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -2936,23 +2919,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Full Example: Pipelined Matmul">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#running-the-bundled-test" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Running the bundled test
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -3244,8 +3210,7 @@ int main() {
 }
 </code></pre></div>
 <p>The host side is unchanged in spirit from earlier chapters: allocate <code>spandata</code>, fill inputs, call <code>matmul</code> with <code>.view()</code>, and check results. The new skills are all in the <code>__co__</code> body.</p>
-<h3 id="running-the-bundled-test">Running the bundled test<a class="headerlink" href="#running-the-bundled-test" title="Permanent link">&para;</a></h3>
-<p>The Choreo tree ships this kernel as <code>tests/gpu/end2end/matmul-pipelined-2.co</code>. Your local checkout may use a different driver command, but the idea is the same as in Chapter 1: invoke the compiler on the <code>.co</code> file, then run the generated host binary so it prints <code>Test Passed</code> after the reference check. Pipelining does not change the observable result—only the schedule under the hood—so the verification loop in <code>main</code> stays a straightforward triply nested scalar matmul against <code>res</code>.</p>
+<p><strong>Running the bundled test.</strong> The Choreo tree ships this kernel as <code>tests/gpu/end2end/matmul-pipelined-2.co</code>. Your local checkout may use a different driver command, but the idea is the same as in Chapter 1: invoke the compiler on the <code>.co</code> file, then run the generated host binary so it prints <code>Test Passed</code> after the reference check. Pipelining does not change the observable result—only the schedule under the hood—so the verification loop in <code>main</code> stays a straightforward triply nested scalar matmul against <code>res</code>.</p>
 <h2 id="parallel-granularity-block-and-thread">Parallel Granularity: <code>: block</code> and <code>: thread</code><a class="headerlink" href="#parallel-granularity-block-and-thread" title="Permanent link">&para;</a></h2>
 <p>Two nested <code>parallel</code> constructs carve the output matrix:</p>
 <div class="highlight"><pre><span></span><code>parallel {px, py} by [8, 16] : block
@@ -3361,13 +3326,7 @@ rf1 = dma.any;
 </table>
 <p>The new syntax—<strong><code>with tile_k in 16</code></strong>, <strong><code>foreach tile_k(1:)</code></strong>, <strong><code>dma.any</code></strong>, <strong><code>swap</code></strong>, <strong><code>=&gt; shared</code></strong>, <strong><code>: block</code> / <code>: thread</code></strong>, and <strong><code>auto</code></strong>—exists to make that schedule explicit and checkable. The compiler can see which futures are live across iterations and align generated code with the overlap you intended.</p>
 <h2 id="what-to-take-away">What to Take Away<a class="headerlink" href="#what-to-take-away" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Sequential DMA-then-compute leaves either memory or math idle; <strong>pipelining</strong> hides transfer latency behind useful work.</li>
-<li><strong>Double buffering</strong> needs two names for two buffers; <strong><code>swap</code></strong> rotates those names without moving data.</li>
-<li><strong><code>dma.any</code></strong> plus later assignment gives you a placeholder future so the swap pattern type-checks from the first iteration.</li>
-<li><strong><code>foreach tile_k(1:)</code></strong> separates <strong>prologue</strong> (tile 0 only loaded) from <strong>steady state</strong> (load next, compute previous).</li>
-<li><strong><code>=&gt; shared</code></strong> stages tiles where the whole block can see them—natural for tiled matmul.</li>
-</ul>
+<p>Sequential DMA-then-compute leaves either memory or math idle; pipelining hides transfer latency behind useful work. Double buffering needs two names for two buffers, and <code>swap</code> rotates those names without moving data. The placeholder future <code>dma.any</code> lets the swap pattern type-check from the very first iteration, while <code>foreach tile_k(1:)</code> separates the prologue (tile 0 only loaded) from the steady state (load next, compute previous). Staging tiles with <code>=&gt; shared</code> keeps them visible to the whole block—a natural fit for tiled matmul.</p>
 <p>In the next chapter you will push data movement further toward hardware-specific fast paths (TMA and swizzled layouts). The mental model you built here—prologue, steady state, epilogue, and explicit futures—carries over directly: you are still describing <strong>who</strong> moves <strong>which</strong> tile <strong>when</strong>, only with richer primitives underneath.</p>
 
 

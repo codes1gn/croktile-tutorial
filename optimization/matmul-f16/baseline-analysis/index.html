@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#baseline-and-profiling-dense-gemm-fp16" class="md-skip">
+        <a href="#baseline-and-profiling" class="md-skip">
           Skip to content
         </a>
       
@@ -907,10 +907,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#baseline-definition" class="md-nav__link">
+  <a href="#what-baseline-means-here" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Baseline definition
+        What “baseline” means here
       
     </span>
   </a>
@@ -918,10 +918,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#tflops-accounting-sanity-check" class="md-nav__link">
+  <a href="#why-2087-tflops-still-leaves-a-large-gap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TFLOPS accounting (sanity check)
+        Why 208.7 TFLOPS still leaves a large gap
       
     </span>
   </a>
@@ -929,10 +929,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-2087-tflops-implies" class="md-nav__link">
+  <a href="#waves-occupancy-and-why-size-matters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What 208.7 TFLOPS implies
+        Waves, occupancy, and why size matters
       
     </span>
   </a>
@@ -940,10 +940,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#profiling-narrative-conceptual" class="md-nav__link">
+  <a href="#what-phase-1-and-phase-2-previews-teach-you" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Profiling narrative (conceptual)
+        What Phase 1 and Phase 2 previews teach you
       
     </span>
   </a>
@@ -951,10 +951,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#waves-tails-and-why-size-matters" class="md-nav__link">
+  <a href="#matching-the-baseline-when-you-reproduce" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Waves, tails, and why size matters
+        Matching the baseline when you reproduce
       
     </span>
   </a>
@@ -962,10 +962,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-1-snapshot-at-20483-1p1c" class="md-nav__link">
+  <a href="#correctness-as-a-gate" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 1 snapshot at 2048³ (1p1c)
+        Correctness as a gate
       
     </span>
   </a>
@@ -973,120 +973,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-2-preview-when-numbers-jump" class="md-nav__link">
+  <a href="#takeaway" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 2 preview: when numbers jump
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#baseline-vs-best-81923" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Baseline vs. best (8192³)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#checklist-what-we-looked-at-before-changing-code" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Checklist: what we looked at before changing code
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#baseline-kernel-vs-teaching-kernel" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Baseline kernel vs. teaching kernel
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#connecting-bubbles-to-hardware-counters-optional" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Connecting bubbles to hardware counters (optional)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-start-at-20483-in-phase-1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why start at 2048³ in Phase 1
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#correctness-as-a-profiling-gate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Correctness as a profiling gate
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#baseline-constants-in-plain-language" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Baseline constants in plain language
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#interpreting-close-to-cublas-at-baseline" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Interpreting “close to cuBLAS” at baseline
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#one-sentence-takeaway" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        One-sentence takeaway
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary
+        Takeaway
       
     </span>
   </a>
@@ -2889,10 +2779,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#baseline-definition" class="md-nav__link">
+  <a href="#what-baseline-means-here" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Baseline definition
+        What “baseline” means here
       
     </span>
   </a>
@@ -2900,10 +2790,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#tflops-accounting-sanity-check" class="md-nav__link">
+  <a href="#why-2087-tflops-still-leaves-a-large-gap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TFLOPS accounting (sanity check)
+        Why 208.7 TFLOPS still leaves a large gap
       
     </span>
   </a>
@@ -2911,10 +2801,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-2087-tflops-implies" class="md-nav__link">
+  <a href="#waves-occupancy-and-why-size-matters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What 208.7 TFLOPS implies
+        Waves, occupancy, and why size matters
       
     </span>
   </a>
@@ -2922,10 +2812,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#profiling-narrative-conceptual" class="md-nav__link">
+  <a href="#what-phase-1-and-phase-2-previews-teach-you" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Profiling narrative (conceptual)
+        What Phase 1 and Phase 2 previews teach you
       
     </span>
   </a>
@@ -2933,10 +2823,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#waves-tails-and-why-size-matters" class="md-nav__link">
+  <a href="#matching-the-baseline-when-you-reproduce" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Waves, tails, and why size matters
+        Matching the baseline when you reproduce
       
     </span>
   </a>
@@ -2944,10 +2834,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-1-snapshot-at-20483-1p1c" class="md-nav__link">
+  <a href="#correctness-as-a-gate" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 1 snapshot at 2048³ (1p1c)
+        Correctness as a gate
       
     </span>
   </a>
@@ -2955,120 +2845,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-2-preview-when-numbers-jump" class="md-nav__link">
+  <a href="#takeaway" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 2 preview: when numbers jump
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#baseline-vs-best-81923" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Baseline vs. best (8192³)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#checklist-what-we-looked-at-before-changing-code" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Checklist: what we looked at before changing code
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#baseline-kernel-vs-teaching-kernel" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Baseline kernel vs. teaching kernel
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#connecting-bubbles-to-hardware-counters-optional" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Connecting bubbles to hardware counters (optional)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-start-at-20483-in-phase-1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why start at 2048³ in Phase 1
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#correctness-as-a-profiling-gate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Correctness as a profiling gate
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#baseline-constants-in-plain-language" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Baseline constants in plain language
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#interpreting-close-to-cublas-at-baseline" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Interpreting “close to cuBLAS” at baseline
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#one-sentence-takeaway" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        One-sentence takeaway
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary
+        Takeaway
       
     </span>
   </a>
@@ -3161,169 +2941,32 @@
   
 
 
-<h1 id="baseline-and-profiling-dense-gemm-fp16">Baseline and Profiling: Dense GEMM FP16<a class="headerlink" href="#baseline-and-profiling-dense-gemm-fp16" title="Permanent link">&para;</a></h1>
-<p>This section establishes the <strong>baseline kernel</strong> and the <strong>signals</strong> that justified later changes. All numbers come from the 2026-03-23 AI-tune log unless noted; problem size is <strong>8192³</strong> for the headline baseline unless a smaller cube is explicitly called out.</p>
-<h2 id="baseline-definition">Baseline definition<a class="headerlink" href="#baseline-definition" title="Permanent link">&para;</a></h2>
-<p>The “main branch” reference is <strong>208.7 TFLOPS</strong> at <strong>8192³</strong> with:</p>
+<h1 id="baseline-and-profiling">Baseline and profiling<a class="headerlink" href="#baseline-and-profiling" title="Permanent link">&para;</a></h1>
+<p>This page is about where the kernel sits before you change structure, and how you read that from measurements. Unless stated otherwise, the numbers come from the 2026-03-23 AI-tune log; the headline baseline is <strong>8192³</strong>.</p>
+<h2 id="what-baseline-means-here">What “baseline” means here<a class="headerlink" href="#what-baseline-means-here" title="Permanent link">&para;</a></h2>
+<p>On main, the reference point is <strong>208.7 TFLOPS</strong> at <strong>8192³</strong> with <strong>1p1c</strong> warp specialization (one TMA producer warpgroup, one WGMMA consumer warpgroup), <strong>WN = 128</strong> (<code>MATMUL_WARP_N</code>), and <strong>STAGES = 4</strong> for the K-direction operand ring—the same pipelining idea as <a href="../../../tutorial/ch03-pipeline/">Chapter 3</a>, with roles split as in <a href="../../../tutorial/ch06-warpspec/">Chapter 6</a>. The Choreo sources that embody this are <strong><code>matmul_f16_dyn_sm90.co</code></strong> and <strong><code>matmul_f16_dyn_sm90_warpspec_1p1c.co</code></strong>. Operand layout (swizzle, <code>MATMUL_TILE_K</code>, <code>MATMUL_SWIZ</code>) follows <a href="../../../tutorial/ch04-tma-swizzle/">Chapter 4</a>; the baseline is not broken on addressing. It is <strong>under-scheduled</strong> relative to what the SM can take once tile width, stage depth, and how you stage the output line up with the problem size.</p>
+<p>For a square GEMM of side <strong>S</strong>, useful work is <strong>2S³</strong> multiply-adds (one FMA ≈ two flops), so <strong>TFLOPS ≈ 2S³ / t × 10⁻¹²</strong>. With <strong>S</strong> fixed, TFLOPS tracks inverse runtime. That is why the study moves between <strong>2048³</strong>, <strong>4096³</strong>, and <strong>8192³</strong>: grid waves, L2 footprint, and tail behavior change; the flop definition does not.</p>
+<h2 id="why-2087-tflops-still-leaves-a-large-gap">Why 208.7 TFLOPS still leaves a large gap<a class="headerlink" href="#why-2087-tflops-still-leaves-a-large-gap" title="Permanent link">&para;</a></h2>
+<p><strong>208.7</strong> is a lot of throughput in the abstract, but it sits far below both the <strong>~1513</strong> TFLOPS theoretical FP16 tensor peak and the <strong>~380</strong> TFLOPS you get from <strong>cuBLAS</strong> on the same machine. That gap is what you expect when latency hiding, occupancy, and pipeline depth are off: WGMMA can be “on” while the schedule still wastes cycles. Against <strong>~380</strong> TFLOPS, the baseline is roughly <strong>55% of cuBLAS</strong>—enough to treat the kernel as <strong>schedule-bound</strong>, not as if the hardware were idle for lack of math.</p>
+<p>You do not need a single magic counter to argue that. You combine <strong>throughput vs. problem size</strong> (same kernel at 2048³, 4096³, 8192³—a kernel that looks fine small can be SMEM- or wave-limited large), <strong>shared memory vs. occupancy</strong> (each extra stage multiplies operand staging; Hopper’s <strong>228 KB</strong> per-SM shared budget means residency can step discretely), and <strong>role balance in 1p1c</strong> (consumer stuck on <strong><code>wait full</code></strong> or producer on <strong><code>wait empty</code></strong> means a bubble-limited pipeline). Warp specialization fixes <em>who</em> does TMA vs. WGMMA; it does not by itself size the ring or the tile.</p>
+<p>Early tuning at <strong>2048³</strong> (Phase 1) stresses inner-loop efficiency without paying the full cost of <strong>8192³</strong> every iteration. There the 1p1c family lands near <strong>204</strong> TFLOPS with WN=128 and four stages—same story as the big cube, on a faster edit-measure loop.</p>
+<h2 id="waves-occupancy-and-why-size-matters">Waves, occupancy, and why size matters<a class="headerlink" href="#waves-occupancy-and-why-size-matters" title="Permanent link">&para;</a></h2>
+<p>With a normal data-parallel grid, block count scales with <strong>M/WM</strong> and <strong>N/WN</strong>. Hardware runs that in waves across the <strong>114</strong> SMs. If per-block time is uneven or occupancy drops so fewer blocks run together, the last wave leaves SMs idle. <a href="../../../tutorial/ch07-persistent/">Persistent kernels</a> target that grid-level tail. This baseline used a conventional grid; later, <strong>non-persistent</strong> still won at <strong>8192³</strong> once inner-block throughput dominated—persistence is not always the win when the block schedule is already the bottleneck.</p>
+<h2 id="what-phase-1-and-phase-2-previews-teach-you">What Phase 1 and Phase 2 previews teach you<a class="headerlink" href="#what-phase-1-and-phase-2-previews-teach-you" title="Permanent link">&para;</a></h2>
+<p>At <strong>2048³</strong>, two small experiments already show SMEM and lowering matter:</p>
 <ul>
-<li><strong>1p1c</strong> warp specialization (one TMA producer warpgroup, one WGMMA consumer warpgroup), as introduced in <a href="../../../tutorial/ch06-warpspec/">Chapter 6: Warp specialization</a>.</li>
-<li><strong>WN = 128</strong> — warpgroup tile width along <strong>N</strong> (<code>MATMUL_WARP_N</code>).</li>
-<li><strong>STAGES = 4</strong> — four shared-memory slots for the K pipeline, the same <em>ring of stages</em> idea as <a href="../../../tutorial/ch03-pipeline/">Chapter 3: Pipelining</a>, but with producer/consumer roles split across warpgroups.</li>
+<li><strong>iter004</strong>: WN=256, STAGES=2 → <strong>208.9</strong> TFLOPS. Fewer stages shrink the operand ring; footprint and residency move together.</li>
+<li><strong>iter023</strong>: adds <strong><code>ptx-barrier</code></strong>, <strong><code>stmatrix</code></strong>, and <strong>subspan</strong> work → <strong>214.3</strong> TFLOPS (~<strong>+5%</strong> over the Phase-1 baseline). That is compiler and operand-path quality on top of tileflow, not a new algorithm.</li>
 </ul>
-<p>The canonical Choreo source for this shape is the dynamic SM90 benchmark <strong><code>matmul_f16_dyn_sm90.co</code></strong> and the warpspec teaching kernel <strong><code>matmul_f16_dyn_sm90_warpspec_1p1c.co</code></strong>: operand staging is multi-buffered, the accumulator tile is not.</p>
-<p>Operand <strong>layout</strong> (swizzle, <code>MATMUL_TILE_K</code>, <code>MATMUL_SWIZ</code>) is the same family as <a href="../../../tutorial/ch04-tma-swizzle/">Chapter 4</a>; the baseline is not “wrong” on addressing—it is <strong>under-scheduled</strong> relative to what the SM can accept once <strong>roles</strong>, <strong>stages</strong>, and <strong>output staging</strong> line up.</p>
-<h2 id="tflops-accounting-sanity-check">TFLOPS accounting (sanity check)<a class="headerlink" href="#tflops-accounting-sanity-check" title="Permanent link">&para;</a></h2>
-<p>For a square <strong>GEMM</strong> of side <strong>S</strong>, useful work is <strong>2S³</strong> multiply-adds (one FMA ≈ two flops). Reported <strong>TFLOPS</strong> are:</p>
-<p>[
-\text{TFLOPS} \approx \frac{2 S^3}{t_{\text{sec}}} \times 10^{-12}.
-]</p>
-<p>Holding <strong>S</strong> fixed (here <strong>8192</strong>) makes <strong>TFLOPS</strong> a direct proxy for <strong>inverse runtime</strong>. That is why the study can move between <strong>2048³</strong>, <strong>4096³</strong>, and <strong>8192³</strong>: each size changes <strong>grid waves</strong>, <strong>L2 footprint</strong>, and <strong>tail behavior</strong>, not the definition of a flop.</p>
-<h2 id="what-2087-tflops-implies">What 208.7 TFLOPS implies<a class="headerlink" href="#what-2087-tflops-implies" title="Permanent link">&para;</a></h2>
-<p><strong>208.7 TFLOPS</strong> is a strong kernel by generic standards but <strong>far below</strong> both the <strong>~1513 TFLOPS</strong> theoretical FP16 tensor peak and the <strong>~380 TFLOPS</strong> that <strong>cuBLAS</strong> achieves on the same machine. The gap is not mysterious: GEMM is <strong>memory-latency-, occupancy-, and pipeline-depth-sensitive</strong> on Hopper. When any of those dimensions is mis-tuned, math throughput collapses even though WGMMA is “on.”</p>
-<p>Expressed as a fraction of the practical ceiling (<strong>~380 TFLOPS</strong>), the baseline is roughly <strong>55% of cuBLAS</strong>. That single ratio is enough to justify a structured search: the kernel is not compute-bound in the naive sense; it is <strong>schedule-bound</strong>.</p>
-<h2 id="profiling-narrative-conceptual">Profiling narrative (conceptual)<a class="headerlink" href="#profiling-narrative-conceptual" title="Permanent link">&para;</a></h2>
-<p>We did not rely on a single counter. The optimization thread combined:</p>
-<ol>
-<li><strong>Throughput vs. problem size</strong> — run the same kernel at <strong>2048³</strong>, <strong>4096³</strong>, and <strong>8192³</strong>. A kernel that looks good on a small cube can be <strong>SMEM- or wave-quantization-limited</strong> on the largest.</li>
-<li><strong>Occupancy vs. shared memory</strong> — each extra <strong>pipeline stage</strong> multiplies operand staging in shared memory. Hopper exposes a <strong>228 KB</strong> shared memory budget per SM (typical configuration); crossing it changes <strong>CTAs per SM</strong> discontinuously.</li>
-<li><strong>Role balance in 1p1c</strong> — if the consumer sits on <strong><code>wait full</code></strong> while the producer is not far enough ahead, or the producer stalls on <strong><code>wait empty</code></strong>, the pipeline is <strong>bubble-limited</strong>. Warp specialization (<a href="../../../tutorial/ch06-warpspec/">Ch6</a>) fixes <em>who</em> runs TMA vs. WGMMA, not <em>whether</em> the stages are sized correctly.</li>
-</ol>
-<p>Early AI-tune phases at <strong>2048³</strong> (Phase 1) isolate <strong>tile and stage</strong> effects without the full <strong>grid wave</strong> story. That is deliberate: a smaller cube stresses <strong>inner-loop efficiency</strong> first.</p>
-<h2 id="waves-tails-and-why-size-matters">Waves, tails, and why size matters<a class="headerlink" href="#waves-tails-and-why-size-matters" title="Permanent link">&para;</a></h2>
-<p>With a <strong>data-parallel</strong> grid (one CTA per output tile), the number of blocks is roughly:</p>
-<p>[
-\Big\lceil \frac{M}{\text{WM}} \Big\rceil \times \Big\lceil \frac{N}{\text{WN}} \Big\rceil,
-]</p>
-<p>where <strong>WM/WN</strong> are warpgroup tile extents. For large <strong>M,N</strong>, this count is huge; the hardware schedules it in <strong>waves</strong> of width <strong>O(number of SMs)</strong>. If <strong>per-block</strong> runtime is uneven—or if <strong>occupancy</strong> drops so fewer CTAs run concurrently—the <strong>last wave</strong> leaves SMs idle. Persistent kernels (<a href="../../../tutorial/ch07-persistent/">Ch7</a>) attack that <strong>grid-level</strong> tail. This baseline used a <strong>conventional</strong> grid; part of the later story is that <strong>non-persistent</strong> still won at <strong>8192³</strong> once <strong>inner-block</strong> throughput dominated.</p>
-<h2 id="phase-1-snapshot-at-20483-1p1c">Phase 1 snapshot at 2048³ (1p1c)<a class="headerlink" href="#phase-1-snapshot-at-20483-1p1c" title="Permanent link">&para;</a></h2>
-<p>At <strong>2048³</strong>, the documented 1p1c baseline was <strong>204 TFLOPS</strong> (WN=128, STAGES=4)—essentially the same family as the 8192³ baseline, scaled to a friendlier development size.</p>
-<p>Two moves immediately illustrate <strong>SMEM footprint vs. occupancy</strong>:</p>
-<table>
-<thead>
-<tr>
-<th>Iteration</th>
-<th>Change</th>
-<th>TFLOPS (2048³)</th>
-<th>Reading</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>iter004</td>
-<td>WN=256, STAGES=2</td>
-<td>208.9</td>
-<td>Fewer stages shrink the operand ring; slightly better residency / scheduling.</td>
-</tr>
-<tr>
-<td>iter023</td>
-<td>+<code>ptx-barrier</code>, +<code>stmatrix</code>, +subspan</td>
-<td>214.3</td>
-<td>Compiler/hardware path improvements; <strong>~+5%</strong> over the Phase-1 baseline.</td>
-</tr>
-</tbody>
-</table>
-<p>The takeaway for readers of <a href="../../../tutorial/ch03-pipeline/">Ch3</a>: <strong>more stages</strong> are not automatically better—each stage is real bytes in <strong><code>lhs_load_s</code> / <code>rhs_load_s</code></strong>, and those bytes compete with <strong>how many blocks</strong> can live on an SM.</p>
-<h2 id="phase-2-preview-when-numbers-jump">Phase 2 preview: when numbers jump<a class="headerlink" href="#phase-2-preview-when-numbers-jump" title="Permanent link">&para;</a></h2>
-<p>Phase 2 (iter043–057) moved from <strong>1p1c</strong> refinements into <strong>1p2c split-output</strong> and <strong>multi-size</strong> validation. The important <strong>profiling</strong> transition is qualitative: once <strong>TFLOPS</strong> at <strong>2048³</strong> crossed <strong>350+</strong> (iter048, <strong>354.1</strong>), the kernel was no longer “missing WGMMA utilization” in a generic sense—it was <strong>ready</strong> to be stressed at <strong>4096³</strong> and <strong>8192³</strong>, where <strong>output staging</strong> and <strong>occupancy</strong> dominate.</p>
-<table>
-<thead>
-<tr>
-<th>Step</th>
-<th>TFLOPS</th>
-<th>Size</th>
-<th>Note</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>iter046</td>
-<td>242</td>
-<td>2048³</td>
-<td>WN=176, STAGES=2</td>
-</tr>
-<tr>
-<td>iter048</td>
-<td>354.1</td>
-<td>2048³</td>
-<td>Same WN, STAGES=3</td>
-</tr>
-<tr>
-<td>iter050</td>
-<td>~375</td>
-<td>4096³</td>
-<td>1p2c split-output</td>
-</tr>
-<tr>
-<td>iter057</td>
-<td>382.5</td>
-<td>8192³</td>
-<td>Best headline</td>
-</tr>
-</tbody>
-</table>
-<p>The jump <strong>242 → 354.1</strong> on the <strong>same</strong> <strong>WN</strong> by changing <strong>STAGES alone</strong> is the clearest <strong>profile-driven</strong> lesson in the log: <strong>pipeline depth</strong> must be tuned <strong>after</strong> tile width settles, and <strong>again</strong> when the problem size changes.</p>
-<h2 id="baseline-vs-best-81923">Baseline vs. best (8192³)<a class="headerlink" href="#baseline-vs-best-81923" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Version</th>
-<th>TFLOPS</th>
-<th>Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Baseline</td>
-<td>208.7</td>
-<td>1p1c, WN=128, STAGES=4</td>
-</tr>
-<tr>
-<td>Best (iter057)</td>
-<td><strong>382.5</strong></td>
-<td>1p2c split-output, WN=152, <strong>non-persistent</strong></td>
-</tr>
-</tbody>
-</table>
-<p>The <strong>+83%</strong> delta is entirely “software schedule”: same ISA family, same broad algorithm (TMA + WGMMA + swizzled staging), different <strong>tile geometry</strong>, <strong>pipeline depth</strong>, <strong>output staging model</strong>, and <strong>launch persistence</strong> (<a href="../../../tutorial/ch07-persistent/">Ch7</a>).</p>
-<h2 id="checklist-what-we-looked-at-before-changing-code">Checklist: what we looked at before changing code<a class="headerlink" href="#checklist-what-we-looked-at-before-changing-code" title="Permanent link">&para;</a></h2>
-<ol>
-<li><strong>End-to-end TFLOPS</strong> at <strong>2048³</strong>, <strong>4096³</strong>, <strong>8192³</strong> with the same harness defaults (<code>CHOREO_TIMING_WARMUP</code>, <code>CHOREO_TIMING_REPEAT</code>).</li>
-<li><strong>Shared memory per block</strong> vs. <strong>228 KB</strong> SM limit—explicit <strong>table</strong> of <strong><code>STAGES × tile bytes</code></strong> plus <strong>output</strong> (including <strong>split</strong> slices when 1p2c).</li>
-<li><strong>CTAs/SM</strong> implied by that footprint—watch for <strong>1 vs 2</strong> transitions.</li>
-<li><strong>Role balance</strong> in 1p1c: are stalls visible as <strong>bubbles</strong> (producer not far enough ahead) or as <strong>empty slots</strong> (consumer starved)?</li>
-<li><strong>Compiler flags</strong> held <strong>fixed</strong> across comparisons when testing <strong>tileflow</strong>; only after a win was stable did we layer <strong><code>stmatrix</code> / <code>ptx-barrier</code> / cluster-aware TMA</strong>.</li>
-</ol>
-<h2 id="baseline-kernel-vs-teaching-kernel">Baseline kernel vs. teaching kernel<a class="headerlink" href="#baseline-kernel-vs-teaching-kernel" title="Permanent link">&para;</a></h2>
-<p>Students often read <strong><code>matmul_f16_dyn_sm90_warpspec_1p1c.co</code></strong> in <a href="../../../tutorial/ch06-warpspec/">Ch6</a> and assume it is “the fastest” kernel in the repo. In this study it is the <strong>clearest</strong> expression of <strong>1p1c</strong>—not the <strong>throughput</strong> champion. The <strong>dynamic</strong> benchmark <strong><code>matmul_f16_dyn_sm90.co</code></strong> matches the <strong>208.7 TFLOPS</strong> baseline configuration on <strong>main</strong> and is the correct <strong>apples-to-apples</strong> reference when comparing against <strong>AI-tune</strong> artifacts.</p>
-<p>If your <strong>measured</strong> TFLOPS on <strong>H800</strong> disagree with <strong>208.7</strong>, check:</p>
-<ul>
-<li><strong>Clocks</strong> (boost vs. sustained)</li>
-<li><strong>Verification</strong> path still disabled for timing (should be <strong>off</strong> only when explicitly debugging)</li>
-<li><strong>Problem size</strong> actually <strong>8192³</strong> (off-by-one in <strong>M/N/K</strong> changes waves dramatically)</li>
-</ul>
-<h2 id="connecting-bubbles-to-hardware-counters-optional">Connecting bubbles to hardware counters (optional)<a class="headerlink" href="#connecting-bubbles-to-hardware-counters-optional" title="Permanent link">&para;</a></h2>
-<p>When <strong>NSight Compute</strong> is available, correlate <strong>warp issue</strong> stalls on the <strong>consumer</strong> with <strong><code>wait full</code></strong> sites, and <strong>TMA</strong> stalls on the <strong>producer</strong> with <strong><code>wait empty</code></strong>. This case study does not paste counter names because the <strong>public</strong> evidence is <strong>TFLOPS</strong>—but the <strong>mental model</strong> from <a href="../../../tutorial/ch06-warpspec/">Ch6</a> maps cleanly: <strong>full/empty</strong> are not syntax sugar, they are the <strong>schedule</strong> you are optimizing.</p>
-<h2 id="why-start-at-20483-in-phase-1">Why start at 2048³ in Phase 1<a class="headerlink" href="#why-start-at-20483-in-phase-1" title="Permanent link">&para;</a></h2>
-<p>A <strong>2048³</strong> cube cuts <strong>K</strong> iterations by <strong>64×</strong> versus <strong>8192³</strong> for the same <strong><code>MATMUL_TILE_K</code></strong>, which shortens <strong>edit-compile-measure</strong> cycles. Phase 1’s <strong>204 → 214.3</strong> band is numerically smaller than Phase 2’s jumps, but it <strong>de-risked</strong> compiler flags and <strong>SMEM</strong> direction before paying the <strong>long</strong> runtimes of <strong>8192³</strong> on every iteration.</p>
-<h2 id="correctness-as-a-profiling-gate">Correctness as a profiling gate<a class="headerlink" href="#correctness-as-a-profiling-gate" title="Permanent link">&para;</a></h2>
-<p>Every row in the README assumes <strong>bitwise</strong> or <strong>tolerance-checked</strong> agreement with a reference on the same <strong>M,N,K</strong>. When <strong>TFLOPS</strong> jump <strong>+50%</strong> in one iteration, the <strong>first</strong> question is not “is Hopper happy?” but “did we <strong>silently</strong> change the <strong>math</strong>?” The harness’s <strong><code>CHOREO_SKIP_VERIFY</code></strong> flag exists for <strong>inner-loop</strong> timing experiments, but the <strong>published</strong> numbers were taken with <strong>verification on</strong> unless explicitly noted otherwise.</p>
-<p>If you replicate this study, treat <strong>correctness</strong> failures as <strong>hard stops</strong>: a <strong>fast wrong</strong> kernel is <strong>negative</strong> progress because it corrupts the <strong>search</strong> direction.</p>
-<h2 id="baseline-constants-in-plain-language">Baseline constants in plain language<a class="headerlink" href="#baseline-constants-in-plain-language" title="Permanent link">&para;</a></h2>
-<p>Matching the <strong>208.7 TFLOPS</strong> baseline means matching its <strong>tile vocabulary</strong>, not just “warp spec on”:</p>
-<ul>
-<li><strong><code>MATMUL_WARP_M</code> / <code>MATMUL_WARP_N</code></strong> — the <strong>M×N</strong> <strong>WGMMA</strong> tile owned by the <strong>consumer</strong> warpgroup before <strong><code>mma.store</code></strong> into <strong><code>output_s</code></strong>.</li>
-<li><strong><code>MATMUL_TILE_K</code></strong> — thickness of each <strong>K</strong> slab staged through <strong>shared</strong> memory per <strong>stage</strong>.</li>
-<li><strong><code>MATMUL_STAGES</code></strong> — how many <strong>K</strong> slabs are <strong>in flight</strong> as a <strong>ring</strong> for <strong>operands</strong> only.</li>
-<li><strong><code>MATMUL_SWIZ</code></strong> — <strong>swizzle</strong> metadata tying <strong>TMA</strong> and <strong>WGMMA</strong> loads together (<a href="../../../tutorial/ch04-tma-swizzle/">Ch4</a>).</li>
-</ul>
-<p>When any constant changes, <strong>recompute</strong> <strong>SMEM</strong> before interpreting <strong>TFLOPS</strong>: a <strong>+8</strong> tweak to <strong>WN</strong> is harmless on paper and <strong>catastrophic</strong> in <strong>KB</strong>.</p>
-<h2 id="interpreting-close-to-cublas-at-baseline">Interpreting “close to cuBLAS” at baseline<a class="headerlink" href="#interpreting-close-to-cublas-at-baseline" title="Permanent link">&para;</a></h2>
-<p><strong>208.7 TFLOPS</strong> vs. <strong>~380 TFLOPS</strong> <strong>cuBLAS</strong> is <strong>not</strong> “within tuning noise.” It is a <strong>different operating point</strong>: <strong>library</strong> kernels routinely combine <strong>software pipelining</strong>, <strong>workspace</strong>, <strong>autotuning</strong>, and <strong>microkernels</strong> per <strong>arch</strong>. The Choreo baseline is <strong>intentionally readable</strong>—its job is to teach <strong>tileflow</strong>. The AI-tune branch shows how far <strong>the same vocabulary</strong> can be pushed when <strong>readability</strong> trades off against <strong>schedule</strong>.</p>
-<h2 id="one-sentence-takeaway">One-sentence takeaway<a class="headerlink" href="#one-sentence-takeaway" title="Permanent link">&para;</a></h2>
-<p>The baseline was <strong>already</strong> a <strong>Hopper-style</strong> <strong>TMA+WGMMA</strong> <strong>warp-specialized</strong> pipeline; it lost <strong>~45%</strong> of <strong>cuBLAS</strong> throughput because <strong>tile width</strong>, <strong>stage count</strong>, <strong>output staging</strong>, and <strong>launch</strong> mode did not match <strong>8192³</strong> <strong>occupancy</strong> and <strong>contention</strong> realities—<strong>not</strong> because the kernel was “unoptimized” in the textbook sense.</p>
-<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
-<p>Profiling here is <strong>TFLOPS plus resource arithmetic</strong>: shared memory per block dictates occupancy; occupancy and pipeline depth dictate how often WGMMA hides TMA. The baseline was already warp-specialized and multi-staged—it was <strong>not</strong> naive—but it sat at <strong>208.7 TFLOPS</strong> at <strong>8192³</strong> because those choices were <strong>suboptimal for the largest problem</strong>. The next document walks the patterns that moved the needle into <strong>cuBLAS territory</strong>.</p>
-<hr />
+<p>Phase 2 is where the profile story shifts: <strong>iter046</strong> hits <strong>242</strong> TFLOPS at <strong>2048³</strong> (WN=176, STAGES=2); <strong>iter048</strong> keeps <strong>WN=176</strong> but uses <strong>three</strong> stages and jumps to <strong>354.1</strong> TFLOPS. Same tile width, different stage count—that is the clearest log lesson that <strong>pipeline depth must be tuned with</strong> tile width <strong>and</strong> revisited when you change problem size. <strong>iter050</strong> then validates <strong>1p2c split-output</strong> at <strong>4096³</strong> (~<strong>375</strong> TFLOPS); <strong>iter057</strong> carries that to <strong>382.5</strong> TFLOPS at <strong>8192³</strong>. Once TFLOPS at 2048³ crosses <strong>350+</strong>, you are not arguing about “turning WGMMA on” anymore; you are arguing about occupancy, output staging, and the large-cube grid.</p>
+<h2 id="matching-the-baseline-when-you-reproduce">Matching the baseline when you reproduce<a class="headerlink" href="#matching-the-baseline-when-you-reproduce" title="Permanent link">&para;</a></h2>
+<p>The teaching kernel <strong><code>matmul_f16_dyn_sm90_warpspec_1p1c.co</code></strong> is the clearest <strong>1p1c</strong> illustration in the repo, not the throughput champion. For apples-to-apples against the tune artifacts, use the <strong>dynamic</strong> benchmark <strong><code>matmul_f16_dyn_sm90.co</code></strong> for the <strong>208.7</strong> configuration. If your H800 number drifts from <strong>208.7</strong>, check clocks, that timing runs without accidental verification overhead, and that <strong>M, N, K</strong> are really <strong>8192</strong> (grid shape is sensitive).</p>
+<p><strong><code>MATMUL_WARP_M</code> / <code>MATMUL_WARP_N</code></strong>, <strong><code>MATMUL_TILE_K</code></strong>, <strong><code>MATMUL_STAGES</code></strong>, and <strong><code>MATMUL_SWIZ</code></strong> are the vocabulary: change any of them and recompute shared memory before you interpret TFLOPS—a small <strong>WN</strong> bump can land on the wrong side of the budget.</p>
+<h2 id="correctness-as-a-gate">Correctness as a gate<a class="headerlink" href="#correctness-as-a-gate" title="Permanent link">&para;</a></h2>
+<p>Published rows assume agreement with a reference. When TFLOPS jumps <strong>+50%</strong> in one step, you ask first whether the math changed, not whether Hopper “likes” the kernel. Use <strong><code>CHOREO_SKIP_VERIFY</code></strong> only when you trust correctness; otherwise treat failures as hard stops—a fast wrong kernel sends the search backward.</p>
+<p>If you have Nsight Compute, consumer stalls at <strong><code>wait full</code></strong> and producer stalls at <strong><code>wait empty</code></strong> line up with the same mental model as <a href="../../../tutorial/ch06-warpspec/">Chapter 6</a>. This writeup leans on TFLOPS as the public evidence; the mapping to counters is optional but consistent.</p>
+<h2 id="takeaway">Takeaway<a class="headerlink" href="#takeaway" title="Permanent link">&para;</a></h2>
+<p>The baseline was already a Hopper-style TMA + WGMMA warp-specialized pipeline. It gave <strong>208.7</strong> TFLOPS at <strong>8192³</strong> because tile width, stage count, output staging, and launch mode did not match that size’s occupancy and contention—not because the code ignored the architecture. The next page walks the structural and flag changes that close most of the distance to <strong>cuBLAS</strong>.</p>
 <p>Next: <a href="../pattern-optimizations/">Optimization patterns</a>.</p>
 
 

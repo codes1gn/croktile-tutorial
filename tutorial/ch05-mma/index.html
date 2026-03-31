@@ -543,188 +543,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-tensor-cores-are-and-why-they-matter" class="md-nav__link">
+  <a href="#tensor-cores-and-the-mma-lifecycle" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What Tensor Cores Are (and Why They Matter)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="What Tensor Cores Are (and Why They Matter)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#from-a-big-gemm-to-nested-tiles" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        From a big GEMM to nested tiles
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-mma-lifecycle-in-choreo" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The MMA Lifecycle in Choreo
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="The MMA Lifecycle in Choreo">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#why-k-shows-up-as-an-outer-loop" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why K shows up as an outer loop
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sm86-ampere-one-warp-one-161616-mma" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SM86 Ampere: One Warp, One 16×16×16 MMA
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="SM86 Ampere: One Warp, One 16×16×16 MMA">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#block-grid-parallel-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Block grid: parallel … : block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#shared-output-staging-output_s" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Shared output staging: output_s
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warp-grid-parallel-group" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warp grid: parallel … : group
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mc-mmafill-00" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        mc = mma.fill 0.0
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#the-k-loop-global-shared-registers-mma" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The K loop: global → shared → registers → MMA
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#what-the-checked-in-sm86-kernel-adds" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What the checked-in SM86 kernel adds
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#register-pressure-and-warp-count-real-kernels" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Register pressure and warp count (real kernels)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#contrasting-sm90-hopper-wgmma-and-group-4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Contrasting SM90 Hopper: WGMMA and : group-4
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Contrasting SM90 Hopper: WGMMA and : group-4">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#wgmma-and-accumulation-precision" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        WGMMA and accumulation precision
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#throughput-intuition-why-the-inner-loop-is-short" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Throughput intuition (why the inner loop is short)
+        Tensor cores and the MMA lifecycle
       
     </span>
   </a>
@@ -732,102 +554,46 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#opaque-register-tiles-what-you-do-not-write-by-hand" class="md-nav__link">
+  <a href="#sm86-ampere-one-warp-one-161616-tile" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Opaque Register Tiles: What You Do Not Write by Hand
+        SM86 Ampere: one warp, one 16×16×16 tile
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Opaque Register Tiles: What You Do Not Write by Hand">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#practical-checklist" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Practical checklist
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#how-choreo-keeps-fragments-out-of-your-source" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        How Choreo keeps fragments out of your source
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#naming-convention-mmarowrow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Naming convention: mma.row.row
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#one-warps-worth-of-output" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        One warp’s worth of output
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
+  <a href="#sm90-hopper-wgmma-and-warp-groups" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Summary
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Summary">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#suggested-experiments" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Suggested experiments
+        SM90 Hopper: WGMMA and warp groups
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#where-to-go-next-in-this-tutorial-series" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#throughput-register-tiles-and-what-choreo-handles-for-you" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Where to go next in this tutorial series
+        Throughput, register tiles, and what Choreo handles for you
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#looking-ahead" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Looking ahead
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2991,188 +2757,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-tensor-cores-are-and-why-they-matter" class="md-nav__link">
+  <a href="#tensor-cores-and-the-mma-lifecycle" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What Tensor Cores Are (and Why They Matter)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="What Tensor Cores Are (and Why They Matter)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#from-a-big-gemm-to-nested-tiles" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        From a big GEMM to nested tiles
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-mma-lifecycle-in-choreo" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The MMA Lifecycle in Choreo
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="The MMA Lifecycle in Choreo">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#why-k-shows-up-as-an-outer-loop" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why K shows up as an outer loop
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sm86-ampere-one-warp-one-161616-mma" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SM86 Ampere: One Warp, One 16×16×16 MMA
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="SM86 Ampere: One Warp, One 16×16×16 MMA">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#block-grid-parallel-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Block grid: parallel … : block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#shared-output-staging-output_s" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Shared output staging: output_s
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warp-grid-parallel-group" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warp grid: parallel … : group
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mc-mmafill-00" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        mc = mma.fill 0.0
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#the-k-loop-global-shared-registers-mma" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The K loop: global → shared → registers → MMA
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#what-the-checked-in-sm86-kernel-adds" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What the checked-in SM86 kernel adds
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#register-pressure-and-warp-count-real-kernels" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Register pressure and warp count (real kernels)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#contrasting-sm90-hopper-wgmma-and-group-4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Contrasting SM90 Hopper: WGMMA and : group-4
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Contrasting SM90 Hopper: WGMMA and : group-4">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#wgmma-and-accumulation-precision" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        WGMMA and accumulation precision
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#throughput-intuition-why-the-inner-loop-is-short" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Throughput intuition (why the inner loop is short)
+        Tensor cores and the MMA lifecycle
       
     </span>
   </a>
@@ -3180,102 +2768,46 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#opaque-register-tiles-what-you-do-not-write-by-hand" class="md-nav__link">
+  <a href="#sm86-ampere-one-warp-one-161616-tile" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Opaque Register Tiles: What You Do Not Write by Hand
+        SM86 Ampere: one warp, one 16×16×16 tile
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Opaque Register Tiles: What You Do Not Write by Hand">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#practical-checklist" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Practical checklist
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#how-choreo-keeps-fragments-out-of-your-source" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        How Choreo keeps fragments out of your source
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#naming-convention-mmarowrow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Naming convention: mma.row.row
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#one-warps-worth-of-output" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        One warp’s worth of output
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
+  <a href="#sm90-hopper-wgmma-and-warp-groups" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Summary
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Summary">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#suggested-experiments" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Suggested experiments
+        SM90 Hopper: WGMMA and warp groups
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#where-to-go-next-in-this-tutorial-series" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#throughput-register-tiles-and-what-choreo-handles-for-you" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Where to go next in this tutorial series
+        Throughput, register tiles, and what Choreo handles for you
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#looking-ahead" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Looking ahead
+      
+    </span>
+  </a>
   
 </li>
       
@@ -3348,37 +2880,43 @@
 
 
 <h1 id="enable-tensor-cores-in-one-primitive-the-mma-operations">Enable Tensor Cores in One Primitive: the <code>mma</code> Operations<a class="headerlink" href="#enable-tensor-cores-in-one-primitive-the-mma-operations" title="Permanent link">&para;</a></h1>
-<p>Chapter 4 introduced Tensor Memory Accelerator (TMA) copies: wide, hardware-assisted movement from global memory into the layouts that later compute expects. This chapter turns to the other half of a fast matrix multiply on NVIDIA GPUs — the <strong>Matrix Multiply-Accumulate (MMA)</strong> instructions that actually drive <strong>Tensor Cores</strong>.</p>
-<p>You will see how Choreo expresses that path as a small vocabulary of <code>mma.*</code> operations, wired together in a predictable lifecycle. We focus on <strong>SM86</strong> (Ampere-class hardware such as RTX 3090 / A40), where each warp owns a <strong>16×16×16</strong> FP16 tile. At the end, we contrast that with <strong>SM90</strong> (Hopper) <strong>WGMMA</strong>, which you may have seen in <code>matmul_f16_dyn_sm90.co</code> alongside TMA — same story at a high level, different thread scope and memory details.</p>
-<p>If Chapter 4 was about <strong>getting tiles to shared memory in the right shape</strong>, this chapter is about <strong>turning those tiles into arithmetic on Tensor Cores</strong> with almost no boilerplate.</p>
-<h2 id="what-tensor-cores-are-and-why-they-matter">What Tensor Cores Are (and Why They Matter)<a class="headerlink" href="#what-tensor-cores-are-and-why-they-matter" title="Permanent link">&para;</a></h2>
-<p>A Tensor Core is not a general-purpose ALU. It is a dedicated circuit that, in one <strong>macro-operation</strong> from the programmer’s point of view, multiplies a <em>small</em> matrix tile and folds the result into a running accumulator — the classic <strong>multiply-accumulate</strong> pattern that dominates dense linear algebra. Internally the unit is deeply pipelined; what matters for your mental model is that you issue <strong>one MMA instruction</strong> per 16×16×16 (on this FP16 path) rather than thousands of scalar FMAs exposed in source code.</p>
-<p>On Ampere FP16 Tensor Cores, a common native tile shape is <strong>M×N×K = 16×16×16</strong>. Thirty-two threads in a warp cooperate to feed that instruction; the hardware maps fragments of the operands across lanes and performs the dot products implied by the tile dimensions. Compared to issuing independent scalar multiplies and adds from generic CUDA cores, Tensor Cores deliver dramatically higher throughput for the kinds of tiles they support — which is why high-performance GEMM kernels are structured as nested loops of <strong>global → shared → register MMA</strong> around those fixed geometries.</p>
-<p>Choreo’s role is to let you stay at the <strong>tile</strong> level: you name accumulator and operand tiles, load from shared memory into operand registers, issue the MMA, and store back — without hand-writing PTX fragment layouts or matching CUDA C++ <code>fragment</code> types by hand.</p>
-<h3 id="from-a-big-gemm-to-nested-tiles">From a big GEMM to nested tiles<a class="headerlink" href="#from-a-big-gemm-to-nested-tiles" title="Permanent link">&para;</a></h3>
-<p>Recall the mathematical goal: for matrices <strong>A</strong> (M×K), <strong>B</strong> (K×N), and <strong>C</strong> (M×N), you want <strong>C += A B</strong>. No GPU holds all of <strong>A</strong> and <strong>B</strong> on-chip at once, so real kernels <strong>tile</strong> M, N, and K:</p>
-<ul>
-<li><strong>Block tiles</strong> carve the output into rectangles each CUDA block will eventually own.</li>
-<li><strong>Warp tiles</strong> (on Ampere MMA) carve those rectangles so each warp works on 16×16 outputs at a time, accumulating along K in steps of 16.</li>
-</ul>
-<p>Choreo makes those levels explicit in the tileflow: outer <code>parallel … : block</code> for the block grid, inner <code>parallel … : group</code> for warps, and <code>foreach</code> loops over K that line up with <code>MATMUL_TILE_K</code> and <code>MATMUL_MMA_K</code>.</p>
-<h2 id="the-mma-lifecycle-in-choreo">The MMA Lifecycle in Choreo<a class="headerlink" href="#the-mma-lifecycle-in-choreo" title="Permanent link">&para;</a></h2>
-<p>Every Tensor Core matmul kernel, expressed in Choreo, follows the same rhythm:</p>
-<ol>
-<li><strong>Initialize</strong> the accumulator — <code>mma.fill</code>.</li>
-<li><strong>Loop over K</strong> (possibly nested: block tile, then warp sub-tile):</li>
-<li>Bring the next slice of <strong>A</strong> and <strong>B</strong> into <strong>shared memory</strong> (here with <code>dma.copy</code>; Chapter 4 showed TMA on Hopper).</li>
-<li><strong>Load</strong> operand tiles from shared into MMA operand registers — <code>mma.load</code>.</li>
-<li><strong>Accumulate</strong> — <code>mma.row.row</code> (or another layout-specific variant) performs <strong>C += A × B</strong> on Tensor Cores.</li>
-<li><strong>Store</strong> the accumulator to shared (and then, outside the warp loop, back to global) — <code>mma.store</code>.</li>
-</ol>
-<p>The accumulator <code>mc</code> in Choreo is an <strong>opaque register-resident tile</strong>: you do not manually size CUDA <code>wmma::fragment</code> types or choose lane mappings. The compiler maps <code>mc</code>, <code>ma</code>, and <code>mb</code> to the correct MMA register file layout for your target architecture.</p>
-<h3 id="why-k-shows-up-as-an-outer-loop">Why K shows up as an outer loop<a class="headerlink" href="#why-k-shows-up-as-an-outer-loop" title="Permanent link">&para;</a></h3>
-<p>Conceptually, one <strong>mma.row.row</strong> applies to <strong>fixed</strong> M, N, and K extents baked into the instruction (16×16×16 here). A full matrix multiply has a much larger <strong>K</strong>. The kernel therefore <strong>streams</strong> along K: each iteration brings another <strong>K-slab</strong> into shared, loads 16×K_sub chunks into <code>ma</code> and <code>mb</code>, and <strong>adds</strong> the new partial product into the <strong>same</strong> <code>mc</code>. That is standard blocked GEMM — Choreo simply names the stages (<code>dma.copy</code>, <code>mma.load</code>, <code>mma.row.row</code>) instead of hiding them inside a single opaque library call.</p>
-<p>If this feels familiar after Chapter 4, that is intentional. TMA answered “how does this slab land in shared?” MMA answers “now that it is in shared, how does a warp turn it into Tensor Core math?” The two chapters are two halves of one pipeline.</p>
-<h2 id="sm86-ampere-one-warp-one-161616-mma">SM86 Ampere: One Warp, One 16×16×16 MMA<a class="headerlink" href="#sm86-ampere-one-warp-one-161616-mma" title="Permanent link">&para;</a></h2>
-<p>On <strong>SM86</strong>, the synchronous MMA path (<code>mma.sync</code>-class instructions under the hood) is scoped to a <strong>single warp</strong> (32 threads). In Choreo tileflow, that corresponds to a parallel region annotated with <strong><code>: group</code></strong>, which denotes one cooperative thread group the size of one warp — not four warps as on Hopper WGMMA.</p>
-<p>The following kernel sketches the structure (tile sizes match the benchmark defaults: <code>MATMUL_MMA_*</code> and <code>MATMUL_TILE_*</code> all equal <strong>16</strong>, so one block tile equals one MMA tile along M and N). Global tensors use <strong>row-major</strong> <code>lhs[M, K]</code> and <strong>rhs stored as <code>[N, K]</code></strong> so that each row of <code>rhs</code> is a length-<code>K</code> vector (a common layout for this style of kernel).</p>
+<p>Chapter 4 showed Tensor Memory Accelerator (TMA) copies: wide, hardware-assisted movement from global memory into layouts that later compute expects. The natural follow-up is what happens after those tiles land in shared memory: <strong>tensor cores</strong> turn them into math. The lifecycle is always <strong>fill → load → multiply → store</strong>, whether you are on Ampere or Hopper. Choreo hides PTX fragment types so you think in <strong>tiles</strong>, not lanes.</p>
+<p>This chapter covers <strong>Matrix Multiply-Accumulate (MMA)</strong> and how Choreo spells it with <strong><code>mma.*</code></strong>. You will see <strong>SM86</strong> (Ampere-class hardware such as RTX 3090 / A40), where each warp owns a <strong>16×16×16</strong> FP16 tile, and contrast that with <strong>SM90</strong> (Hopper) <strong>WGMMA</strong> as in <code>matmul_f16_dyn_sm90.co</code> alongside TMA—same story at a high level, different thread scope and memory details.</p>
+<h2 id="tensor-cores-and-the-mma-lifecycle">Tensor cores and the MMA lifecycle<a class="headerlink" href="#tensor-cores-and-the-mma-lifecycle" title="Permanent link">&para;</a></h2>
+<p>A <strong>tensor core</strong> is not a general-purpose ALU. It is dedicated hardware that, in one <strong>macro-operation</strong> from your point of view, multiplies a small matrix tile and folds the result into a running accumulator—the <strong>multiply-accumulate</strong> pattern behind dense linear algebra.</p>
+<p>The unit is deeply pipelined internally. For your mental model, what matters is that you issue <strong>one MMA instruction</strong> per 16×16×16 on this FP16 path instead of thousands of scalar FMAs in source code.</p>
+<p>On Ampere FP16 tensor cores, a common native tile is <strong>M×N×K = 16×16×16</strong>. Thirty-two threads in a warp cooperate; the hardware maps operand <strong>fragments</strong> (register subsets per lane) across lanes and performs the dot products implied by the tile.</p>
+<p>Compared with independent scalar multiplies and adds on generic CUDA cores, tensor cores deliver much higher throughput on the tile shapes they support. That is why high-performance GEMM kernels are structured as nested loops of <strong>global → shared → register MMA</strong> around those fixed geometries.</p>
+<p>Choreo keeps you at the <strong>tile</strong> level: you name accumulator and operand tiles, load from shared, issue MMA, and store—without hand-writing PTX fragment layouts or matching CUDA C++ <code>fragment</code> types by hand.</p>
+<p>For matrices <strong>A</strong> (M×K), <strong>B</strong> (K×N), and <strong>C</strong> (M×N), you want <strong>C += A B</strong>. No GPU holds all of <strong>A</strong> and <strong>B</strong> on-chip, so real kernels <strong>tile</strong> M, N, and K.</p>
+<p><strong>Block tiles</strong> carve the output into rectangles each CUDA block will eventually own. <strong>Warp tiles</strong> (on Ampere MMA) carve those rectangles so each warp works on 16×16 outputs at a time, accumulating along K in steps of 16.</p>
+<p>Choreo makes those levels explicit in the tileflow: outer <strong><code>parallel … : block</code></strong> for the block grid, inner <strong><code>parallel … : group</code></strong> for warps, and <strong><code>foreach</code></strong> loops over K that line up with <strong><code>MATMUL_TILE_K</code></strong> and <strong><code>MATMUL_MMA_K</code></strong>.</p>
+<p>Every tensor-core matmul in Choreo follows the same rhythm. You <strong>initialize</strong> the accumulator with <strong><code>mma.fill</code></strong>.</p>
+<p>You <strong>loop over K</strong>, possibly nested across block tile and warp sub-tile. Each iteration brings the next slices of <strong>A</strong> and <strong>B</strong> into <strong>shared memory</strong>—here with <strong><code>dma.copy</code></strong>; Chapter 4 showed TMA on Hopper.</p>
+<p>You <strong>load</strong> operand tiles from shared into MMA operand registers with <strong><code>mma.load</code></strong>, then <strong>accumulate</strong> with <strong><code>mma.row.row</code></strong> (or another layout-specific variant) so <strong>C += A × B</strong> runs on tensor cores. Finally you <strong>store</strong> with <strong><code>mma.store</code></strong> to shared, and later (outside the warp loop) back to global.</p>
+<p>The accumulator <strong><code>mc</code></strong> is an <strong>opaque register-resident tile</strong>: you do not manually size <code>wmma::fragment</code> types or choose lane mappings. The compiler maps <strong><code>mc</code></strong>, <strong><code>ma</code></strong>, and <strong><code>mb</code></strong> to the correct MMA register file layout for your target architecture.</p>
+<p>Conceptually, one <strong><code>mma.row.row</code></strong> applies to <strong>fixed</strong> M, N, and K extents baked into the instruction (16×16×16 here). A full matrix multiply has a much larger <strong>K</strong>.</p>
+<p>The kernel therefore <strong>streams</strong> along K: each iteration brings another <strong>K-slab</strong> into shared, loads 16×K_sub chunks into <strong><code>ma</code></strong> and <strong><code>mb</code></strong>, and <strong>adds</strong> the new partial product into the <strong>same</strong> <strong><code>mc</code></strong>. That is standard blocked GEMM—Choreo simply names the stages (<code>dma.copy</code>, <code>mma.load</code>, <code>mma.row.row</code>) instead of hiding them inside a single opaque library call.</p>
+<p>If this feels familiar after Chapter 4, that is intentional. TMA answered “how does this slab land in shared?” MMA answers “now that it is in shared, how does a warp turn it into tensor-core math?” The two chapters are two halves of one pipeline.</p>
+<h2 id="sm86-ampere-one-warp-one-161616-tile">SM86 Ampere: one warp, one 16×16×16 tile<a class="headerlink" href="#sm86-ampere-one-warp-one-161616-tile" title="Permanent link">&para;</a></h2>
+<p>On <strong>SM86</strong>, the synchronous MMA path (<code>mma.sync</code>-class instructions under the hood) is scoped to a <strong>single warp</strong> (32 threads). In Choreo tileflow, that corresponds to a <strong><code>parallel</code></strong> region annotated <strong><code>: group</code></strong>—one cooperative thread group the size of one warp, not four warps as on Hopper WGMMA.</p>
+<p>The outer <strong><code>parallel {block_m, block_n}</code></strong> launches one CUDA thread block per output tile of size <strong><code>MATMUL_TILE_M × MATMUL_TILE_N</code></strong>. Indices <strong><code>block_m</code></strong> and <strong><code>block_n</code></strong> select which <strong>M</strong> and <strong>N</strong> stripes of the result matrix this block owns.</p>
+<p>Think of <strong><code>block_m</code></strong> as “which row bundle of <strong>C</strong>” and <strong><code>block_n</code></strong> as “which column bundle of <strong>C</strong>.” Together they pinpoint the <strong>top-left corner</strong> of the tile this block must eventually write, modulo <strong><code>.at(block_m, iv_k)</code></strong>-style addressing into <strong>lhs</strong> and <strong>rhs</strong> as K advances.</p>
+<p><strong><code>shared f16 [MATMUL_TILE_M, MATMUL_TILE_N] output_s</code></strong> is the block’s scratchpad for the completed partial result of that tile. Warps write their MMA results into disjoint sub-rectangles of <strong><code>output_s</code></strong>; a final <strong><code>dma.copy</code></strong> from <strong><code>output_s</code></strong> to global <strong><code>output</code></strong> (shown in the async listing below) completes the write-back, typically issued cooperatively by the whole block as in the full benchmark.</p>
+<p>Using shared memory as an intermediate for <strong>C</strong> is typical: MMA instructions write register tiles, and <strong><code>mma.store</code></strong> lands those tiles in a space the <strong>entire block</strong> can see. You can then perform vectorized or coalesced global stores once the tile is complete and consistent.</p>
+<p>Inside the block, <strong><code>parallel {warp_m, warp_n} by […] : group</code></strong> enumerates warps. With <strong><code>MATMUL_TILE_M = MATMUL_MMA_M = 16</code></strong> and the same for N, the <strong><code>by</code></strong> extents are <strong>1×1</strong>: a single warp handles the entire block tile.</p>
+<p>If you widen the block tile to multiples of 16, <strong><code>warp_m</code></strong> and <strong><code>warp_n</code></strong> count how many <strong>independent</strong> 16×16 output patches exist; each patch gets its own warp and its own <strong><code>mc</code></strong>. <strong><code>: group</code></strong> means “one warp’s worth of threads”—the right granularity for pre-Hopper <strong>per-warp</strong> MMA on Ampere.</p>
+<p>If you used <strong><code>: group-4</code></strong> here on SM86, you would be describing four-warpgroup cooperation the older ISA does not treat as a single MMA issuer in this style.</p>
+<p><strong><code>mc = mma.fill 0.0</code></strong> creates a fresh <strong>accumulator tile</strong> in MMA accumulator registers, initialized to zero (floating-point zero compatible with FP16 accumulation). Variable <strong><code>mc</code></strong> holds that tile for the rest of the warp’s K-loop.</p>
+<p>This is the Choreo spelling of “zero my <strong>C</strong> fragment before the K dimension sweep.” Nothing in your source names individual lanes; <strong><code>mc</code></strong> is the whole 16×16 accumulator as a first-class value.</p>
+<p><strong><code>foreach {iv_k} in [cdiv(K, MATMUL_TILE_K)]</code></strong> walks the <strong>K</strong> dimension in steps of <strong><code>MATMUL_TILE_K</code></strong>. <strong><code>dma.copy</code> … <code>=&gt; shared</code></strong> stages a <strong>K-slab</strong> of <strong><code>lhs</code></strong> and <strong><code>rhs</code></strong> into shared buffers <strong><code>lhs_load_s</code></strong> and <strong><code>rhs_load_s</code></strong>.</p>
+<p>This is ordinary async-capable DMA-style copy, not TMA (TMA is the Hopper-era accelerator from Chapter 4). On Ampere matmuls you still get excellent performance with well-placed <strong><code>dma.copy</code></strong> / <strong><code>dma.copy.async</code></strong>; you are not “missing out” on tensor cores by skipping TMA—you are only skipping Hopper’s dedicated bulk loader.</p>
+<p>The inner <strong><code>foreach iv_warp_k in [cdiv(MATMUL_TILE_K, MATMUL_MMA_K)]</code></strong> subdivides the K slab into <strong>16-element</strong> chunks along K, matching the <strong>K=16</strong> depth of one <strong><code>mma.sync.m16n16k16.f16</code></strong>-class operation.</p>
+<p>For each K chunk, <strong><code>ma = mma.load lhs_load_s.chunkat(warp_m, iv_warp_k)</code></strong> loads the warp’s <strong>A</strong> operand tile from shared memory into MMA <strong>A</strong> registers. The <strong><code>chunkat</code></strong> selects the <strong>M × 16</strong> slab of the staged <strong>lhs</strong> tile that corresponds to this warp’s row offset and the current K slice.</p>
+<p><strong><code>mb = mma.load rhs_load_s.chunkat(warp_n, iv_warp_k)</code></strong> loads the <strong>B</strong> operand tile similarly from the staged <strong>rhs</strong> tile. <strong><code>mma.row.row mc, ma, mb</code></strong> performs <strong>C += A × B</strong> using tensor cores.</p>
+<p>The <strong><code>row.row</code></strong> suffix states the <strong>layout contract</strong>: both <strong><code>ma</code></strong> and <strong><code>mb</code></strong> are interpreted as <strong>row-major</strong> operand tiles for this instruction variant. Other Choreo MMA variants exist for different matrix layouts; picking the wrong one is a correctness bug, not a silent transpose.</p>
+<p>After the loops, <strong><code>mma.store mc, output_s.subspan(MATMUL_MMA_M, MATMUL_MMA_N).at(warp_m, warp_n)</code></strong> writes the warp’s accumulated <strong>C</strong> tile from accumulator registers into the correct sub-rectangle of shared memory. Equivalently, benchmarks often write <strong><code>mma.store mc, output_s.chunkat(warp_m, warp_n)</code></strong> when the chunking API matches the MMA tile shape directly.</p>
+<p>The kernel below sketches the structure. Tile sizes match the benchmark defaults: <strong><code>MATMUL_MMA_*</code></strong> and <strong><code>MATMUL_TILE_*</code></strong> all equal <strong>16</strong>, so one block tile equals one MMA tile along M and N. Global tensors use <strong>row-major</strong> <strong><code>lhs[M, K]</code></strong> and <strong>rhs stored as <code>[N, K]</code></strong> so that each row of <strong><code>rhs</code></strong> is a length-<strong>K</strong> vector (a common layout for this style of kernel).</p>
 <div class="highlight"><pre><span></span><code>__co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
   parallel {block_m, block_n} by [cdiv(M, MATMUL_TILE_M), cdiv(N, MATMUL_TILE_N)] : block {
     shared f16 [MATMUL_TILE_M, MATMUL_TILE_N] output_s;
@@ -3398,34 +2936,8 @@
   }
 }
 </code></pre></div>
-<p>This is the conceptual core of <code>matmul_f16_dyn_sm86.co</code> in the Choreo benchmark tree. The shipping file adds <strong>asynchronous</strong> <code>dma.copy.async</code>, explicit <code>wait</code> barriers, and uses <code>chunkat</code> for output staging — good for overlapping memory traffic with math. For learning MMA, the synchronous copy version above is easier to read; the lifecycle is identical.</p>
-<h3 id="block-grid-parallel-block">Block grid: <code>parallel … : block</code><a class="headerlink" href="#block-grid-parallel-block" title="Permanent link">&para;</a></h3>
-<p>The outer <code>parallel {block_m, block_n}</code> launches one CUDA thread block per output tile of size <code>MATMUL_TILE_M × MATMUL_TILE_N</code>. Indices <code>block_m</code> and <code>block_n</code> select which <strong>M</strong> and <strong>N</strong> stripes of the result matrix this block owns.</p>
-<p>Think of <code>block_m</code> as “which row bundle of C” and <code>block_n</code> as “which column bundle of C.” Together they pinpoint the <strong>top-left corner</strong> of the tile this block must eventually write — modulo the <code>.at(block_m, iv_k)</code> style addressing into <strong>lhs</strong> and <strong>rhs</strong> as K advances.</p>
-<h3 id="shared-output-staging-output_s">Shared output staging: <code>output_s</code><a class="headerlink" href="#shared-output-staging-output_s" title="Permanent link">&para;</a></h3>
-<p><code>shared f16 [MATMUL_TILE_M, MATMUL_TILE_N] output_s</code> is the block’s scratchpad for the completed partial result of that tile. Warps write their MMA results into disjoint sub-rectangles of <code>output_s</code>; a final <code>dma.copy</code> from <code>output_s</code> to global <code>output</code> (not shown in the first snippet) completes the write-back — typically issued cooperatively by the whole block, as in the full benchmark.</p>
-<p>Using shared memory as an intermediate for <strong>C</strong> is typical: MMA instructions write register tiles; <strong><code>mma.store</code></strong> lands those tiles in a memory space the <strong>entire block</strong> can see, so you can perform vectorized or coalesced global stores once the tile is complete and consistent.</p>
-<h3 id="warp-grid-parallel-group">Warp grid: <code>parallel … : group</code><a class="headerlink" href="#warp-grid-parallel-group" title="Permanent link">&para;</a></h3>
-<p>Inside the block, <code>parallel {warp_m, warp_n} by […] : group</code> enumerates warps. With <code>MATMUL_TILE_M = MATMUL_MMA_M = 16</code> and the same for N, the <code>by</code> extents are <strong>1×1</strong>: a single warp handles the entire block tile. If you widen the block tile to multiples of 16, <code>warp_m</code> and <code>warp_n</code> count how many <strong>independent</strong> 16×16 output patches exist; each patch gets its own warp and its own <code>mc</code>.</p>
-<p><strong><code>: group</code></strong> means “one warp’s worth of threads.” That is the right granularity for pre-Hopper <strong>per-warp</strong> MMA on Ampere. If you accidentally used <code>: group-4</code> here on SM86, you would be describing four-warpgroup cooperation the older ISA does not treat as a single MMA issuer in this style.</p>
-<h3 id="mc-mmafill-00"><code>mc = mma.fill 0.0</code><a class="headerlink" href="#mc-mmafill-00" title="Permanent link">&para;</a></h3>
-<p><strong><code>mma.fill</code></strong> creates a fresh <strong>accumulator tile</strong> in MMA accumulator registers, initialized to zero (here, floating-point zero compatible with FP16 accumulation). Variable <code>mc</code> holds that tile for the rest of the warp’s K-loop.</p>
-<p>This is the Choreo spelling of “zero my C fragment before the K dimension sweep.” Nothing in your source names individual lanes; <strong><code>mc</code></strong> is the whole 16×16 accumulator as a first-class value.</p>
-<h3 id="the-k-loop-global-shared-registers-mma">The K loop: global → shared → registers → MMA<a class="headerlink" href="#the-k-loop-global-shared-registers-mma" title="Permanent link">&para;</a></h3>
-<p><code>foreach {iv_k} in [cdiv(K, MATMUL_TILE_K)]</code> walks the <strong>K</strong> dimension in steps of <code>MATMUL_TILE_K</code>.</p>
-<ul>
-<li><strong><code>dma.copy</code> … <code>=&gt; shared</code></strong> stages a <strong>K-slab</strong> of <code>lhs</code> and <code>rhs</code> into shared buffers <code>lhs_load_s</code> and <code>rhs_load_s</code>. This is ordinary async-capable DMA-style copy, not TMA (TMA is the Hopper-era accelerator from Chapter 4). On Ampere matmuls you still get excellent performance with well-placed <code>dma.copy</code> / <code>dma.copy.async</code>; you are not “missing out” on Tensor Cores by skipping TMA — you are only skipping Hopper’s dedicated bulk loader.</li>
-<li>The inner loop <code>foreach iv_warp_k in [cdiv(MATMUL_TILE_K, MATMUL_MMA_K)]</code> further subdivides the K slab into <strong>16-element</strong> chunks along K, matching the <strong>K=16</strong> depth of one <code>mma.sync.m16n16k16.f16</code> class operation.</li>
-</ul>
-<p>For each K chunk:</p>
-<ul>
-<li><strong><code>ma = mma.load lhs_load_s.chunkat(warp_m, iv_warp_k)</code></strong> loads the warp’s <strong>A</strong> operand tile from shared memory into MMA <strong>A</strong> registers. The <code>chunkat</code> selects the <strong>M × 16</strong> slab of the staged <strong>lhs</strong> tile that corresponds to this warp’s row offset and the current K slice.</li>
-<li><strong><code>mb = mma.load rhs_load_s.chunkat(warp_n, iv_warp_k)</code></strong> loads the <strong>B</strong> operand tile similarly from the staged <strong>rhs</strong> tile.</li>
-<li><strong><code>mma.row.row mc, ma, mb</code></strong> performs <strong>C += A × B</strong> using Tensor Cores. The <strong><code>row.row</code></strong> suffix states the <strong>layout contract</strong>: both <code>ma</code> and <code>mb</code> are interpreted as <strong>row-major</strong> operand tiles for this instruction variant. Other Choreo MMA variants exist for different matrix layouts; picking the wrong one is a correctness bug, not a silent transpose.</li>
-</ul>
-<p>After the loops, <strong><code>mma.store mc, output_s.subspan(MATMUL_MMA_M, MATMUL_MMA_N).at(warp_m, warp_n)</code></strong> writes the warp’s accumulated <strong>C</strong> tile from accumulator registers into the correct sub-rectangle of shared memory. Equivalently, benchmarks often write <code>mma.store mc, output_s.chunkat(warp_m, warp_n)</code> when the chunking API matches the MMA tile shape directly.</p>
-<h3 id="what-the-checked-in-sm86-kernel-adds">What the checked-in SM86 kernel adds<a class="headerlink" href="#what-the-checked-in-sm86-kernel-adds" title="Permanent link">&para;</a></h3>
-<p>For completeness, here is the MMA portion of <code>matmul_f16_dyn_sm86.co</code> as it appears in the repository — note <strong><code>dma.copy.async</code></strong>, <strong><code>wait</code></strong>, and <strong><code>chunkat</code></strong> on the store target:</p>
+<p>This is the conceptual core of <strong><code>matmul_f16_dyn_sm86.co</code></strong> in the Choreo benchmark tree. The shipping file adds <strong>asynchronous</strong> <strong><code>dma.copy.async</code></strong>, explicit <strong><code>wait</code></strong> barriers, and uses <strong><code>chunkat</code></strong> for output staging—good for overlapping memory traffic with math.</p>
+<p>For learning MMA, the synchronous copy version above is easier to read; the lifecycle is identical. For completeness, the MMA portion of <strong><code>matmul_f16_dyn_sm86.co</code></strong> as it appears in the repository follows—note <strong><code>dma.copy.async</code></strong>, <strong><code>wait</code></strong>, and <strong><code>chunkat</code></strong> on the store target:</p>
 <div class="highlight"><pre><span></span><code>parallel {block_m, block_n} by [cdiv(M, MATMUL_TILE_M), cdiv(N, MATMUL_TILE_N)] : block {
   shared f16 [MATMUL_TILE_M, MATMUL_TILE_N] output_s;
   parallel {warp_m, warp_n} by [cdiv(MATMUL_TILE_M, MATMUL_MMA_M), cdiv(MATMUL_TILE_N, MATMUL_MMA_N)] : group {
@@ -3446,12 +2958,12 @@
   dma.copy output_s =&gt; output.subspan(MATMUL_TILE_M, MATMUL_TILE_N).at(block_m, block_n);
 }
 </code></pre></div>
-<p>The <strong><code>wait</code></strong> synchronizes the in-flight copies before <strong><code>mma.load</code></strong> reads shared memory — classic software pipelining you can extend once you are comfortable with the bare <strong><code>mma</code></strong> sequence.</p>
-<h3 id="register-pressure-and-warp-count-real-kernels">Register pressure and warp count (real kernels)<a class="headerlink" href="#register-pressure-and-warp-count-real-kernels" title="Permanent link">&para;</a></h3>
-<p>The tutorial uses 16×16×16 tiles for clarity. The actual <code>matmul_f16_dyn_sm86.co</code> comments note aggressive register usage (on the order of <strong>255 registers per thread</strong> in optimized builds), which caps how many warps you can pack into a block. When you scale tile sizes up, always check occupancy and register limits — Choreo makes the dataflow obvious, but the hardware still enforces physics.</p>
-<h2 id="contrasting-sm90-hopper-wgmma-and-group-4">Contrasting SM90 Hopper: WGMMA and <code>: group-4</code><a class="headerlink" href="#contrasting-sm90-hopper-wgmma-and-group-4" title="Permanent link">&para;</a></h2>
+<p>The <strong><code>wait</code></strong> synchronizes the in-flight copies before <strong><code>mma.load</code></strong> reads shared memory. That is classic software pipelining; you can extend it once you are comfortable with the bare <strong><code>mma</code></strong> sequence.</p>
+<p>The tutorial uses 16×16×16 tiles for clarity. The actual <strong><code>matmul_f16_dyn_sm86.co</code></strong> comments note aggressive register usage (on the order of <strong>255 registers per thread</strong> in optimized builds), which caps how many warps you can pack into a block.</p>
+<p>When you scale tile sizes up, always check occupancy and register limits. Choreo makes the dataflow obvious, but the hardware still enforces physics.</p>
+<h2 id="sm90-hopper-wgmma-and-warp-groups">SM90 Hopper: WGMMA and warp groups<a class="headerlink" href="#sm90-hopper-wgmma-and-warp-groups" title="Permanent link">&para;</a></h2>
 <p>Hopper introduces <strong>Warpgroup Matrix Multiply Accumulate (WGMMA)</strong>: the same <strong>C += A × B</strong> idea, but the instruction is issued cooperatively by <strong>four warps</strong> (<strong>128 threads</strong>), and operand tiles are larger in the <strong>M</strong> and/or <strong>N</strong> dimensions subject to ISA rules.</p>
-<p>In Choreo, that wider cooperation appears as <strong><code>: group-4</code></strong> instead of <strong><code>: group</code></strong>. A canonical excerpt from <code>matmul_f16_dyn_sm90.co</code> looks like this (abbreviated to the MMA body; TMA loads were covered in Chapter 4):</p>
+<p>In Choreo, that wider cooperation appears as <strong><code>: group-4</code></strong> instead of <strong><code>: group</code></strong>. A canonical excerpt from <strong><code>matmul_f16_dyn_sm90.co</code></strong> looks like the following (abbreviated to the MMA body; TMA loads were covered in Chapter 4):</p>
 <div class="highlight"><pre><span></span><code>parallel {block_m, block_n} by [cdiv(M, MATMUL_WARP_M), cdiv(N, MATMUL_WARP_N)] : block {
   shared f16 [MATMUL_WARP_M, MATMUL_TILE_K] lhs_load_s;
   shared f16 [MATMUL_WARP_N, MATMUL_TILE_K] rhs_load_s;
@@ -3474,7 +2986,6 @@
   tma.copy output_s =&gt; output.subspan(MATMUL_WARP_M, MATMUL_WARP_N).at(block_m, block_n);
 }
 </code></pre></div>
-<p>Read this side by side with the SM86 version:</p>
 <table>
 <thead>
 <tr>
@@ -3496,91 +3007,56 @@
 </tr>
 <tr>
 <td>Operand loads</td>
-<td><strong><code>mma.load</code></strong> from ordinary staged shared layout</td>
-<td><strong><code>mma.load.swiz&lt;N&gt;</code></strong> — operands must match <strong>swizzled</strong> shared layout from TMA</td>
+<td><strong><code>mma.load</code></strong> from staged shared layout</td>
+<td><strong><code>mma.load.swiz&lt;N&gt;</code></strong> — operands match <strong>swizzled</strong> shared layout from TMA</td>
 </tr>
 <tr>
 <td>Accumulator setup</td>
 <td><strong><code>mma.fill 0.0</code></strong></td>
-<td><strong><code>mma.fill.f16 …</code></strong> in this benchmark; other Hopper kernels may use <strong>FP32</strong> accumulators (<strong><code>mma.fill.f32</code></strong>) for numerical headroom while operands stay FP16</td>
+<td><strong><code>mma.fill.f16 …</code></strong> here; other kernels may use <strong><code>mma.fill.f32</code></strong> for FP32 accumulators with FP16 operands</td>
 </tr>
 <tr>
 <td>Core math op</td>
 <td><strong><code>mma.row.row mc, ma, mb</code></strong></td>
-<td>Same mnemonic — WGMMA implements a wider, warpgroup-scoped instruction family under the hood</td>
+<td>Same mnemonic—WGMMA is a wider, warpgroup-scoped family under the hood</td>
 </tr>
 <tr>
 <td>Store</td>
-<td><strong><code>mma.store</code></strong> into a tile carved per warp</td>
-<td><strong><code>mma.store</code></strong> into a shared tile sized for the <strong>warpgroup</strong> output footprint</td>
+<td><strong><code>mma.store</code></strong> into a per-warp tile carve</td>
+<td><strong><code>mma.store</code></strong> into shared sized for the <strong>warpgroup</strong> output</td>
 </tr>
 </tbody>
 </table>
-<p>The <strong>lifecycle</strong> is intentionally parallel: <strong>fill</strong>, <strong>load operands</strong>, <strong>accumulate along K</strong>, <strong>store</strong>. What changes is <strong>how many threads participate in one MMA</strong>, how data must be <strong>laid out in shared memory</strong> (Hopper’s <code>.swiz&lt;128&gt;</code> style loads expect a particular swizzle pattern, commonly tied to <strong><code>2 * TILE_K</code></strong> constraints in the benchmark headers), and whether global→shared uses <strong>DMA copies</strong> or <strong>TMA</strong>.</p>
+<p>Read this side by side with the SM86 version. The <strong>lifecycle</strong> is intentionally parallel: <strong>fill</strong>, <strong>load operands</strong>, <strong>accumulate along K</strong>, <strong>store</strong>.</p>
+<p>What changes is <strong>how many threads participate in one MMA</strong>, how data must be <strong>laid out in shared memory</strong> (Hopper’s <strong><code>.swiz&lt;128&gt;</code></strong>-style loads expect a particular swizzle pattern, commonly tied to <strong><code>2 * TILE_K</code></strong> constraints in the benchmark headers), and whether global→shared uses <strong>DMA copies</strong> or <strong>TMA</strong>.</p>
 <p>So Chapter 4’s <strong><code>tma.copy.swiz</code></strong> and this chapter’s <strong><code>mma.load.swiz</code></strong> are a matched pair: the first establishes the shared-memory pattern; the second asserts that operands are read <strong>consistent with that pattern</strong> when the warpgroup issues WGMMA.</p>
-<h3 id="wgmma-and-accumulation-precision">WGMMA and accumulation precision<a class="headerlink" href="#wgmma-and-accumulation-precision" title="Permanent link">&para;</a></h3>
-<p>Warpgroup MMA can widen the <strong>accumulator</strong> relative to the <strong>operands</strong>. A frequent pattern on Hopper-class kernels is to keep <strong>FP16</strong> (or narrower) for <strong><code>ma</code></strong> and <strong><code>mb</code></strong> while accumulating into <strong>FP32</strong> registers for <strong>numerical stability</strong> on large <strong>K</strong>. The Choreo surface may expose that as a different <strong><code>mma.fill.***</code> precision or related typing on the </strong><code>mc</code><strong> handle; the exact spelling depends on the generator version and target. The benchmark you are reading (<code>matmul_f16_dyn_sm90.co</code>) uses </strong><code>mma.fill.f16 0.0f</code><strong> to match its end-to-end FP16 story — always read the </strong>header constants** next to the kernel when you port ideas between projects.</p>
+<p>Warpgroup MMA can widen the <strong>accumulator</strong> relative to the <strong>operands</strong>. A frequent pattern on Hopper-class kernels is to keep <strong>FP16</strong> (or narrower) for <strong><code>ma</code></strong> and <strong><code>mb</code></strong> while accumulating into <strong>FP32</strong> registers for <strong>numerical stability</strong> on large <strong>K</strong>.</p>
+<p>The Choreo surface may expose that as a different <strong><code>mma.fill.***</code> precision or related typing on the </strong><code>mc</code><strong> handle; the exact spelling depends on the generator version and target. The benchmark you are reading (<code>matmul_f16_dyn_sm90.co</code>) uses </strong><code>mma.fill.f16 0.0f</code><strong> to match its end-to-end FP16 story—always read the </strong>header constants** next to the kernel when you port ideas between projects.</p>
 <p>If you see <strong><code>mma.fill.f32</code></strong> in other kernels, think: “same <strong><code>mma.row.row</code></strong> math, wider <strong>C</strong> register file.” The <strong>load</strong> instructions still feed <strong>FP16</strong> tiles in the common case; it is the <strong>accumulator</strong> that gained headroom.</p>
-<h2 id="throughput-intuition-why-the-inner-loop-is-short">Throughput intuition (why the inner loop is short)<a class="headerlink" href="#throughput-intuition-why-the-inner-loop-is-short" title="Permanent link">&para;</a></h2>
-<p>It is tempting to imagine the inner K loop as “heavy work.” On a well-tuned kernel, the opposite is closer to the truth: <strong>Tensor Cores are so fast</strong> that the kernel often becomes <strong>memory bound</strong> — how quickly you can <strong><code>dma.copy</code></strong> or <strong>TMA</strong> the next K-slab into shared, and how cleanly you <strong>pipeline</strong> those copies with <strong><code>mma.load</code></strong>. That is why the repository’s SM86 example reaches for <strong><code>dma.copy.async</code></strong> and explicit <strong><code>wait</code></strong>: the arithmetic in <strong><code>mma.row.row</code></strong> is not the bottleneck you optimize first; <strong>latency hiding</strong> is.</p>
-<p>When you profile, interpret high <strong>Tensor Core utilization</strong> with care. Choreo makes the <strong>instruction sequence</strong> legible; occupancy, <strong>L2</strong> traffic, and <strong>bank conflicts</strong> in shared still decide whether you are feeding those units fast enough. If you expand tiles, watch <strong>shared footprint</strong> and <strong>register spills</strong> — both show up as sudden cliffs in effective TFLOPS.</p>
-<h2 id="opaque-register-tiles-what-you-do-not-write-by-hand">Opaque Register Tiles: What You Do Not Write by Hand<a class="headerlink" href="#opaque-register-tiles-what-you-do-not-write-by-hand" title="Permanent link">&para;</a></h2>
-<p>In raw CUDA C++, WMMA and PTX require you to declare <code>fragment</code> types with specific shapes and manually <code>load_matrix_sync</code>, <code>mma_sync</code>, and <code>store_matrix_sync</code>, keeping track of <strong>row-major versus column-major</strong> variants and <strong>ldmatrix</strong> staging patterns.</p>
-<p>Choreo pushes that detail below the surface:</p>
-<ul>
-<li><strong><code>mc</code></strong>, <strong><code>ma</code></strong>, and <strong><code>mb</code></strong> are <strong>logical MMA tiles</strong> in accumulator and operand register files.</li>
-<li><strong><code>mma.load</code></strong> and <strong><code>mma.store</code></strong> connect <strong>shared-memory slices</strong> to those registers using the same <strong>chunking / subspan</strong> vocabulary you already use for DMA and TMA.</li>
-<li><strong><code>mma.row.row</code></strong> selects the <strong>instruction semantic</strong> (here: row-major times row-major into the accumulator).</li>
-</ul>
-<p>You still must choose <strong>consistent layouts</strong> (correct <code>mma.*</code> variant for your data), tile sizes that <strong>divide</strong> the hardware MMA geometry (<code>16</code> on SM86 for this FP16 path), and a <strong>thread hierarchy</strong> (<code>: group</code> versus <code>: group-4</code>) that matches the ISA. Choreo does not remove those constraints — it makes them <strong>readable</strong> and keeps the <strong>register mapping</strong> out of your way.</p>
-<h3 id="practical-checklist">Practical checklist<a class="headerlink" href="#practical-checklist" title="Permanent link">&para;</a></h3>
-<p>Before you treat a kernel as “done,” skim this list:</p>
-<ul>
-<li><strong>Shapes</strong>: Do <code>MATMUL_TILE_*</code> and <code>MATMUL_MMA_*</code> line up so every <code>chunkat</code> / <code>subspan</code> is a whole number of MMA tiles?</li>
-<li><strong>Layouts</strong>: Does <strong><code>mma.row.row</code></strong> (or your chosen variant) match how <strong><code>lhs</code></strong> and <strong><code>rhs</code></strong> are actually stored in global memory?</li>
-<li><strong>Synchronization</strong>: After async copies, did you <strong><code>wait</code></strong> (or equivalent) before <strong><code>mma.load</code></strong>?</li>
-<li><strong>Scope</strong>: Is <strong><code>parallel … : group</code></strong> used for SM86-style per-warp MMA, and <strong><code>group-4</code></strong> only where WGMMA is intended?</li>
-</ul>
-<h3 id="how-choreo-keeps-fragments-out-of-your-source">How Choreo keeps fragments out of your source<a class="headerlink" href="#how-choreo-keeps-fragments-out-of-your-source" title="Permanent link">&para;</a></h3>
-<p>It helps to name what you are <em>not</em> writing. In PTX-flavored workflows you might thread <strong>A</strong> and <strong>B</strong> through <strong><code>ldmatrix</code></strong> with a specific <strong>layout</strong> bit, then feed the result into <strong><code>mma.sync</code></strong>. Choreo’s <strong><code>mma.load</code></strong> is the composite “get a tile from shared into the operand register file” step; <strong><code>mma.row.row</code></strong> is the “multiply with this major-ness assumption” step; <strong><code>mma.store</code></strong> reverses the path for <strong>C</strong>. That decomposition mirrors how experts think about kernels — memory → math → memory — even when the underlying SASS bundles several micro-ops.</p>
-<p>When you debug a wrong result, suspect <strong>layout first</strong> (row versus column major, and whether <strong>rhs</strong> is <code>[N,K]</code> versus <code>[K,N]</code>), then <strong>indexing</strong> (which <code>block_m</code>, <code>block_n</code>, and K slice you attached with <code>.at</code> / <code>chunkat</code>), then <strong>async ordering</strong> if you introduced <strong><code>dma.copy.async</code></strong>.</p>
-<h3 id="naming-convention-mmarowrow">Naming convention: <code>mma.row.row</code><a class="headerlink" href="#naming-convention-mmarowrow" title="Permanent link">&para;</a></h3>
-<p>The <strong><code>mma.row.row</code></strong> token is read as <strong>“treat the left operand as row-major, the right operand as row-major.”</strong> Choreo may offer additional MMA variants for other major orders or transposed views; they exist because the hardware instruction set exposes <strong>multiple encodings</strong> for the same mathematical multiply, each assuming a particular <strong>register packing</strong>. If you have ever fought <strong><code>layout_t</code></strong> arguments in WMMA, this is the same decision with a choreographic name.</p>
-<p>Choosing correctly is not a performance hint — it is <strong>required for correctness</strong>. The <strong>global</strong> tensor layout, the <strong>shared</strong> staging pattern, and the <strong>MMA</strong> variant must agree. When in doubt, draw a 4×4 <strong>toy matrix</strong> on paper, mark how elements sit in memory, and check which <strong>row</strong> or <strong>column</strong> interpretation your <strong><code>chunkat</code></strong> slices preserve.</p>
-<h3 id="one-warps-worth-of-output">One warp’s worth of output<a class="headerlink" href="#one-warps-worth-of-output" title="Permanent link">&para;</a></h3>
-<p>With <strong><code>MATMUL_MMA_M = MATMUL_MMA_N = 16</code></strong>, each <strong><code>mma.store</code></strong> commits <strong>256</strong> output elements worth of <strong>C</strong> for that warp (in FP16). Each <strong><code>mma.row.row</code></strong> fuses a <strong>16×16</strong> update that consumed a <strong>16×16×16</strong> contraction along K for that step. Walking <strong><code>iv_k</code></strong> and <strong><code>iv_warp_k</code></strong> simply <strong>sums</strong> those contractions into the same <strong><code>mc</code></strong> until the full <strong>K</strong> dimension for the block tile is covered.</p>
-<p>If you shrink <strong><code>MATMUL_TILE_K</code></strong> below <strong>16</strong>, you still need <strong><code>MATMUL_MMA_K</code></strong> to remain <strong>16</strong> for this instruction shape — the inner loop’s trip count would become fractional unless you pad or switch ISA. That is why tutorials and benchmarks usually keep <strong>tile K</strong> as a multiple of <strong>16</strong> for FP16 MMA on Ampere.</p>
-<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
-<p>Tensor Cores execute small dense matrix multiply-accumulates in hardware; on <strong>SM86</strong>, the natural Choreo expression is a <strong>per-warp</strong> pipeline: <strong><code>mma.fill</code></strong>, <strong><code>mma.load</code></strong> from shared, <strong><code>mma.row.row</code></strong> for <strong>C += AB</strong>, and <strong><code>mma.store</code></strong> back to shared, under <strong><code>parallel … : group</code></strong>. Global data reaches shared through <strong><code>dma.copy</code></strong> in this chapter’s Ampere-focused example; <strong>Hopper</strong> combines <strong>TMA</strong> with <strong><code>mma.load.swiz&lt;N&gt;</code></strong> and <strong><code>parallel … : group-4</code></strong> for WGMMA.</p>
-<p>Once you internalize that lifecycle, reading and extending matmul kernels in Choreo becomes a matter of <strong>tiling geometry</strong> and <strong>memory path</strong> (DMA versus TMA), not of spelling PTX by hand.</p>
-<h3 id="suggested-experiments">Suggested experiments<a class="headerlink" href="#suggested-experiments" title="Permanent link">&para;</a></h3>
-<ul>
-<li>Bump <strong><code>MATMUL_TILE_M</code></strong> and <strong><code>MATMUL_TILE_N</code></strong> to 32 while keeping <strong>MMA</strong> at 16×16×16, and reason about how many warps <strong><code>parallel {warp_m, warp_n} … : group</code></strong> must launch inside each block — then cross-check the benchmark’s register-pressure comments before expecting a speedup.</li>
-<li>Compare <strong><code>matmul_f16_dyn_sm86.co</code></strong> and <strong><code>matmul_f16_dyn_sm90.co</code></strong> line by line: identify every line that is “same lifecycle, different mechanism” versus “Hopper-only.”</li>
-<li>Temporarily remove <strong><code>wait</code></strong> in the async SM86 kernel (in a scratch copy) and observe verification failures — it is a concrete lesson in <strong>memory visibility</strong> before <strong><code>mma.load</code></strong>.</li>
-</ul>
-<p>The next steps in your own experiments are to vary <strong>tile sizes</strong>, study <strong><code>dma.copy.async</code> + <code>wait</code></strong> in the full SM86 benchmark for overlap, and align <strong>Hopper swizzle constants</strong> with <strong><code>MATMUL_TILE_K</code></strong> as in <code>matmul_f16_dyn_sm90.co</code>.</p>
-<hr />
-<p><strong>Key syntax introduced</strong></p>
-<ul>
-<li><strong><code>mc = mma.fill 0.0</code></strong> — Allocate and zero the <strong>accumulator</strong> tile in MMA accumulator registers; <code>mc</code> is reused across the entire K sweep.</li>
-<li><strong><code>ma = mma.load buffer.chunkat(…)</code></strong> — Move a <strong>16×16</strong> (and <strong>K=16</strong> along the staged axis) operand from <strong>shared</strong> into <strong>A</strong> operand registers; <strong><code>mb</code></strong> is the same for <strong>B</strong>.</li>
-<li><strong><code>mma.row.row mc, ma, mb</code></strong> — Issue <strong>C += A × B</strong> on Tensor Cores with <strong>row-major</strong> semantics for both operands.</li>
-<li><strong><code>mma.store mc, output_s.…</code></strong> — Write the finished <strong>C</strong> tile from accumulators to <strong>shared</strong> so the block can <strong><code>dma.copy</code></strong> to global.</li>
-<li><strong><code>: group</code></strong> — This <strong><code>parallel</code></strong> region maps to <strong>one warp</strong> (32 threads), the SM86 MMA scope.</li>
-<li><strong><code>: group-4</code></strong> — Four-warpgroup region for <strong>SM90 WGMMA</strong> (128 threads); not interchangeable with <strong><code>: group</code></strong> on Ampere-style kernels.</li>
-<li><strong>Opaque tiles <code>mc</code>, <code>ma</code>, <code>mb</code></strong> — Logical MMA values; the compiler chooses <strong>lane mappings</strong> and <strong>register counts</strong>.</li>
-</ul>
-<p><strong>Further reading in-tree</strong></p>
-<ul>
-<li><code>choreo/benchmark/performance/matmul/matmul_f16_dyn_sm86.co</code> — full SM86 kernel, async copy, timing harness, verification loop.</li>
-<li><code>choreo/benchmark/performance/matmul/matmul_f16_dyn_sm90.co</code> — Hopper TMA + WGMMA reference; compare <strong><code>tma.copy.swiz</code></strong> with <strong><code>mma.load.swiz</code></strong>.</li>
-</ul>
-<h3 id="where-to-go-next-in-this-tutorial-series">Where to go next in this tutorial series<a class="headerlink" href="#where-to-go-next-in-this-tutorial-series" title="Permanent link">&para;</a></h3>
-<p>You now have both major <strong>data movement</strong> idioms for modern NVIDIA matmuls — <strong>DMA/TMA into shared</strong> — and the <strong>MMA</strong> idiom that turns those tiles into <strong>Tensor Core</strong> math. Later chapters can combine these ideas with <strong>persistent kernels</strong>, <strong>warp-specialization</strong>, or <strong>different dtypes</strong> (e.g. FP8 paths in the same benchmark directory) without changing the <strong>fill → load → multiply → store</strong> skeleton you learned here.</p>
-<p>When you read unfamiliar matmul <strong><code>.co</code></strong> files, skim for <strong><code>mma.</code></strong> first to find the compute heart, then walk outward to see whether <strong>global→shared</strong> uses <strong><code>dma.copy</code></strong> or <strong><code>tma.copy</code></strong>, and whether <strong><code>parallel</code></strong> says <strong><code>group</code></strong> or <strong><code>group-4</code></strong>. That three-point scan usually decodes the architecture generation in under a minute.</p>
-<p>Finally, remember that <strong>Choreo is describing orchestration</strong>, not replacing your host-side setup. You still allocate <strong><code>global</code></strong> buffers, launch the generated kernel, and validate results exactly as you would for any CUDA workload — the payoff is that the <strong>tileflow</strong> portion reads like a <strong>recipe</strong> for movement and <strong>mma</strong> instead of an opaque wall of pointer arithmetic. Carry that mental model into the next chapter when you start composing larger pipelines.</p>
-<p>That recipe stays stable even as NVIDIA evolves the ISA: <strong>newer GPUs</strong> may change <strong>thread scope</strong>, <strong>swizzle rules</strong>, and <strong>copy engines</strong>, but the <strong>fill → load → multiply → store</strong> rhythm you practiced on SM86 remains the backbone of every Tensor Core matmul you will meet in Choreo.</p>
+<h2 id="throughput-register-tiles-and-what-choreo-handles-for-you">Throughput, register tiles, and what Choreo handles for you<a class="headerlink" href="#throughput-register-tiles-and-what-choreo-handles-for-you" title="Permanent link">&para;</a></h2>
+<p>It is tempting to imagine the inner K loop as “heavy work.” On a well-tuned kernel, the opposite is closer to the truth: <strong>tensor cores are so fast</strong> that the kernel often becomes <strong>memory bound</strong>.</p>
+<p>What usually limits you is how quickly you can <strong><code>dma.copy</code></strong> or <strong>TMA</strong> the next K-slab into shared, and how cleanly you <strong>pipeline</strong> those copies with <strong><code>mma.load</code></strong>. That is why the repository’s SM86 example reaches for <strong><code>dma.copy.async</code></strong> and explicit <strong><code>wait</code></strong>: the arithmetic in <strong><code>mma.row.row</code></strong> is not the bottleneck you optimize first; <strong>latency hiding</strong> is.</p>
+<p>When you profile, interpret high <strong>tensor core utilization</strong> with care. Choreo makes the <strong>instruction sequence</strong> legible; occupancy, <strong>L2</strong> traffic, and <strong>bank conflicts</strong> in shared still decide whether you are feeding those units fast enough.</p>
+<p>If you expand tiles, watch <strong>shared footprint</strong> and <strong>register spills</strong>—both show up as sudden cliffs in effective TFLOPS.</p>
+<p>In raw CUDA C++, WMMA and PTX require you to declare <strong><code>fragment</code></strong> types with specific shapes and manually <strong><code>load_matrix_sync</code></strong>, <strong><code>mma_sync</code></strong>, and <strong><code>store_matrix_sync</code></strong>, keeping track of <strong>row-major versus column-major</strong> variants and <strong><code>ldmatrix</code></strong> staging patterns.</p>
+<p>Choreo pushes that detail below the surface. <strong><code>mc</code></strong>, <strong><code>ma</code></strong>, and <strong><code>mb</code></strong> are <strong>logical MMA tiles</strong> in accumulator and operand register files. <strong><code>mma.load</code></strong> and <strong><code>mma.store</code></strong> connect <strong>shared-memory slices</strong> to those registers using the same <strong>chunking</strong> / <strong><code>subspan</code></strong> vocabulary you already use for DMA and TMA.</p>
+<p><strong><code>mma.row.row</code></strong> selects the <strong>instruction semantic</strong> (here: row-major times row-major into the accumulator). You still must choose <strong>consistent layouts</strong> (correct <strong><code>mma.*</code></strong> variant for your data), tile sizes that <strong>divide</strong> the hardware MMA geometry (<strong>16</strong> on SM86 for this FP16 path), and a <strong>thread hierarchy</strong> (<strong><code>: group</code></strong> versus <strong><code>: group-4</code></strong>) that matches the ISA.</p>
+<p>Choreo does not remove those constraints—it makes them <strong>readable</strong> and keeps the <strong>register mapping</strong> out of your way.</p>
+<p>Before you treat a kernel as “done,” skim this list. <strong>Shapes</strong>: do <strong><code>MATMUL_TILE_*</code></strong> and <strong><code>MATMUL_MMA_*</code></strong> line up so every <strong><code>chunkat</code></strong> / <strong><code>subspan</code></strong> is a whole number of MMA tiles? <strong>Layouts</strong>: does <strong><code>mma.row.row</code></strong> (or your chosen variant) match how <strong><code>lhs</code></strong> and <strong><code>rhs</code></strong> are actually stored in global memory?</p>
+<p><strong>Synchronization</strong>: after async copies, did you <strong><code>wait</code></strong> (or equivalent) before <strong><code>mma.load</code></strong>? <strong>Scope</strong>: is <strong><code>parallel … : group</code></strong> used for SM86-style per-warp MMA, and <strong><code>group-4</code></strong> only where WGMMA is intended?</p>
+<p>It helps to name what you are <em>not</em> writing. In PTX-flavored workflows you might thread <strong>A</strong> and <strong>B</strong> through <strong><code>ldmatrix</code></strong> with a specific <strong>layout</strong> bit, then feed the result into <strong><code>mma.sync</code></strong>.</p>
+<p>Choreo’s <strong><code>mma.load</code></strong> is the composite “get a tile from shared into the operand register file” step; <strong><code>mma.row.row</code></strong> is the “multiply with this major-ness assumption” step; <strong><code>mma.store</code></strong> reverses the path for <strong>C</strong>. That decomposition mirrors how experts think about kernels—memory → math → memory—even when the underlying SASS bundles several micro-ops.</p>
+<p>When you debug a wrong result, suspect <strong>layout first</strong> (row versus column major, and whether <strong>rhs</strong> is <strong><code>[N,K]</code></strong> versus <strong><code>[K,N]</code></strong>), then <strong>indexing</strong> (which <strong><code>block_m</code></strong>, <strong><code>block_n</code></strong>, and K slice you attached with <strong><code>.at</code></strong> / <strong><code>chunkat</code></strong>), then <strong>async ordering</strong> if you introduced <strong><code>dma.copy.async</code></strong>.</p>
+<p>The <strong><code>mma.row.row</code></strong> token is read as <strong>“treat the left operand as row-major, the right operand as row-major.”</strong> Choreo may offer additional MMA variants for other major orders or transposed views; they exist because the hardware instruction set exposes <strong>multiple encodings</strong> for the same mathematical multiply, each assuming a particular <strong>register packing</strong>.</p>
+<p>If you have ever fought <strong><code>layout_t</code></strong> arguments in WMMA, this is the same decision with a choreographic name. Choosing correctly is not a performance hint—it is <strong>required for correctness</strong>.</p>
+<p>The <strong>global</strong> tensor layout, the <strong>shared</strong> staging pattern, and the <strong>MMA</strong> variant must agree. When in doubt, draw a 4×4 <strong>toy matrix</strong> on paper, mark how elements sit in memory, and check which <strong>row</strong> or <strong>column</strong> interpretation your <strong><code>chunkat</code></strong> slices preserve.</p>
+<p>With <strong><code>MATMUL_MMA_M = MATMUL_MMA_N = 16</code></strong>, each <strong><code>mma.store</code></strong> commits <strong>256</strong> output elements worth of <strong>C</strong> for that warp (in FP16). Each <strong><code>mma.row.row</code></strong> fuses a <strong>16×16</strong> update that consumed a <strong>16×16×16</strong> contraction along K for that step.</p>
+<p>Walking <strong><code>iv_k</code></strong> and <strong><code>iv_warp_k</code></strong> simply <strong>sums</strong> those contractions into the same <strong><code>mc</code></strong> until the full <strong>K</strong> dimension for the block tile is covered.</p>
+<p>If you shrink <strong><code>MATMUL_TILE_K</code></strong> below <strong>16</strong>, you still need <strong><code>MATMUL_MMA_K</code></strong> to remain <strong>16</strong> for this instruction shape—the inner loop’s trip count would become fractional unless you pad or switch ISA. That is why tutorials and benchmarks usually keep <strong>tile K</strong> as a multiple of <strong>16</strong> for FP16 MMA on Ampere.</p>
+<h2 id="looking-ahead">Looking ahead<a class="headerlink" href="#looking-ahead" title="Permanent link">&para;</a></h2>
+<p>On <strong>SM86</strong>, tensor cores show up as a <strong>per-warp</strong> pipeline: <strong><code>mma.fill</code></strong> zeros <strong><code>mc</code></strong>, <strong><code>mma.load</code></strong> pulls <strong><code>ma</code></strong> / <strong><code>mb</code></strong> from shared, <strong><code>mma.row.row</code></strong> does <strong>C += AB</strong>, and <strong><code>mma.store</code></strong> writes <strong><code>mc</code></strong> back to shared under <strong><code>parallel … : group</code></strong>. <strong><code>dma.copy</code></strong> or <strong><code>dma.copy.async</code></strong> with <strong><code>wait</code></strong> stages K-slabs from global memory. On <strong>Hopper</strong>, the same <strong>fill → load → multiply → store</strong> rhythm pairs <strong>TMA</strong> with <strong><code>mma.load.swiz&lt;N&gt;</code></strong> and <strong><code>parallel … : group-4</code></strong> for WGMMA.</p>
+<p><strong><code>mc = mma.fill 0.0</code></strong> (or <strong><code>mma.fill.f16</code></strong> / <strong><code>mma.fill.f32</code></strong> where the kernel demands) holds the accumulator for the full K sweep. <strong><code>mma.row.row mc, ma, mb</code></strong> is row-major <strong>C += A × B</strong> on tensor cores; <strong><code>mma.store mc, output_s.…</code></strong> hands <strong>C</strong> to shared for global write-back. <strong><code>: group</code></strong> is one warp—the SM86 MMA scope; <strong><code>: group-4</code></strong> is four warps on SM90 and is not a drop-in on Ampere-style kernels. <strong><code>mc</code></strong>, <strong><code>ma</code></strong>, and <strong><code>mb</code></strong> remain <strong>opaque</strong> logical tiles; the compiler maps lanes and register counts.</p>
+<p>Widen <strong><code>MATMUL_TILE_M</code></strong> / <strong><code>MATMUL_TILE_N</code></strong> to 32 with MMA still 16×16×16 and reconcile warp count inside <strong><code>parallel {warp_m, warp_n} … : group</code></strong> with the register-pressure comments in <strong><code>matmul_f16_dyn_sm86.co</code></strong>. Diff that file against <strong><code>matmul_f16_dyn_sm90.co</code></strong> for “same lifecycle, different mechanism” versus Hopper-only lines, and try omitting <strong><code>wait</code></strong> in a scratch copy to see verification fail—<strong>memory visibility</strong> before <strong><code>mma.load</code></strong>. For reference, read <strong><code>choreo/benchmark/performance/matmul/matmul_f16_dyn_sm86.co</code></strong> and <strong><code>matmul_f16_dyn_sm90.co</code></strong> end to end (compare <strong><code>tma.copy.swiz</code></strong> with <strong><code>mma.load.swiz</code></strong>). On new matmul <strong><code>.co</code></strong> files, skim <strong><code>mma.</code></strong> first, then <strong><code>dma.copy</code></strong> versus <strong><code>tma.copy</code></strong>, then <strong><code>group</code></strong> versus <strong><code>group-4</code></strong>. Later topics—persistent kernels, warp specialization, FP8 and other dtypes in the same tree—reuse this skeleton. <strong>Choreo describes orchestration</strong>: you still allocate <strong><code>global</code></strong> buffers, launch, and validate like any CUDA program; carry the tileflow <strong>recipe</strong> into the next chapter. Newer GPUs may change thread scope, swizzles, and copy engines, but <strong>fill → load → multiply → store</strong> remains the backbone.</p>
 
 
 

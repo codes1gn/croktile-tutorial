@@ -2743,7 +2743,7 @@
 
 
 <h1 id="block-scaled-gemm-fp8-e4m3-case-study">Block-Scaled GEMM FP8 (E4M3): Case Study<a class="headerlink" href="#block-scaled-gemm-fp8-e4m3-case-study" title="Permanent link">&para;</a></h1>
-<p>This case study traces <strong>FP8 E4M3 matrix multiply with per-block scaling</strong> on <strong>Hopper SM90a</strong>, measured on <strong>H800 PCIe</strong> (114 SMs). Operand values use the narrow <strong>e4m3</strong> format; <strong>FP16</strong> holds the accumulator. Along <strong>K</strong>, each block of values (here aligned with <strong>128</strong>-element tiles) carries <strong>FP32 scale factors</strong> for the left and right operands so inner products can be reconstructed at useful accuracy without abandoning FP8 storage bandwidth.</p>
+<p>This walkthrough follows <strong>FP8 E4M3 matrix multiply with per-block scaling</strong> on <strong>Hopper SM90a</strong>, measured on <strong>H800 PCIe</strong> (114 SMs). Operands are <strong>e4m3</strong>; the accumulator stays in <strong>FP16</strong>. Along <strong>K</strong>, each block aligned with <strong>128</strong>-element tiles carries <strong>FP32 scale factors</strong> for left and right operands so inner products stay useful after quantization without giving up FP8 bandwidth.</p>
 <p><strong>Reference peak (headline)</strong></p>
 <table>
 <thead>
@@ -2763,7 +2763,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>End-to-end results (from AI-tune 2026-03-22)</strong></p>
+<p><strong>End-to-end results (AI-tune 2026-03-22)</strong></p>
 <table>
 <thead>
 <tr>
@@ -2812,11 +2812,11 @@
 </tr>
 </tbody>
 </table>
-<p>Absolute efficiency vs <strong>3026 TFLOPS</strong> stays modest because blockscaled GEMM does <strong>extra scale traffic and fused math</strong> beyond a plain FP8 GEMM; the interesting story is <strong>relative gain</strong> from scheduling, tile geometry, cache hints, and scale prefetch.</p>
+<p>Efficiency vs <strong>3026 TFLOPS</strong> stays modest because blockscaled GEMM pays extra scale traffic and fused math compared with a plain FP8 GEMM; the interesting part is <strong>relative gain</strong> from scheduling, tile geometry, cache hints, and scale prefetch.</p>
 <p><strong>How to read the series</strong></p>
 <ol>
-<li><a href="baseline-analysis/">Baseline and block-scaling background</a> — why per-block scales exist, how the baseline kernel is structured, and what the first throughput numbers imply.</li>
-<li><a href="pattern-optimizations/">Optimization patterns</a> — TMA overlap, N256 tiles, L2 promotion, scale prefetch, and how <strong>Choreo</strong> sources in <code>benchmark/performance/blockscale_gemm/</code> and <code>blockscale_gemm_v2/</code> explore scale <strong>DMA to shared memory</strong> and layout variants.</li>
+<li><a href="baseline-analysis/">Baseline and block-scaling background</a> — why per-block scales exist, how the baseline kernel is wired, and what the first throughput numbers mean in context.</li>
+<li><a href="pattern-optimizations/">Optimization patterns</a> — TMA overlap, N256 tiles, L2 promotion, scale prefetch, and how sources under <code>benchmark/performance/blockscale_gemm/</code> and <code>blockscale_gemm_v2/</code> explore scale <strong>DMA to shared memory</strong> and layout variants.</li>
 </ol>
 <p><strong>Compile and run (Cute backend example)</strong></p>
 <div class="highlight"><pre><span></span><code>./choreo<span class="w"> </span>-gs<span class="w"> </span>-t<span class="w"> </span>cute<span class="w"> </span>-arch<span class="o">=</span>sm_90a<span class="w"> </span>--use-warpspec<span class="w"> </span>--stmatrix<span class="w"> </span><span class="se">\</span>

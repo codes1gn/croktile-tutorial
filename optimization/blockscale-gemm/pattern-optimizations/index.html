@@ -1332,21 +1332,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#choreo-source-variants-exploration-not-the-iter-table" class="md-nav__link">
+  <a href="#choreo-source-variants" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Choreo source variants (exploration, not the iter table)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#environment-variables-reproducibility" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Environment variables (reproducibility)
+        Choreo source variants
       
     </span>
   </a>
@@ -2856,21 +2845,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#choreo-source-variants-exploration-not-the-iter-table" class="md-nav__link">
+  <a href="#choreo-source-variants" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Choreo source variants (exploration, not the iter table)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#environment-variables-reproducibility" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Environment variables (reproducibility)
+        Choreo source variants
       
     </span>
   </a>
@@ -2986,7 +2964,7 @@
 
 
 <h1 id="optimization-patterns-block-scaled-gemm-fp8">Optimization Patterns: Block-Scaled GEMM FP8<a class="headerlink" href="#optimization-patterns-block-scaled-gemm-fp8" title="Permanent link">&para;</a></h1>
-<p>This document walks the <strong>patterns</strong> that moved <strong>blockscale GEMM E4M3</strong> from the <strong>baseline</strong> (<code>blockscale_gemm_dyn_sm90.co</code>) to the <strong>best shipped kernel</strong> (<strong>iter066</strong>), using the <strong>2026-03-22</strong> AI-tune log as the source of truth. All kernels target <strong>SM90a</strong>; headline <strong>peak</strong> remains <strong>3026 TFLOPS</strong> on <strong>H800 PCIe</strong>.</p>
+<p>This page follows the patterns that moved blockscale GEMM E4M3 from the baseline (<code>blockscale_gemm_dyn_sm90.co</code>) to the best shipped kernel (<strong>iter066</strong>), using the <strong>2026-03-22</strong> AI-tune log as the source of truth. Targets are <strong>SM90a</strong>; headline peak stays <strong>3026 TFLOPS</strong> on H800 PCIe. Timing and environment knobs are documented in <a href="../../setup-profiling/">setup-profiling.md</a>.</p>
 <h2 id="results-ladder-20483-and-40963">Results ladder (2048³ and 4096³)<a class="headerlink" href="#results-ladder-20483-and-40963" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -3036,109 +3014,39 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Best @2048³</strong>: <strong>iter049</strong> (<strong>+21%</strong> vs baseline). <strong>N256</strong> shifts can <strong>trade small-cube grid size</strong> for <strong>large-cube throughput</strong>, so <strong>iter051</strong> is slightly <strong>below</strong> baseline at <strong>2048³</strong> while winning at <strong>4096³</strong>.</p>
+<p><strong>Best @2048³</strong> is <strong>iter049</strong> (<strong>+21%</strong> vs baseline). <strong>N256</strong> trades small-cube grid density for large-cube throughput, so <strong>iter051</strong> sits slightly below baseline at <strong>2048³</strong> while winning at <strong>4096³</strong>.</p>
+<p>The four sections below follow that ladder: first you fix the schedule so TMA does not wait on scale work (<strong>iter049</strong>), then you widen the math tile (<strong>iter051</strong>), then you help the RHS stick in cache (<strong>iter053</strong>), and finally you pull scale loads ahead of the hot loop (<strong>iter066</strong>). Each step assumes you are already on the warp-specialized 1p1c template described in <a href="../baseline-analysis/">baseline-analysis.md</a>.</p>
 <h2 id="pattern-1-tma-overlap-after-wgmma-iter049">Pattern 1: TMA overlap after WGMMA (iter049)<a class="headerlink" href="#pattern-1-tma-overlap-after-wgmma-iter049" title="Permanent link">&para;</a></h2>
-<p><strong>Symptom</strong>: The consumer waits on <strong>WGMMA</strong>, then performs <strong>scale-related accumulation</strong> work, while the <strong>next</strong> <strong>K-tile</strong> operands are not yet <strong>in flight</strong>—<strong>TMA</strong> sits <strong>idle</strong> at the handoff.</p>
-<p><strong>Change</strong>: <strong>Issue the next K-block’s TMA loads</strong> as soon as the <strong>WGMMA wait</strong> completes, <strong>before</strong> or <strong>in parallel with</strong> <strong>scale_accumulator</strong> logic, so <strong>memory latency</strong> overlaps <strong>non-WGMMA</strong> math.</p>
-<p><strong>Outcome</strong>: <strong>380 TFLOPS</strong> at <strong>2048³</strong> (<strong>+21%</strong> over <strong>314.2</strong>), without changing the <strong>M64N128K32</strong> tile class.</p>
-<p><strong>Reading</strong>: This is a <strong>software pipeline</strong> refinement in the spirit of <a href="../../../tutorial/ch03-pipeline/">Chapter 3: Pipelining</a>: reorder <strong>independent</strong> work so the <strong>longest-latency</strong> piece (<strong>TMA</strong>) starts <strong>earlier</strong>. Blockscale adds <strong>scale_accumulator</strong> as a <strong>third</strong> phase beside <strong>load</strong> and <strong>MMA</strong>; <strong>iter049</strong> shows that phase can <strong>share</strong> the bubble with <strong>TMA</strong>.</p>
+<p>The consumer finishes <strong>WGMMA</strong>, does <strong>scale_accumulator</strong> work, and only then drives the next <strong>K</strong>-tile TMA, so TMA sits idle across the handoff. <strong>iter049</strong> issues the <strong>next</strong> <strong>K</strong>-block’s TMA loads as soon as the WGMMA wait completes, overlapping memory latency with scale-related math that does not need the new operands yet.</p>
+<p><strong>Outcome:</strong> <strong>380 TFLOPS</strong> at <strong>2048³</strong> (<strong>+21%</strong> over <strong>314.2</strong>), still in the <strong>M64N128K32</strong> tile class.</p>
+<p>This is the same scheduling instinct as <a href="../../../tutorial/ch03-pipeline/">Chapter 3: Pipelining</a>: move independent work so the longest-latency piece (TMA) starts earlier. Blockscale adds <strong>scale_accumulator</strong> as a third phase beside load and MMA; <strong>iter049</strong> shows that phase can share the bubble with TMA.</p>
 <h2 id="pattern-2-n256-wgmma-double-math-per-tile-iter051">Pattern 2: N256 WGMMA — double math per tile (iter051)<a class="headerlink" href="#pattern-2-n256-wgmma-double-math-per-tile-iter051" title="Permanent link">&para;</a></h2>
-<p><strong>Symptom</strong>: <strong>N128</strong> tiles <strong>finish</strong> <strong>K-pipeline</strong> steps quickly but <strong>launch</strong> <strong>many</strong> CTAs along <strong>N</strong>; on <strong>large</strong> <strong>N</strong>, <strong>wave quantization</strong> and <strong>per-CTA overhead</strong> dominate.</p>
-<p><strong>Change</strong>: Move to <strong>M64N256K32</strong> — <strong>double</strong> the <strong>N</strong> dimension of the <strong>WGMMA</strong> tile per CTA. README notes <strong>~40 KB</strong> <strong>shared memory</strong> for the operand staging footprint.</p>
-<p><strong>Outcome</strong>: <strong>602 TFLOPS</strong> at <strong>4096³</strong> (<strong>iter051</strong>). <strong>2048³</strong> drops to <strong>372 TFLOPS</strong> (vs <strong>380</strong> on <strong>iter049</strong>) because <strong>fewer</strong> blocks cover the <strong>N</strong> dimension; the <strong>grid</strong> is <strong>coarser</strong> and <strong>occupancy</strong>/<strong>parallelism</strong> trade differently.</p>
-<p><strong>Reading</strong>: <strong>Wider N</strong> is the same <strong>GEMM knob</strong> as in dense FP16 tuning: <strong>more math per block</strong>, <strong>fewer blocks</strong>, <strong>heavier SMEM</strong>. For <strong>blockscale</strong>, the <strong>RHS</strong> and <strong>scale_rhs</strong> <strong>footprint</strong> scales with <strong>N</strong>; <strong>SMEM</strong> limits must still allow <strong>multi-stage TMA</strong> if the pipeline uses them.</p>
+<p><strong>N128</strong> tiles finish <strong>K</strong>-pipeline steps quickly but launch many CTAs along <strong>N</strong>; on large <strong>N</strong>, wave quantization and per-CTA overhead hurt. <strong>iter051</strong> moves to <strong>M64N256K32</strong>—double the <strong>N</strong> extent of the WGMMA tile per CTA. The README notes about <strong>40 KB</strong> shared memory for operand staging.</p>
+<p><strong>Outcome:</strong> <strong>602 TFLOPS</strong> at <strong>4096³</strong>. <strong>2048³</strong> falls to <strong>372 TFLOPS</strong> (vs <strong>380</strong> on <strong>iter049</strong>) because fewer blocks cover <strong>N</strong>; the grid is coarser and occupancy trades differently.</p>
+<p>Wider <strong>N</strong> is the same knob as in dense FP16 tuning: more math per block, fewer blocks, heavier SMEM. For blockscale, RHS and <strong>scale_rhs</strong> footprint grows with <strong>N</strong>; you still need enough SMEM headroom if the pipeline stages TMA.</p>
 <h2 id="pattern-3-l2-promotion-on-rhs-tma-iter053">Pattern 3: L2 promotion on RHS TMA (iter053)<a class="headerlink" href="#pattern-3-l2-promotion-on-rhs-tma-iter053" title="Permanent link">&para;</a></h2>
-<p><strong>Symptom</strong>: At <strong>4096³</strong>, <strong>RHS</strong> panels are <strong>large</strong>; <strong>TMA</strong> traffic is <strong>repeatedly</strong> pulled through the <strong>memory hierarchy</strong> without <strong>sticking</strong> in <strong>L2</strong> as effectively as desired.</p>
-<p><strong>Change</strong>: Set <strong><code>CU_TENSOR_MAP_L2_PROMOTION_L2_256B</code></strong> on the <strong>RHS</strong> <strong>tensor map</strong> so hardware <strong>promotes</strong> lines into <strong>L2</strong> with a <strong>256B</strong> granularity policy (NVIDIA <strong>Hopper</strong> TMA / <strong>tensor map</strong> option).</p>
-<p><strong>Outcome</strong>: <strong>610 TFLOPS</strong> at <strong>4096³</strong> (<strong>+8</strong> over <strong>iter051</strong>).</p>
-<p><strong>Reading</strong>: This is a <strong>hint</strong>, not a new algorithm: it <strong>biases</strong> the <strong>cache</strong> toward <strong>reuse</strong> of <strong>RHS</strong> data across <strong>K</strong> iterations and <strong>CTAs</strong> that share <strong>spatial locality</strong>. It pairs naturally with <strong>wider N</strong> (<strong>iter051</strong>), which <strong>increases</strong> <strong>per-CTA</strong> <strong>RHS</strong> volume.</p>
+<p>At <strong>4096³</strong>, RHS panels are large; TMA traffic does not always stick in L2 the way you want. <strong>iter053</strong> sets <strong><code>CU_TENSOR_MAP_L2_PROMOTION_L2_256B</code></strong> on the RHS tensor map so Hopper promotes lines into L2 with a <strong>256B</strong> granularity policy.</p>
+<p><strong>Outcome:</strong> <strong>610 TFLOPS</strong> at <strong>4096³</strong> (<strong>+8</strong> over <strong>iter051</strong>).</p>
+<p>You are not changing the math; you are nudging the memory system. The hint biases the cache toward reuse of RHS data across <strong>K</strong> iterations and CTAs that share spatial locality. It pairs naturally with wider <strong>N</strong> from <strong>iter051</strong>, which increases per-CTA RHS volume and makes L2 behavior matter more.</p>
 <h2 id="pattern-4-prefetch-per-row-scale_a-before-wgmma-iter066">Pattern 4: Prefetch per-row <code>scale_a</code> before WGMMA (iter066)<a class="headerlink" href="#pattern-4-prefetch-per-row-scale_a-before-wgmma-iter066" title="Permanent link">&para;</a></h2>
-<p><strong>Symptom</strong>: <strong>Scale</strong> loads (<strong><code>__ldg</code></strong> or equivalent) can <strong>stall</strong> the <strong>consumer</strong> if they sit <strong>inside</strong> the <strong>tight</strong> <strong>WGMMA</strong> loop with <strong>short</strong> <strong>II</strong>.</p>
-<p><strong>Change</strong>: <strong>Prefetch</strong> <strong>per-row</strong> <strong><code>scale_a</code></strong> values into <strong>registers</strong> <strong>before</strong> the <strong>inner WGMMA</strong> loop body so <strong>load latency</strong> hides <strong>behind</strong> <strong>independent</strong> setup or <strong>prior</strong> <strong>WGMMA</strong> work.</p>
-<p><strong>Outcome</strong>: <strong>621 TFLOPS</strong> at <strong>4096³</strong> (<strong>best</strong>); <strong>+56.1%</strong> vs <strong>baseline 397.9</strong>.</p>
-<p><strong>Reading</strong>: Blockscale makes <strong>scales</strong> <strong>first-class operands</strong>. Treat them like <strong>any other</strong> <strong>latency-bound</strong> input: <strong>software prefetch</strong>, <strong>double-buffering</strong>, or <strong>DMA-to-SMEM</strong> (below) are all <strong>valid</strong> <strong>design</strong> axes.</p>
-<h2 id="choreo-source-variants-exploration-not-the-iter-table">Choreo source variants (exploration, not the iter table)<a class="headerlink" href="#choreo-source-variants-exploration-not-the-iter-table" title="Permanent link">&para;</a></h2>
-<p>The <strong><code>blockscale_gemm_v2/</code></strong> directory holds <strong><code>.co</code></strong> experiments that <strong>factor</strong> the <strong>scale path</strong> differently from the <strong>register-immediate</strong> style in <strong><code>blockscale_gemm_dyn_sm90.co</code></strong>:</p>
-<table>
-<thead>
-<tr>
-<th>File (suffix / name)</th>
-<th>Idea</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong><code>rhs_scale_dma_smem</code></strong></td>
-<td>Bring <strong>RHS-related scales</strong> via <strong>TMA into shared memory</strong> instead of <strong>register</strong> paths only.</td>
-</tr>
-<tr>
-<td><strong><code>scale_dma_smem</code></strong></td>
-<td>General <strong>scale DMA to SMEM</strong> staging.</td>
-</tr>
-<tr>
-<td><strong><code>transposed_scale</code></strong></td>
-<td>Change <strong>scale layout</strong> for <strong>coalescing</strong> / <strong>TMA</strong> vs <strong>index cost</strong>.</td>
-</tr>
-<tr>
-<td><strong><code>tileN</code></strong></td>
-<td><strong>Tile</strong> along <strong>N</strong> explicitly in the <strong>Choreo</strong> structure (compare to <strong>fixed</strong> <strong>WARP_N</strong> macros).</td>
-</tr>
-</tbody>
-</table>
-<p>These align with the <strong>README</strong> theme: <strong>scale DMA</strong> is an alternative to <strong>keeping scales in registers</strong> when <strong>register pressure</strong> or <strong>load scheduling</strong> hurts <strong>WGMMA</strong> <strong>II</strong>.</p>
-<p><strong>Warp-specialized</strong> baselines:</p>
-<ul>
-<li><code>blockscale_gemm_e4m3_dyn_sm90_warpspec_1p1c.co</code> — <strong>1p1c</strong> template.</li>
-<li><code>blockscale_gemm_e4m3_dyn_sm90_warpspec_1p1c_m2048_n2048_k2048.co</code> — adds <strong><code>__cpp__</code></strong> / launch tuning (<strong><code>setmaxnreg</code></strong>-class constraints) for <strong>specific</strong> <strong>M,N,K</strong>.</li>
-</ul>
-<p><strong>Persistent</strong> variant: <code>blockscale_gemm_e4m3_dyn_sm90_warpspec_persis_1p1c.co</code> ties into <a href="../../../tutorial/ch07-persistent/">Chapter 7: Persistent kernels</a> for <strong>grid</strong> behavior across <strong>tiles</strong>.</p>
-<h2 id="environment-variables-reproducibility">Environment variables (reproducibility)<a class="headerlink" href="#environment-variables-reproducibility" title="Permanent link">&para;</a></h2>
-<p>When running generated harnesses or <strong><code>bash /tmp/bs.cute.result</code></strong> wrappers:</p>
-<table>
-<thead>
-<tr>
-<th>Variable</th>
-<th>Role</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>CHOREO_TIMING_WARMUP</code></td>
-<td>Warmup iterations (default <strong>100</strong>)</td>
-</tr>
-<tr>
-<td><code>CHOREO_TIMING_REPEAT</code></td>
-<td>Timed iterations (default <strong>1000</strong>)</td>
-</tr>
-<tr>
-<td><code>CHOREO_DISABLE_TIMING</code></td>
-<td>Set <strong><code>1</code></strong> to skip timing</td>
-</tr>
-<tr>
-<td><code>CHOREO_SKIP_VERIFY</code></td>
-<td>Set <strong><code>1</code></strong> to skip numerical check</td>
-</tr>
-</tbody>
-</table>
-<p>Use <strong><code>--disable-timing</code></strong> on <strong><code>run.sh</code></strong> when you only need <strong>correctness</strong> or <strong>compile</strong> validation.</p>
+<p>Scale loads can stall the consumer if they sit inside a tight WGMMA loop with short II. <strong>iter066</strong> prefetches per-row <strong><code>scale_a</code></strong> into registers <strong>before</strong> the inner WGMMA body so load latency hides behind independent setup or prior WGMMA work.</p>
+<p><strong>Outcome:</strong> <strong>621 TFLOPS</strong> at <strong>4096³</strong>; <strong>+56.1%</strong> vs baseline <strong>397.9</strong>.</p>
+<p>By the time you reach <strong>iter066</strong>, the kernel is already doing heavy WGMMA and wide <strong>N</strong>; the remaining slack often sits in operand latency. Blockscale makes scales first-class operands—treat them like any other latency-bound input. Software prefetch, double-buffering, or DMA-to-SMEM (see the <strong>v2</strong> variants below) are all design axes when registers or scheduling bind.</p>
+<h2 id="choreo-source-variants">Choreo source variants<a class="headerlink" href="#choreo-source-variants" title="Permanent link">&para;</a></h2>
+<p>Under <strong><code>blockscale_gemm_v2/</code></strong>, additional <strong><code>.co</code></strong> files factor the scale path differently than register-immediate style in <strong><code>blockscale_gemm_dyn_sm90.co</code></strong>: <strong><code>rhs_scale_dma_smem</code></strong> and <strong><code>scale_dma_smem</code></strong> stage scales via TMA into shared memory; <strong><code>transposed_scale</code></strong> changes layout for coalescing vs index cost; <strong><code>tileN</code></strong> tiles along <strong>N</strong> explicitly in the Choreo structure. Those align with the README theme that <strong>scale DMA</strong> is an alternative when register pressure or load scheduling hurts WGMMA II.</p>
+<p>Warp-specialized entry points include <strong><code>blockscale_gemm_e4m3_dyn_sm90_warpspec_1p1c.co</code></strong> (1p1c template) and <strong><code>..._m2048_n2048_k2048.co</code></strong> for launch and register tuning. <strong><code>blockscale_gemm_e4m3_dyn_sm90_warpspec_persis_1p1c.co</code></strong> connects to <a href="../../../tutorial/ch07-persistent/">Chapter 7: Persistent kernels</a> for grid behavior across tiles.</p>
 <h2 id="compile-flags-cute-warp-specialization">Compile flags (Cute + warp specialization)<a class="headerlink" href="#compile-flags-cute-warp-specialization" title="Permanent link">&para;</a></h2>
-<p>The tutorial index gives a <strong>representative</strong> <strong>choreo</strong> command:</p>
 <div class="highlight"><pre><span></span><code>./choreo<span class="w"> </span>-gs<span class="w"> </span>-t<span class="w"> </span>cute<span class="w"> </span>-arch<span class="o">=</span>sm_90a<span class="w"> </span>--use-warpspec<span class="w"> </span>--stmatrix<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>benchmark/performance/blockscale_gemm_v2/blockscale_gemm_e4m3_dyn_sm90_warpspec_1p1c.co<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-o<span class="w"> </span>/tmp/bs.cute.result<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>bash<span class="w"> </span>/tmp/bs.cute.result<span class="w"> </span>--execute
 </code></pre></div>
-<ul>
-<li><strong><code>-arch=sm_90a</code></strong> selects <strong>Hopper</strong> features (<strong>WGMMA</strong>, <strong>TMA</strong>).</li>
-<li><strong><code>--use-warpspec</code></strong> matches <strong>1p1c</strong> (and related) <strong>producer/consumer</strong> lowering.</li>
-<li><strong><code>--stmatrix</code></strong> enables <strong>store-matrix</strong> paths for <strong>accumulator</strong> writeback where the compiler pipeline expects it.</li>
-</ul>
-<p>Shipped <strong>iter049 / iter051 / iter053 / iter066</strong> artifacts are <strong>pre-generated <code>.cu</code></strong> folders with <strong><code>run.sh</code></strong>; use those for <strong>bit-identical</strong> reproduction of the <strong>README</strong> numbers.</p>
+<p><strong><code>-arch=sm_90a</code></strong> selects Hopper (WGMMA, TMA). <strong><code>--use-warpspec</code></strong> matches 1p1c producer/consumer lowering. <strong><code>--stmatrix</code></strong> enables store-matrix paths for accumulator writeback where the pipeline expects them. Pre-generated <strong>iter049 / iter051 / iter053 / iter066</strong> trees ship with <strong><code>run.sh</code></strong> for bit-identical reproduction of the README numbers.</p>
 <h2 id="takeaways">Takeaways<a class="headerlink" href="#takeaways" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Blockscale</strong> adds a <strong>scale critical path</strong>; <strong>iter049</strong> proves <strong>scheduling</strong> (<strong>TMA</strong> vs <strong>scale_accumulator</strong>) matters as much as <strong>tile size</strong>.</li>
-<li><strong>N256</strong> (<strong>iter051</strong>) is the <strong>large-cube</strong> win: <strong>more FLOP per CTA</strong>, <strong>cost</strong> at <strong>small</strong> cubes.</li>
-<li><strong>L2 promotion</strong> (<strong>iter053</strong>) and <strong>scale prefetch</strong> (<strong>iter066</strong>) are <strong>late</strong> <strong>percentage</strong> gains on an already <strong>strong</strong> kernel—exactly where <strong>memory hierarchy</strong> and <strong>operand latency</strong> dominate.</li>
-<li><strong>Choreo <code>.co</code> files</strong> in <strong><code>blockscale_gemm/</code></strong> and <strong><code>blockscale_gemm_v2/</code></strong> document <strong>alternative scale movement</strong> (<strong>DMA SMEM</strong>, <strong>transposed</strong>) for <strong>future</strong> tuning when <strong>register</strong> or <strong>layout</strong> limits bind.</li>
+<li>Blockscale adds a <strong>scale critical path</strong>; <strong>iter049</strong> shows scheduling (TMA vs <strong>scale_accumulator</strong>) matters as much as tile size.</li>
+<li><strong>N256</strong> (<strong>iter051</strong>) is the large-cube win: more FLOP per CTA, cost at small cubes.</li>
+<li><strong>L2 promotion</strong> (<strong>iter053</strong>) and <strong>scale prefetch</strong> (<strong>iter066</strong>) are late percentage gains on an already strong kernel—where memory hierarchy and operand latency dominate.</li>
+<li><strong><code>blockscale_gemm/</code></strong> and <strong><code>blockscale_gemm_v2/</code></strong> document alternative scale movement (DMA SMEM, transposed layouts) for future tuning when register or layout limits bind.</li>
 </ol>
 <p>Full iteration history: <strong><code>ai-tune/2026-03-22/blockscale_gemm_v2</code></strong> (71 iterations). Summary: <code>choreo/benchmark/performance/blockscale_gemm_v2/README_blockscale_gemm_e4m3_aitune_2026-03-22.md</code>.</p>
 

@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sparse-gemm-fp16-and-fp8-e4m3-case-study" class="md-skip">
+        <a href="#sparse-gemm-fp16-and-e4m3-24" class="md-skip">
           Skip to content
         </a>
       
@@ -2742,74 +2742,22 @@
   
 
 
-<h1 id="sparse-gemm-fp16-and-fp8-e4m3-case-study">Sparse GEMM: FP16 and FP8 E4M3 Case Study<a class="headerlink" href="#sparse-gemm-fp16-and-fp8-e4m3-case-study" title="Permanent link">&para;</a></h1>
-<p>This case study follows <strong>structured 2:4 sparse matrix multiply</strong> on Hopper (SM90a), measured on <strong>H800 PCIe</strong> (114 SMs). We treat <strong>FP16</strong> and <strong>FP8 E4M3</strong> (accumulate to FP16) as one narrative: same sparsity pattern, same metadata-driven loads, but different tensor paths and ceilings—so optimization patterns <strong>transfer</strong>, while the dominant bottleneck shifts.</p>
-<p><strong>Problem shape (both dtypes)</strong></p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>M × N × K</td>
-<td>4096 × 8192 × 8192</td>
-</tr>
-<tr>
-<td>Sparsity</td>
-<td>NVIDIA 2:4 (four consecutive weights, two kept)</td>
-</tr>
-<tr>
-<td>Peak reference (FP8)</td>
-<td><strong>3026 TFLOPS</strong> (H800 PCIe headline)</td>
-</tr>
-<tr>
-<td>Peak reference (FP16 dense)</td>
-<td><strong>1513 TFLOPS</strong> (context for accumulators)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>End-to-end results</strong></p>
-<table>
-<thead>
-<tr>
-<th>Variant</th>
-<th>Baseline TFLOPS</th>
-<th>Best TFLOPS</th>
-<th>Gain vs baseline</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>FP16</strong> sparse GEMM</td>
-<td>368</td>
-<td><strong>655</strong> (iter143)</td>
-<td><strong>+78%</strong></td>
-</tr>
-<tr>
-<td><strong>E4M3</strong> sparse GEMM</td>
-<td>671</td>
-<td><strong>1127</strong> (iter068)</td>
-<td><strong>+68%</strong></td>
-</tr>
-</tbody>
-</table>
-<p>The FP16 line peaks lower in absolute TFLOPS but shows how <strong>metadata bandwidth</strong>, <strong>TMA layout</strong>, and <strong>pipeline depth</strong> compound; E4M3 starts from a stronger baseline and benefits especially from <strong>software pipelining</strong> and <strong>early-empty / barrier</strong> refinements.</p>
-<p><strong>How to read the series</strong></p>
+<h1 id="sparse-gemm-fp16-and-e4m3-24">Sparse GEMM: FP16 and E4M3 (2:4)<a class="headerlink" href="#sparse-gemm-fp16-and-e4m3-24" title="Permanent link">&para;</a></h1>
+<p>This case study walks <strong>structured 2:4</strong> sparse GEMM on Hopper (SM90a), measured on <strong>H800 PCIe</strong> (114 SMs). You run the same logical problem in <strong>FP16</strong> and <strong>FP8 E4M3</strong> (accumulate to FP16): one sparsity pattern, one metadata story, two different math paths and ceilings.</p>
+<p><strong>Problem:</strong> (4096 \times 8192 \times 8192) GEMM with NVIDIA <strong>2:4</strong> on the sparse operand—groups of four weights along <strong>K</strong>, two kept, two zero, with hardware metadata selecting the active pair.</p>
+<p><strong>Results (TFLOPS on this harness and shape)</strong></p>
+<ul>
+<li><strong>FP16:</strong> 368 → <strong>655</strong> (+78%), best at <strong>iter143</strong></li>
+<li><strong>E4M3:</strong> 671 → <strong>1127</strong> (+68%), best at <strong>iter068</strong></li>
+</ul>
+<p>For scale only: FP8 peak on this class of GPU is <strong>3026 TFLOPS</strong>, FP16 dense peak <strong>1513 TFLOPS</strong>. Sparse kernels are not compared to those as “efficiency of dense GEMM”; they anchor whether your numbers are in the right ballpark.</p>
+<p><strong>Read next</strong></p>
 <ol>
-<li><a href="baseline-analysis/">Baseline and sparse GEMM background</a> — 2:4 structure, why metadata matters, and what the Choreo baselines are doing.</li>
-<li><a href="pattern-optimizations/">Optimization patterns</a> — patterns that apply to both F16 and E4M3, with dtype-specific notes.</li>
-<li><a href="aitune-last-mile/">AI-tune last mile</a> — <code>.co</code> vs <code>.cu</code>, iter120 vs iter143 on FP16, and how automated sweeps explore the space.</li>
+<li><a href="baseline-analysis/">Baseline analysis</a> — what 2:4 implies, why baselines land at 368 / 671, and why <strong>metadata</strong> sits on the critical path.</li>
+<li><a href="pattern-optimizations/">Optimization patterns</a> — sync and warpgroup tuning, metadata delivery, 1p2c and pipeline depth, inner loop and tile geometry, with TFLOPS ladders woven through.</li>
+<li><a href="aitune-last-mile/">AI-tune and the last mile</a> — the <strong><code>.co</code> / <code>.cu</code> boundary</strong> on FP16 (plateau at iter120, breakthrough to iter143) versus E4M3, where automated sweeps carry most of the distance to iter068.</li>
 </ol>
-<p>Sources of truth for iteration tables: <code>choreo/benchmark/performance/gemm_sp/README_gemm_sp_f16_aitune_2026-03-25.md</code> and <code>README_e4m3_aitune_2026-03-21.md</code>. Representative artifacts live under <code>benchmark/performance/gemm_sp/</code> (<code>.co</code> variants and per-iteration <code>.cu</code> subfolders).</p>
-<p><strong>Methodology (shared with other optimization chapters)</strong></p>
-<p>Measurements use the same harness described in <a href="../setup-profiling/">Setting up: TimerOption, TFLOPS, and HW efficiency</a>: warmup, repeated timed runs, and TFLOPS derived from the effective operation count for <strong>2:4</strong> (nonzeros only). Compare sparse results against <strong>FP8</strong> or <strong>FP16</strong> peaks only to sanity-check scale—not to claim “percent of dense GEMM.”</p>
-<p><strong>Tutorial cross-links</strong></p>
-<p>Warp specialization (<a href="../../tutorial/ch06-warpspec/">Ch6</a>), pipelining (<a href="../../tutorial/ch03-pipeline/">Ch3</a>), TMA swizzle (<a href="../../tutorial/ch04-tma-swizzle/">Ch4</a>), and MMA (<a href="../../tutorial/ch05-mma/">Ch5</a>) supply the vocabulary; this case study shows how they compose when a <strong>metadata plane</strong> sits beside the operand plane.</p>
-<p><strong>Why two dtypes in one study</strong></p>
-<p>FP16 makes <strong>metadata and layout</strong> mistakes expensive in wall time because the math ceiling is lower. E4M3 raises the math ceiling so <strong>sync and pipeline bubbles</strong> surface sooner. Seeing both curves helps you decide whether the next experiment should target <strong>loads</strong>, <strong>stages</strong>, or <strong>barriers</strong>.</p>
+<p>Iteration tables and short change blurbs live in <code>choreo/benchmark/performance/gemm_sp/README_gemm_sp_f16_aitune_2026-03-25.md</code> and <code>README_e4m3_aitune_2026-03-21.md</code>. Kernel artifacts sit under <code>benchmark/performance/gemm_sp/</code> (<code>.co</code> variants and per-iteration <code>.cu</code> trees).</p>
 
 
 
