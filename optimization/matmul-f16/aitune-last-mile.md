@@ -1,56 +1,108 @@
-# AI-tune: shipped kernels and reproduction
+# AI-Tune: Shipped Kernels and Reproduction
 
-This page is about **how** the final numbers were produced—which **`.co`** files shipped, how to run them, and what Phase 3 learned about **WN** and occupancy—without replaying all 65 iterations. Branch detail: `origin/ai-tune/2026-03-23/matmul_f16`; full tables: `croktile/benchmark/performance/matmul/README_matmul_f16_aitune_2026-03-23.md`.
+This page covers the **how**: which `.co` files shipped, how to run them, and what the Phase 3 WN sweep revealed about occupancy. Branch detail: `origin/ai-tune/2026-03-23/matmul_f16`; full tables: `croktile/benchmark/performance/matmul/README_matmul_f16_aitune_2026-03-23.md`.
 
-**Hardware** — H800 PCIe, **SM90a**, **114** SMs. Compare tuned kernels to **cuBLAS** (~**380** TFLOPS on this stack), not the **~1513** TFLOPS marketing peak. The README quotes **iter061** as **80.7%** of cuBLAS at **8192³** and **100.5%** at **2048³**—the smaller cube favors the chosen tile and stage mix, so short-cube efficiency can read above the library while **8192³** stays the stress case.
+**Hardware:** H800 PCIe, SM90a, 114 SMs. Compare tuned kernels to cuBLAS (~380 TFLOPS), not the ~1513 TFLOPS marketing peak.
 
-## Shipped checkpoints
+## Shipped Checkpoints
 
-**iter048** — **354.1** TFLOPS at **2048³**; **1p1c**, **WN=176**, **STAGES=3**. Shows the three-stage operand ring paying off on a mid-size cube before you scale the grid.
+| Checkpoint | TFLOPS | Size | Configuration |
+| ---------- | ------ | ---- | ------------- |
+| **iter048** | 354.1 | 2048³ | 1p1c, WN=176, STAGES=3 |
+| **iter050** | ~375 | 4096³ | 1p2c split-output, WN=128, STAGES=2 |
+| **iter057** | **382.5** | 8192³ | 1p2c split-output, WN=152, non-persistent |
+| **iter061** | 380.6 | 8192³ | 1p2c split-output, WN=160, K-unroll, wgmma-wait-depth |
 
-**iter050** — **~375** TFLOPS at **4096³**; **1p2c split-output**, **WN=128**, **STAGES=2**. Validates split-output between **2048³** and the final **8192³** push.
+**iter057** is the peak headline. **iter061** trades 1.9 TFLOPS at 8192³ for a stronger cross-size story: 100.5% of cuBLAS at 2048³ and 80.7% at 8192³.
 
-**iter057** — **382.5** TFLOPS at **8192³**; **1p2c split-output**, **WN=152**, **non-persistent**. Best headline in the study vs. the **208.7** main baseline.
+## Build and Run
 
-**iter061** — **380.6** TFLOPS at **8192³**; **1p2c split-output**, **WN=160**, **K-unroll** and Phase-3 wait-depth tuning. Trades **1.9** TFLOPS vs. iter057 for a stronger cross-size story (the **100.5% / 80.7%** cuBLAS pair above). Shared flag bundle; difference is **WN**, **K-unroll**, and **`wgmma-wait-depth`**.
-
-## Build and run
-
-From the Croktile repo root after `make build`, use the same **croktile** flags for each artifact; only the input **`.co`** changes:
+From the Croktile repo root after `make build`, use the same flags for each artifact — only the input `.co` changes:
 
 ```bash
-./croktile -gs -t cute -arch=sm_90a --use-warpspec --stmatrix --hoist-offset --hoist-scale --ptx-barrier --tma-cluster-aware \
+./croktile -gs -t cute -arch=sm_90a \
+  --use-warpspec --stmatrix --hoist-offset --hoist-scale \
+  --ptx-barrier --tma-cluster-aware \
   benchmark/performance/matmul/<INPUT>.co \
   -o /tmp/run.cute.result && bash /tmp/run.cute.result --execute
 ```
 
-Concrete inputs:
+Concrete `.co` filenames:
 
-- **iter057** (best **8192³** TFLOPS): `matmul_f16_aitune_2026-03-23_matmul_f16_iter057_1p2c_so_wn152_nonpersis.co`
-- **iter061**: `matmul_f16_aitune_2026-03-23_matmul_f16_iter061_1p2c_so_wn160_kunroll.co`
-- **iter050**: `matmul_f16_aitune_2026-03-23_matmul_f16_iter050_1p2c_splitout.co`
-- **iter048**: `matmul_f16_aitune_2026-03-23_matmul_f16_iter048_s3_wn176_best.co`
+```
+# iter057 — best 8192³ TFLOPS
+matmul_f16_aitune_2026-03-23_matmul_f16_iter057_1p2c_so_wn152_nonpersis.co
 
-Phase 3 added **`--wgmma-wait-depth=N`** to the README invocations where recorded; **`N`** couples to **STAGES** and **WN**—reproduce with the exact command from the README unless you are sweeping **`N`** deliberately.
+# iter061 — best cross-size robustness
+matmul_f16_aitune_2026-03-23_matmul_f16_iter061_1p2c_so_wn160_kunroll.co
 
-**Harness** — Defaults in the log use **`CROKTILE_TIMING_WARMUP`** (10) and **`CROKTILE_TIMING_REPEAT`** (500). Keep verify on for apples-to-apples TFLOPS; set **`CROKTILE_SKIP_VERIFY=1`** only when you already trust correctness. If noise dominates, raise **`CROKTILE_TIMING_REPEAT`** before you chase shorter warmup.
+# iter050 — split-output validation at 4096³
+matmul_f16_aitune_2026-03-23_matmul_f16_iter050_1p2c_splitout.co
 
-## iter057 vs. iter061
+# iter048 — 3-stage at 2048³
+matmul_f16_aitune_2026-03-23_matmul_f16_iter048_s3_wn176_best.co
+```
 
-Pick **iter057** when **8192³** is the only number that matters (peak headline, strong scaling). Pick **iter061** when one binary should behave well on both small and large cubes without retuning **`MATMUL_*`** per job. Both are **1p2c split-output** with the same compiler bundle.
+Phase 3 added `--wgmma-wait-depth=N` where recorded — `N` couples to STAGES and WN, so reproduce with the exact command from the README unless you are sweeping `N` deliberately.
 
-## Phase 3: WN sweep and the occupancy cliff
+**Harness defaults:** `CROKTILE_TIMING_WARMUP=10`, `CROKTILE_TIMING_REPEAT=500`. Keep verification on for apples-to-apples TFLOPS. Set `CROKTILE_SKIP_VERIFY=1` only when you already trust correctness. If noise dominates, raise `CROKTILE_TIMING_REPEAT` before chasing shorter warmup.
 
-After split-output unlocked cuBLAS-class throughput, Phase 3 swept **WN** at **8192³**. **WN=168** failed: shared memory went past **228 KB**, residency dropped to **one block per SM**, and throughput fell off a cliff—latency hiding across CTAs disappears, so the hit is large, not a few percent. **iter061** at **WN=160** sits near **114.7 KB** with **two CTAs/SM**. You catch that kind of threshold by measuring and by precomputing bytes per block, not by guessing from **WN** alone.
+## Choosing Between iter057 and iter061
 
-Condensed timeline: Phase 1 (iterations ~001–038) — **1p1c** at **2048³**, **214.3** TFLOPS after SMEM and lowering tweaks. Phase 2 (~043–057) — split-output and multi-size validation, **382.5** at **8192³** (**iter057**). Phase 3 (~061–065) — **WN** sweep, **380.6** (**iter061**), **`wgmma-wait-depth`**, **WN=168** failure.
+| | iter057 | iter061 |
+|---|---------|---------|
+| Best for | Peak 8192³ headline | One binary across sizes |
+| WN | 152 | 160 |
+| Extra | non-persistent | K-unroll, wgmma-wait-depth |
+| 8192³ | **382.5** | 380.6 |
+| 2048³ | good | **100.5% of cuBLAS** |
 
-## Reproducibility
+Both are 1p2c split-output with the same compiler flag bundle.
 
-Build **`./croktile`** from the same revision as the **`.co`** file or expect codegen drift. Use **`-arch=sm_90a`** for this GPU class. When you compare to external cuBLAS figures, note driver and library version and GPU clock behavior—thermal or power caps can narrow **~380** TFLOPS references slightly.
+## Phase 3: The WN Sweep and the Occupancy Cliff
 
-## Where the files live
+After split-output unlocked cuBLAS-class throughput, Phase 3 asked: what is the optimal WN for 8192³? The sweep found a sharp boundary:
 
-Dated filenames (`matmul_f16_aitune_2026-03-23_*`) keep artifacts stable in history. Beside them: **`matmul_f16_dyn_sm90.co`** (dynamic baseline), **`matmul_f16_dyn_sm90_warpspec_1p1c.co`**, **`matmul_f16_dyn_sm90_warpspec_1p2c.co`**. For regressions, **`diff -u`** on **`MATMUL_*`** and **`parallel`** structure—those dominate SMEM and roles.
+| WN | SMEM (approx) | CTAs/SM | TFLOPS @8192³ |
+| -- | ------------- | ------- | ------------- |
+| 152 | ~108 KB | 2 | 382.5 |
+| 160 | ~114.7 KB | 2 | 380.6 |
+| **168** | **> 228 KB** | **1** | **cliff** |
 
-Concepts tie back to [index](index.md), [baseline](baseline-analysis.md), and [patterns](pattern-optimizations.md). The parent [optimization index](../index.md) lists this case next to sparse and block-scaled GEMMs; dense FP16 keeps the data path minimal so the schedule story stays visible.
+At WN=168, shared memory exceeded 228 KB. Residency dropped from 2 blocks to 1 block per SM. Latency hiding across CTAs disappeared, and throughput fell catastrophically — not a few percent, but a large, sharp regression.
+
+You catch this kind of threshold by precomputing bytes per block:
+
+```
+SMEM = STAGES × (WM × TK + WN × TK) × sizeof(fp16) + output_staging
+```
+
+and checking against the 228 KB per-SM budget. Do not guess from WN alone.
+
+## Condensed Timeline
+
+| Phase | Iterations | Key Milestone | TFLOPS |
+| ----- | ---------- | ------------- | ------ |
+| Phase 1 | ~001–038 | 1p1c at 2048³ + SMEM/lowering tweaks | 214.3 |
+| Phase 2 | ~043–057 | Split-output, multi-size validation | **382.5** @8192³ |
+| Phase 3 | ~061–065 | WN sweep, K-unroll, wgmma-wait-depth | 380.6 @8192³ |
+
+65 iterations total. Phase 1 took ~38 iterations to improve by +5%. Phase 2 took ~14 iterations to improve by +83%. Phase 3 refined the last few TFLOPS and discovered the WN=168 failure. Power laws are everywhere.
+
+## Reproducibility Notes
+
+- Build `./croktile` from the same revision as the `.co` file, or expect codegen drift.
+- Use `-arch=sm_90a` for this GPU class.
+- When comparing to external cuBLAS figures, note driver version, library version, and GPU clock behavior — thermal or power caps can narrow ~380 TFLOPS references slightly.
+
+## Where the Files Live
+
+Dated filenames (`matmul_f16_aitune_2026-03-23_*`) keep artifacts stable in history. Beside them:
+
+- `matmul_f16_dyn_sm90.co` — dynamic baseline
+- `matmul_f16_dyn_sm90_warpspec_1p1c.co` — 1p1c teaching kernel
+- `matmul_f16_dyn_sm90_warpspec_1p2c.co` — 1p2c split-output template
+
+For regressions, `diff -u` on `MATMUL_*` parameters and `parallel` structure — those dominate SMEM and roles.
+
+Concepts tie back to [baseline analysis](baseline-analysis.md) and [optimization patterns](pattern-optimizations.md). The parent [optimization index](../index.md) lists this case alongside sparse and block-scaled GEMMs.

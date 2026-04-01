@@ -1,41 +1,79 @@
-# Baseline Analysis: Why 2:4 Sits Where It Does
+# Baseline: Why 2:4 Sits Where It Does
 
-You are optimizing **structured 2:4** sparse GEMM at **4096 × 8192 × 8192**. Along the sparse axis (here, **K** in the weight-like operand), every four consecutive values keep **two** nonzeros; the other two are zero. Hardware uses **metadata** to tell the sparse MMA path which lanes are live, so the core fetches **packed** nonzeros instead of pretending the matrix is dense.
+Before we optimize anything, we need to understand what 2:4 structured sparsity actually costs and why the baselines land at 368 (FP16) and 671 (E4M3) TFLOPS.
 
-That regularity is what makes tiling and TMA predictable: you get a **2×** compression along **K** on the sparse side in terms of stored weights. The tradeoff is explicit: **metadata traffic** and **instruction overhead** ride next to operand traffic. Once operand TMA and WGMMA are in decent shape, **metadata** often becomes a first-class bottleneck—extra loads on the path from global memory (or staging) to the MMA interface, not a free sideband.
+## What 2:4 Structured Sparsity Means
 
-When you profile, you want to separate **tensor math**, **TMA / shared staging**, **metadata** (latency, coalescing, cache behavior), and **synchronization** between producer and consumer warpgroups. Sparse work teaches you to never let MMA sit idle waiting on meta while DRAM looks fine.
+Along the sparse axis (K in the weight-like operand), every four consecutive values keep **two** nonzeros; the other two are zero. The hardware uses **metadata** to tell the sparse MMA path which lanes are live, so the core fetches **packed** nonzeros instead of pretending the matrix is dense.
 
----
+This gives you 2× compression along K on the sparse side in terms of stored weights. The tradeoff is explicit: **metadata traffic** and **instruction overhead** ride alongside operand traffic. You are not getting sparsity for free — you are trading matrix bandwidth for metadata bandwidth.
 
-**FP16 baseline: 368 TFLOPS.** The starting kernel is already using Hopper in earnest: **1p1c** (one TMA producer warpgroup, one consumer), **swizzle 64** on the lhs packing / shared layout, **TK 64**, and a **2-stage** operand pipeline. At 368 TFLOPS the schedule is not broken; it is **shallow** and **metadata-conservative** relative to what the SM can sustain when stages, warp mix, and vectorized or TMA-backed metadata line up. TK64 and two stages leave little slack to hide metadata latency next to the math path.
+## The FP16 Baseline: 368 TFLOPS
 
-Compare 368 TFLOPS to the **1513 TFLOPS** FP16 dense peak on this GPU class only for order of magnitude. Sparse effective FLOPs per stored element differ from dense, and metadata is real work. The question that matters is whether time goes to **MMA**, **TMA**, or **metadata plus barriers**.
+The starting kernel uses Hopper in earnest:
 
-**E4M3 baseline: 671 TFLOPS.** Here the baseline already reflects stronger FP8-oriented choices: still **1p1c**, but **swizzle 128 / 128** on lhs and rhs, a **prepacked** sparse operand, and **2-stage** pipelining. Roughly **22%** of the **3026 TFLOPS** FP8 headline peak is a reasonable sanity check for a first structured-sparse implementation before you push **deep staging** and **producer–consumer overlap**. The math ceiling is higher than FP16, so **sync and pipeline bubbles** tend to show up sooner in relative terms even when absolute TFLOPS looks strong.
+| Parameter | Value |
+| --------- | ----- |
+| Warp spec | 1p1c (one TMA producer, one WGMMA consumer) |
+| Swizzle | 64 on LHS packing / shared layout |
+| TK | 64 |
+| Pipeline | 2-stage operand ring |
 
----
+At 368 TFLOPS the schedule is not broken — it is **shallow** and **metadata-conservative**. TK64 and two stages leave little slack to hide metadata latency next to the math path. The pipeline works; it just does not run far enough ahead.
 
-**Why metadata shows up in profiles.** Symptoms include consumers with decent `wgmma` issue rates but **gaps between fragments**, extra L1/L2 traffic from scalar or poorly grouped loads compared to operand TMA, and **serial dependence** when metadata is read **inside** the K loop without prefetch into registers or shared. The FP16 AI-tune chain attacks that with `__ldg`, **`uint2` vectorization**, **hoisting**, L2-friendly grouping, and eventually **TMA-backed metadata**. On E4M3, **TMA metadata staging** appears as early as **iter001 (759 TFLOPS)**—the same idea at a higher baseline.
+Compare 368 to the 1513 TFLOPS FP16 dense peak only for order of magnitude — sparse effective FLOPs per stored element differ from dense, and metadata is real work. The question that matters is whether time goes to MMA, TMA, or metadata-plus-barriers.
 
-**Vocabulary you will see on the next pages:** **1p1c / 1p2c** is one producer versus one producer with **two** consumer warpgroups (warp specialization). **TK** is the tile size along **K** in the inner steady state. **2-stage / 3-stage** counts buffered operand slots in the async ring. **Prepack** means the sparse operand is already in the hardware-packed 2:4 layout.
+## The E4M3 Baseline: 671 TFLOPS
 
----
+The E4M3 baseline reflects stronger FP8-oriented choices from the start:
 
-**Milestones preview (same story, two dtypes).** On FP16, the README anchors **368** (baseline) → **434** at **iter120** (best `.co`: 1p2c + 3-stage) → **543** at **iter137** (hand `.cu`: inner unroll 24 and FTZ) → **655** at **iter143** (TK128, TMA metadata, split RHS TMA). The step from 434 to 655 is the **`.co` versus `.cu` gap** in miniature; [aitune-last-mile](aitune-last-mile.md) unpacks that.
+| Parameter | Value |
+| --------- | ----- |
+| Warp spec | 1p1c |
+| Swizzle | 128/128 on LHS and RHS |
+| Operand format | Prepacked sparse |
+| Pipeline | 2-stage |
 
-On E4M3, the ladder runs **671** (baseline) → **759** (iter001, TMA metadata) → **772** (iter016, early empty + merged barrier) → **811** (iter023, software pipeline + `warpgroup_wait<1>`) → **897** (iter036, 1p2c) → **1090** (iter040, **3-stage**) → **1127** (iter068, early empty **arrive**). The jump into **>1000 TFLOPS** at iter040 is the signature of **pipeline depth** once operands **and** metadata prefetch far enough ahead; the last tens of TFLOPS are **sync polish** on top of that.
+671 TFLOPS is roughly 22% of the 3026 TFLOPS FP8 peak — a reasonable starting point before pushing deep staging and producer-consumer overlap. The math ceiling is higher than FP16, so sync and pipeline bubbles show up sooner in relative terms even when absolute TFLOPS looks strong.
 
-**Pipeline depth versus tile width.** More stages hide TMA and metadata latency but cost shared memory and registers; if occupancy collapses, extra stages can hurt. For this shape, the measured E4M3 jump at **3-stage** says the SM had enough headroom—likely because metadata staging and warp specialization had already trimmed bubbles. Widening **TK** (FP16 **TK128** at iter143) amortizes inner-loop and epilogue overhead per K step but forces you to revisit **swizzle**, **TMA descriptors**, and **metadata** layout together—never TK in isolation.
+## Why Metadata Shows Up in Profiles
 
----
+When you profile a 2:4 sparse GEMM, the symptoms of metadata bottlenecks look like this:
 
-**Shape and measurement.** At **4096 × 8192 × 8192**, **N** and **K** are large relative to **M**, so wave packing on **114 SMs** can make grid efficiency sensitive to tile choices. When you compare iterations, watch for CTA count changes that move tail-wave behavior; the cleanest A/B tests are edits that touch **only** inner-loop sync or scheduling while the grid stays the same. TFLOPS here follow the harness in [setup-profiling](../setup-profiling.md) for 2:4 (nonzeros only); keep the formula fixed so before/after runs stay comparable.
+- Consumers show decent `wgmma` issue rates but **gaps between fragments**
+- Extra L1/L2 traffic from scalar or poorly grouped loads compared to operand TMA
+- **Serial dependence** when metadata is read inside the K loop without prefetch into registers or shared memory
 
-Timings can wobble with L2 state or clock behavior; prefer a **median** over many repeats and, when you need tight comparisons, controlled clocks. A few TFLOPS of noise at **1100+** is sub‑percent—small relative to iter040→iter068, so methodology matters for last-mile claims.
+The optimization chains on both dtypes attack these symptoms with different tools: `__ldg` read-only cache paths, `uint2` vectorization, hoisting, L2-friendly grouping, and eventually TMA-backed metadata. On E4M3, TMA metadata staging appears as early as iter001 (759 TFLOPS). On FP16, it is part of the iter143 mix alongside TK128 and split RHS TMA.
 
-**Correctness.** Throughput is useless if metadata disagrees with packed indices. Keep host checks enabled while you churn **TK** and **unroll**—those are the edits most likely to misalign 2:4 silently.
+## Lower Bounding What the Kernel Does
 
-**Dense case study.** The [dense FP16 matmul](../matmul-f16/index.md) story tops out near cuBLAS-class throughput at **8192³**. Sparse FP16 here reaches **655 TFLOPS** at a different shape and FLOP definition; the habits still rhyme—**stages**, **1p2c**, **swizzle**, **TMA** first, micro-optimizations after you know where the profile points.
+For a 4096 × 8192 × 8192 GEMM with 2:4 sparsity:
 
-When you are done with baselines, continue to [optimization patterns](pattern-optimizations.md) for the pattern narrative tied to those TFLOPS numbers, and [aitune-last-mile](aitune-last-mile.md) for where automation hands off to hand-authored CUDA on FP16.
+```
+Effective FLOPs: 2 × 4096 × 8192 × 8192 × (2/4) ≈ 275 GFLOP
+                 (only 2 of 4 elements contribute per group)
+Packed operand:  8192 × (8192/2) × element_size
+                 (2× compression on sparse axis)
+Metadata:        proportional to K/4 groups per row
+```
+
+The metadata is small per tile, but it is touched every K iteration. Scalar loads that miss L2 behave like pointer chasing next to wide TMA — that is why vectorizing and hoisting metadata loads produces measurable gains.
+
+## Milestones Preview
+
+Both ladders follow the same structural arc, with different dominant bottlenecks:
+
+**FP16:** 368 → 434 (iter120, best `.co`: 1p2c + 3-stage) → 543 (iter137, hand `.cu`: inner unroll + FTZ) → **655** (iter143, TK128 + TMA metadata + split RHS TMA). The 434 → 655 jump is the `.co` vs `.cu` gap in miniature — [AI-tune last mile](aitune-last-mile.md) unpacks that.
+
+**E4M3:** 671 → 759 (TMA metadata) → 772 (early empty + merged barrier) → 811 (software pipeline + `warpgroup_wait<1>`) → 897 (1p2c) → **1090** (3-stage) → **1127** (early empty arrive). The jump past 1000 TFLOPS at iter040 is the signature of pipeline depth — once operands and metadata prefetch far enough ahead, the math path stays fed.
+
+## Shape and Measurement Notes
+
+At 4096 × 8192 × 8192, N and K are large relative to M, so wave packing on 114 SMs makes grid efficiency sensitive to tile choices. The cleanest A/B tests are edits that touch only inner-loop sync or scheduling while the grid shape stays the same.
+
+Timings can wobble with L2 state or clock behavior. A few TFLOPS of noise at 1100+ is sub-percent — small relative to the iter040 → iter068 gap, but it means methodology matters for last-mile claims. Prefer median over many repeats and, when you need tight comparisons, controlled clocks.
+
+**Correctness:** Throughput is useless if metadata disagrees with packed indices. Keep host checks enabled while churning TK and unroll — those are the edits most likely to misalign 2:4 silently.
+
+Next: [Optimization patterns](pattern-optimizations.md) — step-by-step through each optimization with measurements.

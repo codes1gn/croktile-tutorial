@@ -59,6 +59,7 @@ markdown_extensions:
   - pymdownx.details
   - tables
   - attr_list
+  - md_in_html
 
 nav:
   - Home: index.md
@@ -67,16 +68,15 @@ nav:
   - "Part I — Tutorial":
     - Overview: tutorial/index.md
     - "Ch 0: Installation": tutorial/ch00-installation.md
-    - "Ch 1: Hello Croktile": tutorial/ch01-hello-choreo.md
-    - "Ch 2: Data Movement Basics": tutorial/ch02-data-movement.md
-    - "Ch 3: Pipeline Patterns": tutorial/ch03-pipeline.md
-    - "Ch 4: TMA and Swizzle": tutorial/ch04-tma-swizzle.md
-    - "Ch 5: MMA Operations": tutorial/ch05-mma.md
-    - "Ch 6: Warp Specialization": tutorial/ch06-warpspec.md
-    - "Ch 7: Persistent Matmul": tutorial/ch07-persistent.md
-    - "Ch 8: Multi-Warpgroup": tutorial/ch08-multi-warpgroup.md
-    - "Ch 9: view/from": tutorial/ch09-view-from.md
-    - "Ch 10: C++ Inline & Macros": tutorial/ch10-cpp-inline-macros.md
+    - "Ch 1: Hello Croktile": tutorial/ch01-hello-croktile.md
+    - "Ch 2: Data Movement": tutorial/ch02-data-movement.md
+    - "Ch 3: Parallelism": tutorial/ch03-parallelism.md
+    - "Ch 4: MMA Operations": tutorial/ch04-mma.md
+    - "Ch 5: Branch & Control": tutorial/ch05-branch-control.md
+    - "Ch 6: Synchronization": tutorial/ch06-synchronization.md
+    - "Ch 7: Advanced Movement": tutorial/ch07-advanced-movement.md
+    - "Ch 8: C++ Interop": tutorial/ch08-cpp-interop.md
+    - "Ch 9: Debug & Verbose": tutorial/ch09-debug-verbose.md
 
   - "Part II — Performance Tuning Demos":
     - Overview: optimization/index.md

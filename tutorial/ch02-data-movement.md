@@ -1,324 +1,224 @@
-# Data Movement Basics: Moving Data Blocks as a Whole
+# Data Movement: From Elements to Data Blocks
 
-In Chapter 1, you wrote an element-wise addition using `foreach` and `.at()` — every element was read individually from the input tensors, computed on, and written to the output. That is the simplest possible pattern, and it works. But on real GPU hardware, reading one element at a time from global memory is expensive: the memory bus is wide, latency is high, and the hardware is designed to move data in large, contiguous blocks.
+Chapter 1 expressed computation at the level of individual elements: pick position `(i, j)`, read the two inputs, add, write the result. That is the natural way to think about SIMD-style programming — and it is exactly the mental model that most CUDA and GPU tutorials teach. You write a per-element kernel, launch one thread per element, and each thread does its own tiny job.
 
-This chapter introduces the two primitives that let you express block-level data movement in Croktile: `dma.copy` (bulk transfer between memory levels) and `chunkat` (carving a tensor into rectangular tiles). We start with a matrix multiply written in the element-wise style from Chapter 1 — no DMA, just `.at()` and `parallel` — to show how far you can get with scalar indexing. Then we add explicit tile loads to the same kernel, so you can see exactly what changes and why it matters.
+The trouble is that hardware does not actually work this way. A GPU does not fetch one 32-bit integer from memory at a time. It fetches contiguous blocks — 128 bytes, 256 bytes, sometimes more — in a single transaction, and it stages those blocks through a hierarchy of caches and on-chip buffers before any arithmetic touches them. There is a fundamental mismatch between the per-element programming model and the per-block hardware reality. Bridging that gap — thinking in blocks, managing memory levels, wiring up transfers — is the single biggest reason GPU programming is hard for newcomers.
 
-## The Scalar Matmul: Parallelism Without DMA
+Croktile is designed around this insight. Instead of forcing you to think element-by-element and then hope the compiler or hardware will figure out the block structure, Croktile gives you **data-block-level primitives**: you name a rectangular chunk of a tensor with `chunkat`, move it between memory levels with `dma.copy`, and then work on it in-place. The programming model matches what the hardware actually does.
 
-We start with the smallest complete matmul in the Croktile test suite: no DMA, no device kernel call in the Croktile function — just `parallel`, `foreach`, and arithmetic on spanned tensors. It is not how you would ship production GEMM, but it is the cleanest place to learn `.at()`, `#`, and `span`.
+This chapter rewrites Chapter 1's element-wise addition to use these block-level primitives. The math is identical — every element of `lhs` is still added to the corresponding element of `rhs` — but the code now explicitly describes which blocks of data move where, and the computation happens on whole tiles rather than individual scalars.
 
-**Function shape and output allocation.**
+![Per-element vs data-block programming model comparison](../assets/images/ch02/fig1_element_vs_block.png)
 
-```choreo
-__co__ s32 [128, 256] matmul(s32 [128, 256] lhs, s32 [256, 256] rhs) {
-  s32[lhs.span(0), rhs.span(1)] output;
-  // ...
-  return output;
-}
-```
+*Left: per-element view — each thread fetches one element individually. Right: data-block view — one DMA moves an entire tile at once.*
 
-The signature says the function returns a `128 × 256` matrix of 32-bit integers. The left-hand side `lhs` is `128 × 256`; the right-hand side `rhs` is `256 × 256`, so the classic contraction dimension is the shared `256`.
+<details>
+<summary>Animated version</summary>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;">
+  <source src="/croktile-tutorial/assets/videos/ch02/anim1_element_vs_block.mp4" type="video/mp4" />
+</video>
+</details>
 
-The line that allocates `output` is worth a slow read. Instead of repeating literal sizes, it ties the output shape to the *actual* extents of the operands:
+## Tiled Element-Wise Addition
 
-- `lhs.span(0)` is the size of `lhs` along its first axis — here, `128` (rows of the result).
-- `rhs.span(1)` is the size of `rhs` along its second axis — here, `256` (columns of the result).
-
-You already used `lhs.span` in Chapter 1 to copy the full shape of an input. The indexed form `span(i)` picks out one dimension when you are building a tensor whose rank does not match the operand's rank, or when you want to be explicit about which axis you mean.
-
-**Parallel over a 2D grid of tiles.**
+Here is the same addition, rewritten to move data in tiles of 16 elements. The inputs are 1D vectors of length 128 so the tiling arithmetic stays simple:
 
 ```choreo
-  parallel p by 16, q by 64 {
-```
-
-This declares two **parallel indices** at once: `p` and `q`. Think of them as a logical 2D launch grid. The first axis is split into 16 tiles; the second into 64. Croktile uses the comma form `p by 16, q by 64` when you want a Cartesian product of parallel dimensions without introducing extra braces.
-
-A quick sanity check on the numbers never hurts. With `#p = 16` and `#q = 64`, the `foreach` bounds `128 / #p` and `256 / #q` evaluate to `8` and `4`. So each `(p, q)` tile owns an `8 × 4` block of output elements, and there are `16 × 64 = 1024` such tiles in parallel — enough to cover the full `128 × 256` result without gaps or overlaps, because `16 × 8 = 128` and `64 × 4 = 256`. When you write your own tilings, this kind of multiplication check is how you catch an off-by-one factor in the parallel grid before you ever run the program.
-
-**The triple loop with named indices.**
-
-```choreo
-    foreach index = {m, n, k} in [128 / #p , 256 / #q, 256]
-      output.at(m#p, n#q) += lhs.at(m#p, k) * rhs.at(k, n#q);
-```
-
-The `foreach` iterates three nested indices, but instead of three separate `in` clauses, it **names a tuple** of indices: `{m, n, k}`. The `index =` part binds that tuple to the loop variable `index` (handy if you later need the whole thing); the important part for reading the body is that `m`, `n`, and `k` are in scope inside the loop.
-
-The trip counts are symbolic fractions of the parallel grid:
-
-- `128 / #p` — how many row steps each `p`-tile owns along the result rows.
-- `256 / #q` — how many column steps each `q`-tile owns.
-- `256` — the full inner dimension (the contraction length).
-
-Here `#p` and `#q` mean "the **extent** of the parallel index" — the number of tiles along that axis. So `128 / #p` is exactly the height of one tile in rows, and `256 / #q` is the width of one tile in columns. The inner `k` runs over the whole `K` dimension; this version does not yet break `K` into chunks in memory.
-
-**`.at()` and the `#` composition operator.**
-
-Until now, you mostly saw whole chunks (`lhs.chunkat(...)`) and device kernels that consumed flat pointers. For matmul we need **element-level** addressing on spanned values. That is what `.at(...)` is for: it takes one index per dimension and refers to a single scalar inside the tensor view.
-
-The interesting indices are the ones that mix **intra-tile** offsets with **which tile** you are in:
-
-- `m#p` — row index in the full matrix: offset `m` within tile column `p`.
-- `n#q` — column index: offset `n` within tile column `q`.
-
-Read `#` as **compose**: "local offset within tile" glued to "parallel tile id." So `m` runs from `0` up to (but not including) the per-tile row count, and `p` selects which horizontal band of rows you are responsible for; `m#p` is the global row. Likewise `n#q` is the global column.
-
-The multiply-accumulate is the textbook formula:
-
-\[
-C_{ij} \mathrel{+}= \sum_k A_{ik} B_{kj}
-\]
-
-In Croktile, for a fixed `(m, n, k)` inside tile `(p, q)`:
-
-- `lhs.at(m#p, k)` takes row `m#p` and column `k` from the left matrix.
-- `rhs.at(k, n#q)` takes row `k` and column `n#q` from the right matrix.
-- `output.at(m#p, n#q)` accumulates into the result cell at that global row and column.
-
-No temporary buffers, no `dma.copy` — the compiler still has to implement loads and stores under the hood, but the **Croktile function** you wrote is entirely in terms of global tensor indices.
-
-**Host side: owning buffers with `make_spandata`.**
-
-Chapter 1 used `crok::make_spandata` and `.view()` to create and pass host tensors. The same API works here:
-
-```choreo
-int main() {
-  auto lhs = crok::make_spandata<crok::s32>(128, 256);
-  auto rhs = crok::make_spandata<crok::s32>(256, 256);
-  lhs.fill_random(-10, 10);
-  rhs.fill_random(-10, 10);
-
-  auto res = matmul(lhs.view(), rhs.view());
-  // verification...
-  std::cout << "Test Passed\n" << std::endl;
-}
-```
-
-`make_spandata` builds a dense owning buffer with the given shape. You can fill it, query `.shape()`, and pass a non-owning `view()` into a `__co__` function. This is the same pattern you used in Chapter 1.
-
-The verification loop is ordinary C++: compare `res` against a reference triple loop over `lhs` and `rhs`. The point of this chapter is the Croktile function; the host code stays boring on purpose.
-
-**What this version teaches — and what it omits.**
-
-You have now seen:
-
-- Multi-dimensional `parallel` with comma-separated axes.
-- `foreach` with **named destructuring** `index = {m, n, k}` and a single `in [..., ..., ...]` shape.
-- `.at` for scalar indexing into spanned tensors.
-- `#` for combining loop indices with parallel tile ids.
-- `span(0)` / `span(1)` for extracting individual dimension sizes into a new tensor's shape.
-- `make_spandata` for owned host tensors and `.view()` to borrow them into a kernel.
-
-What you have *not* seen yet is any control over **where** those `lhs.at` / `rhs.at` reads land in the memory hierarchy. For large matrices on real hardware, reading every `k` step from far-away global memory inside the innermost loop is exactly what you want to fix next. That is where DMA and explicit local buffers enter the story.
-
-**Complete scalar matmul (Croktile function + host).**
-
-For reference, here is the full scalar program as it appears in the Croktile tests (minus the `// REQUIRES` / `// RUN` harness lines). Read it top to bottom once: the `__co__` body fits on a handful of lines, and the host is almost entirely verification.
-
-```choreo
-__co__ s32 [128, 256] matmul(s32 [128, 256] lhs, s32 [256, 256] rhs) {
-  s32[lhs.span(0), rhs.span(1)] output;
-
-  parallel p by 16, q by 64 {
-    foreach index = {m, n, k} in [128 / #p , 256 / #q, 256]
-      output.at(m#p, n#q) += lhs.at(m#p, k) * rhs.at(k, n#q);
-  }
-  return output;
-}
-
-int main() {
-  auto lhs = crok::make_spandata<crok::s32>(128, 256);
-  auto rhs = crok::make_spandata<crok::s32>(256, 256);
-  lhs.fill_random(-10, 10);
-  rhs.fill_random(-10, 10);
-
-  auto res = matmul(lhs.view(), rhs.view());
-
-  for (size_t i = 0; i < res.shape()[0]; ++i)
-    for (size_t j = 0; j < res.shape()[1]; ++j) {
-      int ref = 0;
-      for (size_t k = 0; k < lhs.shape()[1]; ++k)
-        ref += lhs[i][k] * rhs[k][j];
-      crok::choreo_assert(ref == res[i][j], "values are not equal.");
-    }
-
-  std::cout << "Test Passed\n" << std::endl;
-}
-```
-
-Notice the symmetry between the Croktile function and the reference: the triple `foreach` is the same `i, j, k` contraction as the host's `ref` loop, only written in terms of tiles and composed indices. That is a useful pattern when you are debugging — if the host reference passes and the Croktile function fails, you can usually narrow the bug to indexing (`#`, `.at`, or trip counts) rather than to the arithmetic itself.
-
-**Tracing a single output cell.**
-
-Pick a concrete output position, say global row `37` and column `50`. In the scalar program, there is exactly one pair `(p, q)` and one pair `(m, n)` such that `m#p = 37` and `n#q = 50`. Because rows are split across `16` tiles of height `8`, tile `p = 37 / 8 = 4` and within-tile offset `m = 37 % 8 = 5`. Similarly `50 / 4 = 12` so `q = 12`, and `n = 50 % 4 = 2`. For that fixed `(p, q, m, n)`, the loop over `k` runs from `0` to `255`, and each iteration adds one product to the same `output.at(37, 50)`. Nothing in this version says *how* the hardware should cache those loads — it only states the dependence chain. The DMA version below will make the *reuse* of `lhs` and `rhs` values across `k` explicit by loading contiguous K-slabs into `local` first.
-
-## The DMA Matmul: Blocks Along K
-
-The file `matmul-dma.co` keeps the same mathematical contract — `128 × 256` times `256 × 256` → `128 × 256` — but changes the **orchestration**. Instead of indexing global `lhs` and `rhs` for every `(k, qx, qy)`, it loads **rectangular tiles** of `lhs` and `rhs` into local memory once per `tile_k`, then performs the arithmetic against those local views.
-
-**Why move data in blocks?**
-
-GPUs hide memory latency by keeping many threads busy and by exploiting fast **on-chip** storage (shared memory, registers, L2). If each multiply goes straight to device DRAM, you spend most of your time waiting on loads. A standard pattern is:
-
-1. Cooperatively load a **tile** of `A` and a **tile** of `B` that are relevant to the same slice of `K`.
-2. Compute partial dot products from those tiles while they are still hot in fast memory.
-3. Advance `tile_k` and repeat until the full inner dimension is covered.
-
-Croktile makes step 1 explicit with `dma.copy ... => local`. You still write the arithmetic with `.at`, but the tensors you read in the inner loop are the **loaded** locals, not the global spanned parameters.
-
-**Top-level parallel grid over output tiles.**
-
-```choreo
-  parallel {px, py} by [8, 16] {
-```
-
-This is the **brace form** for multi-dimensional parallelism: one parallel index tuple `{px, py}` with a matching tile count vector `[8, 16]`. The grid is `8 × 16` tiles. Together with the inner `parallel {qx, qy} by [16, 16]`, the example carves the `128 × 256` output into a hierarchy: coarse tiles `(px, py)` and finer sub-tiles `(qx, qy)` inside each coarse tile.
-
-If you are used to CUDA `blockIdx` / `threadIdx`, think of `px, py` as a logical block over the output matrix and `qx, qy` as a finer partition inside that block — Croktile keeps the algebra of indices explicit instead of folding everything into one flat thread id.
-
-**Outer `foreach` over K-tiles.**
-
-```choreo
-    foreach {tile_k} in [16] {
-      lhs_load = dma.copy lhs.chunkat(px, tile_k) => local;
-      rhs_load = dma.copy rhs.chunkat(tile_k , py) => local;
-```
-
-There are `16` steps along the `tile_k` axis (the test's chosen factorization). For each step:
-
-- `lhs.chunkat(px, tile_k)` selects the **rows** owned by `px` and the **K-range** owned by `tile_k`. Intuitively, it is the strip of `lhs` that participates in this K-tile for those output rows.
-- `rhs.chunkat(tile_k, py)` selects the **K-range** for `tile_k` and the **columns** owned by `py` — the strip of `rhs` that lines up with the same contraction chunk.
-
-Both copies target `local`, i.e. fast memory visible to the compute that will consume them. The assignments `lhs_load =` and `rhs_load =` bind **futures** (the DMA operations in flight). The nested `parallel` below shows how the inner compute waits on those implicitly and reads through `.data`.
-
-Spacing in `chunkat(tile_k , py)` is only stylistic; Croktile ignores the extra space.
-
-**Nested `parallel` and the inner `k` loop.**
-
-```choreo
-      parallel {qx, qy} by [16, 16] {
-        foreach k in [256 / #tile_k] {
-          output.at(px#qx, py#qy) += lhs_load.data.at(qx, k) * rhs_load.data.at(k, qy);
-        }
-      }
-```
-
-A second `parallel` nest subdivides each `(px, py)` tile. Indices `qx` and `qy` are composed with `px` and `py` exactly like `m#p` in the scalar version: `px#qx` is the global output row; `py#qy` is the global output column.
-
-Inside, `k` runs over the **K extent of this loaded tile**. The trip count is `256 / #tile_k`: total inner size divided by the number of `tile_k` steps. Each `tile_k` iteration loads another slab of `K`; within that slab, `k` indexes the position inside the slab.
-
-Crucially, the loads use **`lhs_load.data` and `rhs_load.data`**. The `dma.copy` future's `.data` member is the local spanned buffer you can index with `.at`. The global `lhs` / `rhs` parameters are not touched in the innermost statement — the hardware (via generated code) already brought the relevant rectangles into `local`.
-
-Nested `parallel` expresses **two levels of parallelism**: orchestration across the output grid, and finer-grained work inside each tile. On a GPU target, the compiler maps these to warps, blocks, and shared memory in ways that depend on the backend; the Croktile function you write stays at the level of *what* is parallel, not *which* hardware register holds which tid.
-
-**Dimension arithmetic for the DMA nest.**
-
-It helps to read the DMA example as a stack of factors. The output has shape `128 × 256`. The outer parallel grid is `[8, 16]` along `(px, py)`, so each coarse tile spans `128 / 8 = 16` rows and `256 / 16 = 16` columns of the result. The inner parallel grid is `[16, 16]` along `(qx, qy)`, which subdivides that `16 × 16` block into `16 × 16` sub-cells of size `1 × 1`. In other words, at this particular choice of numbers, each inner `(qx, qy)` pair is responsible for exactly one output element inside the coarse `(px, py)` tile — a common didactic layout because you can read `px#qx` and `py#qy` as "row and column in the global matrix" without an extra scaling factor in your head.
-
-Along `K`, the outer `foreach {tile_k} in [16]` fixes `#tile_k = 16`, so each DMA slice covers `256 / 16 = 16` consecutive `k` values. The inner `foreach k in [256 / #tile_k]` therefore runs `k = 0 … 15` inside each loaded tile. For each `tile_k`, the `chunkat` expressions pull the matching `lhs` rows for `px` and `rhs` columns for `py` — aligned strips so that `lhs_load.data.at(qx, k) * rhs_load.data.at(k, qy)` is a legal multiply for every `k` in that slab. After all `tile_k` iterations complete, every output has seen contributions from the full `256`-long contraction, just as in the scalar program.
-
-You do not have to memorize these exact factors. What you should internalize is the **pattern**: outer parallelism over output regions, an outer sequential or tiled loop over `K` that triggers DMA, inner parallelism over the fine structure of the tile, and an inner `k` loop whose length is the **current K-tile height**, not the full `256` every time.
-
-**Complete DMA matmul (Croktile function + host).**
-
-Here is the full `matmul-dma.co` body for side-by-side comparison with the scalar version. The Croktile function is longer, but the `main` function is still mostly setup and verification.
-
-```choreo
-__co__ s32 [128, 256] matmul(s32 [128, 256] lhs, s32 [256, 256] rhs) {
-  s32[lhs.span(0), rhs.span(1)] output;
-  parallel {px, py} by [8, 16] {
-    foreach {tile_k} in [16] {
-      lhs_load = dma.copy lhs.chunkat(px, tile_k) => local;
-      rhs_load = dma.copy rhs.chunkat(tile_k , py) => local;
-      parallel {qx, qy} by [16, 16] {
-        foreach k in [256 / #tile_k] {
-          output.at(px#qx, py#qy) += lhs_load.data.at(qx, k) * rhs_load.data.at(k, qy);
-        }
-      }
-    }
+__co__ s32 [128] tiled_add(s32 [128] lhs, s32 [128] rhs) {
+  s32 [lhs.span] output;
+
+  parallel tile by 8 {
+    lhs_load = dma.copy lhs.chunkat(tile) => local;
+    rhs_load = dma.copy rhs.chunkat(tile) => local;
+
+    foreach i in [128 / #tile]
+      output.at(tile # i) = lhs_load.data.at(i) + rhs_load.data.at(i);
   }
 
   return output;
 }
 
 int main() {
-  crok::s32 a[128][256] = {0};
-  crok::s32 b[256][256] = {0};
-  auto lhs_data = crok::make_spanview<2, crok::s32>((int*)a, {128, 256});
-  auto rhs_data = crok::make_spanview<2, crok::s32>((int*)b, {256, 256});
-  lhs_data.fill_random(-10, 10);
-  rhs_data.fill_random(-10, 10);
+  auto lhs = choreo::make_spandata<choreo::s32>(128);
+  auto rhs = choreo::make_spandata<choreo::s32>(128);
+  lhs.fill_random(-10, 10);
+  rhs.fill_random(-10, 10);
 
-  auto res = matmul(lhs_data, rhs_data);
+  auto res = tiled_add(lhs.view(), rhs.view());
 
-  for (size_t i = 0; i < res.shape()[0]; ++i)
-    for (size_t j = 0; j < res.shape()[1]; ++j) {
-      int ref = 0;
-      for (size_t k = 0; k < lhs_data.shape()[1]; ++k)
-        ref += a[i][k] * b[k][j];
-      crok::choreo_assert(ref == res[i][j], "values are not equal.");
-    }
+  for (int i = 0; i < 128; ++i)
+    choreo::choreo_assert(lhs[i] + rhs[i] == res[i], "values are not equal.");
 
   std::cout << "Test Passed\n" << std::endl;
 }
 ```
 
-Comparing the two `__co__` functions line by line is instructive. Both allocate `output` the same way. Both ultimately implement `+= lhs * rhs` into `output.at(...)`. The scalar version states *which global elements* participate in each product; the DMA version states *which tiles were copied* before the product, then uses `.data` to read the copy. That is the whole conceptual step: from element-wise `.at()` on globals to "copy a tile, then index the local chunk."
+Save it as `tiled_add.co`, compile and run:
 
-**Host program: views into stack arrays.**
+```bash
+croktile tiled_add.co -o tiled_add
+./tiled_add
+```
 
-The DMA variant's `main` in the test suite uses `make_spanview` with stack-backed storage:
+Same `Test Passed`. The result is identical to Chapter 1's version — the math has not changed, only how data moves through memory.
+
+![Tiled addition: load, compute, store flow](../assets/images/ch02/fig2_tiled_add.png)
+
+*Tiled addition for tile = 2: DMA loads both operand chunks into local memory, element-wise addition runs on the tile, and the result writes back to the output vector.*
+
+<details>
+<summary>Animated version</summary>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;">
+  <source src="/croktile-tutorial/assets/videos/ch02/anim2_tiled_add.mp4" type="video/mp4" />
+</video>
+</details>
+
+Here is what is new.
+
+## `chunkat`: Carving a Tensor into Tiles
 
 ```choreo
-int main() {
-  crok::s32 a[128][256] = {0};
-  crok::s32 b[256][256] = {0};
-  auto lhs_data = crok::make_spanview<2, crok::s32>((int*)a, {128, 256});
-  auto rhs_data = crok::make_spanview<2, crok::s32>((int*)b, {256, 256});
-  lhs_data.fill_random(-10, 10);
-  rhs_data.fill_random(-10, 10);
+lhs.chunkat(tile)
+```
 
-  auto res = matmul(lhs_data, rhs_data);
-  // verification against a and b...
+`chunkat` divides a tensor into equal, non-overlapping rectangular pieces along each dimension. Here `lhs` has shape `[128]` and the `parallel` declares 8 tiles, so each chunk is `128 / 8 = 16` elements wide. The argument `tile` is the chunk index — which of the 8 pieces you want. When `tile` is 0, you get elements 0 through 15; when `tile` is 3, you get elements 48 through 63; and so on.
+
+For a 2D tensor, `chunkat` takes one index per dimension:
+
+```choreo
+matrix.chunkat(row_tile, col_tile)
+```
+
+Each dimension is divided independently. If `matrix` has shape `[64, 128]` and you declare `parallel {r, c} by [4, 8]`, then `matrix.chunkat(r, c)` gives you a `[16, 16]` piece at tile position `(r, c)`. Croktile figures out the chunk size from the tensor shape and the number of tiles along each axis.
+
+The key thing to remember: `chunkat` does not copy data. It is a **view** — a description of which rectangle of the original tensor you mean. The actual movement happens in `dma.copy`.
+
+![chunkat 2D tile selection semantics](../assets/images/ch02/fig3_chunkat.png)
+
+*A [64, 128] tensor divided into 4 × 8 tiles. `chunkat(1, 3)` selects the [16, 16] sub-tensor at row-tile 1, column-tile 3.*
+
+<details>
+<summary>Animated version</summary>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;">
+  <source src="/croktile-tutorial/assets/videos/ch02/anim3_chunkat.mp4" type="video/mp4" />
+</video>
+</details>
+
+## `dma.copy`: Bulk Transfer Between Memory Levels
+
+```choreo
+lhs_load = dma.copy lhs.chunkat(tile) => local;
+```
+
+This copies the chunk selected by `chunkat(tile)` from wherever `lhs` lives (by default, global device memory) into `local` memory — fast, on-chip storage close to the compute units. The result, `lhs_load`, is a **DMA future**: a handle that represents the in-flight (or completed) transfer.
+
+The `=> local` part is the **destination memory specifier**. Croktile has three levels:
+
+| Specifier | What it means | Analogy |
+|-----------|--------------|---------|
+| `global` | Device-wide memory (large, slow) | DRAM |
+| `shared` | Block-scoped on-chip memory (fast, visible to all threads in a block) | CUDA shared memory |
+| `local` | Thread-private on-chip storage (fastest, private) | Registers or per-thread scratch |
+
+For now the examples use `local` because each tile runs independently — there is no cross-tile cooperation, so thread-private storage is the natural choice. Chapter 3 will introduce `shared` when multiple threads need to read the same tile.
+
+## Futures and `.data`
+
+After `dma.copy`, the variable `lhs_load` is not a tensor — it is a **future** that tracks the transfer. To get at the actual data, you use `.data`:
+
+```choreo
+lhs_load.data.at(i)
+```
+
+`lhs_load.data` is a spanned tensor in local memory with the shape of the chunk that was copied. You index into it with `.at(i)` exactly like you indexed into `lhs` in Chapter 1 — except now you are reading from fast memory instead of global memory.
+
+Why the indirection? Because in later chapters you will issue copies that run **asynchronously** — the hardware starts moving data while your program does other work. The future is what lets you refer to "the data that will be there when the transfer finishes" without blocking immediately. For now, the copies are synchronous and `.data` is always valid right after the `dma.copy` line, but the pattern is the same.
+
+## The `#` Compose Operator
+
+Look at the output indexing:
+
+```choreo
+output.at(tile # i)
+```
+
+The `#` operator composes a **tile index** `tile` with a **local offset** `i` to produce a **global index** into `output`. The rule is **outer # inner**: the higher-level index goes on the left, the element offset within that tile goes on the right. Since `tile` selects which chunk of 16 elements to work on, and `i` runs from 0 to 15 within that chunk, `tile # i` gives the position in the full 128-element vector: concretely `tile * 16 + i`.
+
+You need `#` because `lhs_load.data.at(i)` uses a **local** index (position within the tile), but `output.at(...)` uses a **global** index (position in the full output tensor). The compose operator bridges the two coordinate systems. Read `tile # i` as "element `i` within tile `tile`."
+
+This `#` operator appears in one dimension here. In Chapter 3, when tiling a 2D matrix with parallel indices `p` and `q`, the pattern is `output.at(p#m, q#n)` — same idea, just more axes.
+
+## The `#` Extent Operator
+
+In the inner loop:
+
+```choreo
+foreach i in [128 / #tile]
+```
+
+`#tile` means "the **extent** of the tile axis" — how many tiles there are along that dimension. Here `#tile` is 8 (because `parallel tile by 8` declared 8 tiles), so `128 / #tile` is 16 — the number of elements in each tile. This is the trip count of the inner loop: you visit every element position within one tile.
+
+The `#` symbol does double duty in Croktile: before a name in an expression (`#tile`) it means the **extent** of that index; between two names (`tile # i`) it means **compose**. Context tells you which is which — `#` as extent always appears as a prefix, and `#` as compose always appears as an infix between two operands.
+
+## `span(i)`: Picking One Dimension
+
+Chapter 1 used `lhs.span` to copy the *entire* shape of an input. Sometimes you want just one dimension. `lhs.span(0)` gives the size along the first axis, `rhs.span(1)` gives the size along the second, and so on. This matters when your output has a different rank than your inputs — for example, a matmul where the output shape `[M, N]` comes from `lhs.span(0)` and `rhs.span(1)`:
+
+```choreo
+s32 [lhs.span(0), rhs.span(1)] output;
+```
+
+`span(i)` is not needed yet in this 1D example, but it becomes important the moment you tile 2D tensors.
+
+## 2D Tiled Addition
+
+The same pattern works on matrices. Here is a `[64, 128]` addition tiled into `[4, 8]` chunks of size `[16, 16]`:
+
+```choreo
+__co__ s32 [64, 128] tiled_add_2d(s32 [64, 128] lhs, s32 [64, 128] rhs) {
+  s32 [lhs.span] output;
+
+  parallel {tr, tc} by [4, 8] {
+    lhs_load = dma.copy lhs.chunkat(tr, tc) => local;
+    rhs_load = dma.copy rhs.chunkat(tr, tc) => local;
+
+    foreach {i, j} in [64 / #tr, 128 / #tc]
+      output.at(tr # i, tc # j) = lhs_load.data.at(i, j) + rhs_load.data.at(i, j);
+  }
+
+  return output;
 }
 ```
 
-The `make_spanview` function wraps existing C arrays with shape metadata, similar to how `make_spandata` + `.view()` works in Chapter 1. You could equally allocate with `make_spandata` and pass `.view()` — the Croktile function only cares that the arguments are spanned tensors with consistent shapes.
+Every construct generalizes naturally to higher dimensions: `chunkat(tr, tc)` takes two tile indices, `foreach {i, j}` introduces two inner indices, `tr # i` and `tc # j` compose along each axis (outer # inner), and `#tr` / `#tc` give the tile counts (4 and 8 respectively) so the inner loop bounds compute to `16` and `16`.
 
-**Scalar vs DMA: same math, different movement story.**
+The host code is the same pattern as before — `make_spandata<choreo::s32>(64, 128)`, `.view()`, verify with nested loops.
 
-Both programs implement the same multiply-accumulate. The scalar version is a **reference choreography**: easy to read, direct `.at` on globals. The DMA version is a **movement-aware** choreography: it states *which rectangles* of `lhs` and `rhs` live in `local` for each `tile_k`, and it nests parallelism so that sub-tiles `(qx, qy)` cooperate under each `(px, py)`.
+## Memory Hierarchy: Where Data Lives
 
-When you optimize further (pipelines, TMA, tensor cores), you will keep this structure: outer loops over tiles and memory stages, inner loops over compute, explicit `.data` views after copies.
+The examples used `=> local` for all copies. In practice, you choose the destination based on who needs access:
 
-**How this extends Chapter 1.**
+- **`local`** — only the thread that issued the `dma.copy` can see this data. Good when there is no sharing, or when each thread works on its own independent slice.
+- **`shared`** — all threads in the same block can see this data. Essential when multiple threads collaborate on the same tile (which is the standard pattern for matmul and reductions). We will use `shared` in the next chapter.
+- **`global`** — device-wide, largest and slowest. Input and output tensors start here; you copy pieces into `shared` or `local` for fast access, then copy results back.
 
-Chapter 1 used `foreach` and `.at()` for pure element-wise arithmetic — no control over how data moves through the memory hierarchy. This chapter introduced two new concepts: `dma.copy ... => local` for explicit bulk transfers, and `chunkat` for carving tensors into rectangular tiles. The `dma.copy` future's `.data` member gives you a local spanned buffer to index with `.at`, so the compute code looks similar to Chapter 1 but operates on cached local data instead of global memory.
+The choice does not change the Croktile function's semantics — only performance. You could replace every `=> local` with `=> shared` and the program would still produce the same result, just with different speed characteristics.
 
-The rule of thumb for `chunkat` is that it lists indices in the same order as the dimensions you are carving; the meaning of each slot follows from the shape of the tensor in the signature.
+## What Changed from Chapter 1
 
-If you are tempted to merge the scalar and DMA styles — for example, using `.at` on globals for some loops and `.data.at` for others in one kernel — Croktile will let you express that, but readability usually suffers. Pick one level of abstraction per loop nest: either trust the compiler for global accesses, or stage explicitly with `dma.copy` and stay on `.data` until you leave the tile.
+Nothing about the math changed. Every element of `lhs` is still added to the corresponding element of `rhs`. What changed is the **granularity** of memory access: instead of 128 individual reads and writes, we issue 8 bulk copies per input tensor, each moving 16 contiguous elements into fast memory. The compute loop then runs entirely on local data.
 
-## New Syntax and Concepts (Chapter 2)
+The new vocabulary:
 
-| Topic | What to remember |
-|--------|------------------|
-| `.at(i, j, ...)` | Element-level indexing on spanned tensors; one argument per dimension. |
-| `m#p`, `py#qy` | `#` composes an offset within a tile with a parallel tile index to form a global index. |
-| `lhs.span(0)`, `rhs.span(1)` | Read individual dimension sizes from an operand's shape when building another tensor. |
-| `parallel p by A, q by B` | Comma-separated parallel axes (Cartesian product). |
-| `parallel {px, py} by [8, 16]` | Tuple parallel indices with a matching list of tile counts. |
-| Nested `parallel` | Outer grid over coarse tiles, inner grid over sub-tiles — hierarchy of parallelism. |
-| `dma.copy x.chunkat(...) => local` | Explicit bulk move of a tensor tile into local memory. |
-| `future.data.at(...)` | After `dma.copy`, use `.data` to get the local spanned buffer for `.at` indexing. |
-| `make_spandata<T>(...)` | Host-side owning buffer; use `.view()` to pass into `__co__` functions. |
-| `foreach index = {m, n, k} in [a, b, c]` | Named destructuring: multiple loop indices introduced in one `foreach` head. |
-| `128 / #p`, `256 / #tile_k` | `#name` as the extent of parallel index or tile axis in symbolic trip counts. |
+| Syntax | Meaning |
+|--------|---------|
+| `dma.copy src => local` | Bulk-copy `src` into local (or `shared` / `global`) memory |
+| `tensor.chunkat(i)` | View of the `i`-th equal chunk of `tensor` |
+| `tensor.chunkat(i, j)` | View of chunk at position `(i, j)` in a 2D tiling |
+| `future.data.at(...)` | Access the copied data through a DMA future |
+| `tile # i` | Compose tile index `tile` with local offset `i` into a global index (outer # inner) |
+| `#tile` | Extent (number of tiles) along the `tile` axis |
+| `lhs.span(0)` | Size of `lhs` along its first dimension |
+| `local` / `shared` / `global` | Memory level specifiers for DMA destinations |
 
-That table recaps what this chapter added beyond Chapter 1's `foreach` + `.at()` basics. If you are comparing to CUDA tutorials, the scalar matmul is like writing the arithmetic with global pointers; the DMA matmul is like bringing shared-memory tiles into scope before the inner loops. Croktile's advantage is that both levels are **one language** — the same `.at` notation, the same `parallel` / `foreach` vocabulary — so you can refactor from one to the other without rewriting your host code or inventing ad-hoc macros.
-
-## What's Next
-
-You can now express matrix multiply with explicit tile loads and nested parallelism. The next chapter builds on this by **overlapping** DMA with compute — multiple buffers, pipelined `tile_k` steps, and the habit of thinking in terms of what is in flight while arithmetic runs. Bring the mental model from this chapter: global tensors, `chunkat`, `dma.copy => local`, and `.data` for the pieces you actually compute on.
+All of these compose naturally with `parallel` and `.at()` from Chapter 1. The [next chapter](ch03-parallelism.md) goes deeper into `parallel` — mapping it to CUDA thread blocks, warps, and warpgroups — and uses everything from this chapter to build a tiled matrix multiply.

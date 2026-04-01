@@ -1,32 +1,31 @@
-# Block-Scaled GEMM FP8 (E4M3): Case Study
+# How to Optimize a Croktile Block-Scaled FP8 GEMM: a Worklog
 
-This walkthrough follows **FP8 E4M3 matrix multiply with per-block scaling** on **Hopper SM90a**, measured on **H800 PCIe** (114 SMs). Operands are **e4m3**; the accumulator stays in **FP16**. Along **K**, each block aligned with **128**-element tiles carries **FP32 scale factors** for left and right operands so inner products stay useful after quantization without giving up FP8 bandwidth.
+This walkthrough follows FP8 E4M3 matrix multiply with **per-block scaling** on Hopper (SM90a), measured on H800 PCIe (114 SMs). Operands are E4M3; the accumulator stays in FP16. Along K, each block aligned with 128-element tiles carries FP32 scale factors so inner products stay useful after quantization — FP8 for density, scales for fidelity.
 
-**Reference peak (headline)**
+## Results Summary
 
-| Metric | Value |
-|--------|--------|
-| H800 PCIe FP8 tensor peak | **3026 TFLOPS** |
-| Problem shapes (reported) | **2048³**, **4096³** |
+| Step | Kernel | TFLOPS @2048³ | TFLOPS @4096³ | Δ vs baseline @4k |
+| ---- | ------ | ------------- | ------------- | ----------------- |
+| 0 | Baseline (M64N128K32) | 314.2 | 397.9 | — |
+| 1 | TMA overlap with scale accumulation (iter049) | **380** | — | +21% @2k |
+| 2 | N256 WGMMA (iter051) | 372 | 602 | +51% |
+| 3 | N256 + L2 256B promotion (iter053) | — | 610 | +53% |
+| 4 | N256 + L2 + prefetch scale_a (iter066) | — | **621** | **+56%** |
 
-**End-to-end results (AI-tune 2026-03-22)**
+Reference peak: **3026 TFLOPS** (FP8 tensor on H800 PCIe). Efficiency vs peak stays modest because block-scaled GEMM pays extra scale traffic and fused math compared with a plain FP8 GEMM. The interesting part is relative gain from scheduling, tile geometry, cache hints, and scale prefetch.
 
-| Variant | TFLOPS @2048³ | TFLOPS @4096³ | HW eff @4096³ | Notes |
-|---------|---------------|---------------|---------------|--------|
-| Baseline (`blockscale_gemm_dyn_sm90.co`, M64N128K32) | 314.2 | 397.9 | 13.2% | Starting warp layout and tiling |
-| iter049 | **380** | — | — | **+21% @2k** — TMA overlap around scale accumulation |
-| iter051 | 372 | 602 | 19.9% | N256 WGMMA — doubled math per tile |
-| iter053 | — | 610 | 20.2% | N256 + **L2 256B promotion** on RHS TMA |
-| **iter066** | — | **621** | **20.5%** | **+56% @4k vs baseline** — N256 + L2 + **prefetch `scale_a`** |
+## What Makes Block-Scaled GEMM Different
 
-Efficiency vs **3026 TFLOPS** stays modest because blockscaled GEMM pays extra scale traffic and fused math compared with a plain FP8 GEMM; the interesting part is **relative gain** from scheduling, tile geometry, cache hints, and scale prefetch.
+Plain FP8 trades dynamic range for bandwidth. Block scaling repairs this without reverting to FP16 weights: partition K into blocks (aligned with TILE_K = 128), and for each (row, block) on the left and (column, block) on the right, store a single FP32 scale factor. During the dot product, each block's contribution is scaled consistently so the FP16 accumulator approximates a higher-precision reference.
 
-**How to read the series**
+This means every K-tile iteration pulls **matrix data and scale metadata**. The Croktile surface expresses this as `mma.row.row.scale` instead of a plain `mma.row.row` — same tiling discipline, extra operands for scales, and the same pressure to hide TMA latency behind math.
 
-1. [Baseline and block-scaling background](baseline-analysis.md) — why per-block scales exist, how the baseline kernel is wired, and what the first throughput numbers mean in context.
-2. [Optimization patterns](pattern-optimizations.md) — TMA overlap, N256 tiles, L2 promotion, scale prefetch, and how sources under `benchmark/performance/blockscale_gemm/` and `blockscale_gemm_v2/` explore scale **DMA to shared memory** and layout variants.
+## Read Order
 
-**Compile and run (Cute backend example)**
+1. [Baseline and block-scaling background](baseline-analysis.md) — why per-block scales exist, how the baseline kernel is wired, and the first throughput numbers in context
+2. [Optimization patterns](pattern-optimizations.md) — TMA overlap, N256 tiles, L2 promotion, scale prefetch, with TFLOPS at each step
+
+## Compile and Run
 
 ```bash
 ./croktile -gs -t cute -arch=sm_90a --use-warpspec --stmatrix \
@@ -34,4 +33,4 @@ Efficiency vs **3026 TFLOPS** stays modest because blockscaled GEMM pays extra s
   -o /tmp/bs.cute.result && bash /tmp/bs.cute.result --execute
 ```
 
-Shipped winner harnesses with `run.sh` live under `croktile/benchmark/performance/blockscale_gemm_v2/blockscale_gemm_e4m3_aitune_2026-03-22_iter{049,051,053,066}/`. Summary tables and iteration notes: `croktile/benchmark/performance/blockscale_gemm_v2/README_blockscale_gemm_e4m3_aitune_2026-03-22.md`.
+Shipped winner harnesses with `run.sh` live under `croktile/benchmark/performance/blockscale_gemm_v2/blockscale_gemm_e4m3_aitune_2026-03-22_iter{049,051,053,066}/`. Full iteration history (71 iterations): `README_blockscale_gemm_e4m3_aitune_2026-03-22.md`.

@@ -1,17 +1,40 @@
-# Dense GEMM FP16: optimization case study
+# How to Optimize a Croktile FP16 GEMM for cuBLAS-like Performance: a Worklog
 
-You take a Hopper (SM90a) half-precision GEMM from the Croktile benchmark baseline to throughput in the same band as cuBLAS on **H800 PCIe** (114 SMs). The path is deliberate: measure first, infer the limiter from TFLOPS and occupancy math, then pull in tutorial ideas—[warp specialization](../../tutorial/ch06-warpspec.md), [pipelining](../../tutorial/ch03-pipeline.md), [persistent tiling](../../tutorial/ch07-persistent.md)—only when the numbers justify them.
+In this walkthrough, we iteratively optimize a Hopper (SM90a) half-precision GEMM written in Croktile from **208 TFLOPS** to **382+ TFLOPS** on H800 PCIe — within spitting distance of cuBLAS on the same hardware. The path is deliberate: measure first, identify the bottleneck from TFLOPS and occupancy arithmetic, then apply exactly one optimization and re-measure.
 
-**Anchor numbers** (8192³ unless noted): baseline **208.7** TFLOPS (1p1c, WN=128, four stages); best shipped **382.5** TFLOPS (1p2c split-output, WN=152, non-persistent); **+83%** vs. that baseline on the same problem. Marketing peak for this class is often quoted around **1513** TFLOPS FP16 tensor; **cuBLAS** on this stack sits near **~380** TFLOPS—that is the bar the tuned kernels aim at.
+Matrix multiplication on GPUs is the most important algorithm in deep learning. So how much work is it to write a performant Croktile SGEMM from a correct baseline? Here is the summary:
 
-**Read order**
+| Step | Kernel | TFLOPS @8192³ | vs cuBLAS (~380) |
+| ---- | ------ | ------------- | ---------------- |
+| 0 | Baseline: 1p1c, WN=128, 4-stage | 208.7 | 55% |
+| 1 | Tile geometry: WN=176, STAGES=2 | 242.0 | 64% |
+| 2 | Pipeline depth: WN=176, STAGES=3 | 354.1 | 93% |
+| 3 | Split-output 1p2c, WN=128 | ~375.0 | 99% |
+| 4 | Split-output 1p2c, WN=152, non-persistent | **382.5** | **101%** |
+| 5 | WN=160, K-unroll, wgmma-wait-depth | 380.6 | 100% |
 
-1. [Baseline and profiling](baseline-analysis.md) — where **208.7** comes from and why it is schedule-bound, not “missing WGMMA.”
-2. [Optimization patterns](pattern-optimizations.md) — how WN, stage depth, 1p2c split-output, launch mode, and compiler flags line up with the measured jumps.
-3. [AI-tune last mile](aitune-last-mile.md) — shipped checkpoints (iter048, iter050, iter057, iter061), repro commands, and the WN sweep / occupancy cliff.
+The +83% from baseline to best came entirely from Croktile function geometry, output staging, and compiler flags — no mixed precision, no split-K, no CUDA Graph capture.
 
-Full iteration tables: `croktile/benchmark/performance/matmul/README_matmul_f16_aitune_2026-03-23.md`. Representative sources: `matmul_f16_dyn_sm90.co`, `matmul_f16_dyn_sm90_warpspec_1p1c.co`, `matmul_f16_dyn_sm90_warpspec_1p2c.co`, and dated `*_iter048_*`, `*_iter050_*`, `*_iter057_*`, `*_iter061_*` builds.
+## Prerequisites
 
-**Before you start** — You should already be comfortable with [TMA and swizzle](../../tutorial/ch04-tma-swizzle.md) and [WGMMA](../../tutorial/ch05-mma.md): why **`tma.copy`** and **`mma.load.swiz`** agree on layout.
+You should already be comfortable with:
 
-**Method** — Each step: quote TFLOPS at a fixed size, name the limiter (occupancy, pipeline bubbles, output contention), change one thing, re-measure.
+- [Chapter 4 (MMA)](../../tutorial/ch04-mma.md) — WGMMA and why `tma.copy` and `mma.load.swiz` agree on layout
+- [Chapter 5 (branch and control)](../../tutorial/ch05-branch-control.md) — warp specialization and persistent kernels
+- [Chapter 6 (synchronization)](../../tutorial/ch06-synchronization.md) — pipelining
+- [Chapter 7 (advanced movement)](../../tutorial/ch07-advanced-movement.md) — TMA and swizzle
+
+## Read Order
+
+1. [Baseline analysis](baseline-analysis.md) — where 208.7 TFLOPS comes from, hardware limits calculation, and why the kernel is schedule-bound
+2. [Optimization patterns](pattern-optimizations.md) — each step with the code change, measurement, and explanation
+3. [AI-tune last mile](aitune-last-mile.md) — shipped checkpoints, repro commands, the WN sweep, and the occupancy cliff
+
+## Source Files
+
+Full iteration tables: `croktile/benchmark/performance/matmul/README_matmul_f16_aitune_2026-03-23.md`. Representative sources:
+
+- `matmul_f16_dyn_sm90.co` — dynamic baseline
+- `matmul_f16_dyn_sm90_warpspec_1p1c.co` — 1p1c teaching kernel
+- `matmul_f16_dyn_sm90_warpspec_1p2c.co` — 1p2c split-output
+- Dated `*_iter048_*` through `*_iter061_*` builds

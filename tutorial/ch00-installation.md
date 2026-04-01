@@ -22,10 +22,10 @@ Clone the repository and run the automated setup:
 ```bash
 git clone https://github.com/codes1gn/croktile.git
 cd croktile
-make setup
+make setup-core
 ```
 
-`make setup` downloads the required versions of Flex, Bison, FileCheck, and GoogleTest if they are not already present. Once setup finishes, build the compiler:
+`make setup-core` pulls git submodules and downloads the required versions of Flex, Bison, FileCheck, and GoogleTest if they are not already present. Once setup finishes, build the compiler:
 
 ```bash
 make
@@ -45,14 +45,18 @@ Create a minimal `.co` file to confirm the compiler runs:
 
 ```choreo
 __co__ s32 [4] identity(s32 [4] input) {
-  return input;
+  s32 [input.span] output;
+  parallel i by 4
+    output.at(i) = input.at(i);
+  return output;
 }
 
 int main() {
-  crok::s32 data[4] = {1, 2, 3, 4};
-  auto result = identity(crok::make_spanview<1>(&data[0], {4}));
+  auto input = choreo::make_spandata<choreo::s32>(4);
+  input[0] = 1; input[1] = 2; input[2] = 3; input[3] = 4;
+  auto result = identity(input.view());
   for (int i = 0; i < 4; ++i)
-    if (data[i] != result[i]) { std::cerr << "FAIL\n"; return 1; }
+    if (input[i] != result[i]) { std::cerr << "FAIL\n"; return 1; }
   std::cout << "OK\n";
 }
 ```
@@ -102,4 +106,4 @@ make sample-test-operator OPERATOR=add # test a specific operator
 
 These are useful when you modify Croktile itself or want to verify a specific operator family.
 
-With the compiler installed and verified, you are ready to write your first real Croktile program in [Chapter 1](ch01-hello-choreo.md).
+With the compiler installed and verified, you are ready to write your first real Croktile program in [Chapter 1](ch01-hello-croktile.md).
