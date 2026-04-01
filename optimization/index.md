@@ -1,6 +1,6 @@
 # Performance Tuning Demos
 
-When we say **performance tuning** in this tutorial, we mean the same thing you would do on a real kernel: start from something that runs correctly, measure it with a stable harness, read the numbers against hardware limits, then change one axis at a time and watch what moves. The Choreo matmul benchmarks all share that rhythm—warmup and repeat counts, TFLOPS from FLOPs and mean time, efficiency vs a documented peak—so the case studies below are comparable experiments, not one-off demos.
+When we say **performance tuning** in this tutorial, we mean the same thing you would do on a real kernel: start from something that runs correctly, measure it with a stable harness, read the numbers against hardware limits, then change one axis at a time and watch what moves. The Croktile matmul benchmarks all share that rhythm—warmup and repeat counts, TFLOPS from FLOPs and mean time, efficiency vs a documented peak—so the case studies below are comparable experiments, not one-off demos.
 
 Before you open a specific kernel, skim how timing and reporting work in the tree:
 

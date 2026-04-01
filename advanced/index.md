@@ -2,7 +2,7 @@
 
 *This section is planned for future content.*
 
-Deep-dive articles on Choreo's design rationale, tradeoffs, and frontier challenges — similar in spirit to the MLIR rationale documents.
+Deep-dive articles on Croktile's design rationale, tradeoffs, and frontier challenges — similar in spirit to the MLIR rationale documents.
 
 ## Planned Topics
 

@@ -35,7 +35,7 @@ The FP16 README also lists a **percent chain** (each step vs the kernel immediat
 
 ## 3. Structural changes: 1p2c and pipeline depth
 
-**1p2c and multi-stage rings.** In **1p1c**, one producer warpgroup issues all TMA and often absorbs setup work that steals issue slots from the consumer’s steady `wgmma` stream. **1p2c** adds a second consumer warpgroup (exact role split follows the Choreo schedule) and pairs with **3-stage** (or deeper) operand buffering so producers run **ahead** of consumers.
+**1p2c and multi-stage rings.** In **1p1c**, one producer warpgroup issues all TMA and often absorbs setup work that steals issue slots from the consumer’s steady `wgmma` stream. **1p2c** adds a second consumer warpgroup (exact role split follows the Croktile schedule) and pairs with **3-stage** (or deeper) operand buffering so producers run **ahead** of consumers.
 
 On FP16, **iter120 (434 TFLOPS)** is the best **`.co`** outcome: **1p2c + 3-stage**, a large structural step (~**+9%** class vs the prior step in the logged chain). On E4M3, **iter036 (897 TFLOPS)** marks **1p2c**; **iter040 (1090 TFLOPS)** is the **3-stage** breakthrough—about **+62%** vs the **671** baseline in the README narrative, and the move into **>1000 TFLOPS** territory. **Depth without producer throughput** tends to fail; **1p2c without enough stages** still bubbles.
 
@@ -55,7 +55,7 @@ On FP16, **iter120 (434 TFLOPS)** is the best **`.co`** outcome: **1p2c + 3-stag
 
 **TK128, TMA metadata, split RHS TMA (FP16 iter143).** **TK64** keeps K tiles small, which can inflate trip count and metadata traffic per unit work. **iter143 at 655 TFLOPS** combines **TK128**, **TMA metadata**, and **split RHS TMA** so bandwidth tracks consumer demand—**+78%** vs the **368** baseline overall. E4M3 already used **128/128** swizzle from the baseline; the parallel is **iter001** metadata plus **iter040** depth, not a literal copy of every FP16 knob.
 
-**Swizzle and dtype.** Do not copy FP16 **swizzle 64** onto E4M3 **128/128** or vice versa without validation—bank conflict behavior changes. **Accum dtype** (E4M3 into FP16 accum) shifts register pressure relative to pure FP16 sparse. Choreo **`.co`** sources and AI-tune flags (e.g. **`--wgmma-split-batch`**) are the same CUDA ideas under different spelling—treat README flag names as “reshape WGMMA batching,” exact tokens may differ by revision.
+**Swizzle and dtype.** Do not copy FP16 **swizzle 64** onto E4M3 **128/128** or vice versa without validation—bank conflict behavior changes. **Accum dtype** (E4M3 into FP16 accum) shifts register pressure relative to pure FP16 sparse. Croktile **`.co`** sources and AI-tune flags (e.g. **`--wgmma-split-batch`**) are the same CUDA ideas under different spelling—treat README flag names as “reshape WGMMA batching,” exact tokens may differ by revision.
 
 ---
 

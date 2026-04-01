@@ -1,12 +1,12 @@
 # Data Movement Basics: Moving Data Blocks as a Whole
 
-In Chapter 1, you added two arrays element by element. The Choreo function carved the tensors into chunks, copied each chunk into local memory with `dma.copy`, computed the addition inline with `foreach` and `.at()`, and wrote the result back. That pattern is a perfect introduction to Choreo because the arithmetic is trivial: every output element depends only on the matching input elements in the same place.
+In Chapter 1, you wrote an element-wise addition using `foreach` and `.at()` — every element was read individually from the input tensors, computed on, and written to the output. That is the simplest possible pattern, and it works. But on real GPU hardware, reading one element at a time from global memory is expensive: the memory bus is wide, latency is high, and the hardware is designed to move data in large, contiguous blocks.
 
-Matrix multiplication is different. Each output element is a dot product along an entire *inner* dimension, so a naïve kernel touches a lot of global data unless you reorganize how work and memory line up. This chapter uses plain matrix multiply — first without explicit DMA, then with `dma.copy` and tiling — to show how Choreo expresses **element-level indexing**, **tile index composition**, and **nested parallelism**. By the end, you will have a mental model for why GPUs move data in blocks and how Choreo makes that explicit.
+This chapter introduces the two primitives that let you express block-level data movement in Croktile: `dma.copy` (bulk transfer between memory levels) and `chunkat` (carving a tensor into rectangular tiles). We start with a matrix multiply written in the element-wise style from Chapter 1 — no DMA, just `.at()` and `parallel` — to show how far you can get with scalar indexing. Then we add explicit tile loads to the same kernel, so you can see exactly what changes and why it matters.
 
 ## The Scalar Matmul: Parallelism Without DMA
 
-We start with the smallest complete matmul in the Choreo test suite: no DMA, no device kernel call in the Choreo function — just `parallel`, `foreach`, and arithmetic on spanned tensors. It is not how you would ship production GEMM, but it is the cleanest place to learn `.at()`, `#`, and `span`.
+We start with the smallest complete matmul in the Croktile test suite: no DMA, no device kernel call in the Croktile function — just `parallel`, `foreach`, and arithmetic on spanned tensors. It is not how you would ship production GEMM, but it is the cleanest place to learn `.at()`, `#`, and `span`.
 
 **Function shape and output allocation.**
 
@@ -25,7 +25,7 @@ The line that allocates `output` is worth a slow read. Instead of repeating lite
 - `lhs.span(0)` is the size of `lhs` along its first axis — here, `128` (rows of the result).
 - `rhs.span(1)` is the size of `rhs` along its second axis — here, `256` (columns of the result).
 
-You will see `lhs.span` without an index when the full shape is implied (as in Chapter 1). The indexed form `span(i)` picks out one dimension when you are building a tensor whose rank does not match the operand's rank, or when you want to be explicit about which axis you mean.
+You already used `lhs.span` in Chapter 1 to copy the full shape of an input. The indexed form `span(i)` picks out one dimension when you are building a tensor whose rank does not match the operand's rank, or when you want to be explicit about which axis you mean.
 
 **Parallel over a 2D grid of tiles.**
 
@@ -33,7 +33,7 @@ You will see `lhs.span` without an index when the full shape is implied (as in C
   parallel p by 16, q by 64 {
 ```
 
-This declares two **parallel indices** at once: `p` and `q`. Think of them as a logical 2D launch grid. The first axis is split into 16 tiles; the second into 64. Choreo uses the comma form `p by 16, q by 64` when you want a Cartesian product of parallel dimensions without introducing extra braces.
+This declares two **parallel indices** at once: `p` and `q`. Think of them as a logical 2D launch grid. The first axis is split into 16 tiles; the second into 64. Croktile uses the comma form `p by 16, q by 64` when you want a Cartesian product of parallel dimensions without introducing extra braces.
 
 A quick sanity check on the numbers never hurts. With `#p = 16` and `#q = 64`, the `foreach` bounds `128 / #p` and `256 / #q` evaluate to `8` and `4`. So each `(p, q)` tile owns an `8 × 4` block of output elements, and there are `16 × 64 = 1024` such tiles in parallel — enough to cover the full `128 × 256` result without gaps or overlaps, because `16 × 8 = 128` and `64 × 4 = 256`. When you write your own tilings, this kind of multiplication check is how you catch an off-by-one factor in the parallel grid before you ever run the program.
 
@@ -71,22 +71,22 @@ The multiply-accumulate is the textbook formula:
 C_{ij} \mathrel{+}= \sum_k A_{ik} B_{kj}
 \]
 
-In Choreo, for a fixed `(m, n, k)` inside tile `(p, q)`:
+In Croktile, for a fixed `(m, n, k)` inside tile `(p, q)`:
 
 - `lhs.at(m#p, k)` takes row `m#p` and column `k` from the left matrix.
 - `rhs.at(k, n#q)` takes row `k` and column `n#q` from the right matrix.
 - `output.at(m#p, n#q)` accumulates into the result cell at that global row and column.
 
-No temporary buffers, no `dma.copy` — the compiler still has to implement loads and stores under the hood, but the **Choreo function** you wrote is entirely in terms of global tensor indices.
+No temporary buffers, no `dma.copy` — the compiler still has to implement loads and stores under the hood, but the **Croktile function** you wrote is entirely in terms of global tensor indices.
 
 **Host side: owning buffers with `make_spandata`.**
 
-Chapter 1 used `choreo::make_spanview` to wrap existing C arrays. For tests that do not need a preallocated stack array, Choreo can allocate for you:
+Chapter 1 used `crok::make_spandata` and `.view()` to create and pass host tensors. The same API works here:
 
 ```choreo
 int main() {
-  auto lhs = choreo::make_spandata<choreo::s32>(128, 256);
-  auto rhs = choreo::make_spandata<choreo::s32>(256, 256);
+  auto lhs = crok::make_spandata<crok::s32>(128, 256);
+  auto rhs = crok::make_spandata<crok::s32>(256, 256);
   lhs.fill_random(-10, 10);
   rhs.fill_random(-10, 10);
 
@@ -96,9 +96,9 @@ int main() {
 }
 ```
 
-`make_spandata` builds a **dense owning buffer** with the given shape. It is the host-side counterpart to the `spanned_data` return type from Chapter 1: you can fill it, query `.shape()`, and pass a non-owning `view()` into a `__co__` function so the Choreo function sees a normal spanned input.
+`make_spandata` builds a dense owning buffer with the given shape. You can fill it, query `.shape()`, and pass a non-owning `view()` into a `__co__` function. This is the same pattern you used in Chapter 1.
 
-The verification loop is ordinary C++: compare `res` against a reference triple loop over `lhs` and `rhs`. The point of this chapter is the Choreo function; the host code stays boring on purpose.
+The verification loop is ordinary C++: compare `res` against a reference triple loop over `lhs` and `rhs`. The point of this chapter is the Croktile function; the host code stays boring on purpose.
 
 **What this version teaches — and what it omits.**
 
@@ -113,9 +113,9 @@ You have now seen:
 
 What you have *not* seen yet is any control over **where** those `lhs.at` / `rhs.at` reads land in the memory hierarchy. For large matrices on real hardware, reading every `k` step from far-away global memory inside the innermost loop is exactly what you want to fix next. That is where DMA and explicit local buffers enter the story.
 
-**Complete scalar matmul (Choreo function + host).**
+**Complete scalar matmul (Croktile function + host).**
 
-For reference, here is the full scalar program as it appears in the Choreo tests (minus the `// REQUIRES` / `// RUN` harness lines). Read it top to bottom once: the `__co__` body fits on a handful of lines, and the host is almost entirely verification.
+For reference, here is the full scalar program as it appears in the Croktile tests (minus the `// REQUIRES` / `// RUN` harness lines). Read it top to bottom once: the `__co__` body fits on a handful of lines, and the host is almost entirely verification.
 
 ```choreo
 __co__ s32 [128, 256] matmul(s32 [128, 256] lhs, s32 [256, 256] rhs) {
@@ -129,8 +129,8 @@ __co__ s32 [128, 256] matmul(s32 [128, 256] lhs, s32 [256, 256] rhs) {
 }
 
 int main() {
-  auto lhs = choreo::make_spandata<choreo::s32>(128, 256);
-  auto rhs = choreo::make_spandata<choreo::s32>(256, 256);
+  auto lhs = crok::make_spandata<crok::s32>(128, 256);
+  auto rhs = crok::make_spandata<crok::s32>(256, 256);
   lhs.fill_random(-10, 10);
   rhs.fill_random(-10, 10);
 
@@ -141,14 +141,14 @@ int main() {
       int ref = 0;
       for (size_t k = 0; k < lhs.shape()[1]; ++k)
         ref += lhs[i][k] * rhs[k][j];
-      choreo::choreo_assert(ref == res[i][j], "values are not equal.");
+      crok::choreo_assert(ref == res[i][j], "values are not equal.");
     }
 
   std::cout << "Test Passed\n" << std::endl;
 }
 ```
 
-Notice the symmetry between the Choreo function and the reference: the triple `foreach` is the same `i, j, k` contraction as the host's `ref` loop, only written in terms of tiles and composed indices. That is a useful pattern when you are debugging — if the host reference passes and the Choreo function fails, you can usually narrow the bug to indexing (`#`, `.at`, or trip counts) rather than to the arithmetic itself.
+Notice the symmetry between the Croktile function and the reference: the triple `foreach` is the same `i, j, k` contraction as the host's `ref` loop, only written in terms of tiles and composed indices. That is a useful pattern when you are debugging — if the host reference passes and the Croktile function fails, you can usually narrow the bug to indexing (`#`, `.at`, or trip counts) rather than to the arithmetic itself.
 
 **Tracing a single output cell.**
 
@@ -166,7 +166,7 @@ GPUs hide memory latency by keeping many threads busy and by exploiting fast **o
 2. Compute partial dot products from those tiles while they are still hot in fast memory.
 3. Advance `tile_k` and repeat until the full inner dimension is covered.
 
-Choreo makes step 1 explicit with `dma.copy ... => local`. You still write the arithmetic with `.at`, but the tensors you read in the inner loop are the **loaded** locals, not the global spanned parameters.
+Croktile makes step 1 explicit with `dma.copy ... => local`. You still write the arithmetic with `.at`, but the tensors you read in the inner loop are the **loaded** locals, not the global spanned parameters.
 
 **Top-level parallel grid over output tiles.**
 
@@ -176,7 +176,7 @@ Choreo makes step 1 explicit with `dma.copy ... => local`. You still write the a
 
 This is the **brace form** for multi-dimensional parallelism: one parallel index tuple `{px, py}` with a matching tile count vector `[8, 16]`. The grid is `8 × 16` tiles. Together with the inner `parallel {qx, qy} by [16, 16]`, the example carves the `128 × 256` output into a hierarchy: coarse tiles `(px, py)` and finer sub-tiles `(qx, qy)` inside each coarse tile.
 
-If you are used to CUDA `blockIdx` / `threadIdx`, think of `px, py` as a logical block over the output matrix and `qx, qy` as a finer partition inside that block — Choreo keeps the algebra of indices explicit instead of folding everything into one flat thread id.
+If you are used to CUDA `blockIdx` / `threadIdx`, think of `px, py` as a logical block over the output matrix and `qx, qy` as a finer partition inside that block — Croktile keeps the algebra of indices explicit instead of folding everything into one flat thread id.
 
 **Outer `foreach` over K-tiles.**
 
@@ -193,7 +193,7 @@ There are `16` steps along the `tile_k` axis (the test's chosen factorization). 
 
 Both copies target `local`, i.e. fast memory visible to the compute that will consume them. The assignments `lhs_load =` and `rhs_load =` bind **futures** (the DMA operations in flight). The nested `parallel` below shows how the inner compute waits on those implicitly and reads through `.data`.
 
-Spacing in `chunkat(tile_k , py)` is only stylistic; Choreo ignores the extra space.
+Spacing in `chunkat(tile_k , py)` is only stylistic; Croktile ignores the extra space.
 
 **Nested `parallel` and the inner `k` loop.**
 
@@ -211,7 +211,7 @@ Inside, `k` runs over the **K extent of this loaded tile**. The trip count is `2
 
 Crucially, the loads use **`lhs_load.data` and `rhs_load.data`**. The `dma.copy` future's `.data` member is the local spanned buffer you can index with `.at`. The global `lhs` / `rhs` parameters are not touched in the innermost statement — the hardware (via generated code) already brought the relevant rectangles into `local`.
 
-Nested `parallel` expresses **two levels of parallelism**: orchestration across the output grid, and finer-grained work inside each tile. On a GPU target, the compiler maps these to warps, blocks, and shared memory in ways that depend on the backend; the Choreo function you write stays at the level of *what* is parallel, not *which* hardware register holds which tid.
+Nested `parallel` expresses **two levels of parallelism**: orchestration across the output grid, and finer-grained work inside each tile. On a GPU target, the compiler maps these to warps, blocks, and shared memory in ways that depend on the backend; the Croktile function you write stays at the level of *what* is parallel, not *which* hardware register holds which tid.
 
 **Dimension arithmetic for the DMA nest.**
 
@@ -221,9 +221,9 @@ Along `K`, the outer `foreach {tile_k} in [16]` fixes `#tile_k = 16`, so each DM
 
 You do not have to memorize these exact factors. What you should internalize is the **pattern**: outer parallelism over output regions, an outer sequential or tiled loop over `K` that triggers DMA, inner parallelism over the fine structure of the tile, and an inner `k` loop whose length is the **current K-tile height**, not the full `256` every time.
 
-**Complete DMA matmul (Choreo function + host).**
+**Complete DMA matmul (Croktile function + host).**
 
-Here is the full `matmul-dma.co` body for side-by-side comparison with the scalar version. The Choreo function is longer, but the `main` function is still mostly setup and verification.
+Here is the full `matmul-dma.co` body for side-by-side comparison with the scalar version. The Croktile function is longer, but the `main` function is still mostly setup and verification.
 
 ```choreo
 __co__ s32 [128, 256] matmul(s32 [128, 256] lhs, s32 [256, 256] rhs) {
@@ -244,10 +244,10 @@ __co__ s32 [128, 256] matmul(s32 [128, 256] lhs, s32 [256, 256] rhs) {
 }
 
 int main() {
-  choreo::s32 a[128][256] = {0};
-  choreo::s32 b[256][256] = {0};
-  auto lhs_data = choreo::make_spanview<2, choreo::s32>((int*)a, {128, 256});
-  auto rhs_data = choreo::make_spanview<2, choreo::s32>((int*)b, {256, 256});
+  crok::s32 a[128][256] = {0};
+  crok::s32 b[256][256] = {0};
+  auto lhs_data = crok::make_spanview<2, crok::s32>((int*)a, {128, 256});
+  auto rhs_data = crok::make_spanview<2, crok::s32>((int*)b, {256, 256});
   lhs_data.fill_random(-10, 10);
   rhs_data.fill_random(-10, 10);
 
@@ -258,14 +258,14 @@ int main() {
       int ref = 0;
       for (size_t k = 0; k < lhs_data.shape()[1]; ++k)
         ref += a[i][k] * b[k][j];
-      choreo::choreo_assert(ref == res[i][j], "values are not equal.");
+      crok::choreo_assert(ref == res[i][j], "values are not equal.");
     }
 
   std::cout << "Test Passed\n" << std::endl;
 }
 ```
 
-Comparing the two `__co__` functions line by line is instructive. Both allocate `output` the same way. Both ultimately implement `+= lhs * rhs` into `output.at(...)`. The scalar version states *which global elements* participate in each product; the DMA version states *which tiles were copied* before the product, then uses `.data` to read the copy. That is the whole conceptual step from Chapter 1's element-wise DMA to "copy a tile, stay in the Choreo function and index the chunk."
+Comparing the two `__co__` functions line by line is instructive. Both allocate `output` the same way. Both ultimately implement `+= lhs * rhs` into `output.at(...)`. The scalar version states *which global elements* participate in each product; the DMA version states *which tiles were copied* before the product, then uses `.data` to read the copy. That is the whole conceptual step: from element-wise `.at()` on globals to "copy a tile, then index the local chunk."
 
 **Host program: views into stack arrays.**
 
@@ -273,10 +273,10 @@ The DMA variant's `main` in the test suite uses `make_spanview` with stack-backe
 
 ```choreo
 int main() {
-  choreo::s32 a[128][256] = {0};
-  choreo::s32 b[256][256] = {0};
-  auto lhs_data = choreo::make_spanview<2, choreo::s32>((int*)a, {128, 256});
-  auto rhs_data = choreo::make_spanview<2, choreo::s32>((int*)b, {256, 256});
+  crok::s32 a[128][256] = {0};
+  crok::s32 b[256][256] = {0};
+  auto lhs_data = crok::make_spanview<2, crok::s32>((int*)a, {128, 256});
+  auto rhs_data = crok::make_spanview<2, crok::s32>((int*)b, {256, 256});
   lhs_data.fill_random(-10, 10);
   rhs_data.fill_random(-10, 10);
 
@@ -285,21 +285,21 @@ int main() {
 }
 ```
 
-That is the same pattern as Chapter 1: you own the memory (`a`, `b`), and the spanview tells Choreo the rank (`2`) and element type. You could equally allocate with `make_spandata` and pass `.view()` — the Choreo function only cares that the arguments are spanned tensors with consistent shapes.
+The `make_spanview` function wraps existing C arrays with shape metadata, similar to how `make_spandata` + `.view()` works in Chapter 1. You could equally allocate with `make_spandata` and pass `.view()` — the Croktile function only cares that the arguments are spanned tensors with consistent shapes.
 
 **Scalar vs DMA: same math, different movement story.**
 
 Both programs implement the same multiply-accumulate. The scalar version is a **reference choreography**: easy to read, direct `.at` on globals. The DMA version is a **movement-aware** choreography: it states *which rectangles* of `lhs` and `rhs` live in `local` for each `tile_k`, and it nests parallelism so that sub-tiles `(qx, qy)` cooperate under each `(px, py)`.
 
-When you optimize further (pipelines, TMA, tensor cores), you will keep this structure: outer loops over tiles and memory stages, inner loops over compute, explicit `.data` views after copies. Chapter 1 gave you DMA with inline arithmetic on a simple addition; this chapter applies the same primitives to a richer loop nest.
+When you optimize further (pipelines, TMA, tensor cores), you will keep this structure: outer loops over tiles and memory stages, inner loops over compute, explicit `.data` views after copies.
 
 **How this extends Chapter 1.**
 
-In Chapter 1, `dma.copy` staged data to local memory and `foreach` with `.at()` performed the addition inline. The matmul DMA example uses the same `.data` handles in a richer loop nest — nested `parallel` for a 2D tile hierarchy, an outer loop over K-tiles, and an inner per-element accumulation. Nothing changed about DMA — you still get a future, you still read the payload through `.data` — only the loop structure grew.
+Chapter 1 used `foreach` and `.at()` for pure element-wise arithmetic — no control over how data moves through the memory hierarchy. This chapter introduced two new concepts: `dma.copy ... => local` for explicit bulk transfers, and `chunkat` for carving tensors into rectangular tiles. The `dma.copy` future's `.data` member gives you a local spanned buffer to index with `.at`, so the compute code looks similar to Chapter 1 but operates on cached local data instead of global memory.
 
-Similarly, Chapter 1 introduced `chunkat` on 3D tensors for element-wise add. Here, `chunkat` takes **two** indices because each operand is a matrix and the tiling axes are the output row tile, the output column tile, and the `K` tile. The rule of thumb is that `chunkat` always lists indices in the same order as the dimensions you are carving; the meaning of each slot follows from the shape of the tensor in the signature.
+The rule of thumb for `chunkat` is that it lists indices in the same order as the dimensions you are carving; the meaning of each slot follows from the shape of the tensor in the signature.
 
-If you are tempted to merge the scalar and DMA styles — for example, using `.at` on globals for some loops and `.data.at` for others in one kernel — Choreo will let you express that, but readability usually suffers. Pick one level of abstraction per loop nest: either trust the compiler for global accesses, or stage explicitly with `dma.copy` and stay on `.data` until you leave the tile.
+If you are tempted to merge the scalar and DMA styles — for example, using `.at` on globals for some loops and `.data.at` for others in one kernel — Croktile will let you express that, but readability usually suffers. Pick one level of abstraction per loop nest: either trust the compiler for global accesses, or stage explicitly with `dma.copy` and stay on `.data` until you leave the tile.
 
 ## New Syntax and Concepts (Chapter 2)
 
@@ -317,7 +317,7 @@ If you are tempted to merge the scalar and DMA styles — for example, using `.a
 | `foreach index = {m, n, k} in [a, b, c]` | Named destructuring: multiple loop indices introduced in one `foreach` head. |
 | `128 / #p`, `256 / #tile_k` | `#name` as the extent of parallel index or tile axis in symbolic trip counts. |
 
-That table recaps what this chapter added relative to Chapter 1. If you are comparing to CUDA tutorials, the scalar program is like writing the arithmetic in one place with global pointers; the DMA program is like bringing shared-memory tiles into scope before the inner loops. Choreo's advantage is that both levels are **one language** — the same `.at` notation, the same `parallel` / `foreach` vocabulary — so you can refactor from one to the other without rewriting your host code or inventing ad-hoc macros.
+That table recaps what this chapter added beyond Chapter 1's `foreach` + `.at()` basics. If you are comparing to CUDA tutorials, the scalar matmul is like writing the arithmetic with global pointers; the DMA matmul is like bringing shared-memory tiles into scope before the inner loops. Croktile's advantage is that both levels are **one language** — the same `.at` notation, the same `parallel` / `foreach` vocabulary — so you can refactor from one to the other without rewriting your host code or inventing ad-hoc macros.
 
 ## What's Next
 

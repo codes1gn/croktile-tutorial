@@ -1,6 +1,6 @@
 # Overlapping Compute and DMA: Pipeline Patterns
 
-In the previous chapter you expressed matrix multiplication with explicit DMA copies: each K-tile of the operands is brought into fast memory, multiplied into the accumulator, and then the next tile is fetched. That version is easy to read and correct, but it leaves a familiar hole in the schedule. While the GPU waits for the next DMA to finish, the arithmetic units sit idle; while the GPU is busy multiplying, the memory subsystem could be prefetching the *following* tile. This chapter shows how Choreo expresses **software pipelining** so data movement and computation overlap, using the same matmul example with **double buffering** in shared memory.
+In the previous chapter you expressed matrix multiplication with explicit DMA copies: each K-tile of the operands is brought into fast memory, multiplied into the accumulator, and then the next tile is fetched. That version is easy to read and correct, but it leaves a familiar hole in the schedule. While the GPU waits for the next DMA to finish, the arithmetic units sit idle; while the GPU is busy multiplying, the memory subsystem could be prefetching the *following* tile. This chapter shows how Croktile expresses **software pipelining** so data movement and computation overlap, using the same matmul example with **double buffering** in shared memory.
 
 ## The Problem: Sequential DMA and Compute
 
@@ -12,7 +12,7 @@ Picture the inner K-loop from a naive tiled matmul expressed with DMA. For each 
 
 Steps 2 and 3 cannot overlap with the *next* tile's step 1 if you only hold one staging buffer: you would overwrite data that is still being read. So the timeline looks like a staircase: copy, compute, copy, compute, with one side of the machine always idle.
 
-**Double buffering** fixes that by keeping two slots: **buffer 0** holds the tile you are computing on *now*, while **buffer 1** is filled with the *next* tile in parallel. When a stage finishes, you **swap** the roles of the two buffers and repeat. Choreo makes this pattern explicit with named DMA futures, a prologue, a steady-state loop, and an epilogue—plus a few syntax pieces you have not seen yet.
+**Double buffering** fixes that by keeping two slots: **buffer 0** holds the tile you are computing on *now*, while **buffer 1** is filled with the *next* tile in parallel. When a stage finishes, you **swap** the roles of the two buffers and repeat. Croktile makes this pattern explicit with named DMA futures, a prologue, a steady-state loop, and an epilogue—plus a few syntax pieces you have not seen yet.
 
 ## The Idea in One Diagram
 
@@ -26,7 +26,7 @@ The code below follows exactly that story. It also places tiles in **shared** me
 
 ## Full Example: Pipelined Matmul
 
-The following program matches the Choreo end-to-end test `matmul-pipelined-2.co`: square-ish block and thread tiling, `K = 256`, and a K-tile size of `16`. The interesting part is the `with tile_k` region and the `foreach tile_k(1:)` loop.
+The following program matches the Croktile end-to-end test `matmul-pipelined-2.co`: square-ish block and thread tiling, `K = 256`, and a K-tile size of `16`. The interesting part is the `with tile_k` region and the `foreach tile_k(1:)` loop.
 
 ```choreo
 #define M 128
@@ -65,8 +65,8 @@ __co__ auto matmul(s32 [M, K] lhs, s32 [K, N] rhs) {
 }
 
 int main() {
-  auto lhs = choreo::make_spandata<choreo::s32>(M, K);
-  auto rhs = choreo::make_spandata<choreo::s32>(K, N);
+  auto lhs = crok::make_spandata<crok::s32>(M, K);
+  auto rhs = crok::make_spandata<crok::s32>(K, N);
   lhs.fill_random(-10, 10);
   rhs.fill_random(-10, 10);
   auto res = matmul(lhs.view(), rhs.view());
@@ -77,7 +77,7 @@ int main() {
 
 The host side is unchanged in spirit from earlier chapters: allocate `spandata`, fill inputs, call `matmul` with `.view()`, and check results. The new skills are all in the `__co__` body.
 
-**Running the bundled test.** The Choreo tree ships this kernel as `tests/gpu/end2end/matmul-pipelined-2.co`. Your local checkout may use a different driver command, but the idea is the same as in Chapter 1: invoke the compiler on the `.co` file, then run the generated host binary so it prints `Test Passed` after the reference check. Pipelining does not change the observable result—only the schedule under the hood—so the verification loop in `main` stays a straightforward triply nested scalar matmul against `res`.
+**Running the bundled test.** The Croktile tree ships this kernel as `tests/gpu/end2end/matmul-pipelined-2.co`. Your local checkout may use a different driver command, but the idea is the same as in Chapter 1: invoke the compiler on the `.co` file, then run the generated host binary so it prints `Test Passed` after the reference check. Pipelining does not change the observable result—only the schedule under the hood—so the verification loop in `main` stays a straightforward triply nested scalar matmul against `res`.
 
 ## Parallel Granularity: `: block` and `: thread`
 
@@ -88,7 +88,7 @@ parallel {px, py} by [8, 16] : block
   parallel {qx, qy} by [16, 16] : thread {
 ```
 
-The annotations **`: block`** and **`: thread`** tell Choreo how each loop maps to the GPU hierarchy. The outer loop is a 8×16 grid of **thread blocks**; the inner loop is a 16×16 arrangement of **threads** within each block. Together they cover the logical output indices: expressions like `px#qx` and `py#qy` combine block indices with in-block thread indices to address the full output element this thread owns. You can read `#` as "compose block and thread coordinates."
+The annotations **`: block`** and **`: thread`** tell Croktile how each loop maps to the GPU hierarchy. The outer loop is a 8×16 grid of **thread blocks**; the inner loop is a 16×16 arrangement of **threads** within each block. Together they cover the logical output indices: expressions like `px#qx` and `py#qy` combine block indices with in-block thread indices to address the full output element this thread owns. You can read `#` as "compose block and thread coordinates."
 
 This structure matters for pipelining because **shared memory is scoped to a block**: one pair `(px, py)` corresponds to one block, and all threads in that block cooperate on the same double-buffered tiles in shared memory.
 
@@ -100,7 +100,7 @@ The line:
 with tile_k in 16 {
 ```
 
-does two jobs at once. It opens a scoped region (like the `with index in [...]` you saw earlier), and it **binds the name `tile_k` to the tiling factor 16**. Inside the block, `tile_k` is not just a number—it is the **chunk index** for `chunkat` along the K dimension, and Choreo can relate the extent of each chunk to that constant.
+does two jobs at once. It opens a scoped region (like the `with index in [...]` you saw earlier), and it **binds the name `tile_k` to the tiling factor 16**. Inside the block, `tile_k` is not just a number—it is the **chunk index** for `chunkat` along the K dimension, and Croktile can relate the extent of each chunk to that constant.
 
 The inner arithmetic uses `256 / #tile_k` for the number of elements along K inside a tile: `#tile_k` turns the bound symbol into a compile-time numeric value for shape expressions. That keeps the inner `foreach k` loop consistent with the physical tile size without scattering literal `16` everywhere.
 
@@ -191,9 +191,9 @@ Counting stages: one prologue, fifteen overlapped iterations, one epilogue—six
 
 ## What `swap` Does (and Does Not Do)
 
-**`swap(lf0, lf1)`** is about **names and futures**, not about memcpy. After a swap, the identifier `lf0` refers to whatever asynchronous operation and backing buffer `lf1` referred to before, and vice versa. The data already staged in shared memory stays where the hardware put it; only the Choreo-level handles rotate.
+**`swap(lf0, lf1)`** is about **names and futures**, not about memcpy. After a swap, the identifier `lf0` refers to whatever asynchronous operation and backing buffer `lf1` referred to before, and vice versa. The data already staged in shared memory stays where the hardware put it; only the Croktile-level handles rotate.
 
-That distinction matters when you read the loop: you are not "moving" tensors between variables—you are **re-pointing** the program at the correct in-flight copy and the correct `.data` view for the next iteration. The same idea appears in hand-written CUDA when programmers toggle between two `__shared__` arrays with a `^ 1` index or a boolean phase variable; Choreo makes the intent visible at the language level.
+That distinction matters when you read the loop: you are not "moving" tensors between variables—you are **re-pointing** the program at the correct in-flight copy and the correct `.data` view for the next iteration. The same idea appears in hand-written CUDA when programmers toggle between two `__shared__` arrays with a `^ 1` index or a boolean phase variable; Croktile makes the intent visible at the language level.
 
 Because `dma.any` creates an inert placeholder, the **first** steady-state iteration must assign real copies to `lf1`/`rf1` before any `.data` read from those names in later code paths. The structure of the listing guarantees that: placeholders appear only once, immediately before the loop.
 
@@ -211,7 +211,7 @@ The kernel is declared as:
 __co__ auto matmul(s32 [M, K] lhs, s32 [K, N] rhs) {
 ```
 
-Using **`auto`** as the return type tells Choreo to infer the result tensor type from `return output;`. Here `output` has shape `[lhs.span(0), rhs.span(1)]`, i.e. `[M, N]` for these fixed `M`, `N`. Explicit `s32 [M, N] matmul(...)` would also work; `auto` keeps the header aligned with shape expressions that depend on spans and keeps refactors less noisy if you generalize dimensions later.
+Using **`auto`** as the return type tells Croktile to infer the result tensor type from `return output;`. Here `output` has shape `[lhs.span(0), rhs.span(1)]`, i.e. `[M, N]` for these fixed `M`, `N`. Explicit `s32 [M, N] matmul(...)` would also work; `auto` keeps the header aligned with shape expressions that depend on spans and keeps refactors less noisy if you generalize dimensions later.
 
 ## Shared vs Local: When to Prefer Which
 

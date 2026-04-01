@@ -48,16 +48,16 @@ Scale loads can stall the consumer if they sit inside a tight WGMMA loop with sh
 
 By the time you reach **iter066**, the kernel is already doing heavy WGMMA and wide **N**; the remaining slack often sits in operand latency. Blockscale makes scales first-class operands—treat them like any other latency-bound input. Software prefetch, double-buffering, or DMA-to-SMEM (see the **v2** variants below) are all design axes when registers or scheduling bind.
 
-## Choreo source variants
+## Croktile source variants
 
-Under **`blockscale_gemm_v2/`**, additional **`.co`** files factor the scale path differently than register-immediate style in **`blockscale_gemm_dyn_sm90.co`**: **`rhs_scale_dma_smem`** and **`scale_dma_smem`** stage scales via TMA into shared memory; **`transposed_scale`** changes layout for coalescing vs index cost; **`tileN`** tiles along **N** explicitly in the Choreo structure. Those align with the README theme that **scale DMA** is an alternative when register pressure or load scheduling hurts WGMMA II.
+Under **`blockscale_gemm_v2/`**, additional **`.co`** files factor the scale path differently than register-immediate style in **`blockscale_gemm_dyn_sm90.co`**: **`rhs_scale_dma_smem`** and **`scale_dma_smem`** stage scales via TMA into shared memory; **`transposed_scale`** changes layout for coalescing vs index cost; **`tileN`** tiles along **N** explicitly in the Croktile structure. Those align with the README theme that **scale DMA** is an alternative when register pressure or load scheduling hurts WGMMA II.
 
 Warp-specialized entry points include **`blockscale_gemm_e4m3_dyn_sm90_warpspec_1p1c.co`** (1p1c template) and **`..._m2048_n2048_k2048.co`** for launch and register tuning. **`blockscale_gemm_e4m3_dyn_sm90_warpspec_persis_1p1c.co`** connects to [Chapter 7: Persistent kernels](../../tutorial/ch07-persistent.md) for grid behavior across tiles.
 
 ## Compile flags (Cute + warp specialization)
 
 ```bash
-./choreo -gs -t cute -arch=sm_90a --use-warpspec --stmatrix \
+./croktile -gs -t cute -arch=sm_90a --use-warpspec --stmatrix \
   benchmark/performance/blockscale_gemm_v2/blockscale_gemm_e4m3_dyn_sm90_warpspec_1p1c.co \
   -o /tmp/bs.cute.result && bash /tmp/bs.cute.result --execute
 ```
@@ -71,4 +71,4 @@ Warp-specialized entry points include **`blockscale_gemm_e4m3_dyn_sm90_warpspec_
 3. **L2 promotion** (**iter053**) and **scale prefetch** (**iter066**) are late percentage gains on an already strong kernel—where memory hierarchy and operand latency dominate.
 4. **`blockscale_gemm/`** and **`blockscale_gemm_v2/`** document alternative scale movement (DMA SMEM, transposed layouts) for future tuning when register or layout limits bind.
 
-Full iteration history: **`ai-tune/2026-03-22/blockscale_gemm_v2`** (71 iterations). Summary: `choreo/benchmark/performance/blockscale_gemm_v2/README_blockscale_gemm_e4m3_aitune_2026-03-22.md`.
+Full iteration history: **`ai-tune/2026-03-22/blockscale_gemm_v2`** (71 iterations). Summary: `croktile/benchmark/performance/blockscale_gemm_v2/README_blockscale_gemm_e4m3_aitune_2026-03-22.md`.

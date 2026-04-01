@@ -8,15 +8,15 @@ On Hopper-class hardware, **WGMMA** (warp-group matrix multiply-accumulate) typi
 
 The payoff is familiar from tiling theory: **larger per-block tiles** mean **fewer blocks** for the same matrix dimensions, which reduces **grid launch overhead**, improves **data reuse** of **B** within the block, and often helps **SM utilization** — provided the larger shared-memory and register footprint still fits your target.
 
-You might ask: **why not** keep **one** warpgroup per block and simply use **more** blocks along M? That design is valid and often easier to reason about. Multi-warpgroup layouts earn their keep when **B** reuse across the **M** split is strong: **one** TMA brings **B** into shared, and **two** groups multiply **different** row bundles of **A** against **that same** **B** without a second global read of **B** for the second **M** stripe. You still pay for **A** at the **full** **128×K** footprint per **K** step, but you **halve** the **B** traffic **per result row bundle** in the sense that two **64×64** result patches share one **B** slab. Whether that wins over a simpler kernel is **empirical**; the Choreo pattern exists so you can express the layout cleanly and let the compiler target WGMMA.
+You might ask: **why not** keep **one** warpgroup per block and simply use **more** blocks along M? That design is valid and often easier to reason about. Multi-warpgroup layouts earn their keep when **B** reuse across the **M** split is strong: **one** TMA brings **B** into shared, and **two** groups multiply **different** row bundles of **A** against **that same** **B** without a second global read of **B** for the second **M** stripe. You still pay for **A** at the **full** **128×K** footprint per **K** step, but you **halve** the **B** traffic **per result row bundle** in the sense that two **64×64** result patches share one **B** slab. Whether that wins over a simpler kernel is **empirical**; the Croktile pattern exists so you can express the layout cleanly and let the compiler target WGMMA.
 
 The rest of this chapter walks the benchmark kernel line by line, then generalizes the **`parallel p1 by N : group-4`** idiom and collects pitfalls that show up in real tuning.
 
-Keep a copy of **`matmul_f16_dynamic_mwg_impl_1.co`** open in your editor while you read. The prose quotes the **Choreo function** accurately, but the **C++** file is where **asserts**, **timing**, and **preprocessor** guards live.
+Keep a copy of **`matmul_f16_dynamic_mwg_impl_1.co`** open in your editor while you read. The prose quotes the **Croktile function** accurately, but the **C++** file is where **asserts**, **timing**, and **preprocessor** guards live.
 
 ## One warpgroup vs. two: the M axis
 
-Fix these sizes in your head (they match `matmul_f16_dynamic_mwg_impl_1.co` in the Choreo benchmarks):
+Fix these sizes in your head (they match `matmul_f16_dynamic_mwg_impl_1.co` in the Croktile benchmarks):
 
 | Symbol | Value | Role |
 |--------|-------|------|
@@ -34,7 +34,7 @@ The **key insight** for reading the code: **the right-hand tile in shared memory
 
 ## `parallel p1 by 2 : group-4`
 
-Choreo expresses multiple warpgroups with **`parallel`** over a small index, here **`p1`**, with a **`group`** annotation that says how many warps cooperate per group:
+Croktile expresses multiple warpgroups with **`parallel`** over a small index, here **`p1`**, with a **`group`** annotation that says how many warps cooperate per group:
 
 ```choreo
 parallel p1 by 2 : group-4 {
@@ -46,17 +46,17 @@ Read **`by 2`** as “**two** warpgroup instances in this block.” Read **`: gr
 
 Outside this region, the block still has a single **K** loop and shared buffers. Inside, **`p1`** selects **which** of the two groups is executing — and that index drives **which slice of `lhs_load_s`** and **which slice of `output_s`** this group uses.
 
-The **128 threads** per warpgroup matter for how the hardware executes **`mma.row.row`**: WGMMA is a **collective** on a **warp group**, not a single warp. Choreo’s **`: group-4`** states that requirement in the Choreo function so the lowering path can target the right instruction shape. When you read vendor documentation that says **“four warps cooperate”**, map that directly to **`group-4`** here.
+The **128 threads** per warpgroup matter for how the hardware executes **`mma.row.row`**: WGMMA is a **collective** on a **warp group**, not a single warp. Croktile’s **`: group-4`** states that requirement in the Croktile function so the lowering path can target the right instruction shape. When you read vendor documentation that says **“four warps cooperate”**, map that directly to **`group-4`** here.
 
-You can read **`p1`** as a **compile-time** or **Choreo-level** lane ID: it is not a runtime loop counter over threads inside one warp. It partitions **which warpgroup** owns **which strip** of the block’s **M** dimension in shared and in **`mc`**.
+You can read **`p1`** as a **compile-time** or **Croktile-level** lane ID: it is not a runtime loop counter over threads inside one warp. It partitions **which warpgroup** owns **which strip** of the block’s **M** dimension in shared and in **`mc`**.
 
 ## Full kernel walkthrough
 
-Below is the **Choreo function** core of the benchmark kernel (eliding C++ harness). Compare it mentally to a single-warpgroup Hopper matmul: the **TMA loads** and **output tile** are sized for **`TILE_M`**, while **compute** is duplicated in shape but **split** across **`p1`**.
+Below is the **Croktile function** core of the benchmark kernel (eliding C++ harness). Compare it mentally to a single-warpgroup Hopper matmul: the **TMA loads** and **output tile** are sized for **`TILE_M`**, while **compute** is duplicated in shape but **split** across **`p1`**.
 
 The listing is the **authoritative** shape reference; the prose that follows names each region — grid, shared sizing, **K** loop, **store**, epilog **TMA**, and **swizzle** — without subsection headings so you can read it straight through.
 
-**`__co__ void matmul`** is the Choreo entry point the C++ driver launches; the **`global`** tensors are the usual row-major **A**, **B**, and **C** views at the problem scale. Everything inside **`parallel {block_m, block_n} … : block`** is what a single CUDA CTA executes.
+**`__co__ void matmul`** is the Croktile entry point the C++ driver launches; the **`global`** tensors are the usual row-major **A**, **B**, and **C** views at the problem scale. Everything inside **`parallel {block_m, block_n} … : block`** is what a single CUDA CTA executes.
 
 ```choreo
 __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
@@ -101,7 +101,7 @@ For each **`iv_k`**, TMA fills **`lhs_load_s`** with the **`MATMUL_TILE_M × MAT
 
 **`ma`** — `lhs_load_s.subspan(MATMUL_WARP_M, MATMUL_TILE_K).at(p1, 0)` — is a **`64 × 64`** view of **`lhs_load_s`**: row offset **`p1 * 64`**, column offset **0**, so **`p1 = 0`** gets the **top** half of the **A** tile and **`p1 = 1`** the **bottom** half. **`mb`** — `rhs_load_s.chunkat(_, iv_warp)` — does **not** depend on **`p1`**: every warpgroup loads the **same** **B** stripes as **`iv_warp`** advances along **K**. **`mma.row.row mc, ma, mb`** gives each group **its own** **`mc`** (conceptually a per-group accumulator), accumulating **its** **A** rows against the **shared** **B** data. The inner **`foreach {iv_warp}`** walks **`TILE_K / WARP_K = 4`** steps along **K** inside shared memory, matching the usual blocked MMA pattern.
 
-Fix **`block_m`**, **`block_n`**, and **`iv_k`** for a moment. TMA lands **128×64** **A** and **64×64** **B** in shared. For **`p1 = 0`**, **`ma`** sees rows **0…63** of **`lhs_load_s`**; for **`p1 = 1`**, **64…127**. For **both**, **`mb`** cycles **four** **K**-shards of **`rhs_load_s`**. After this **`iv_k`**, each **`mc`** holds the **partial** sum for **its** **64×64** **C** patch over **K** so far; the outer **`foreach {iv_k}`** runs until **K** is exhausted. **TMA** appears before the **`parallel p1 by 2`** nest on purpose: **shared** must hold the new **A** and **B** slabs before **`mma.load`**. Real code may use **async** TMA and **barriers**; the Choreo function still states **dependences** like a synchronous kernel. If you **pipeline** two **K** buffers, the **multi-warpgroup** split is unchanged: each **phase** still ends with **both** groups seeing **consistent** **`lhs_load_s`** and **`rhs_load_s`**.
+Fix **`block_m`**, **`block_n`**, and **`iv_k`** for a moment. TMA lands **128×64** **A** and **64×64** **B** in shared. For **`p1 = 0`**, **`ma`** sees rows **0…63** of **`lhs_load_s`**; for **`p1 = 1`**, **64…127**. For **both**, **`mb`** cycles **four** **K**-shards of **`rhs_load_s`**. After this **`iv_k`**, each **`mc`** holds the **partial** sum for **its** **64×64** **C** patch over **K** so far; the outer **`foreach {iv_k}`** runs until **K** is exhausted. **TMA** appears before the **`parallel p1 by 2`** nest on purpose: **shared** must hold the new **A** and **B** slabs before **`mma.load`**. Real code may use **async** TMA and **barriers**; the Croktile function still states **dependences** like a synchronous kernel. If you **pipeline** two **K** buffers, the **multi-warpgroup** split is unchanged: each **phase** still ends with **both** groups seeing **consistent** **`lhs_load_s`** and **`rhs_load_s`**.
 
 After **K**, each warpgroup still holds **its** **`mc`** in registers (or the lowering’s equivalent). A second **`parallel p1 by 2 : group-4`** stores each **`mc`** into **`output_s`** — flushing accumulators into shared before global writeback:
 
@@ -127,7 +127,7 @@ Nothing in the pattern is special to **two**. If hardware resources allow, you c
 
 **N-side** scaling is a **different** design fork. This chapter’s kernel keeps **`parallel p1`** strictly on the **M** split. If you also want **two** **64×64** patches **along N**, you typically introduce **another** parallel axis (or **another** **block** dimension) and **either** **replicate** or **partition** **B** accordingly — you **cannot** blindly keep a **single** **`rhs_load_s`** sized **`[64,64]`** if **each** group needs **disjoint** **N** data. The **M-only** split is the **sweet spot** for **one B tile** serving **many A row bundles**.
 
-If you generalize to **`MATMUL_TILE_M = 192`**, the Choreo function changes only where **counts** and **buffer sizes** appear — the **pattern** is unchanged:
+If you generalize to **`MATMUL_TILE_M = 192`**, the Croktile function changes only where **counts** and **buffer sizes** appear — the **pattern** is unchanged:
 
 ```choreo
 shared f16 [192, MATMUL_TILE_K] lhs_load_s;
@@ -157,7 +157,7 @@ When you see **`TILE_M`** and **`WARP_M`** in the same kernel, treat **`TILE_*`*
 
 Two bugs show up often when you **first** sketch multi-warpgroup matmuls by analogy with **multi-warp** Ampere kernels. **Indexing `rhs` with `p1`** — if **`mb`** accidentally depended on **`p1`**, you would be telling a story where **different** groups need **different** **B** tiles — at that point you usually want **different** **`block_n`** or an **N-side** split, not a second **M** group reading the same **`rhs_load_s`**. **Forgetting to partition `output_s`** — if both groups **`mma.store`** to **`output_s.subspan(MATMUL_WARP_M, MATMUL_WARP_N).at(0, 0)`**, the **second** group **overwrites** the **first**. The **`.at(p1, 0)`** on **store** is not decorative; it is the **same** **M-axis** addressing as on **`ma`**. Also watch **occupancy**: **doubling** **`TILE_M`** grows **`lhs_load_s`** and **`output_s`** roughly **linearly** in that dimension. **Shared** limits can **push** you to **fewer** resident blocks per SM even as **arithmetic intensity** improves. Profile **both** **throughput** and **occupancy** when you change **`TILE_M`** or the **number** of groups.
 
-Choreo’s **`subspan`** and **`.at(p1, 0)`** compose the same way whether you have one warpgroup or four. **`subspan(MATMUL_WARP_M, MATMUL_TILE_K)`** declares a **window** whose **height** is **64** rows and **width** is the full **K** chunk (**64**) sitting in **`lhs_load_s`**. That window is **logically** a **64×64** matrix for each **`iv_warp`** step after **`chunkat(_, iv_warp)`** narrows along **K**. **`.at(p1, 0)`** then **slides** that window **down** the **M** axis: **`p1 = 0`** anchors at row **0** of **`lhs_load_s`**, **`p1 = 1`** at row **64**. The second index **0** is the column anchor inside the **subspan** — here the **left** edge of the **K** chunk, because the **entire** **TILE_K** width is already addressed by **`subspan(..., MATMUL_TILE_K)`** and the **`chunkat`** picks **which 16-column stripe** (for **`WARP_K = 16`**) participates in this **`mma.row.row`**.
+Croktile’s **`subspan`** and **`.at(p1, 0)`** compose the same way whether you have one warpgroup or four. **`subspan(MATMUL_WARP_M, MATMUL_TILE_K)`** declares a **window** whose **height** is **64** rows and **width** is the full **K** chunk (**64**) sitting in **`lhs_load_s`**. That window is **logically** a **64×64** matrix for each **`iv_warp`** step after **`chunkat(_, iv_warp)`** narrows along **K**. **`.at(p1, 0)`** then **slides** that window **down** the **M** axis: **`p1 = 0`** anchors at row **0** of **`lhs_load_s`**, **`p1 = 1`** at row **64**. The second index **0** is the column anchor inside the **subspan** — here the **left** edge of the **K** chunk, because the **entire** **TILE_K** width is already addressed by **`subspan(..., MATMUL_TILE_K)`** and the **`chunkat`** picks **which 16-column stripe** (for **`WARP_K = 16`**) participates in this **`mma.row.row`**.
 
 The **store** line repeats the **same** **subspan** shape and **same** **`.at(p1, 0)`**, but the buffer is **`output_s`** instead of **`lhs_load_s`**. That **symmetry** is deliberate: whatever **rows** of **A** a group used to **form** its **`mc`**, it writes **`mc`** back to the **matching** **rows** of the **staged** **C** tile. If **load** and **store** ever disagree on **`p1`**, you have a **silent** correctness bug — the kind **unit tests** catch quickly if **M** and **N** are small enough to **eyeball** a full matrix.
 
@@ -167,7 +167,7 @@ If you are reading the chapters in order: Chapter 5 set up **MMA** lifecycle and
 
 None of that ordering is mandatory for correctness here: you could read this chapter first and still understand the kernel if you treat **Chapter 7** as “optional background on **persistent** scheduling.” The **dataflow** inside one block stands on its own.
 
-The repository path **`choreo/benchmark/performance/matmul/matmul_f16_dynamic_mwg_impl_1.co`** contains the full **C++** harness (timing, verification, CLI flags) around the **`__co__ void matmul`** you saw above. The **preprocessor** block at the top is worth skimming even if you never change the constants: it encodes **WGMMA** shape rules (**`WARP_M`**, **`WARP_K`**), **swizzle** legality, and **`TILE_M % WARP_M`**. Treat those **`#error`** lines as **documentation** that happens to be executable — when you bump **`TILE_K`**, the compiler will refuse combinations that break **FP16** Hopper assumptions instead of failing mysteriously at runtime.
+The repository path **`croktile/benchmark/performance/matmul/matmul_f16_dynamic_mwg_impl_1.co`** contains the full **C++** harness (timing, verification, CLI flags) around the **`__co__ void matmul`** you saw above. The **preprocessor** block at the top is worth skimming even if you never change the constants: it encodes **WGMMA** shape rules (**`WARP_M`**, **`WARP_K`**), **swizzle** legality, and **`TILE_M % WARP_M`**. Treat those **`#error`** lines as **documentation** that happens to be executable — when you bump **`TILE_K`**, the compiler will refuse combinations that break **FP16** Hopper assumptions instead of failing mysteriously at runtime.
 
 **Check your understanding.**
 

@@ -4,7 +4,7 @@ This page is about where the kernel sits before you change structure, and how yo
 
 ## What “baseline” means here
 
-On main, the reference point is **208.7 TFLOPS** at **8192³** with **1p1c** warp specialization (one TMA producer warpgroup, one WGMMA consumer warpgroup), **WN = 128** (`MATMUL_WARP_N`), and **STAGES = 4** for the K-direction operand ring—the same pipelining idea as [Chapter 3](../../tutorial/ch03-pipeline.md), with roles split as in [Chapter 6](../../tutorial/ch06-warpspec.md). The Choreo sources that embody this are **`matmul_f16_dyn_sm90.co`** and **`matmul_f16_dyn_sm90_warpspec_1p1c.co`**. Operand layout (swizzle, `MATMUL_TILE_K`, `MATMUL_SWIZ`) follows [Chapter 4](../../tutorial/ch04-tma-swizzle.md); the baseline is not broken on addressing. It is **under-scheduled** relative to what the SM can take once tile width, stage depth, and how you stage the output line up with the problem size.
+On main, the reference point is **208.7 TFLOPS** at **8192³** with **1p1c** warp specialization (one TMA producer warpgroup, one WGMMA consumer warpgroup), **WN = 128** (`MATMUL_WARP_N`), and **STAGES = 4** for the K-direction operand ring—the same pipelining idea as [Chapter 3](../../tutorial/ch03-pipeline.md), with roles split as in [Chapter 6](../../tutorial/ch06-warpspec.md). The Croktile sources that embody this are **`matmul_f16_dyn_sm90.co`** and **`matmul_f16_dyn_sm90_warpspec_1p1c.co`**. Operand layout (swizzle, `MATMUL_TILE_K`, `MATMUL_SWIZ`) follows [Chapter 4](../../tutorial/ch04-tma-swizzle.md); the baseline is not broken on addressing. It is **under-scheduled** relative to what the SM can take once tile width, stage depth, and how you stage the output line up with the problem size.
 
 For a square GEMM of side **S**, useful work is **2S³** multiply-adds (one FMA ≈ two flops), so **TFLOPS ≈ 2S³ / t × 10⁻¹²**. With **S** fixed, TFLOPS tracks inverse runtime. That is why the study moves between **2048³**, **4096³**, and **8192³**: grid waves, L2 footprint, and tail behavior change; the flop definition does not.
 
@@ -25,7 +25,7 @@ With a normal data-parallel grid, block count scales with **M/WM** and **N/WN**.
 At **2048³**, two small experiments already show SMEM and lowering matter:
 
 - **iter004**: WN=256, STAGES=2 → **208.9** TFLOPS. Fewer stages shrink the operand ring; footprint and residency move together.
-- **iter023**: adds **`ptx-barrier`**, **`stmatrix`**, and **subspan** work → **214.3** TFLOPS (~**+5%** over the Phase-1 baseline). That is compiler and operand-path quality on top of the Choreo function, not a new algorithm.
+- **iter023**: adds **`ptx-barrier`**, **`stmatrix`**, and **subspan** work → **214.3** TFLOPS (~**+5%** over the Phase-1 baseline). That is compiler and operand-path quality on top of the Croktile function, not a new algorithm.
 
 Phase 2 is where the profile story shifts: **iter046** hits **242** TFLOPS at **2048³** (WN=176, STAGES=2); **iter048** keeps **WN=176** but uses **three** stages and jumps to **354.1** TFLOPS. Same tile width, different stage count—that is the clearest log lesson that **pipeline depth must be tuned with** tile width **and** revisited when you change problem size. **iter050** then validates **1p2c split-output** at **4096³** (~**375** TFLOPS); **iter057** carries that to **382.5** TFLOPS at **8192³**. Once TFLOPS at 2048³ crosses **350+**, you are not arguing about “turning WGMMA on” anymore; you are arguing about occupancy, output staging, and the large-cube grid.
 
@@ -37,7 +37,7 @@ The teaching kernel **`matmul_f16_dyn_sm90_warpspec_1p1c.co`** is the clearest *
 
 ## Correctness as a gate
 
-Published rows assume agreement with a reference. When TFLOPS jumps **+50%** in one step, you ask first whether the math changed, not whether Hopper “likes” the kernel. Use **`CHOREO_SKIP_VERIFY`** only when you trust correctness; otherwise treat failures as hard stops—a fast wrong kernel sends the search backward.
+Published rows assume agreement with a reference. When TFLOPS jumps **+50%** in one step, you ask first whether the math changed, not whether Hopper “likes” the kernel. Use **`CROKTILE_SKIP_VERIFY`** only when you trust correctness; otherwise treat failures as hard stops—a fast wrong kernel sends the search backward.
 
 If you have Nsight Compute, consumer stalls at **`wait full`** and producer stalls at **`wait empty`** line up with the same mental model as [Chapter 6](../../tutorial/ch06-warpspec.md). This writeup leans on TFLOPS as the public evidence; the mapping to counters is optional but consistent.
 

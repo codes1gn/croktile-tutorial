@@ -1,8 +1,8 @@
 # Setting Up: TimerOption, TFLOPS, and HW Efficiency
 
-This page is the shared measurement contract for the optimization walkthroughs. You will see the same ideas in every matmul host program: Choreo wraps the kernel in `choreo::timing` with a `choreo::TimerOption`, prints mean milliseconds, then derives TFLOPS and sometimes efficiency vs peak. Once that pipeline is familiar, you can read each case study as an A/B story on the same yardstick.
+This page is the shared measurement contract for the optimization walkthroughs. You will see the same ideas in every matmul host program: Croktile wraps the kernel in `crok::timing` with a `crok::TimerOption`, prints mean milliseconds, then derives TFLOPS and sometimes efficiency vs peak. Once that pipeline is familiar, you can read each case study as an A/B story on the same yardstick.
 
-## How `choreo::timing` Works
+## How `crok::timing` Works
 
 `TimerOption` carries **`warmup`** and **`repeat`**. Warmup runs are executed but excluded from the average so caches, TLBs, and steady-state behavior settle first. The timed runs are averaged; the reported value is **mean elapsed time in milliseconds**.
 
@@ -11,14 +11,14 @@ Host code often reads overrides from the environment, then times a lambda that l
 ```cpp
 int warmup = 10;
 int repeat = 500;
-const char* warmup_env = std::getenv("CHOREO_TIMING_WARMUP");
-const char* repeat_env = std::getenv("CHOREO_TIMING_REPEAT");
+const char* warmup_env = std::getenv("CROKTILE_TIMING_WARMUP");
+const char* repeat_env = std::getenv("CROKTILE_TIMING_REPEAT");
 if (warmup_env) { int value = std::atoi(warmup_env); if (value >= 0) warmup = value; }
 if (repeat_env) { int value = std::atoi(repeat_env); if (value > 0) repeat = value; }
-choreo::TimerOption topt;
+crok::TimerOption topt;
 topt.warmup = warmup;
 topt.repeat = repeat;
-auto avg_ms = choreo::timing([&]() { matmul(lhs_d, rhs_d, res_d); cudaDeviceSynchronize(); }, topt);
+auto avg_ms = crok::timing([&]() { matmul(lhs_d, rhs_d, res_d); cudaDeviceSynchronize(); }, topt);
 std::cout << "Timing avg ms: " << avg_ms << "\n";
 ```
 
@@ -51,7 +51,7 @@ double eff = (tflops / H800_PCIE_PEAK_F16_TFLOPS) * 100.0;
 std::cout << "HW efficiency: " << eff << "%\n";
 ```
 
-Reference peaks used in Choreo matmul benchmarks for **H800 PCIe**:
+Reference peaks used in Croktile matmul benchmarks for **H800 PCIe**:
 
 | Constant | Value (TFLOPS) | Use |
 | -------- | ------------- | --- |
@@ -64,21 +64,21 @@ Those numbers are theoretical peaks; real kernels rarely sit at 100%. Use the sa
 
 | Variable | Default | Effect |
 | -------- | ------- | ------ |
-| `CHOREO_TIMING_WARMUP` | `10` | Warmup iterations (non-negative; `0` disables warmup). |
-| `CHOREO_TIMING_REPEAT` | `500` | Timed iterations (must be positive to take effect). |
-| `CHOREO_DISABLE_TIMING` | unset | Set to `1` to skip timing (compile or correctness only). |
-| `CHOREO_SKIP_VERIFY` | unset | Set to `1` to skip numerical verification (faster iteration when you trust the math). |
+| `CROKTILE_TIMING_WARMUP` | `10` | Warmup iterations (non-negative; `0` disables warmup). |
+| `CROKTILE_TIMING_REPEAT` | `500` | Timed iterations (must be positive to take effect). |
+| `CROKTILE_DISABLE_TIMING` | unset | Set to `1` to skip timing (compile or correctness only). |
+| `CROKTILE_SKIP_VERIFY` | unset | Set to `1` to skip numerical verification (faster iteration when you trust the math). |
 
-Verification compares the kernel against a reference and adds host work. For timing-focused runs after layout or precision are stable, `export CHOREO_SKIP_VERIFY=1` keeps the measurement focused on the device path. Turn verification back on when you change data layout, precision, or tiling.
+Verification compares the kernel against a reference and adds host work. For timing-focused runs after layout or precision are stable, `export CROKTILE_SKIP_VERIFY=1` keeps the measurement focused on the device path. Turn verification back on when you change data layout, precision, or tiling.
 
-Performance `.co` files are built through the Choreo driver: pass **`-gs`** (generate script), **`-t cute`**, **`-arch`**, and codegen flags; **`-o`** points at a shell script (often under `/tmp`); run that script with **`--execute`** to compile and run. Keep flags fixed when you are hunting regressions—change one knob at a time.
+Performance `.co` files are built through the Croktile driver: pass **`-gs`** (generate script), **`-t cute`**, **`-arch`**, and codegen flags; **`-o`** points at a shell script (often under `/tmp`); run that script with **`--execute`** to compile and run. Keep flags fixed when you are hunting regressions—change one knob at a time.
 
 ```bash
-./choreo -gs -t cute -arch=sm_90a --use-warpspec --stmatrix \
+./croktile -gs -t cute -arch=sm_90a --use-warpspec --stmatrix \
   benchmark/performance/matmul/matmul_f16_dyn_sm90.co \
   -o /tmp/matmul.cute.result && bash /tmp/matmul.cute.result --execute
 ```
 
-SM90-class matmul command lines often include flags such as **`--use-warpspec`**, **`--stmatrix`**, **`--hoist-offset`**, **`--hoist-scale`**, **`--ptx-barrier`**, **`--tma-cluster-aware`**, and **`--wgmma-wait-depth=N`**. Exact semantics live in Choreo’s CLI help; copy the recipe from the benchmark you are reproducing, then vary flags deliberately.
+SM90-class matmul command lines often include flags such as **`--use-warpspec`**, **`--stmatrix`**, **`--hoist-offset`**, **`--hoist-scale`**, **`--ptx-barrier`**, **`--tma-cluster-aware`**, and **`--wgmma-wait-depth=N`**. Exact semantics live in Croktile’s CLI help; copy the recipe from the benchmark you are reproducing, then vary flags deliberately.
 
 With warmup/repeat, TFLOPS, efficiency, env vars, and the compile-and-run loop in hand, the case studies read as one measurement harness and many controlled kernel experiments.

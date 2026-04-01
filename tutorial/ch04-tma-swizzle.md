@@ -2,7 +2,7 @@
 
 In Chapters 2 and 3, you moved data with **DMA** — explicit copies that software orchestrates tile by tile. That model is clear and portable, but on modern NVIDIA GPUs it leaves performance on the table. Starting with the **Hopper** architecture (compute capability 9.0, or **SM90**), NVIDIA added a dedicated hardware path for bulk, multi-dimensional loads and stores: the **Tensor Memory Accelerator**, or **TMA**.
 
-This chapter introduces TMA in Choreo, together with **swizzle** — a layout trick that keeps shared-memory accesses free of **bank conflicts** when tensor cores and wide loads expect a particular byte pattern. The running example is a real **FP16 matrix multiply** Choreo function from the benchmark suite. MMA operations (`mma.load`, `mma.row.row`, and friends) appear here because they sit in the same loop as TMA; Chapter 5 unpacks tensor-core programming in depth.
+This chapter introduces TMA in Croktile, together with **swizzle** — a layout trick that keeps shared-memory accesses free of **bank conflicts** when tensor cores and wide loads expect a particular byte pattern. The running example is a real **FP16 matrix multiply** Croktile function from the benchmark suite. MMA operations (`mma.load`, `mma.row.row`, and friends) appear here because they sit in the same loop as TMA; Chapter 5 unpacks tensor-core programming in depth.
 
 ## From software copies to hardware tensor movement
 
@@ -10,17 +10,17 @@ On pre-Hopper GPUs, getting a tile from global memory into shared memory usually
 
 **TMA** moves that work into a **hardware unit**. You give it a description of a multi-dimensional tensor in memory (a *tensor map* or descriptor), and it issues the right sequence of memory transactions to copy a **rectangular tile** in one logical operation. Warps can keep doing math — or wait on a lightweight barrier — while TMA works. That is the performance story: **fewer instructions spent on movement**, better overlap, and a path that lines up with what tensor memory and WGMMA expect on Hopper.
 
-Choreo exposes this through **`tma.copy`** and variants like **`tma.copy.swiz<N>`**. The **swizzle** parameter tells the hardware (and the compiler) how to **remap** the destination layout in shared memory so that later column-like or K-dimension accesses do not hammer the same shared memory **bank** repeatedly.
+Croktile exposes this through **`tma.copy`** and variants like **`tma.copy.swiz<N>`**. The **swizzle** parameter tells the hardware (and the compiler) how to **remap** the destination layout in shared memory so that later column-like or K-dimension accesses do not hammer the same shared memory **bank** repeatedly.
 
 Shared memory is split into **32 banks**. Successive 4-byte words map to successive banks. If a warp reads a row and every lane reads a consecutive element, you get a nice spread across banks. If a warp reads a **column** of a row-major `f16` matrix, many lanes land on the same bank — **bank conflicts** that serialize accesses. **Swizzling** applies a fixed permutation of how addresses map to banks (often described in bytes: 32, 64, or **128**), so that the access pattern your MMA or TMA consumer uses sees fewer conflicts. For FP16 kernels, a common choice is **`swiz<128>`** when the tile width in K matches the recipe (in the benchmark, `MATMUL_TILE_K` is 64 elements of `f16` → 128 bytes per row fragment, and the build asserts `MATMUL_SWIZ == 2 * MATMUL_TILE_K`).
 
 The important idea: **`tma.copy.swiz<N>`** is not just a copy; it is **copy + agreed-upon SMEM layout** so that **`mma.load.swiz<N>`** on the same buffer sees a consistent byte pattern.
 
-In Chapters 2 and 3, **`dma.copy`** expressed the same intent — move a tile between memory kinds — but the generated path was software-driven (threads participating in the copy, possibly pipelined with `inthreads` and events). **`tma.copy`** is the Hopper-shaped spelling: the Choreo compiler maps it to TMA descriptors and instructions for SM90-family targets. You still think in terms of source fragment and destination buffer, but the mechanism is different. When a kernel uses **`mma.load.swiz`** and WGMMA-style **`parallel ... : group-4`**, pairing TMA loads with those intrinsics is the expected layout; swapping in generic DMA for the same SMEM buffers would break the assumptions the MMA side makes about byte-level placement. **DMA** teaches tiling and orchestration; **TMA** is the next gear when you commit to Hopper tensor pipelines.
+In Chapters 2 and 3, **`dma.copy`** expressed the same intent — move a tile between memory kinds — but the generated path was software-driven (threads participating in the copy, possibly pipelined with `inthreads` and events). **`tma.copy`** is the Hopper-shaped spelling: the Croktile compiler maps it to TMA descriptors and instructions for SM90-family targets. You still think in terms of source fragment and destination buffer, but the mechanism is different. When a kernel uses **`mma.load.swiz`** and WGMMA-style **`parallel ... : group-4`**, pairing TMA loads with those intrinsics is the expected layout; swapping in generic DMA for the same SMEM buffers would break the assumptions the MMA side makes about byte-level placement. **DMA** teaches tiling and orchestration; **TMA** is the next gear when you commit to Hopper tensor pipelines.
 
-## Reference kernel: FP16 matmul Choreo function (SM90)
+## Reference kernel: FP16 matmul Croktile function (SM90)
 
-The following is the `__co__` core of the dynamic FP16 matrix multiply from the Choreo Hopper benchmark (`matmul_f16_dyn_sm90.co`). Compile-time constants:
+The following is the `__co__` core of the dynamic FP16 matrix multiply from the Croktile Hopper benchmark (`matmul_f16_dyn_sm90.co`). Compile-time constants:
 
 - `MATMUL_WARP_M = 64`, `MATMUL_WARP_N = 128`, `MATMUL_TILE_K = 64`, `MATMUL_WARP_K = 16`
 - `MATMUL_SWIZ = 128`
@@ -50,13 +50,13 @@ __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, 
 }
 ```
 
-A smaller, test-oriented version lives in `choreo/tests/gpu/end2end/matmul_f16_dynamic.co` with simpler numbers (`WARP_M = 64`, `WARP_N = 64`, `TILE_K = 64`, `WARP_K = 16`, literal `128` for swizzle) and is easier to grep and run under the test harness. The ideas are identical; the benchmark widens the N tile to 128 for throughput.
+A smaller, test-oriented version lives in `croktile/tests/gpu/end2end/matmul_f16_dynamic.co` with simpler numbers (`WARP_M = 64`, `WARP_N = 64`, `TILE_K = 64`, `WARP_K = 16`, literal `128` for swizzle) and is easier to grep and run under the test harness. The ideas are identical; the benchmark widens the N tile to 128 for throughput.
 
 ## What one thread block does
 
 It helps to narrate a single output tile before worrying about the whole grid.
 
-**Grid and dynamic shapes.** Pick indices **`block_m`** and **`block_n`**. This CUDA block owns the **`MATMUL_WARP_M × MATMUL_WARP_N`** region of **`output`** at logical position `(block_m, block_n)` in the block grid — rows roughly `block_m * MATMUL_WARP_M` through `(block_m + 1) * MATMUL_WARP_M - 1`, columns analogously. The function signature says **`global f16 [M, K] lhs`**: **`f16`** is half precision, **`M`** and **`K`** are **symbolic dimensions** whose concrete values come from the host, and **`global`** marks device global memory. Using symbolic sizes means one Choreo function handles any problem shape without recompilation. The return type **`void`** means results are written **in place** through the **`output`** parameter, matching how many GPU kernels accept destination pointers explicitly.
+**Grid and dynamic shapes.** Pick indices **`block_m`** and **`block_n`**. This CUDA block owns the **`MATMUL_WARP_M × MATMUL_WARP_N`** region of **`output`** at logical position `(block_m, block_n)` in the block grid — rows roughly `block_m * MATMUL_WARP_M` through `(block_m + 1) * MATMUL_WARP_M - 1`, columns analogously. The function signature says **`global f16 [M, K] lhs`**: **`f16`** is half precision, **`M`** and **`K`** are **symbolic dimensions** whose concrete values come from the host, and **`global`** marks device global memory. Using symbolic sizes means one Croktile function handles any problem shape without recompilation. The return type **`void`** means results are written **in place** through the **`output`** parameter, matching how many GPU kernels accept destination pointers explicitly.
 
 **Ceiling division.** **`cdiv(K, MATMUL_TILE_K)`** is \(\lceil K / \text{TILE\_K} \rceil\) — one more tile when K is not a multiple of the tile size. The grid uses `cdiv(M, MATMUL_WARP_M)` and `cdiv(N, MATMUL_WARP_N)` for the same reason. When the last tile is partial, real kernels pair `cdiv` grid sizing with predicate masks, zero-padding, or epilogue cleanup so out-of-bounds threads do not read or write garbage.
 
@@ -83,7 +83,7 @@ The end-to-end flow: **TMA in → tensor cores accumulate → `mma.store` to SME
 
 **The inner MMA loop.** Inside each loaded K-tile, **`iv_warp`** runs from 0 to `cdiv(MATMUL_TILE_K, MATMUL_WARP_K) - 1`. With TILE_K=64 and WARP_K=16, that is **four** MMA slices along K per outer K-tile. For each slice, the warp group loads **`ma`** and **`mb`** from SMEM with **`mma.load.swiz<MATMUL_SWIZ>`** and issues **`mma.row.row mc, ma, mb`** to fold the partial product into the accumulator.
 
-Hopper **WGMMA** expects a **warp group** of four warps (128 threads) to cooperate on one MMA. Choreo annotates that with **`parallel p by 1 : group-4`**. Even though the parallel count is 1 in the `p` dimension, the team executing the body is four warps. Chapter 5 goes deeper; for this chapter, treat **`: group-4`** as "schedule this body as a Hopper warp group."
+Hopper **WGMMA** expects a **warp group** of four warps (128 threads) to cooperate on one MMA. Croktile annotates that with **`parallel p by 1 : group-4`**. Even though the parallel count is 1 in the `p` dimension, the team executing the body is four warps. Chapter 5 goes deeper; for this chapter, treat **`: group-4`** as "schedule this body as a Hopper warp group."
 
 In **`lhs_load_s.chunkat(_, iv_warp)`**, the underscore **`_`** says "no tiling selector on the first dimension — keep its full extent." The entire `MATMUL_WARP_M` (or `MATMUL_WARP_N`) side is already in SMEM for this block; only K is subdivided for each MMA slice. Writing `chunkat(some_m, iv_warp)` would incorrectly imply an extra partition along M inside SMEM.
 
@@ -116,11 +116,11 @@ Prefer **`subspan().at()`** when you are matching hardware recipes from a spread
 
 ## Constraints, pitfalls, and what's next
 
-The `// REQUIRES: TARGET-SM_90` line on the test file is a hint: TMA + WGMMA + `group-4` needs a **Hopper-class** target (typically `sm_90a` in your Choreo invocation). The benchmark source statically asserts relationships between constants — for example that `MATMUL_SWIZ` equals `2 * MATMUL_TILE_K` for this FP16 recipe, and that `MATMUL_SWIZ` is one of 32, 64, or 128. Those checks mirror hardware constraints: swizzle mode, element size, and tile width must agree or the descriptor setup is invalid. If you change `TILE_K` without changing `swiz`, expect either a compile-time error or a runtime failure depending on how far the bad combination gets.
+The `// REQUIRES: TARGET-SM_90` line on the test file is a hint: TMA + WGMMA + `group-4` needs a **Hopper-class** target (typically `sm_90a` in your Croktile invocation). The benchmark source statically asserts relationships between constants — for example that `MATMUL_SWIZ` equals `2 * MATMUL_TILE_K` for this FP16 recipe, and that `MATMUL_SWIZ` is one of 32, 64, or 128. Those checks mirror hardware constraints: swizzle mode, element size, and tile width must agree or the descriptor setup is invalid. If you change `TILE_K` without changing `swiz`, expect either a compile-time error or a runtime failure depending on how far the bad combination gets.
 
 Treat `MATMUL_WARP_K = 16` for `f16` the same way: it is tied to the MMA instruction shape on SM90, not an arbitrary tunable. Copy working triples `(TILE_K, SWIZ, WARP_K)` from known-good kernels before you experiment. Later chapters revisit autotuning; for now, start from known-good constants.
 
-When reading or writing a Hopper-style Choreo kernel, watch for:
+When reading or writing a Hopper-style Croktile kernel, watch for:
 
 - **Mismatched swizzle tags.** If `tma.copy.swiz<128>` feeds a buffer but `mma.load.swiz<64>` reads it, tensor cores interpret the wrong byte layout. Keep the template argument identical per SMEM allocation.
 - **`subspan` extents disagreeing with `shared` sizes.** The global view's tile shape and the `shared f16 [...]` declaration must describe the same element counts in each dimension. Off-by-one or transposition shows up as silent wrong answers or illegal TMA shapes.

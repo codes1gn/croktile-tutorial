@@ -1,12 +1,13 @@
-# Choreo Tutorial
+# Croktile Tutorial
 
-Welcome to the Choreo tutorial. This guide walks you through writing high-performance GPU kernels using Choreo, starting from scratch and building up to production-grade patterns.
+Welcome to the Croktile tutorial. This guide walks you through writing high-performance GPU kernels using Croktile, starting from scratch and building up to production-grade patterns.
 
-Each chapter introduces a small set of new concepts by evolving a running example. By the end, you will have encountered every major Choreo construct in a concrete, working program. For detailed syntax design and language reference, see the [Coding Reference](../documentation/index.md).
+Each chapter introduces a small set of new concepts by evolving a running example. By the end, you will have encountered every major Croktile construct in a concrete, working program. For detailed syntax design and language reference, see the [Coding Reference](../documentation/index.md).
 
 ## Chapters
 
-1. [Hello Choreo: From Zero to Running Kernel](ch01-hello-choreo.md)
+0. [Installation: Setting Up the Croktile Compiler](ch00-installation.md)
+1. [Hello Croktile: From Zero to Running Kernel](ch01-hello-choreo.md)
 2. [Data Movement Basics: Moving Data Blocks as a Whole](ch02-data-movement.md)
 3. [Overlapping Compute and DMA: Pipeline Patterns](ch03-pipeline.md)
 4. [High-Performance Data Movement: TMA and Swizzle](ch04-tma-swizzle.md)
@@ -21,4 +22,4 @@ Each chapter introduces a small set of new concepts by evolving a running exampl
 
 - Basic C++ knowledge (functions, pointers, arrays)
 - Familiarity with GPU programming concepts (threads, blocks, shared memory)
-- A built Choreo compiler (see [Getting Started](../documentation/getting-started-with-choreo.src.md))
+- A working Croktile compiler (see [Chapter 0](ch00-installation.md))

@@ -12,9 +12,8 @@ theme:
   features:
     - navigation.instant
     - navigation.top
-    - navigation.sections
-    - navigation.expand
     - navigation.path
+    - navigation.indexes
     - search.highlight
     - search.suggest
     - content.code.annotate
@@ -63,10 +62,12 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - What is Good in CrokTile: documentation/what-is-choreo.md
 
-  - Tutorial:
+  - "Part I — Tutorial":
     - Overview: tutorial/index.md
-    - "Ch 1: Hello Choreo": tutorial/ch01-hello-choreo.md
+    - "Ch 0: Installation": tutorial/ch00-installation.md
+    - "Ch 1: Hello Croktile": tutorial/ch01-hello-choreo.md
     - "Ch 2: Data Movement Basics": tutorial/ch02-data-movement.md
     - "Ch 3: Pipeline Patterns": tutorial/ch03-pipeline.md
     - "Ch 4: TMA and Swizzle": tutorial/ch04-tma-swizzle.md
@@ -77,7 +78,7 @@ nav:
     - "Ch 9: view/from": tutorial/ch09-view-from.md
     - "Ch 10: C++ Inline & Macros": tutorial/ch10-cpp-inline-macros.md
 
-  - Performance Tuning Demos:
+  - "Part II — Performance Tuning Demos":
     - Overview: optimization/index.md
     - "Profiling Setup": optimization/setup-profiling.md
     - "Dense GEMM FP16":
@@ -95,11 +96,10 @@ nav:
       - Baseline Analysis: optimization/blockscale-gemm/baseline-analysis.md
       - Pattern Optimizations: optimization/blockscale-gemm/pattern-optimizations.md
 
-  - Coding Reference:
+  - "Part III — Coding Reference":
     - Home: documentation/index.md
-    - What is Choreo: documentation/what-is-choreo.md
     - "Program Structure":
-      - Choreo-C++ Program Structure: documentation/choreo-program-structure.md
+      - Croktile-C++ Program Structure: documentation/choreo-program-structure.md
     - "Shaped Data":
       - Shape and MDSpan: documentation/shape-in-choreo.md
       - Integers and I-Tuples: documentation/integer-ituple.md
@@ -122,8 +122,8 @@ nav:
       - More on Async Execution: documentation/general-async.md
     - "Advanced":
       - Experimental Features: documentation/loop-in-advance.md
-    - "Optimisation Patterns":
-      - Tileflow Optimisations: documentation/tileflow-opt.md
+    - "Optimization Patterns":
+      - Tileflow Optimizations: documentation/tileflow-opt.md
       - Async DMA Patterns: documentation/async-dma-patterns.md
       - Multi-buffering Patterns: documentation/multi-buffering-patterns.md
     - Reference Palette: documentation/operator-samples.md
@@ -133,4 +133,4 @@ nav:
       - Symbolic Evaluation System: documentation/value-numbering.md
       - Dynamism Support: documentation/dynamic-design.md
 
-  - Design Rationales: advanced/index.md
+  - "Part IV — Design Rationales": advanced/index.md

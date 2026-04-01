@@ -2,7 +2,7 @@
 
 Chapter 3’s double buffering interleaves producer and consumer work on the **same threads**: two named slots, a prologue, a steady-state loop with **`swap`**, and an epilogue. Warp specialization assigns those roles to **different warpgroups** so loads and math **truly overlap in time**, coordinated by **shared events** instead of swapping buffer aliases. The **1 producer + 1 consumer (1P1C)** kernel in **`matmul_f16_dyn_sm90_warpspec_1p1c.co`** is the canonical example.
 
-You still need **TMA** and **swizzle** from Chapter 4 and **WGMMA** with **`: group-4`** from Chapter 5. This chapter connects them with **shared events**, **`inthreads.async`**, **async TMA completion** wired to events, and **`mma.commit`**. The Choreo function below matches the benchmark header:
+You still need **TMA** and **swizzle** from Chapter 4 and **WGMMA** with **`: group-4`** from Chapter 5. This chapter connects them with **shared events**, **`inthreads.async`**, **async TMA completion** wired to events, and **`mma.commit`**. The Croktile function below matches the benchmark header:
 
 - **`MATMUL_WARP_M = 64`**, **`MATMUL_WARP_N = 128`** — warpgroup output tile (WGMMA footprint along M and N).
 - **`MATMUL_TILE_K = 64`** — K depth of each staged slab in shared memory per pipeline stage.
@@ -20,7 +20,7 @@ In Chapter 3, **double buffering** meant computing on **`lf0` / `rf0`** while pr
 
 **Warp specialization** keeps that safety story — each **stage** is either **empty** (safe for the producer to write) or **full** (safe for the consumer to read) — but **assigns** those actions to **different warpgroups**. The producer never runs **`mma.row.row`**; the consumer never issues **`tma.copy`**. They coordinate only through **events** and the shared arrays they agree on.
 
-On **NVIDIA Hopper**, a block can host **multiple warpgroups**; **WGMMA** already used **four warps** (**`: group-4`**) in Chapter 5. The 1P1C kernel launches **two** such groups (**`parallel p1 by 2 : group-4`**) and uses **`p1`** as a role index. Choreo expresses that with **`inthreads.async (condition)`**: only the warpgroup for which **`condition`** holds runs the block — here **`p1 == 0`** or **`p1 == 1`**. That is **role specialization** in the parallel structure, not a scattered runtime **`if`** around unrelated code. A plain **`if (p1 == 0)`** inside one body could diverge every instruction; **`inthreads.async (…)`** keeps **two straight-line loop nests**, one per role, which is the idiomatic spell when you read **`inthreads.async`** in repository **`.co`** files.
+On **NVIDIA Hopper**, a block can host **multiple warpgroups**; **WGMMA** already used **four warps** (**`: group-4`**) in Chapter 5. The 1P1C kernel launches **two** such groups (**`parallel p1 by 2 : group-4`**) and uses **`p1`** as a role index. Croktile expresses that with **`inthreads.async (condition)`**: only the warpgroup for which **`condition`** holds runs the block — here **`p1 == 0`** or **`p1 == 1`**. That is **role specialization** in the parallel structure, not a scattered runtime **`if`** around unrelated code. A plain **`if (p1 == 0)`** inside one body could diverge every instruction; **`inthreads.async (…)`** keeps **two straight-line loop nests**, one per role, which is the idiomatic spell when you read **`inthreads.async`** in repository **`.co`** files.
 
 ## Shared memory and the event arrays
 
@@ -41,7 +41,7 @@ In the **`swap(lf0, lf1)`** world, two names alias two buffers and you exchange 
 
 **`output_s`** is a single warpgroup-sized tile: the consumer accumulates the full K sweep into **`mc`**, **`mma.store`** once, then **`tma.copy`** to global. Only operand staging is multi-buffered.
 
-## Full Choreo function: 1P1C matmul
+## Full Croktile function: 1P1C matmul
 
 Below is the **`__co__ void matmul`** body from **`matmul_f16_dyn_sm90_warpspec_1p1c.co`**, trimmed to the `__co__` body (no host harness).
 
@@ -111,7 +111,7 @@ inthreads.async (p1 == 0) {
 
 **`stage = iv_k % MATMUL_STAGES`** is **ring indexing**: after **`MATMUL_STAGES`** steps along **`iv_k`**, you reuse the same shared slice, like double buffering generalized to N slots. **`wait empty[stage]`** means the consumer has released that slot; without it, TMA could overwrite data the consumer still reads.
 
-The two **`tma.copy.async<full[stage]>.swiz<…>`** lines start **asynchronous TMA** from global into the **`stage`** slice. The **`<full[stage]>`** annotation ties transfer **completion** to the **`full[stage]`** event: Choreo’s contract is that hardware completion of this async transfer participates in signaling **`full`** (exact micro-model is target-specific).
+The two **`tma.copy.async<full[stage]>.swiz<…>`** lines start **asynchronous TMA** from global into the **`stage`** slice. The **`<full[stage]>`** annotation ties transfer **completion** to the **`full[stage]`** event: Croktile’s contract is that hardware completion of this async transfer participates in signaling **`full`** (exact micro-model is target-specific).
 
 **`trigger full[stage]`** appears **after** both copies are **issued**. Together with the **`<full[stage]>`** completion semantics, that yields a clear story for the consumer: **`wait full[stage]`** means the **A/B** slab at **`stage`** is consistent for this **`iv_k`**.
 
@@ -149,7 +149,7 @@ In the steady state, **`wait full[stage]`** waits until TMA and signaling mean *
 
 **`mma.commit`** ends the **pipeline stage** from the accumulator’s perspective. WGMMA overlaps operand movement and math deeply; without this boundary, you risk **semantic overlap** between micro-operations the hardware still treats as in flight for the prior stage and the next round of **`wait full`** / **`mma.load`** assumptions about **shared** contents.
 
-**`commit`** is the Choreo-level fence that folds this stage’s partial products into **`mc`** before you reuse the slot. **`trigger empty[stage]`** returns the slot to the producer for a future **`iv_k`** when the ring wraps.
+**`commit`** is the Croktile-level fence that folds this stage’s partial products into **`mc`** before you reuse the slot. **`trigger empty[stage]`** returns the slot to the producer for a future **`iv_k`** when the ring wraps.
 
 After all K tiles, **`mma.store`** and **`tma.copy`** write the result tile to global, as in the non-specialized Hopper kernel, except the K loop lives entirely in the consumer.
 
@@ -212,16 +212,16 @@ You have walked the **1P1C** pattern end to end: one warpgroup keeps **TMA** in 
 
 Relative to Chapters 3–5, the new vocabulary is **`inthreads.async (condition)`** for **warpgroup roles**, **`shared event`** arrays, **`wait` / `trigger`**, **`tma.copy.async<event>.swiz<N>`** (completion tied to **`event`**), and **`mma.commit`** as the fence between WGMMA pipeline stages. **`grep`** **`inthreads.async`** in the benchmark tree when you want more working examples of the same idea.
 
-For source and harness, open **`choreo/benchmark/performance/matmul/matmul_f16_dyn_sm90_warpspec_1p1c.co`**. The swap baseline lives in **`croktile-tutorial/tutorial/ch03-pipeline.md`**. For event semantics beyond this matmul, see **`croktile-tutorial/documentation/events.md`**.
+For source and harness, open **`croktile/benchmark/performance/matmul/matmul_f16_dyn_sm90_warpspec_1p1c.co`**. The swap baseline lives in **`croktile-tutorial/tutorial/ch03-pipeline.md`**. For event semantics beyond this matmul, see **`croktile-tutorial/documentation/events.md`**.
 
-Chapter 7 (persistent kernels) and Chapter 8 (multi-warpgroup scaling) build on the same Choreo function: you already know how to **fill**, **compute**, and **store**; warp specialization adds **which warpgroup** owns each phase and how credits move around the ring.
+Chapter 7 (persistent kernels) and Chapter 8 (multi-warpgroup scaling) build on the same Croktile function: you already know how to **fill**, **compute**, and **store**; warp specialization adds **which warpgroup** owns each phase and how credits move around the ring.
 
 If you want hands-on checks, compare wall-clock and TFLOPS against **`matmul_f16_dyn_sm90.co`** on the same **M, N, K** after you align timing flags — gains track problem size, memory bandwidth, and stage count, not a universal speedup.
 
 In a scratch copy of the warpspec file, try **`MATMUL_STAGES = 2`** and watch occupancy and stalls in your tooling. In a disposable branch, delete the **`trigger empty`** prologue once to see the deadlock, then restore it.
 
-You may enable **`CHOREO_SKIP_VERIFY`** for faster iteration while editing, but run a full host check on **C** before you trust TFLOPS — a green verify is your first signal that **`full` / `empty`** ordering still matches the ring index math.
+You may enable **`CROKTILE_SKIP_VERIFY`** for faster iteration while editing, but run a full host check on **C** before you trust TFLOPS — a green verify is your first signal that **`full` / `empty`** ordering still matches the ring index math.
 
-Underneath, Choreo is still **orchestration**: which warpgroup **waits** on which **event**, which async copy fills which shared slice, and where **`mma.commit`** closes a WGMMA stage.
+Underneath, Croktile is still **orchestration**: which warpgroup **waits** on which **event**, which async copy fills which shared slice, and where **`mma.commit`** closes a WGMMA stage.
 
 **TMA** and **WGMMA** stay the Chapter 4–5 primitives; **roles** and **events** are what let memory traffic and math **overlap across warpgroups** instead of **interleaving** on one program counter. When **`stage`**, **`full`**, and **`empty`** feel automatic, you are in good shape for Chapters 7 and 8.

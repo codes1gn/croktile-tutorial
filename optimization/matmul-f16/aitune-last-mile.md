@@ -1,6 +1,6 @@
 # AI-tune: shipped kernels and reproduction
 
-This page is about **how** the final numbers were produced—which **`.co`** files shipped, how to run them, and what Phase 3 learned about **WN** and occupancy—without replaying all 65 iterations. Branch detail: `origin/ai-tune/2026-03-23/matmul_f16`; full tables: `choreo/benchmark/performance/matmul/README_matmul_f16_aitune_2026-03-23.md`.
+This page is about **how** the final numbers were produced—which **`.co`** files shipped, how to run them, and what Phase 3 learned about **WN** and occupancy—without replaying all 65 iterations. Branch detail: `origin/ai-tune/2026-03-23/matmul_f16`; full tables: `croktile/benchmark/performance/matmul/README_matmul_f16_aitune_2026-03-23.md`.
 
 **Hardware** — H800 PCIe, **SM90a**, **114** SMs. Compare tuned kernels to **cuBLAS** (~**380** TFLOPS on this stack), not the **~1513** TFLOPS marketing peak. The README quotes **iter061** as **80.7%** of cuBLAS at **8192³** and **100.5%** at **2048³**—the smaller cube favors the chosen tile and stage mix, so short-cube efficiency can read above the library while **8192³** stays the stress case.
 
@@ -16,10 +16,10 @@ This page is about **how** the final numbers were produced—which **`.co`** fil
 
 ## Build and run
 
-From the Choreo repo root after `make build`, use the same **choreo** flags for each artifact; only the input **`.co`** changes:
+From the Croktile repo root after `make build`, use the same **croktile** flags for each artifact; only the input **`.co`** changes:
 
 ```bash
-./choreo -gs -t cute -arch=sm_90a --use-warpspec --stmatrix --hoist-offset --hoist-scale --ptx-barrier --tma-cluster-aware \
+./croktile -gs -t cute -arch=sm_90a --use-warpspec --stmatrix --hoist-offset --hoist-scale --ptx-barrier --tma-cluster-aware \
   benchmark/performance/matmul/<INPUT>.co \
   -o /tmp/run.cute.result && bash /tmp/run.cute.result --execute
 ```
@@ -33,7 +33,7 @@ Concrete inputs:
 
 Phase 3 added **`--wgmma-wait-depth=N`** to the README invocations where recorded; **`N`** couples to **STAGES** and **WN**—reproduce with the exact command from the README unless you are sweeping **`N`** deliberately.
 
-**Harness** — Defaults in the log use **`CHOREO_TIMING_WARMUP`** (10) and **`CHOREO_TIMING_REPEAT`** (500). Keep verify on for apples-to-apples TFLOPS; set **`CHOREO_SKIP_VERIFY=1`** only when you already trust correctness. If noise dominates, raise **`CHOREO_TIMING_REPEAT`** before you chase shorter warmup.
+**Harness** — Defaults in the log use **`CROKTILE_TIMING_WARMUP`** (10) and **`CROKTILE_TIMING_REPEAT`** (500). Keep verify on for apples-to-apples TFLOPS; set **`CROKTILE_SKIP_VERIFY=1`** only when you already trust correctness. If noise dominates, raise **`CROKTILE_TIMING_REPEAT`** before you chase shorter warmup.
 
 ## iter057 vs. iter061
 
@@ -47,7 +47,7 @@ Condensed timeline: Phase 1 (iterations ~001–038) — **1p1c** at **2048³**, 
 
 ## Reproducibility
 
-Build **`./choreo`** from the same revision as the **`.co`** file or expect codegen drift. Use **`-arch=sm_90a`** for this GPU class. When you compare to external cuBLAS figures, note driver and library version and GPU clock behavior—thermal or power caps can narrow **~380** TFLOPS references slightly.
+Build **`./croktile`** from the same revision as the **`.co`** file or expect codegen drift. Use **`-arch=sm_90a`** for this GPU class. When you compare to external cuBLAS figures, note driver and library version and GPU clock behavior—thermal or power caps can narrow **~380** TFLOPS references slightly.
 
 ## Where the files live
 

@@ -1,21 +1,21 @@
-# What is Choreo?
+# What is Good in CrokTile?
 
-## Choreo's Target
+Croktile is a C++ embedded DSL for writing high-performance GPU and DSA kernels. You write Croktile functions in `.co` files alongside your existing C++ code, and the compiler transpiles them into efficient target code (CUDA today, more backends planned) with full interoperability to CUDA, CuTe, and any C++ library.
 
+Four design pillars set Croktile apart from raw CUDA, CuTe, or Triton.
 
-Choreo is a DSL designed to **orchestrate DMA data transfers** with ease. It abstracts away the complexity of managing DMA operations by offering a high-level, declarative programming model. Developers can use Choreo to specify when and how data should be transferred between different memory regions, while leaving the low-level details of memory management to Choreo.
+## Easy to Use
 
-Choreo was developed to simplify the orchestration of DMA transfers while maintaining the performance and flexibility needed for modern computing systems. By providing an easy-to-use interface, Choreo allows developers to focus on high-level memory orchestration instead of dealing with the intricacies of hardware-specific programming.
+You work on tensors and tiles, not raw buffers and pointers. DMA transfers, memory allocation, and synchronization that take dozens of lines of CUDA boilerplate reduce to a single `dma.copy ... => ...` statement — roughly 40% of the equivalent CUDA code. Every construct compiles down to the same PTX you would write by hand: zero-cost abstraction, no runtime overhead, no hidden allocations.
 
-## Introduction to DMA and the Need for Orchestration
+## Compile-Time Safety
 
-Direct Memory Access (DMA) plays a critical role in high-performance computing systems, allowing peripherals, processors, and other hardware components to access memory directly, without the need for the CPU to be involved in data transfer. This capability is especially crucial in systems like GPUs, network cards, and embedded systems, where large volumes of data need to be moved quickly between memory and devices.
+353 compile-time diagnostic checks across 7 compiler modules catch shape mismatches, tiling errors, and DMA violations before any code runs on the GPU. In development builds, 1,319 runtime assertions guard every transfer and memory access. Together they eliminate entire classes of bugs that would otherwise need `cuda-memcheck` and hours of printf debugging.
 
-However, managing DMA transfers efficiently can be complex. It involves coordinating data movement across different memory spaces, ensuring synchronization, and minimizing latency. Without an effective mechanism to orchestrate DMA operations, systems can quickly become bottlenecked by inefficient data movement.
+## Dynamic Shapes
 
-## Key Features of Choreo
+First-class symbolic dimensions let you write a kernel once and run it on any shape without recompilation. The compiler derives packed-K, metadata columns, grid dimensions, and shared-memory size automatically. Static and runtime memory are unified — no template metaprogramming, no boilerplate.
 
-- **High-Level Abstractions**: Choreo simplifies complex DMA orchestration with concise syntax, reducing the boilerplate code required for memory transfers.
-- **Interoperability**: Choreo integrates seamlessly with other kernel programming models like **CUDA/Cute**, and others, making it ideal for use in heterogeneous environments.
-- **Optimized for Performance**: Choreo abstracts the complexity of DMA, enabling high-performance memory transfers without requiring manual fine-tuning.
-- **Ease of Integration**: Choreo can be integrated into existing systems, allowing for simplified memory management in both standalone and hybrid kernel programming environments.
+## Born for AI Tuning
+
+Compact, structured syntax keeps entire kernels inside AI context windows (30–60 lines vs. hundreds in CUDA/CuTe). Structured error messages and well-documented CLI arguments let autonomous agents compile, profile, and iterate without human intervention. In practice, AI agents have pushed FP16 matmul from 671 to 1,127 TFLOPS in a single session.

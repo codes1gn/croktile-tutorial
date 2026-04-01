@@ -1,6 +1,6 @@
 # AI-Tune and the Last Mile: `.co` vs `.cu`
 
-AI-tune here means **high-volume compile–measure** over a structured neighborhood of kernels Choreo already understands. You mutate a small set of knobs—stages, warp split, swizzle, metadata load style, flags, unroll, **TK**, TMA descriptors—build under `benchmark/performance/gemm_sp/`, run the standard harness, and record TFLOPS. The search is cheap compared to human hypothesis latency; **correctness** (2:4 metadata aligned with packed operands) and **interpretation** (sync vs TMA vs occupancy) stay on you.
+AI-tune here means **high-volume compile–measure** over a structured neighborhood of kernels Croktile already understands. You mutate a small set of knobs—stages, warp split, swizzle, metadata load style, flags, unroll, **TK**, TMA descriptors—build under `benchmark/performance/gemm_sp/`, run the standard harness, and record TFLOPS. The search is cheap compared to human hypothesis latency; **correctness** (2:4 metadata aligned with packed operands) and **interpretation** (sync vs TMA vs occupancy) stay on you.
 
 ---
 
@@ -10,7 +10,7 @@ The documented FP16 sweep hits a clear ceiling on **compiler-generated `.co`**: 
 
 From there the story splits. **iter137 at 543 TFLOPS** is the strongest **“organic” `.cu`** in the log: **inner unroll 24** and **FTZ** expose ILP and trim denorm edge cases without yet rewriting the full memory hierarchy story. **iter143 at 655 TFLOPS** adds **TK128**, **TMA-backed metadata**, and **split RHS TMA**—structural memory-system work, not loop cosmetics.
 
-Roughly **+18%** baseline → best `.co` (368→434), then **~+51%** from iter120 to iter143 (434→655) once you have **CUDA-level** control over scheduling and descriptors. The second leg is not a polishing pass; it is **different expressiveness**. Choreo’s `.co` path still chooses loop nests, register allocation, and much async-proxy placement. Sparse GEMM couples **operand TMA**, **metadata** (scalar, vector, or TMA), and **WGMMA** batching with **warpgroup** barriers. When the compiler **serializes** metadata consumption with MMA in a way no single pragma fixes, **manual unroll**, **explicit prefetch**, and **TMA descriptor** work need **`.cu`** surface area—which is exactly the gap between **iter120** and **iter137 / iter143**.
+Roughly **+18%** baseline → best `.co` (368→434), then **~+51%** from iter120 to iter143 (434→655) once you have **CUDA-level** control over scheduling and descriptors. The second leg is not a polishing pass; it is **different expressiveness**. Croktile’s `.co` path still chooses loop nests, register allocation, and much async-proxy placement. Sparse GEMM couples **operand TMA**, **metadata** (scalar, vector, or TMA), and **WGMMA** batching with **warpgroup** barriers. When the compiler **serializes** metadata consumption with MMA in a way no single pragma fixes, **manual unroll**, **explicit prefetch**, and **TMA descriptor** work need **`.cu`** surface area—which is exactly the gap between **iter120** and **iter137 / iter143**.
 
 If you are validating in Nsight, **iter137** should show inner-loop issue improvements; **iter143** should show shifted DRAM/L2 balance or better behavior on the metadata stream after **TK128** and **TMA meta**.
 
@@ -42,4 +42,4 @@ Freeze problem size (**4096×8192×8192**) and build flags; change **one family*
 
 AI-tune **compresses calendar time** on the long tail: it finds **iter120**, **iter040**, and **iter068** faster than ad-hoc guessing. On **FP16**, the **last mile** still belongs to engineers when compiler schedules cap TFLOPS—that is **iter120 → iter143**. On **E4M3**, the same machinery covers **671 → 1127** with **3-stage** and **barrier** work as the headline structural wins. Use **`.co` for breadth** and **`.cu` for depth** where the logs say you must; measure every step on the **same harness** so the ladders stay comparable.
 
-Iteration labels and TFLOPS rows are anchored in `README_gemm_sp_f16_aitune_2026-03-25.md` and `README_e4m3_aitune_2026-03-21.md`; if your Choreo tree advances, match patterns to **your** regenerated READMEs.
+Iteration labels and TFLOPS rows are anchored in `README_gemm_sp_f16_aitune_2026-03-25.md` and `README_e4m3_aitune_2026-03-21.md`; if your Croktile tree advances, match patterns to **your** regenerated READMEs.

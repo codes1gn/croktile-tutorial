@@ -1,6 +1,6 @@
 # Baseline and Block-Scaling Background
 
-This section defines **block-scaled GEMM** in the sense used by the Choreo benchmarks, ties it to **FP8 E4M3** limitations, and describes the **baseline kernel** whose throughput anchors the AI-tune story. Unless noted, problem sizes are **2048³** and **4096³** cubes; hardware is **H800 PCIe** with **3026 TFLOPS** FP8 peak.
+This section defines **block-scaled GEMM** in the sense used by the Croktile benchmarks, ties it to **FP8 E4M3** limitations, and describes the **baseline kernel** whose throughput anchors the AI-tune story. Unless noted, problem sizes are **2048³** and **4096³** cubes; hardware is **H800 PCIe** with **3026 TFLOPS** FP8 peak.
 
 ## Why block scaling exists
 
@@ -14,9 +14,9 @@ Accumulation **order** still matters for **finite** **FP16**: the blockscaled fo
 
 This is the same family of tricks used in **MXFP8**-style training and inference stacks: **FP8 for density**, **scales for fidelity**.
 
-## Choreo surface: `mma.row.row.scale`
+## Croktile surface: `mma.row.row.scale`
 
-In Choreo, the fused path is expressed as a single MMA form that consumes **fragments from shared memory** (after **TMA** loads with **swizzle**) **and** the **per-tile scale pointers** appropriate to the current **M**, **N**, and **K** block.
+In Croktile, the fused path is expressed as a single MMA form that consumes **fragments from shared memory** (after **TMA** loads with **swizzle**) **and** the **per-tile scale pointers** appropriate to the current **M**, **N**, and **K** block.
 
 The baseline device code in `benchmark/performance/blockscale_gemm/blockscale_gemm_dyn_sm90.co` follows the dense GEMM skeleton—**TMA** in, **WGMMA-shaped** loads, accumulator in registers—except the inner MMA is **`mma.row.row.scale`** instead of a plain **`mma.row.row`**. That opcode ties **WGMMA** execution on **E4M3** operands to the **scale factors** for the active **K** slice, keeping the **FP16** accumulator contract described in the shipped README (verification uses **FP32** reference dots with blockscale factors, **FP16** output, tolerances **`base_tol=0.5`**, **`rel_tol=0.01`**).
 
@@ -97,10 +97,10 @@ This is the same **“throughput + resource arithmetic”** style as [Dense GEMM
 
 ## Relation to warp specialization
 
-The baseline path can be written as **single-group** Choreo; production-style kernels in this tree often use **1p1c** warp specialization (**one producer warpgroup for TMA**, **one consumer for WGMMA**), as in [Chapter 6: Warp specialization](../../tutorial/ch06-warpspec.md). The **AI-tune winners (iter049–iter066)** are generated in that **warp-specialized** family; gains reported in the README are **on top of** an already structured pipeline, not on top of a trivial scalar loop.
+The baseline path can be written as **single-group** Croktile; production-style kernels in this tree often use **1p1c** warp specialization (**one producer warpgroup for TMA**, **one consumer for WGMMA**), as in [Chapter 6: Warp specialization](../../tutorial/ch06-warpspec.md). The **AI-tune winners (iter049–iter066)** are generated in that **warp-specialized** family; gains reported in the README are **on top of** an already structured pipeline, not on top of a trivial scalar loop.
 
 **Verification** (from the README): **512** **coprime-stride** samples over **M×N**, each compared against a **full FP32** reference dot with blockscale factors. That keeps iteration velocity high while catching **scale indexing** and **MMA** mistakes.
 
 ## Summary
 
-Block scaling makes **FP8 GEMM numerically viable** by attaching **FP32 factors** to **K-blocks**. The **Choreo** baseline realizes that as **`mma.row.row.scale`** with **TMA-swizzled** operands and lands near **314 / 398 TFLOPS** at **2048³ / 4096³**. The next document walks **concrete schedule and memory changes** that push **4096³** to **621 TFLOPS** (**+56%** vs baseline) while staying in the same **ISA and framework** family.
+Block scaling makes **FP8 GEMM numerically viable** by attaching **FP32 factors** to **K-blocks**. The **Croktile** baseline realizes that as **`mma.row.row.scale`** with **TMA-swizzled** operands and lands near **314 / 398 TFLOPS** at **2048³ / 4096³**. The next document walks **concrete schedule and memory changes** that push **4096³** to **621 TFLOPS** (**+56%** vs baseline) while staying in the same **ISA and framework** family.

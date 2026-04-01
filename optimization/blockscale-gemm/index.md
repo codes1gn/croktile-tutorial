@@ -29,9 +29,9 @@ Efficiency vs **3026 TFLOPS** stays modest because blockscaled GEMM pays extra s
 **Compile and run (Cute backend example)**
 
 ```bash
-./choreo -gs -t cute -arch=sm_90a --use-warpspec --stmatrix \
+./croktile -gs -t cute -arch=sm_90a --use-warpspec --stmatrix \
   benchmark/performance/blockscale_gemm_v2/blockscale_gemm_e4m3_dyn_sm90_warpspec_1p1c.co \
   -o /tmp/bs.cute.result && bash /tmp/bs.cute.result --execute
 ```
 
-Shipped winner harnesses with `run.sh` live under `choreo/benchmark/performance/blockscale_gemm_v2/blockscale_gemm_e4m3_aitune_2026-03-22_iter{049,051,053,066}/`. Summary tables and iteration notes: `choreo/benchmark/performance/blockscale_gemm_v2/README_blockscale_gemm_e4m3_aitune_2026-03-22.md`.
+Shipped winner harnesses with `run.sh` live under `croktile/benchmark/performance/blockscale_gemm_v2/blockscale_gemm_e4m3_aitune_2026-03-22_iter{049,051,053,066}/`. Summary tables and iteration notes: `croktile/benchmark/performance/blockscale_gemm_v2/README_blockscale_gemm_e4m3_aitune_2026-03-22.md`.

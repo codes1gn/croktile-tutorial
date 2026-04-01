@@ -8,7 +8,7 @@ When **`tiles_m * tiles_n`** dwarfs the SM count, a data-dependent grid schedule
 
 You will **linearize** output tiles and assign them with **`tile_iter # block_id`**, guard out-of-range work with **`if (tile_id < total_tiles)`**, and spell strides with **`.step(M, K)`** on **`subspan`** when you want them explicit. **Integer division and remainder** recover **`(block_m, block_n)`** from a linear **`tile_id`**. **`NUM_SMS`** sets the launch width, and **`cdiv(total_tiles, NUM_SMS)`** is the shared outer loop bound every block uses.
 
-The reference for this chapter is the **static persistent** FP16 matmul on SM90 in Choreo’s benchmarks: `choreo/benchmark/performance/matmul/matmul_f16_dyn_persis_sta_sm90.co`. The **`__co__`** body below matches that kernel’s structure (constants follow the listing).
+The reference for this chapter is the **static persistent** FP16 matmul on SM90 in Croktile’s benchmarks: `croktile/benchmark/performance/matmul/matmul_f16_dyn_persis_sta_sm90.co`. The **`__co__`** body below matches that kernel’s structure (constants follow the listing).
 
 ```choreo
 __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
@@ -58,7 +58,7 @@ Suppose **`M`** and **`N`** are large enough that **`tiles_m * tiles_n`** is **m
 
 A **persistent** layout flips the picture: you launch **`NUM_SMS`** blocks (or another fixed count you choose), and **every** block stays busy across **many** logical tiles. Work is **striped** across CTAs so that block **`b`** handles tiles **`b`, `b + NUM_SMS`, `b + 2 * NUM_SMS`, ...**.
 
-You avoid the “almost empty final wave” problem at the **grid** level because you never asked for **`total_tiles`** separate CTAs in the first place. The tradeoff is **software complexity**: you need a loop over tile indices, a mapping from a **linear** tile id back to **`(block_m, block_n)`**, and a guard for **padding** iterations when striping does not divide evenly. Choreo’s `__co__` function makes that explicit and readable.
+You avoid the “almost empty final wave” problem at the **grid** level because you never asked for **`total_tiles`** separate CTAs in the first place. The tradeoff is **software complexity**: you need a loop over tile indices, a mapping from a **linear** tile id back to **`(block_m, block_n)`**, and a guard for **padding** iterations when striping does not divide evenly. Croktile’s `__co__` function makes that explicit and readable.
 
 Earlier matmul chapters used a **two-dimensional** parallel over **`block_m`** and **`block_n`**, with bounds derived from **`M`** and **`N`**. Here you use a **one-dimensional** parallel over **`block_id`**:
 
@@ -89,7 +89,7 @@ block_m = tile_id / cdiv(N, MATMUL_WARP_N);
 block_n = tile_id % cdiv(N, MATMUL_WARP_N);
 ```
 
-Here **`cdiv(N, MATMUL_WARP_N)`** is the number of tiles along **N**; dividing by it recovers the row index **`block_m`**, and the remainder is the column index **`block_n`**. This is ordinary integer **Choreo** arithmetic: it tells TMA and the output store **which** logical output tile this iteration is responsible for.
+Here **`cdiv(N, MATMUL_WARP_N)`** is the number of tiles along **N**; dividing by it recovers the row index **`block_m`**, and the remainder is the column index **`block_n`**. This is ordinary integer **Croktile** arithmetic: it tells TMA and the output store **which** logical output tile this iteration is responsible for.
 
 Each persistent CTA does not own a contiguous chunk of that sequence. CTA **`b`** processes **`tile_id`** values **`b`, b + NUM_SMS, b + 2 * NUM_SMS, ...`**—a **stride-`NUM_SMS`** walk through the linearized list. That is how **`NUM_SMS`** workers share the load evenly in the steady state.
 
@@ -110,7 +110,7 @@ You might first guess **`total_tiles / NUM_SMS`** passes per block; that only wo
 
 Second, **`tile_id = tile_iter # block_id`** **composes** the pass index with the **block index** to form the **global linear tile id** for this iteration. Read **`#`** as “combine **`tile_iter`** and **`block_id`** into the **`tile_id`** this striping scheme assigns to this block at this step.” For block **`block_id`**, iteration **`tile_iter`** handles the tile at position **`tile_iter * NUM_SMS + block_id`** in the linear ordering—matching the stride-**`NUM_SMS`** picture above.
 
-If you are coming from CUDA C, this is the same algebra you would write by hand; Choreo makes the **iteration space** and **composition** part of the `__co__` language.
+If you are coming from CUDA C, this is the same algebra you would write by hand; Croktile makes the **iteration space** and **composition** part of the `__co__` language.
 
 ## The `if` guard and `.step` on `subspan`
 
@@ -157,7 +157,7 @@ The **only** structural difference from the one-tile-per-CTA kernel is the **wra
 | Launch count | **`cdiv(M, …) * cdiv(N, …)`** — grows with problem size | **Fixed** — e.g. **`NUM_SMS`** |
 | Which tile a block does | **`(block_m, block_n)`** from the parallel indices | **`(block_m, block_n)`** from **`tile_id`** after striping |
 | Tail SM utilization | Last grid wave may leave SMs idle | CTAs keep pulling tiles until none remain |
-| Extra Choreo constructs | Minimal | **`total_tiles`**, **`foreach tile_iter`**, **`#`**, **`if`** |
+| Extra Croktile constructs | Minimal | **`total_tiles`**, **`foreach tile_iter`**, **`#`**, **`if`** |
 
 Neither style changes **correctness** of the multiply; both should match a reference GEMM modulo floating-point associativity. The persistent form is an **occupancy and scheduling** choice, especially attractive when **`total_tiles >> NUM_SMS`**.
 
@@ -179,7 +179,7 @@ The benchmark pins **`NUM_SMS`** to **114** for **H800 PCIe** to match that SKU�
 
 The persistent pattern still works if you launch **fewer** CTAs than SMs—some SMs stay idle—or **more** CTAs than SMs (multiple blocks per SM over time), though the sweet spot is usually **close to** the hardware SM count so you **fill** the machine without gratuitous oversubscription.
 
-**`total_tiles`** already accounts for **partial** tiles at the **bottom** and **right** of **`M × N`** because **`cdiv(M, MATMUL_WARP_M)`** and **`cdiv(N, MATMUL_WARP_N)`** count tiles the same way the data-dependent grid did. TMA and the store still target **`MATMUL_WARP_M × MATMUL_WARP_N`** logical tiles; **`M`**, **`N`**, **`K`** stay **symbolic** in the Choreo function, and generated code must respect **tail** elements as in the non-persistent kernel.
+**`total_tiles`** already accounts for **partial** tiles at the **bottom** and **right** of **`M × N`** because **`cdiv(M, MATMUL_WARP_M)`** and **`cdiv(N, MATMUL_WARP_N)`** count tiles the same way the data-dependent grid did. TMA and the store still target **`MATMUL_WARP_M × MATMUL_WARP_N`** logical tiles; **`M`**, **`N`**, **`K`** stay **symbolic** in the Croktile function, and generated code must respect **tail** elements as in the non-persistent kernel.
 
 The **persistent** layer does not change **edge** behavior—it only changes **how many** CTAs iterate **which** **`(block_m, block_n)`** pairs.
 

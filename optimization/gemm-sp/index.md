@@ -17,4 +17,4 @@ For scale only: FP8 peak on this class of GPU is **3026 TFLOPS**, FP16 dense pea
 2. [Optimization patterns](pattern-optimizations.md) — sync and warpgroup tuning, metadata delivery, 1p2c and pipeline depth, inner loop and tile geometry, with TFLOPS ladders woven through.
 3. [AI-tune and the last mile](aitune-last-mile.md) — the **`.co` / `.cu` boundary** on FP16 (plateau at iter120, breakthrough to iter143) versus E4M3, where automated sweeps carry most of the distance to iter068.
 
-Iteration tables and short change blurbs live in `choreo/benchmark/performance/gemm_sp/README_gemm_sp_f16_aitune_2026-03-25.md` and `README_e4m3_aitune_2026-03-21.md`. Kernel artifacts sit under `benchmark/performance/gemm_sp/` (`.co` variants and per-iteration `.cu` trees).
+Iteration tables and short change blurbs live in `croktile/benchmark/performance/gemm_sp/README_gemm_sp_f16_aitune_2026-03-25.md` and `README_e4m3_aitune_2026-03-21.md`. Kernel artifacts sit under `benchmark/performance/gemm_sp/` (`.co` variants and per-iteration `.cu` trees).
