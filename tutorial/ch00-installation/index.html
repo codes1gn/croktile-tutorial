@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://codes1gn.github.io/croktile-tutorial/tutorial/ch04-tma-swizzle/">
+        <link rel="canonical" href="https://codes1gn.github.io/croktile-tutorial/tutorial/ch00-installation/">
       
       
-        <link rel="prev" href="../ch03-pipeline/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../ch05-mma/">
+        <link rel="next" href="../ch01-hello-choreo/">
       
       
         
@@ -25,7 +25,7 @@
     
     
       
-        <title>Ch 4: TMA and Swizzle - Croktile</title>
+        <title>Ch 0: Installation - Croktile</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#high-performance-data-movement-tma-and-swizzle" class="md-skip">
+        <a href="#ch-0-installing-croktile" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Ch 4: TMA and Swizzle
+              Ch 0: Installation
             
           </span>
         </div>
@@ -399,10 +399,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../ch00-installation/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 0: Installation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -418,6 +445,81 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#system-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        System Requirements
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#build-from-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build from Source
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verify-the-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify the Installation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compiler-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compiler Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#development-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development Utilities
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -511,37 +613,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Ch 4: TMA and Swizzle
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../ch04-tma-swizzle/" class="md-nav__link">
         
   
   
@@ -557,81 +632,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#from-software-copies-to-hardware-tensor-movement" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        From software copies to hardware tensor movement
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reference-kernel-fp16-matmul-croktile-function-sm90" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reference kernel: FP16 matmul Croktile function (SM90)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#what-one-thread-block-does" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What one thread block does
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#choosing-between-subspan-and-chunkat" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Choosing between subspan and chunkat
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#constraints-pitfalls-and-whats-next" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Constraints, pitfalls, and what's next
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2771,10 +2771,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#from-software-copies-to-hardware-tensor-movement" class="md-nav__link">
+  <a href="#system-requirements" class="md-nav__link">
     <span class="md-ellipsis">
       
-        From software copies to hardware tensor movement
+        System Requirements
       
     </span>
   </a>
@@ -2782,10 +2782,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#reference-kernel-fp16-matmul-croktile-function-sm90" class="md-nav__link">
+  <a href="#build-from-source" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reference kernel: FP16 matmul Croktile function (SM90)
+        Build from Source
       
     </span>
   </a>
@@ -2793,10 +2793,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-one-thread-block-does" class="md-nav__link">
+  <a href="#verify-the-installation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What one thread block does
+        Verify the Installation
       
     </span>
   </a>
@@ -2804,10 +2804,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#choosing-between-subspan-and-chunkat" class="md-nav__link">
+  <a href="#compiler-usage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Choosing between subspan and chunkat
+        Compiler Usage
       
     </span>
   </a>
@@ -2815,10 +2815,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#constraints-pitfalls-and-whats-next" class="md-nav__link">
+  <a href="#development-utilities" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Constraints, pitfalls, and what's next
+        Development Utilities
       
     </span>
   </a>
@@ -2893,86 +2893,120 @@
   
 
 
-<h1 id="high-performance-data-movement-tma-and-swizzle">High-Performance Data Movement: TMA and Swizzle<a class="headerlink" href="#high-performance-data-movement-tma-and-swizzle" title="Permanent link">&para;</a></h1>
-<p>In Chapters 2 and 3, you moved data with <strong>DMA</strong> — explicit copies that software orchestrates tile by tile. That model is clear and portable, but on modern NVIDIA GPUs it leaves performance on the table. Starting with the <strong>Hopper</strong> architecture (compute capability 9.0, or <strong>SM90</strong>), NVIDIA added a dedicated hardware path for bulk, multi-dimensional loads and stores: the <strong>Tensor Memory Accelerator</strong>, or <strong>TMA</strong>.</p>
-<p>This chapter introduces TMA in Croktile, together with <strong>swizzle</strong> — a layout trick that keeps shared-memory accesses free of <strong>bank conflicts</strong> when tensor cores and wide loads expect a particular byte pattern. The running example is a real <strong>FP16 matrix multiply</strong> Croktile function from the benchmark suite. MMA operations (<code>mma.load</code>, <code>mma.row.row</code>, and friends) appear here because they sit in the same loop as TMA; Chapter 5 unpacks tensor-core programming in depth.</p>
-<h2 id="from-software-copies-to-hardware-tensor-movement">From software copies to hardware tensor movement<a class="headerlink" href="#from-software-copies-to-hardware-tensor-movement" title="Permanent link">&para;</a></h2>
-<p>On pre-Hopper GPUs, getting a tile from global memory into shared memory usually meant many threads each loading a few elements, or a vectorized loop you wrote yourself. The program pays for every instruction that participates in that copy.</p>
-<p><strong>TMA</strong> moves that work into a <strong>hardware unit</strong>. You give it a description of a multi-dimensional tensor in memory (a <em>tensor map</em> or descriptor), and it issues the right sequence of memory transactions to copy a <strong>rectangular tile</strong> in one logical operation. Warps can keep doing math — or wait on a lightweight barrier — while TMA works. That is the performance story: <strong>fewer instructions spent on movement</strong>, better overlap, and a path that lines up with what tensor memory and WGMMA expect on Hopper.</p>
-<p>Croktile exposes this through <strong><code>tma.copy</code></strong> and variants like <strong><code>tma.copy.swiz&lt;N&gt;</code></strong>. The <strong>swizzle</strong> parameter tells the hardware (and the compiler) how to <strong>remap</strong> the destination layout in shared memory so that later column-like or K-dimension accesses do not hammer the same shared memory <strong>bank</strong> repeatedly.</p>
-<p>Shared memory is split into <strong>32 banks</strong>. Successive 4-byte words map to successive banks. If a warp reads a row and every lane reads a consecutive element, you get a nice spread across banks. If a warp reads a <strong>column</strong> of a row-major <code>f16</code> matrix, many lanes land on the same bank — <strong>bank conflicts</strong> that serialize accesses. <strong>Swizzling</strong> applies a fixed permutation of how addresses map to banks (often described in bytes: 32, 64, or <strong>128</strong>), so that the access pattern your MMA or TMA consumer uses sees fewer conflicts. For FP16 kernels, a common choice is <strong><code>swiz&lt;128&gt;</code></strong> when the tile width in K matches the recipe (in the benchmark, <code>MATMUL_TILE_K</code> is 64 elements of <code>f16</code> → 128 bytes per row fragment, and the build asserts <code>MATMUL_SWIZ == 2 * MATMUL_TILE_K</code>).</p>
-<p>The important idea: <strong><code>tma.copy.swiz&lt;N&gt;</code></strong> is not just a copy; it is <strong>copy + agreed-upon SMEM layout</strong> so that <strong><code>mma.load.swiz&lt;N&gt;</code></strong> on the same buffer sees a consistent byte pattern.</p>
-<p>In Chapters 2 and 3, <strong><code>dma.copy</code></strong> expressed the same intent — move a tile between memory kinds — but the generated path was software-driven (threads participating in the copy, possibly pipelined with <code>inthreads</code> and events). <strong><code>tma.copy</code></strong> is the Hopper-shaped spelling: the Croktile compiler maps it to TMA descriptors and instructions for SM90-family targets. You still think in terms of source fragment and destination buffer, but the mechanism is different. When a kernel uses <strong><code>mma.load.swiz</code></strong> and WGMMA-style <strong><code>parallel ... : group-4</code></strong>, pairing TMA loads with those intrinsics is the expected layout; swapping in generic DMA for the same SMEM buffers would break the assumptions the MMA side makes about byte-level placement. <strong>DMA</strong> teaches tiling and orchestration; <strong>TMA</strong> is the next gear when you commit to Hopper tensor pipelines.</p>
-<h2 id="reference-kernel-fp16-matmul-croktile-function-sm90">Reference kernel: FP16 matmul Croktile function (SM90)<a class="headerlink" href="#reference-kernel-fp16-matmul-croktile-function-sm90" title="Permanent link">&para;</a></h2>
-<p>The following is the <code>__co__</code> core of the dynamic FP16 matrix multiply from the Croktile Hopper benchmark (<code>matmul_f16_dyn_sm90.co</code>). Compile-time constants:</p>
-<ul>
-<li><code>MATMUL_WARP_M = 64</code>, <code>MATMUL_WARP_N = 128</code>, <code>MATMUL_TILE_K = 64</code>, <code>MATMUL_WARP_K = 16</code></li>
-<li><code>MATMUL_SWIZ = 128</code></li>
-<li><code>M</code>, <code>N</code>, and <code>K</code> are <strong>symbolic</strong> — actual sizes come from the host at runtime.</li>
-</ul>
-<pre class="highlight"><code class="language-choreo">__co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
-  parallel {block_m, block_n} by [cdiv(M, MATMUL_WARP_M), cdiv(N, MATMUL_WARP_N)] : block {
-    shared f16 [MATMUL_WARP_M, MATMUL_TILE_K] lhs_load_s;
-    shared f16 [MATMUL_WARP_N, MATMUL_TILE_K] rhs_load_s;
-    mc = mma.fill.f16 0.0f;
-    foreach {iv_k} in [cdiv(K, MATMUL_TILE_K)] {
-      tma.copy.swiz&lt;MATMUL_SWIZ&gt; lhs.subspan(MATMUL_WARP_M, MATMUL_TILE_K).at(block_m, iv_k) =&gt; lhs_load_s;
-      tma.copy.swiz&lt;MATMUL_SWIZ&gt; rhs.chunkat(block_n, iv_k) =&gt; rhs_load_s;
-      foreach {iv_warp} in [cdiv(MATMUL_TILE_K, MATMUL_WARP_K)] {
-        parallel p by 1 : group-4 {
-          ma = mma.load.swiz&lt;MATMUL_SWIZ&gt; lhs_load_s.chunkat(_, iv_warp);
-          mb = mma.load.swiz&lt;MATMUL_SWIZ&gt; rhs_load_s.chunkat(_, iv_warp);
-          mma.row.row mc, ma, mb;
-        }
-      }
-    }
-    shared f16 [MATMUL_WARP_M, MATMUL_WARP_N] output_s;
-    mma.store mc, output_s;
-    tma.copy output_s =&gt; output.subspan(MATMUL_WARP_M, MATMUL_WARP_N).at(block_m, block_n);
-  }
+<h1 id="ch-0-installing-croktile">Ch 0: Installing Croktile<a class="headerlink" href="#ch-0-installing-croktile" title="Permanent link">&para;</a></h1>
+<p>Before writing your first kernel, you need the Croktile compiler on your machine. This chapter walks through system dependencies, building from source, and verifying the installation.</p>
+<h2 id="system-requirements">System Requirements<a class="headerlink" href="#system-requirements" title="Permanent link">&para;</a></h2>
+<p>You need a C++17-capable compiler and two parser-generator tools:</p>
+<table>
+<thead>
+<tr>
+<th>Dependency</th>
+<th>Minimum Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GCC</td>
+<td>8.1+ (or Clang 6+)</td>
+</tr>
+<tr>
+<td>Bison</td>
+<td>3.8+</td>
+</tr>
+<tr>
+<td>Flex</td>
+<td>2.6.4+</td>
+</tr>
+<tr>
+<td>CUDA Toolkit</td>
+<td>11.8+ (for GPU targets)</td>
+</tr>
+</tbody>
+</table>
+<p>Most Linux distributions ship Flex and an older Bison. If your system Bison is below 3.8, the setup step below will fetch a compatible version automatically.</p>
+<h2 id="build-from-source">Build from Source<a class="headerlink" href="#build-from-source" title="Permanent link">&para;</a></h2>
+<p>Clone the repository and run the automated setup:</p>
+<pre class="highlight"><code class="language-bash">git clone https://github.com/codes1gn/croktile.git
+cd croktile
+make setup</code></pre>
+<p><code>make setup</code> downloads the required versions of Flex, Bison, FileCheck, and GoogleTest if they are not already present. Once setup finishes, build the compiler:</p>
+<pre class="highlight"><code class="language-bash">make</code></pre>
+<p>Then run the test suite to confirm everything works:</p>
+<pre class="highlight"><code class="language-bash">make test</code></pre>
+<p>If all tests pass, the <code>croktile</code> binary is ready in your build directory. Add it to your <code>PATH</code> or invoke it by its full path.</p>
+<h2 id="verify-the-installation">Verify the Installation<a class="headerlink" href="#verify-the-installation" title="Permanent link">&para;</a></h2>
+<p>Create a minimal <code>.co</code> file to confirm the compiler runs:</p>
+<pre class="highlight"><code class="language-choreo">__co__ s32 [4] identity(s32 [4] input) {
+  return input;
+}
+
+int main() {
+  crok::s32 data[4] = {1, 2, 3, 4};
+  auto result = identity(crok::make_spanview&lt;1&gt;(&amp;data[0], {4}));
+  for (int i = 0; i &lt; 4; ++i)
+    if (data[i] != result[i]) { std::cerr &lt;&lt; "FAIL\n"; return 1; }
+  std::cout &lt;&lt; "OK\n";
 }</code></pre>
-<p>A smaller, test-oriented version lives in <code>croktile/tests/gpu/end2end/matmul_f16_dynamic.co</code> with simpler numbers (<code>WARP_M = 64</code>, <code>WARP_N = 64</code>, <code>TILE_K = 64</code>, <code>WARP_K = 16</code>, literal <code>128</code> for swizzle) and is easier to grep and run under the test harness. The ideas are identical; the benchmark widens the N tile to 128 for throughput.</p>
-<h2 id="what-one-thread-block-does">What one thread block does<a class="headerlink" href="#what-one-thread-block-does" title="Permanent link">&para;</a></h2>
-<p>It helps to narrate a single output tile before worrying about the whole grid.</p>
-<p><strong>Grid and dynamic shapes.</strong> Pick indices <strong><code>block_m</code></strong> and <strong><code>block_n</code></strong>. This CUDA block owns the <strong><code>MATMUL_WARP_M × MATMUL_WARP_N</code></strong> region of <strong><code>output</code></strong> at logical position <code>(block_m, block_n)</code> in the block grid — rows roughly <code>block_m * MATMUL_WARP_M</code> through <code>(block_m + 1) * MATMUL_WARP_M - 1</code>, columns analogously. The function signature says <strong><code>global f16 [M, K] lhs</code></strong>: <strong><code>f16</code></strong> is half precision, <strong><code>M</code></strong> and <strong><code>K</code></strong> are <strong>symbolic dimensions</strong> whose concrete values come from the host, and <strong><code>global</code></strong> marks device global memory. Using symbolic sizes means one Croktile function handles any problem shape without recompilation. The return type <strong><code>void</code></strong> means results are written <strong>in place</strong> through the <strong><code>output</code></strong> parameter, matching how many GPU kernels accept destination pointers explicitly.</p>
-<p><strong>Ceiling division.</strong> <strong><code>cdiv(K, MATMUL_TILE_K)</code></strong> is (\lceil K / \text{TILE_K} \rceil) — one more tile when K is not a multiple of the tile size. The grid uses <code>cdiv(M, MATMUL_WARP_M)</code> and <code>cdiv(N, MATMUL_WARP_N)</code> for the same reason. When the last tile is partial, real kernels pair <code>cdiv</code> grid sizing with predicate masks, zero-padding, or epilogue cleanup so out-of-bounds threads do not read or write garbage.</p>
-<p><strong>Shared buffers.</strong> Inside <code>parallel … : block</code>, two SMEM allocations stage operand tiles:</p>
-<pre class="highlight"><code class="language-choreo">shared f16 [MATMUL_WARP_M, MATMUL_TILE_K] lhs_load_s;
-shared f16 [MATMUL_WARP_N, MATMUL_TILE_K] rhs_load_s;</code></pre>
-<p>These are explicit shared-memory arenas with fixed compile-time extents. TMA writes into them (<code>=&gt; lhs_load_s</code>), and later <strong><code>mma.load.swiz</code></strong> reads the same SMEM with the same swizzle tag so the layout contract holds. The accumulator path uses a separate SMEM tile for the result before copying to global:</p>
-<pre class="highlight"><code class="language-choreo">shared f16 [MATMUL_WARP_M, MATMUL_WARP_N] output_s;
-mma.store mc, output_s;
-tma.copy output_s =&gt; output.subspan(MATMUL_WARP_M, MATMUL_WARP_N).at(block_m, block_n);</code></pre>
-<p>The end-to-end flow: <strong>TMA in → tensor cores accumulate → <code>mma.store</code> to SMEM → TMA out to global.</strong></p>
-<p><strong>The accumulator.</strong> <strong><code>mc = mma.fill.f16 0.0f</code></strong> creates an MMA accumulator state in register-resident tiles, zeroed for FP16 accumulation. <strong><code>mc</code></strong> is not ordinary SMEM; it persists across the K loop and represents the block's running output tile. Chapter 5 says more about its scope and type.</p>
-<p><strong>The K loop.</strong> <strong><code>foreach {iv_k} in [cdiv(K, MATMUL_TILE_K)]</code></strong> iterates over K-tiles from global memory. For each <code>iv_k</code>, two <strong><code>tma.copy.swiz&lt;MATMUL_SWIZ&gt;</code></strong> lines pull operand slabs from global into SMEM. The LHS load uses <strong><code>lhs.subspan(MATMUL_WARP_M, MATMUL_TILE_K).at(block_m, iv_k)</code></strong> — a view with explicit tile extents, then tile selection by block index and K index. The RHS load uses <strong><code>rhs.chunkat(block_n, iv_k)</code></strong> — regular tiling along block and K indices. Both are views over the same underlying <code>global</code> data; they differ in how explicitly you state the tile shape (more on this choice in the next section).</p>
-<p><strong>The inner MMA loop.</strong> Inside each loaded K-tile, <strong><code>iv_warp</code></strong> runs from 0 to <code>cdiv(MATMUL_TILE_K, MATMUL_WARP_K) - 1</code>. With TILE_K=64 and WARP_K=16, that is <strong>four</strong> MMA slices along K per outer K-tile. For each slice, the warp group loads <strong><code>ma</code></strong> and <strong><code>mb</code></strong> from SMEM with <strong><code>mma.load.swiz&lt;MATMUL_SWIZ&gt;</code></strong> and issues <strong><code>mma.row.row mc, ma, mb</code></strong> to fold the partial product into the accumulator.</p>
-<p>Hopper <strong>WGMMA</strong> expects a <strong>warp group</strong> of four warps (128 threads) to cooperate on one MMA. Croktile annotates that with <strong><code>parallel p by 1 : group-4</code></strong>. Even though the parallel count is 1 in the <code>p</code> dimension, the team executing the body is four warps. Chapter 5 goes deeper; for this chapter, treat <strong><code>: group-4</code></strong> as "schedule this body as a Hopper warp group."</p>
-<p>In <strong><code>lhs_load_s.chunkat(_, iv_warp)</code></strong>, the underscore <strong><code>_</code></strong> says "no tiling selector on the first dimension — keep its full extent." The entire <code>MATMUL_WARP_M</code> (or <code>MATMUL_WARP_N</code>) side is already in SMEM for this block; only K is subdivided for each MMA slice. Writing <code>chunkat(some_m, iv_warp)</code> would incorrectly imply an extra partition along M inside SMEM.</p>
-<p>Notice two nested notions of K: the <strong>outer</strong> loop <code>iv_k</code> stages <code>MATMUL_TILE_K</code> elements at a time from global — sized for memory and descriptor efficiency — while the <strong>inner</strong> loop <code>iv_warp</code> feeds the MMA in thinner <code>MATMUL_WARP_K</code> slivers. The outer loop is about <strong>what fits through TMA and SMEM</strong>; the inner loop is about <strong>what one WGMMA instruction eats per step</strong>.</p>
-<p>Chapter 3 taught you to overlap DMA with compute using software queues. On Hopper, the same load → math → store rhythm continues, but TMA and async barriers let hardware participate in that overlap more aggressively than a naive thread loop. Do not worry if the MMA opcodes feel opaque on first read; the data-movement story you need from this chapter is: <strong>TMA filled <code>lhs_load_s</code> / <code>rhs_load_s</code> with swizzle N; MMA consumed those buffers with the same N; then results left via SMEM and TMA.</strong></p>
-<p>The end-to-end test <code>matmul_f16_dynamic.co</code> uses <strong><code>mma.fill.f32</code></strong> with <strong><code>mma.row.row</code></strong> and FP16 tensors — a slightly different accumulator for the test harness than the <code>mma.fill.f16</code> benchmark variant. For this chapter, treat both as "initialize accumulator, accumulate, store"; Chapter 5 unifies the precision and layout rules.</p>
-<h2 id="choosing-between-subspan-and-chunkat">Choosing between subspan and chunkat<a class="headerlink" href="#choosing-between-subspan-and-chunkat" title="Permanent link">&para;</a></h2>
-<p>Both carve global tensors into tiles, but they emphasize different things.</p>
-<p><strong><code>subspan(M, K).at(i, j)</code></strong> creates a <strong>view</strong> with explicit tile extents, then selects which tile. Use it when you want to spell out the logical tile size — especially when matching a fixed MMA or TMA recipe:</p>
-<pre class="highlight"><code class="language-choreo">lhs.subspan(MATMUL_WARP_M, MATMUL_TILE_K).at(block_m, iv_k)
-output.subspan(MATMUL_WARP_M, MATMUL_WARP_N).at(block_m, block_n)</code></pre>
-<p>Read it as: "take a <code>MATMUL_WARP_M × MATMUL_TILE_K</code> windowing pattern on <code>lhs</code>, then pick the window at <code>(block_m, iv_k)</code>."</p>
-<p><strong><code>chunkat(i, j)</code></strong> assumes a regular decomposition: divide each dimension into equal chunks according to the tile shape implied by the surrounding type and indexing. Use it when the default even tiling is obvious:</p>
-<pre class="highlight"><code class="language-choreo">rhs.chunkat(block_n, iv_k)</code></pre>
-<p>Prefer <strong><code>subspan().at()</code></strong> when you are matching hardware recipes from a spreadsheet or an existing CUTLASS/CUTE kernel — the view extents are literal in your source, easy to cross-check against <code>shared</code> sizes. Prefer <strong><code>chunkat</code></strong> when the decomposition is uniform and already clear from context. Both are views over the same data; the compiler still proves access coherence for the target.</p>
-<h2 id="constraints-pitfalls-and-whats-next">Constraints, pitfalls, and what's next<a class="headerlink" href="#constraints-pitfalls-and-whats-next" title="Permanent link">&para;</a></h2>
-<p>The <code>// REQUIRES: TARGET-SM_90</code> line on the test file is a hint: TMA + WGMMA + <code>group-4</code> needs a <strong>Hopper-class</strong> target (typically <code>sm_90a</code> in your Croktile invocation). The benchmark source statically asserts relationships between constants — for example that <code>MATMUL_SWIZ</code> equals <code>2 * MATMUL_TILE_K</code> for this FP16 recipe, and that <code>MATMUL_SWIZ</code> is one of 32, 64, or 128. Those checks mirror hardware constraints: swizzle mode, element size, and tile width must agree or the descriptor setup is invalid. If you change <code>TILE_K</code> without changing <code>swiz</code>, expect either a compile-time error or a runtime failure depending on how far the bad combination gets.</p>
-<p>Treat <code>MATMUL_WARP_K = 16</code> for <code>f16</code> the same way: it is tied to the MMA instruction shape on SM90, not an arbitrary tunable. Copy working triples <code>(TILE_K, SWIZ, WARP_K)</code> from known-good kernels before you experiment. Later chapters revisit autotuning; for now, start from known-good constants.</p>
-<p>When reading or writing a Hopper-style Croktile kernel, watch for:</p>
-<ul>
-<li><strong>Mismatched swizzle tags.</strong> If <code>tma.copy.swiz&lt;128&gt;</code> feeds a buffer but <code>mma.load.swiz&lt;64&gt;</code> reads it, tensor cores interpret the wrong byte layout. Keep the template argument identical per SMEM allocation.</li>
-<li><strong><code>subspan</code> extents disagreeing with <code>shared</code> sizes.</strong> The global view's tile shape and the <code>shared f16 [...]</code> declaration must describe the same element counts in each dimension. Off-by-one or transposition shows up as silent wrong answers or illegal TMA shapes.</li>
-<li><strong>Forgetting that <code>void</code> means no return value.</strong> Host code must pass a writable <code>output</code> view; you cannot assign the result of <code>matmul(...)</code> to a fresh <code>spanned_data</code> unless you wrap a helper.</li>
-<li><strong>Assuming <code>_</code> means "any index."</strong> It means omit this chunk axis, not "infer a loop variable." The surrounding <code>foreach</code> and <code>parallel</code> still determine which threads run.</li>
-</ul>
-<p>When you read this kernel, ask five questions: Where does data live (<code>global</code> vs <code>shared</code> vs MMA accumulators)? How big is each tile (<code>WARP_M</code>, <code>WARP_N</code>, <code>TILE_K</code>, <code>WARP_K</code>, and how <code>cdiv</code> counts loops)? How do global indices map to blocks? Is the SMEM layout consistent (same <code>swiz&lt;N&gt;</code> on <code>tma.copy.swiz</code> and <code>mma.load.swiz</code>)? Who executes the MMA body (<code>: group-4</code> for WGMMA)?</p>
-<p>In <a href="../ch05-mma/">Chapter 5</a>, the focus shifts to MMA itself: what the accumulators represent, how layouts connect to PTX, and how to reason about correctness and performance without drowning in hardware manuals.</p>
+<p>Compile and run:</p>
+<pre class="highlight"><code class="language-bash">croktile verify.co -o verify
+./verify</code></pre>
+<p>You should see <code>OK</code>. If you do, the compiler, linker, and runtime are all working.</p>
+<h2 id="compiler-usage">Compiler Usage<a class="headerlink" href="#compiler-usage" title="Permanent link">&para;</a></h2>
+<p>The <code>croktile</code> command works like <code>gcc</code> or <code>clang</code>:</p>
+<pre class="highlight"><code class="language-bash">croktile program.co                     # compile and link → a.out
+croktile program.co -o my_kernel        # specify output name
+croktile -es -t cuda program.co -o out.cu  # emit CUDA source only
+croktile -E program.co                  # preprocess only</code></pre>
+<p>Key flags:</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-o &lt;file&gt;</code></td>
+<td>Set output filename</td>
+</tr>
+<tr>
+<td><code>-t &lt;platform&gt;</code></td>
+<td>Select target platform (e.g. <code>cuda</code>)</td>
+</tr>
+<tr>
+<td><code>-es</code></td>
+<td>Emit target source code without compiling it</td>
+</tr>
+<tr>
+<td><code>-E</code></td>
+<td>Preprocess only (expand macros, strip <code>#if 0</code> blocks)</td>
+</tr>
+<tr>
+<td><code>-c</code></td>
+<td>Compile without linking</td>
+</tr>
+<tr>
+<td><code>-S</code></td>
+<td>Emit assembly</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>Show all options</td>
+</tr>
+<tr>
+<td><code>--help-hidden</code></td>
+<td>Show advanced/internal options</td>
+</tr>
+</tbody>
+</table>
+<h2 id="development-utilities">Development Utilities<a class="headerlink" href="#development-utilities" title="Permanent link">&para;</a></h2>
+<p>The Makefile includes shortcuts for running the bundled test suites:</p>
+<pre class="highlight"><code class="language-bash">make help                              # list all available targets
+make sample-test                       # run all sample operator tests
+make sample-test-operator OPERATOR=add # test a specific operator</code></pre>
+<p>These are useful when you modify Croktile itself or want to verify a specific operator family.</p>
+<p>With the compiler installed and verified, you are ready to write your first real Croktile program in <a href="../ch01-hello-choreo/">Chapter 1</a>.</p>
 
 
 
