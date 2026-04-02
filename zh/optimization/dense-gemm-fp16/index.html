@@ -1,0 +1,3028 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://codes1gn.github.io/croktile-tutorial/zh/optimization/dense-gemm-fp16/">
+      
+      
+        <link rel="prev" href="../setup-profiling/">
+      
+      
+        <link rel="next" href="../sparse-gemm/">
+      
+      
+        
+          <link rel="alternate" href="../../../optimization/dense-gemm-fp16/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="zh">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Dense GEMM FP16 - Croktile</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    
+      <link rel="stylesheet" href="../../../assets/css/custom.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="light-green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#fp16-gemm-cublas" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../" title="Croktile" class="md-header__button md-logo" aria-label="Croktile" data-md-component="logo">
+      
+  <img src="../../../assets/images/logo-2.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Croktile
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Dense GEMM FP16
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="light-green"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="green" data-md-color-accent="light-green"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../optimization/dense-gemm-fp16/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/codes1gn/croktile-tutorial" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    codes1gn/croktile-tutorial
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="Croktile" class="md-nav__button md-logo" aria-label="Croktile" data-md-component="logo">
+      
+  <img src="../../../assets/images/logo-2.png" alt="logo">
+
+    </a>
+    Croktile
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/codes1gn/croktile-tutorial" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    codes1gn/croktile-tutorial
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/what-is-choreo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What is Good in CrokTile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../tutorial/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part I — Tutorial
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Part I — Tutorial
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch00-installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 0: Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch01-hello-croktile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 1: Hello Croktile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch02-data-movement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 2: Data Movement
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch03-parallelism/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 3: Parallelism
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch04-mma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 4: MMA Operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch05-branch-control/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 5: Branch & Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch06-synchronization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 6: Synchronization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch07-advanced-movement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 7: Advanced Movement
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch08-cpp-interop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 8: C++ Interop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch09-debug-verbose/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 9: Debug & Verbose
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part II — Performance Tuning Demos
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Part II — Performance Tuning Demos
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../setup-profiling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profiling Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dense GEMM FP16
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dense GEMM FP16
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        步骤 0：基线
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="步骤 0：基线">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        最快可能运行时间的下界
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2087" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        为何 208.7 是调度受限，而非实现错误
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        占用率算术
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-wn176stages2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        步骤 1：分块几何 —— WN=176，STAGES=2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-stages3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        步骤 2：流水线深度 —— STAGES=3
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="步骤 2：流水线深度 —— STAGES=3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        隐患：级数 × 问题规模的相互作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-1p2c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        步骤 3：分离输出 1p2c
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-iter057" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        步骤 4：最佳标题数字 —— iter057
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5wn-iter061" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        步骤 5：WN 扫描与占用率断崖 —— iter061
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        编译器标志：最后一层
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        发布检查点与复现
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        结论
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sparse-gemm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sparse GEMM (FP16 + E4M3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../blockscale-gemm-fp8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Block-Scaled GEMM FP8
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../documentation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part III — Coding Reference
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Part III — Coding Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Program Structure
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Program Structure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/choreo-program-structure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Croktile-C++ Program Structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shaped Data
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Shaped Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/shape-in-choreo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shape and MDSpan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/integer-ituple/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integers and I-Tuples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/spanned-data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spanned Data and Buffers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/symbolic-shape/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dynamic Shape and Symbolic Dimension
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Loop and Parallelism
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Loop and Parallelism
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/intro-loop-parallel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About Parallelism and Iterations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/parallel-in-choreo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SPMD Parallelism
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/within-loops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Loop Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Movement
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data Movement
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/basic-dma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The DMA Statement
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/tiling-chunkat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tile Data with ChunkAt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/dma-in-advance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced Data Movement
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++ Embeddings
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    C++ Embeddings
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/input-output/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inputs and Output
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/macro-in-choreo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Macro and Preprocessing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_7" id="__nav_5_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MPMD Programming
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    MPMD Programming
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/thread-masking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Thread Masking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Events for Async Execution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/general-async/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    More on Async Execution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_8" id="__nav_5_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Advanced
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/loop-in-advance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experimental Features
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_9" id="__nav_5_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optimization Patterns
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Optimization Patterns
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/tileflow-opt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tileflow Optimizations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/async-dma-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Async DMA Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/multi-buffering-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-buffering Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/operator-samples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference Palette
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_11" id="__nav_5_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Rationales
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Design Rationales
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/syntax-design-of-choreo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Syntax Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/why-symbolic-shapes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why Symbolic Shapes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/value-numbering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Symbolic Evaluation System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/dynamic-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dynamism Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part IV — Design Rationales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        步骤 0：基线
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="步骤 0：基线">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        最快可能运行时间的下界
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2087" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        为何 208.7 是调度受限，而非实现错误
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        占用率算术
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-wn176stages2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        步骤 1：分块几何 —— WN=176，STAGES=2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-stages3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        步骤 2：流水线深度 —— STAGES=3
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="步骤 2：流水线深度 —— STAGES=3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        隐患：级数 × 问题规模的相互作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-1p2c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        步骤 3：分离输出 1p2c
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-iter057" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        步骤 4：最佳标题数字 —— iter057
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5wn-iter061" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        步骤 5：WN 扫描与占用率断崖 —— iter061
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        编译器标志：最后一层
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        发布检查点与复现
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        结论
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="导航栏" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../" class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Part II — Performance Tuning Demos
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="fp16-gemm-cublas">如何将鳄霸 FP16 GEMM 优化到接近 cuBLAS 的性能：一份工作日志<a class="headerlink" href="#fp16-gemm-cublas" title="Permanent link">&para;</a></h1>
+<p>本文中，我将以迭代方式优化一个在鳄霸中编写的 Hopper（SM90a）半精度矩阵乘。目标并非打造 cuBLAS 的替代品，而是借助鳄霸的抽象——warp 特化、TMA 流水线、分块几何与编译器标志调参——深入理解 H800 GPU 的性能特征。可在鳄霸仓库的 <code>benchmark/performance/matmul/</code> 下找到全部内核源码。</p>
+<p>就当前而言，GPU 上的矩阵乘法或许是最重要的算法之一：大规模深度学习模型在训练与推理中，几乎全部的 FLOPs 都消耗在矩阵乘上。那么，把一个「能跑」的正确鳄霸 SGEMM 推到「与 cuBLAS 相当」需要多少工作量？从基线出发，逐步施加优化，我们可达到 cuBLAS 的 101%：</p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>内核</th>
+<th>TFLOPS @8192³</th>
+<th>相对 cuBLAS（约 380）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>基线：1p1c，WN=128，4 级</td>
+<td>208.7</td>
+<td>55%</td>
+</tr>
+<tr>
+<td>1</td>
+<td>分块几何：WN=176，STAGES=2</td>
+<td>242.0</td>
+<td>64%</td>
+</tr>
+<tr>
+<td>2</td>
+<td>流水线深度：WN=176，STAGES=3</td>
+<td>354.1</td>
+<td>93%</td>
+</tr>
+<tr>
+<td>3</td>
+<td>分离输出 1p2c，WN=128</td>
+<td>~375.0</td>
+<td>99%</td>
+</tr>
+<tr>
+<td>4</td>
+<td>分离输出 1p2c，WN=152，非持久化</td>
+<td><strong>382.5</strong></td>
+<td><strong>101%</strong></td>
+</tr>
+<tr>
+<td>5</td>
+<td>WN=160，K-unroll，wgmma-wait-depth</td>
+<td>380.6</td>
+<td>100%</td>
+</tr>
+</tbody>
+</table>
+<h2 id="0">步骤 0：基线<a class="headerlink" href="#0" title="Permanent link">&para;</a></h2>
+<p>在鳄霸编程模型中，矩阵乘内核是一个描述操作数经 TMA、共享内存暂存与 WGMMA 累加流动的 <code>__co__</code> 函数。鳄霸编译器将其转译为带 warp 特化、流水线与 swizzle 寻址的 Hopper 原生 PTX。关键旋钮包括：</p>
+<ul>
+<li><code>MATMUL_WARP_N</code> —— WGMMA 分块的 N 向范围（每个 block 输出有多宽）</li>
+<li><code>MATMUL_STAGES</code> —— 沿 K 的操作数环形槽位数（异步流水线深度）</li>
+<li>Warp 特化模式 —— 1p1c（一个生产者、一个消费者）或 1p2c</li>
+</ul>
+<p>基线内核 <code>matmul_f16_dyn_sm90.co</code> 采用 <strong>1p1c</strong> warp 特化（一个 TMA 生产者 warpgroup、一个 WGMMA 消费者 warpgroup——角色定义见 <a href="../../tutorial/ch05-branch-control/">Chapter 5</a>），<strong>WN=128</strong>，以及 <strong>4 级流水线</strong>（流水线思想见 <a href="../../tutorial/ch06-synchronization/">Chapter 6</a>）。编译并运行：</p>
+<pre class="highlight"><code class="language-bash">./croktile -gs -t cute -arch=sm_90a --use-warpspec --stmatrix \
+  benchmark/performance/matmul/matmul_f16_dyn_sm90.co \
+  -o /tmp/matmul.cute.result &amp;&amp; bash /tmp/matmul.cute.result --execute</code></pre>
+<p>结果：在 8192³ 上为 <strong>208.7 TFLOPS</strong>。抽象地看并不差——但离硬件能力尚远。</p>
+<p><img alt="Baseline 1p1c pipeline with 4-stage ring" src="../../../optimization/images/BaselineKernel_ManimCE_v0.19.1_dark.png#only-dark" />
+<img alt="Baseline 1p1c pipeline with 4-stage ring" src="../../../optimization/images/BaselineKernel_ManimCE_v0.19.1_light.png#only-light" /></p>
+<h3 id="_1">最快可能运行时间的下界<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<p>对于边长 S = 8192 的方阵 GEMM，总工作量为 <code>2 × S³ ≈ 1.1 TFLOP</code>（每个输出元素做 S 次乘加；每次乘加计为 2 FLOPs——一次乘法、一次加法，通常融合为单条 FMA 指令）。H800 PCIe 标称约 1513 TFLOPS FP16 张量峰值与约 3.35 TB/s HBM3 带宽。</p>
+<p>若达到张量吞吐峰值，计算约需 0.7 ms。最小访存量（两个 FP16 输入矩阵加一个输出，假设完美复用：<code>3 × 8192² × 2B ≈ 384 MB</code>）在峰值带宽下约需 0.15 ms。因而在理想情形下，该内核明确处于 <strong>compute-bound（计算受限）</strong> ——计算所需时间约为访存的约 5 倍。</p>
+<p>但 cuBLAS 在此栈上仅约 <strong>380 TFLOPS</strong>，约为理论张量峰值的 25%。这一差距反映真实开销：调度、同步、流水线气泡、占用率、指令混合等。因此 <strong>380 TFLOPS</strong>——而非 1513——才是我们的实际目标；基线仅为其 <strong>55%</strong>。</p>
+<h3 id="2087">为何 208.7 是调度受限，而非实现错误<a class="headerlink" href="#2087" title="Permanent link">&para;</a></h3>
+<p>内核对 TMA、WGMMA 与 warp 特化的使用是正确的。它是 <strong>under-scheduled（调度不足）</strong>：分块宽度、级数深度与输出暂存与当前问题规模下的占用率及争用特征不匹配。</p>
+<p>无需分析器，综合三点即可看出。第一，<strong>吞吐与问题规模</strong>：同一内核在 2048³ 约 <strong>204 TFLOPS</strong>、在 8192³ 为 208.7——数值一致表明瓶颈在 block 内部（调度），而非 grid 层面（wave quantization）。第二，<strong>共享内存与占用率</strong>：WN=128 且 4 级时，每 block 的 SMEM 占用约 96 KB——Hopper 每 SM 228 KB 预算下勉强可容纳 2 个 CTA/SM。第三，<strong>1p1c 中的角色平衡</strong>：单生产者单消费者时，若消费者在 <code>wait_full</code> 上停顿、或生产者在 <code>wait_empty</code> 上停顿，流水线即受气泡限制。Warp 特化分配角色；它本身并不会把环形缓冲区尺寸调到消除气泡。</p>
+<h3 id="_2">占用率算术<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>以下计算将指导后续每一项优化：</p>
+<pre class="highlight"><code>SMEM per block ≈ STAGES × (WM × TK + WN × TK) × sizeof(fp16)
+               = 4 × (64 × 64 + 128 × 64) × 2B
+               = 4 × 12288 × 2 ≈ 96 KB</code></pre>
+<p>在 96 KB 时，SM 的 228 KB 预算可容纳 <strong>2 个 block</strong>。SMEM 的任何增加——更宽的 WN、更多级数、输出暂存——都可能使每 SM 仅余 1 个 block。这是延迟隐藏的阶跃式损失，而非温和退化。下文每一项优化都通过这一算术相互牵制。</p>
+<hr />
+<h2 id="1-wn176stages2">步骤 1：分块几何 —— WN=176，STAGES=2<a class="headerlink" href="#1-wn176stages2" title="Permanent link">&para;</a></h2>
+<p><strong>问题。</strong> 四级占用大量 SMEM，留给并发 CTA 的空间很小。流水线结构正确，但对占用率预算而言过深。</p>
+<p><strong>改动。</strong> 将 N 向分块加宽至 176（每个已分段的 K 板层上算更多数学），并降为 2 级：</p>
+<pre class="highlight"><code>MATMUL_WARP_N = 176    # was 128
+MATMUL_STAGES = 2      # was 4</code></pre>
+<p>新的 SMEM：</p>
+<pre class="highlight"><code>SMEM ≈ 2 × (64 × 64 + 176 × 64) × 2B
+     = 2 × 15360 × 2 ≈ 60 KB</code></pre>
+<p>每 block 约 60 KB 时，SM 可容纳 <strong>3 个 block</strong>——由 2 个增加。更多并发 block 意味着跨 CTA 更好的延迟隐藏。</p>
+<p><strong>为何 WN 重要——算术强度。</strong> 更宽的 N 分块意味着每从 GMEM 载入 SMEM 一字节，每个 block 计算更多输出元素。WN=128 时：<code>AI = 2 × 64 × 128 × 64 / ((64 + 128) × 64 × 2) ≈ 42.7 FLOPs/B</code>。WN=176 时：<code>AI ≈ 46.9 FLOPs/B</code>。约 10% 的强度提升有用，但更大收益来自腾出 SMEM 以改善占用率。</p>
+<p><strong>结果：</strong> 在 2048³ 上为 <strong>242 TFLOPS</strong>（+18%）。但 2 级使流水线偏浅——TMA 延迟未能充分隐藏。</p>
+<hr />
+<h2 id="2-stages3">步骤 2：流水线深度 —— STAGES=3<a class="headerlink" href="#2-stages3" title="Permanent link">&para;</a></h2>
+<p><strong>问题。</strong> 在 2 级时，生产者加载完下一块 K 板层后会在 <code>wait_empty</code> 上阻塞——消费者尚未释放上一缓冲区。</p>
+<p><strong>改动。</strong> 增加一级：</p>
+<pre class="highlight"><code>MATMUL_STAGES = 3      # was 2, keeping WN=176</code></pre>
+<p>新 SMEM：<code>3 × 15360 × 2 ≈ 90 KB</code>——在 228 KB 内仍可放 2 个 block。</p>
+<p>多出的这一级使生产者相对消费者可超前运行一个 K 板层，在 WGMMA 计算背后隐藏 TMA 延迟。</p>
+<p><img alt="3-stage pipeline: producer runs ahead" src="../../../optimization/images/Step2ThreeStage_ManimCE_v0.19.1_dark.png#only-dark" />
+<img alt="3-stage pipeline: producer runs ahead" src="../../../optimization/images/Step2ThreeStage_ManimCE_v0.19.1_light.png#only-light" /></p>
+<p><strong>结果：</strong> 在 2048³ 上为 <strong>354.1 TFLOPS</strong>——相对上一步 <strong>+46%</strong>。</p>
+<p>这是整段优化中单次最大跃升，且并非来自更多数学运算——而是 <strong>bubble-limited（受气泡限制）</strong> 调度的典型特征。多一级换来了生产者–消费者并发。流水线从「每轮迭代生产者都停」变为「生产者保持超前」。</p>
+<h3 id="_3">隐患：级数 × 问题规模的相互作用<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>三级在 2048³ 上有利，但在 8192³ 上可能有害，因为更大 grid 会放大占用率效应。多出来的级数是字节，可能挤掉并发 block。问题规模改变 4× 时，应重新扫描 STAGES。这也是后续步骤会再次调整 WN/STAGES 平衡的原因。</p>
+<hr />
+<h2 id="3-1p2c">步骤 3：分离输出 1p2c<a class="headerlink" href="#3-1p2c" title="Permanent link">&para;</a></h2>
+<p><strong>问题。</strong> 单一消费者 warpgroup（1p1c）时，共享内存中只有一个 <code>output_s</code> 分块用于累加器暂存。随着 WN 增大，<strong>输出争用</strong>成为瓶颈——消费者在写入该共享分块时串行，累加路径上的 SMEM 流量侵蚀吞吐。</p>
+<p><strong>改动。</strong> 切换为 <strong>1p2c 分离输出</strong>：一个生产者、两个消费者 warpgroup，各自拥有输出暂存区的私有条带。源码：<code>matmul_f16_dyn_sm90_warpspec_1p2c.co</code>。</p>
+<p><img alt="Split-output 1p2c architecture" src="../../../optimization/images/SplitOutput1p2c_ManimCE_v0.19.1_dark.png#only-dark" />
+<img alt="Split-output 1p2c architecture" src="../../../optimization/images/SplitOutput1p2c_ManimCE_v0.19.1_light.png#only-light" /></p>
+<p>代价是略高的 SMEM（两片输出），换来更低争用。先在 4096³ 上验证——若分离输出在这一中间尺寸上回退，则不会信任代价更高的 8192³。</p>
+<p><strong>结果：</strong> 在 4096³ 上约 <strong>375 TFLOPS</strong>。</p>
+<p>单一分析器计数很少直接显示输出争用。与之相关的经验法则是：仅当启用分离输出时，从 1p1c 换到 1p2c 后 TFLOPS 才上升——说明消费者侧在 <code>output_s</code> 上串行，而非在数学路径上。</p>
+<hr />
+<h2 id="4-iter057">步骤 4：最佳标题数字 —— iter057<a class="headerlink" href="#4-iter057" title="Permanent link">&para;</a></h2>
+<p><strong>改动。</strong> 将分离输出带到完整 8192³ 问题，并调优 WN、采用非持久化 launch：</p>
+<pre class="highlight"><code>Warp spec:        1p2c split-output
+MATMUL_WARP_N:    152
+Launch:           non-persistent (conventional grid)</code></pre>
+<p><a href="../../tutorial/ch05-branch-control/">Chapter 5</a> 讨论了通过持久化内核缓解 grid 层面尾波利用率不足的方案。但当 block 内 SMEM 与流水线选择已限制吞吐时，持久化无法挽回占用率已造成的损失。在 8192³ 与分离输出分块下，wave quantization 可接受，且瓶颈已在 block 内部——常规网格更优。</p>
+<p><strong>结果：</strong> 在 8192³ 上为 <strong>382.5 TFLOPS</strong>——相对 208.7 基线 <strong>+83%</strong>，与 cuBLAS 持平。</p>
+<hr />
+<h2 id="5wn-iter061">步骤 5：WN 扫描与占用率断崖 —— iter061<a class="headerlink" href="#5wn-iter061" title="Permanent link">&para;</a></h2>
+<p>在分离输出已达到 cuBLAS 量级吞吐之后，问题变为：对 8192³ 而言 WN=152 是否最优，抑或只是从小规模实验继承而来？第三阶段在 8192³ 上扫描 WN，并配合 K-unroll 与 <code>--wgmma-wait-depth</code>：</p>
+<pre class="highlight"><code>MATMUL_WARP_N:    160
+K-unroll:         enabled
+--wgmma-wait-depth=N (tuned to match stage count)</code></pre>
+<p><strong>结果：</strong> <strong>380.6 TFLOPS</strong>——在 8192³ 上比 iter057 低 1.9 TFLOPS，但跨尺寸表现更强（在 2048³ 上为 cuBLAS 的 100.5%）。</p>
+<p>扫描还发现了 <strong>WN=168 时的硬失败</strong>：</p>
+<p><img alt="The WN=168 occupancy cliff" src="../../../optimization/images/OccupancyCliff_ManimCE_v0.19.1_dark.png#only-dark" />
+<img alt="The WN=168 occupancy cliff" src="../../../optimization/images/OccupancyCliff_ManimCE_v0.19.1_light.png#only-light" /></p>
+<p>在 WN=168 时，共享内存超过 228 KB。驻留从每 SM 2 个 block 降为 1 个。吞吐断崖式下跌——不是几个百分点，而是延迟隐藏的灾难性丧失。应通过计算 <code>STAGES × tile_dimensions × element_size</code> 并与 228 KB 预算比较来发现，而非凭感觉。</p>
+<hr />
+<h2 id="_4">编译器标志：最后一层<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>函数结构确定之后，编译器如何将鳄霸 lower 到 PTX 仍然重要。发布构建共用一套标志组合：</p>
+<table>
+<thead>
+<tr>
+<th>标志</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--use-warpspec</code></td>
+<td>针对生产者/消费者划分的 warp 特化代码生成</td>
+</tr>
+<tr>
+<td><code>--stmatrix</code></td>
+<td>STSM 风格的共享内存矩阵设置</td>
+</tr>
+<tr>
+<td><code>--hoist-offset</code> / <code>--hoist-scale</code></td>
+<td>将地址运算从内层循环中 hoist 出</td>
+</tr>
+<tr>
+<td><code>--ptx-barrier</code></td>
+<td>异步同步用的 barrier 指令</td>
+</tr>
+<tr>
+<td><code>--tma-cluster-aware</code></td>
+<td>面向 SM90 cluster/multicast 偏置 TMA lowering</td>
+</tr>
+<tr>
+<td><code>--wgmma-wait-depth=N</code></td>
+<td>将 WGMMA 流水线等待深度暴露为可调参数</td>
+</tr>
+</tbody>
+</table>
+<p>标志很重要——iter023 仅 <code>--ptx-barrier</code> 与 <code>--stmatrix</code> 就在 2048³ 上带来约 +5%。但完整日志的教训是 <strong>操作顺序</strong>：扫描 WN 与 STAGES 时冻结标志；仅在分离输出落地后再解冻。在 SMEM 仍错误时过度调标志是常见失败模式。</p>
+<hr />
+<h2 id="_5">发布检查点与复现<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>在鳄霸仓库根目录执行 <code>make build</code> 之后：</p>
+<pre class="highlight"><code class="language-bash">./croktile -gs -t cute -arch=sm_90a \
+  --use-warpspec --stmatrix --hoist-offset --hoist-scale \
+  --ptx-barrier --tma-cluster-aware \
+  benchmark/performance/matmul/&lt;INPUT&gt;.co \
+  -o /tmp/run.cute.result &amp;&amp; bash /tmp/run.cute.result --execute</code></pre>
+<table>
+<thead>
+<tr>
+<th>检查点</th>
+<th><code>.co</code> 文件名</th>
+<th>TFLOPS</th>
+<th>规模</th>
+<th>配置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>iter048</td>
+<td><code>..._iter048_s3_wn176_best.co</code></td>
+<td>354.1</td>
+<td>2048³</td>
+<td>1p1c，WN=176，3 级</td>
+</tr>
+<tr>
+<td>iter050</td>
+<td><code>..._iter050_1p2c_splitout.co</code></td>
+<td>~375</td>
+<td>4096³</td>
+<td>1p2c 分离输出，WN=128</td>
+</tr>
+<tr>
+<td>iter057</td>
+<td><code>..._iter057_1p2c_so_wn152_nonpersis.co</code></td>
+<td><strong>382.5</strong></td>
+<td>8192³</td>
+<td>1p2c 分离输出，WN=152</td>
+</tr>
+<tr>
+<td>iter061</td>
+<td><code>..._iter061_1p2c_so_wn160_kunroll.co</code></td>
+<td>380.6</td>
+<td>8192³</td>
+<td>1p2c 分离输出，WN=160，K-unroll</td>
+</tr>
+</tbody>
+</table>
+<p><strong>选择：</strong> 8192³ 峰值标题取 iter057。需要单个二进制在多种尺寸上表现均衡时取 iter061（2048³ 为 cuBLAS 的 100.5%，8192³ 为 80.7%）。</p>
+<p>Harness 默认：<code>CROKTILE_TIMING_WARMUP=10</code>，<code>CROKTILE_TIMING_REPEAT=500</code>。与 <code>.co</code> 文件使用同一 revision 构建，以避免 codegen drift。使用 <code>-arch=sm_90a</code>。与外部 cuBLAS 数据对比时，注明驱动版本与时钟行为。</p>
+<hr />
+<h2 id="_6">结论<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>撰写本文对应约 65 次迭代、分三个阶段。第一阶段 38 次迭代约提升 +5%。第二阶段 14 次迭代约提升 +83%。第三阶段打磨最后若干 TFLOPS，并发现 WN=168 的失败。幂律处处可见。</p>
+<p>单次最大的结构性收益并非来自某条编译器标志，而是 <strong>1p2c 分离输出</strong> 将 TFLOPS 推入 370–382 区间。<code>--stmatrix</code> 等标志重要，但若两个消费者共享同一累加器分块，它们无法消除 <code>output_s</code> 上的串行化。若在自己的内核中遇到类似天花板，在动用指令级手段之前，先检查输出路径是否为瓶颈。</p>
+<p>+83% 完全来自鳄霸的函数几何、输出暂存与编译器标志——无混合精度、无 split-K、无 CUDA Graph capture。</p>
+<p>完整迭代表：<code>README_matmul_f16_aitune_2026-03-23.md</code>。源码：<code>matmul_f16_dyn_sm90.co</code>、<code>matmul_f16_dyn_sm90_warpspec_1p1c.co</code>、<code>matmul_f16_dyn_sm90_warpspec_1p2c.co</code>，以及带日期的 <code>*_iter048_*</code> 至 <code>*_iter061_*</code> 构建。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.top", "navigation.path", "navigation.indexes", "search.highlight", "search.suggest", "content.code.annotate", "content.code.copy", "toc.follow"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+      
+        <script src="../../../assets/js/hljs-choreo.js"></script>
+      
+        <script src="../../../assets/js/hljs-init.js"></script>
+      
+    
+  </body>
+</html>

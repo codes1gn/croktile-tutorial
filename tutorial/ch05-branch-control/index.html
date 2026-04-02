@@ -18,6 +18,10 @@
       
       
         
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../zh/tutorial/ch05-branch-control/" hreflang="zh">
+        
       
       
       <link rel="icon" href="../../assets/images/favicon.svg">
@@ -80,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#branch-and-control-warp-roles-and-persistent-kernels" class="md-skip">
+        <a href="#role-specialization-and-control-flow" class="md-skip">
           Skip to content
         </a>
       
@@ -151,6 +155,32 @@
     
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../zh/tutorial/ch05-branch-control/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
     
     
       
@@ -600,10 +630,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#inthreadsasync-splitting-roles" class="md-nav__link">
+  <a href="#static-role-partitioning-with-inthreadsasync" class="md-nav__link">
     <span class="md-ellipsis">
       
-        inthreads.async: Splitting Roles
+        Static role partitioning with inthreads.async
       
     </span>
   </a>
@@ -611,10 +641,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#a-1p1c-matmul-skeleton" class="md-nav__link">
+  <a href="#coordinating-roles-events-at-a-glance" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A 1P1C Matmul Skeleton
+        Coordinating roles: events at a glance
       
     </span>
   </a>
@@ -622,10 +652,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#if-guards-conditional-execution" class="md-nav__link">
+  <a href="#role-specialization-in-practice-a-1p1c-matmul" class="md-nav__link">
     <span class="md-ellipsis">
       
-        if Guards: Conditional Execution
+        Role specialization in practice: a 1P1C matmul
       
     </span>
   </a>
@@ -633,10 +663,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#persistent-kernels" class="md-nav__link">
+  <a href="#guarded-execution-with-if" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Persistent Kernels
+        Guarded execution with if
       
     </span>
   </a>
@@ -644,21 +674,38 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cdiv-ceiling-division" class="md-nav__link">
+  <a href="#persistent-scheduling-and-the-if-guard" class="md-nav__link">
     <span class="md-ellipsis">
       
-        cdiv: Ceiling Division
+        Persistent scheduling and the if guard
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Persistent scheduling and the if guard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#data-dependent-vs-persistent-grids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data-dependent vs persistent grids
       
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#choosing-between-data-dependent-and-persistent-grids" class="md-nav__link">
+  <a href="#parallelasync-and-stream-s-non-blocking-launch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Choosing Between Data-Dependent and Persistent Grids
+        parallel.async and stream s: non-blocking launch
       
     </span>
   </a>
@@ -669,7 +716,18 @@
   <a href="#new-syntax" class="md-nav__link">
     <span class="md-ellipsis">
       
-        New Syntax
+        New syntax
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chapter-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chapter summary
       
     </span>
   </a>
@@ -908,33 +966,9 @@
   
   
   
-    
-    
-      
+    <li class="md-nav__item">
+      <a href="../../optimization/dense-gemm-fp16/" class="md-nav__link">
         
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/matmul-f16/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -948,50 +982,6 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Dense GEMM FP16
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
     </li>
   
@@ -1005,96 +995,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/pattern-optimizations/" class="md-nav__link">
+      <a href="../../optimization/sparse-gemm/" class="md-nav__link">
         
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/aitune-last-mile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AI-Tune Last Mile
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/gemm-sp/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -1108,50 +1010,6 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Sparse GEMM (FP16 + E4M3)
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
     </li>
   
@@ -1165,94 +1023,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/pattern-optimizations/" class="md-nav__link">
+      <a href="../../optimization/blockscale-gemm-fp8/" class="md-nav__link">
         
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/aitune-last-mile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AI-Tune Last Mile
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/blockscale-gemm/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -1266,87 +1038,7 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Block-Scaled GEMM FP8
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/blockscale-gemm/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/blockscale-gemm/pattern-optimizations/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -2763,10 +2455,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#inthreadsasync-splitting-roles" class="md-nav__link">
+  <a href="#static-role-partitioning-with-inthreadsasync" class="md-nav__link">
     <span class="md-ellipsis">
       
-        inthreads.async: Splitting Roles
+        Static role partitioning with inthreads.async
       
     </span>
   </a>
@@ -2774,10 +2466,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#a-1p1c-matmul-skeleton" class="md-nav__link">
+  <a href="#coordinating-roles-events-at-a-glance" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A 1P1C Matmul Skeleton
+        Coordinating roles: events at a glance
       
     </span>
   </a>
@@ -2785,10 +2477,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#if-guards-conditional-execution" class="md-nav__link">
+  <a href="#role-specialization-in-practice-a-1p1c-matmul" class="md-nav__link">
     <span class="md-ellipsis">
       
-        if Guards: Conditional Execution
+        Role specialization in practice: a 1P1C matmul
       
     </span>
   </a>
@@ -2796,10 +2488,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#persistent-kernels" class="md-nav__link">
+  <a href="#guarded-execution-with-if" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Persistent Kernels
+        Guarded execution with if
       
     </span>
   </a>
@@ -2807,21 +2499,38 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cdiv-ceiling-division" class="md-nav__link">
+  <a href="#persistent-scheduling-and-the-if-guard" class="md-nav__link">
     <span class="md-ellipsis">
       
-        cdiv: Ceiling Division
+        Persistent scheduling and the if guard
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Persistent scheduling and the if guard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#data-dependent-vs-persistent-grids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data-dependent vs persistent grids
       
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#choosing-between-data-dependent-and-persistent-grids" class="md-nav__link">
+  <a href="#parallelasync-and-stream-s-non-blocking-launch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Choosing Between Data-Dependent and Persistent Grids
+        parallel.async and stream s: non-blocking launch
       
     </span>
   </a>
@@ -2832,7 +2541,18 @@
   <a href="#new-syntax" class="md-nav__link">
     <span class="md-ellipsis">
       
-        New Syntax
+        New syntax
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chapter-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chapter summary
       
     </span>
   </a>
@@ -2907,12 +2627,29 @@
   
 
 
-<h1 id="branch-and-control-warp-roles-and-persistent-kernels">Branch and Control: Warp Roles and Persistent Kernels<a class="headerlink" href="#branch-and-control-warp-roles-and-persistent-kernels" title="Permanent link">&para;</a></h1>
-<p>Up to now, every thread in a block runs the same code. They all load the same tiles, they all run the same MMA, they all store the same result. That uniformity is clean, but it has a cost: while tensor cores are busy multiplying, the memory system could be prefetching the next tile — except nobody is asking it to, because every thread is stuck in the <code>mma.row.row</code> instruction.</p>
-<p>This chapter introduces two forms of control flow that break that uniformity on purpose. <strong>Warp specialization</strong> (<code>inthreads.async</code>) assigns different roles to different warpgroups — one loads data while another computes. <strong>Conditional guards</strong> (<code>if</code>) let you skip work when a tile index falls out of bounds, which is central to <strong>persistent kernels</strong> that run a fixed pool of blocks across a variable number of tiles.</p>
-<h2 id="inthreadsasync-splitting-roles"><code>inthreads.async</code>: Splitting Roles<a class="headerlink" href="#inthreadsasync-splitting-roles" title="Permanent link">&para;</a></h2>
-<p><code>inthreads.async (condition)</code> says: "only the threads for which <code>condition</code> is true execute this block." It is not a runtime branch that every thread evaluates and some skip — it is a <strong>structural split</strong> that creates two (or more) straight-line programs, one per role, which can run concurrently on different hardware units.</p>
-<p>The canonical pattern is the <strong>1 producer + 1 consumer (1P1C)</strong> matmul:</p>
+<h1 id="role-specialization-and-control-flow">Role Specialization and Control Flow<a class="headerlink" href="#role-specialization-and-control-flow" title="Permanent link">&para;</a></h1>
+<p>Chapter 4's matmul kernels have a structural limitation: every thread in the block runs the same program — load, multiply, store, repeat. While the tensor cores are busy multiplying, the memory system idles. While DMA fetches the next K-slab, the tensor cores have nothing to do. Load and compute take turns; neither runs at full throughput.</p>
+<p>This is not a GPU-specific problem. It is the universal bottleneck of <strong>pipeline-stage serialization</strong>. Any system where a single worker alternates between two activities — reading data and processing data — wastes time during each transition. The classic solution, whether in CPU thread pools, Unix pipelines, or factory assembly lines, is <strong>role specialization</strong>: assign different workers to different stages, let each worker focus on one job, and let the stages overlap in time.</p>
+<p>The GPU twist is that CUDA's default execution model is <strong>SPMD</strong> — Single Program, Multiple Data. Every thread in a warp runs the same instruction stream. Overlapping memory and compute within a single kernel requires either instruction-level interleaving (which the hardware scheduler does poorly for large tiles) or explicit <strong>warp specialization</strong> where the programmer manually partitions warps and coordinates them with barriers. In raw CUDA, this means raw <code>__syncthreads()</code>, shared-memory flags, and careful reasoning about which warp is doing what.</p>
+<p>Croktile takes a different approach. Instead of leaving role boundaries implicit in control-flow tricks, it makes them a <strong>first-class language construct</strong>: <code>inthreads.async</code> assigns different instruction streams to different thread subsets at compile time. The compiler can emit truly separate programs for each role, and the runtime schedules them concurrently. The figure below shows the difference:</p>
+<p><img alt="Uniform vs role-specialized execution: sequential alternation vs overlapping stages" src="../../assets/images/ch05/fig1_role_comparison_dark.png#only-dark" />
+<img alt="Uniform vs role-specialized execution: sequential alternation vs overlapping stages" src="../../assets/images/ch05/fig1_role_comparison_light.png#only-light" /></p>
+<p><em>Left: one warpgroup alternates DMA and MMA — no overlap. Right: two warpgroups with static roles — producer DMA and consumer MMA execute concurrently, roughly halving wall-clock time.</em></p>
+<p>Croktile provides three control-flow primitives, each for a different purpose:</p>
+<ul>
+<li><strong><code>inthreads.async</code></strong> — <strong>static role partitioning</strong>: compile-time assignment of different programs to different thread subsets. Analogous to MPMD (Multiple Program, Multiple Data) within a single kernel.</li>
+<li><strong><code>if</code></strong> — <strong>guarded execution</strong>: runtime predication where all threads evaluate a condition and divergent threads are masked. Standard SPMD control flow.</li>
+<li><strong><code>shared event</code></strong> / <strong><code>wait</code></strong> / <strong><code>trigger</code></strong> — <strong>inter-role signaling</strong>: the coordination mechanism that lets statically-partitioned roles communicate safely.</li>
+</ul>
+<h2 id="static-role-partitioning-with-inthreadsasync">Static role partitioning with <code>inthreads.async</code><a class="headerlink" href="#static-role-partitioning-with-inthreadsasync" title="Permanent link">&para;</a></h2>
+<p><code>inthreads.async (condition)</code> means: only threads for which <code>condition</code> is true <strong>have this block in their program at all</strong>. It is not "every thread evaluates the condition and some skip the body" — that is what <code>if</code> does. The distinction is fundamental:</p>
+<ul>
+<li><strong><code>inthreads.async</code></strong>: the compiler generates separate instruction streams for each role. Threads in the false subset never see the body — it is not in their binary. The <code>.async</code> suffix means the roles execute <strong>concurrently and independently</strong> on different hardware resources (different warpgroups, different functional units).</li>
+<li><strong><code>if</code></strong>: one instruction stream, one program. All threads evaluate the predicate; threads where it is false are masked. Divergence within a warp stalls one side.</li>
+</ul>
+<p>Why both? Because they solve different problems. <code>inthreads.async</code> is for <strong>persistent role assignment</strong> — the producer stays a producer for the entire kernel lifetime. <code>if</code> is for <strong>data-dependent decisions</strong> — skip this tile if the index is out of bounds. You would not use <code>if</code> for warp specialization (it does not produce real concurrency), and you would not use <code>inthreads.async</code> for a bounds check (it is a compile-time construct, not a runtime predicate).</p>
+<p>Without <code>.async</code>, <code>inthreads</code> would mean sequential, blocking role execution — thread subsets take turns. The <code>.async</code> modifier is what enables the overlapping pipeline execution in the figure above.</p>
+<p>The canonical pattern is <strong>one producer + one consumer (1P1C)</strong> for matmul:</p>
 <pre class="highlight"><code class="language-choreo">parallel p1 by 2 : group-4 {
 
   inthreads.async (p1 == 0) {
@@ -2925,10 +2662,19 @@
     // run MMA on shared memory, accumulate results
   }
 }</code></pre>
-<p><code>parallel p1 by 2 : group-4</code> creates two warpgroups of 128 threads each. The first <code>inthreads.async</code> block runs only on warpgroup 0 (the producer); the second runs only on warpgroup 1 (the consumer). Because the two bodies are structurally independent, the hardware can schedule TMA loads on one warpgroup while WGMMA runs on the other — true overlap, not interleaving.</p>
-<p>Compare this with Chapter 3's <code>parallel</code>, where every thread runs the same body. Here, <code>inthreads.async</code> <strong>differentiates</strong> the bodies based on the parallel index. Think of it as "each warpgroup has a different job description."</p>
-<h2 id="a-1p1c-matmul-skeleton">A 1P1C Matmul Skeleton<a class="headerlink" href="#a-1p1c-matmul-skeleton" title="Permanent link">&para;</a></h2>
-<p>Here is how <code>inthreads.async</code> fits into a Hopper matmul. The synchronization details (events, wait, trigger) are deliberately omitted — Chapter 6 will add them. Focus on the role split:</p>
+<p><strong><code>parallel p1 by 2 : group-4</code></strong> — Two warpgroups, four warps each (128 threads per warpgroup), indexed by <code>p1</code>.</p>
+<p><strong><code>inthreads.async (p1 == 0)</code></strong> — Warpgroup 0 compiles and executes the producer body; warpgroup 1 never sees this code.</p>
+<p><strong><code>inthreads.async (p1 == 1)</code></strong> — Warpgroup 1 runs the consumer body. The two blocks are separate programs sharing an address space.</p>
+<h2 id="coordinating-roles-events-at-a-glance">Coordinating roles: events at a glance<a class="headerlink" href="#coordinating-roles-events-at-a-glance" title="Permanent link">&para;</a></h2>
+<p>Static role partitioning gives you two concurrent programs — but they share the same shared memory. The producer writes data that the consumer reads. Without coordination, the consumer might read a tile before the producer has finished writing it (a race condition), or the producer might overwrite a tile the consumer is still reading (a data hazard).</p>
+<p>Croktile uses <strong>events</strong> as the signaling mechanism between roles. An event is a lightweight synchronization token declared in shared memory:</p>
+<pre class="highlight"><code class="language-choreo">shared event full;
+shared event empty;</code></pre>
+<p>The producer calls <code>trigger full</code> after writing a tile to signal "data is ready." The consumer calls <code>wait full</code> before reading, blocking until the signal arrives. Symmetrically, the consumer triggers <code>empty</code> after it finishes reading (the buffer can be reused), and the producer waits on <code>empty</code> before writing the next tile.</p>
+<p>This is a <strong>credit-based bounded buffer</strong> protocol — the same pattern used in network flow control and OS bounded queues. <code>full</code> is the "data available" credit; <code>empty</code> is the "buffer free" credit.</p>
+<p>Chapter 6 develops this into the full double-buffering and software-pipelined matmul. For now, the important point is that events are the glue between <code>inthreads.async</code> roles — they turn two independent programs into a coordinated pipeline.</p>
+<h2 id="role-specialization-in-practice-a-1p1c-matmul">Role specialization in practice: a 1P1C matmul<a class="headerlink" href="#role-specialization-in-practice-a-1p1c-matmul" title="Permanent link">&para;</a></h2>
+<p>Here is how the split sits inside a Hopper matmul. Event-based synchronization is omitted on purpose; <a href="../ch06-synchronization/">Chapter 6</a> adds the full pipeline protocol. Focus on who does what:</p>
 <pre class="highlight"><code class="language-choreo">__co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
   parallel {block_m, block_n} by [cdiv(M, MATMUL_WARP_M), cdiv(N, MATMUL_WARP_N)] : block {
     shared f16 [MATMUL_WARP_M, MATMUL_TILE_K] lhs_load_s;
@@ -2961,17 +2707,19 @@
     }
   }
 }</code></pre>
-<p>The producer never touches <code>mc</code>, <code>mma.load</code>, or <code>mma.row.row</code>. The consumer never issues <code>dma.copy</code> to fill shared. Each body is a clean, straight-line loop over K. The missing piece — how the consumer knows a tile is ready before reading it — is synchronization, which comes in Chapter 6.</p>
-<h2 id="if-guards-conditional-execution"><code>if</code> Guards: Conditional Execution<a class="headerlink" href="#if-guards-conditional-execution" title="Permanent link">&para;</a></h2>
-<p>Sometimes you need a plain old conditional. Croktile's <code>if</code> works like C:</p>
+<p><strong>Producer <code>foreach</code></strong> — Walks the K dimension with <code>cdiv(K, MATMUL_TILE_K)</code> steps; only warpgroup 0 issues <code>dma.copy</code> into <code>lhs_load_s</code> and <code>rhs_load_s</code>.</p>
+<p><strong>Consumer <code>mma.fill</code> / <code>mma.row.row</code> / <code>mma.store</code></strong> — Warpgroup 1 never issues those DMA fills; it only reads shared memory, accumulates in <code>mc</code>, and writes the result tile.</p>
+<p><strong>Missing coordination</strong> — The two sides both loop over K independently. The consumer assumes each K-slab is ready when it reads; making that assumption true is synchronization (<a href="../ch06-synchronization/">Chapter 6</a>).</p>
+<h2 id="guarded-execution-with-if">Guarded execution with <code>if</code><a class="headerlink" href="#guarded-execution-with-if" title="Permanent link">&para;</a></h2>
+<p>Sometimes you need a predicate every thread evaluates at runtime. Croktile's <code>if</code> behaves like C:</p>
 <pre class="highlight"><code class="language-choreo">if (tile_id &lt; total_tiles) {
   // only execute this body when the condition is true
 }</code></pre>
-<p>This is a <strong>runtime</strong> check, not a structural role split like <code>inthreads.async</code>. Every thread evaluates the condition; threads where it is false skip the body.</p>
-<p>Where do you need this? Primarily in <strong>persistent kernels</strong>, where a fixed number of blocks iterate over a variable number of tiles, and some blocks may have one extra iteration with no real work to do.</p>
-<h2 id="persistent-kernels">Persistent Kernels<a class="headerlink" href="#persistent-kernels" title="Permanent link">&para;</a></h2>
-<p>In Chapters 3–4, the grid size was proportional to the problem: one block per output tile. For a big matrix, that can mean hundreds of thousands of blocks. The GPU schedules them in <strong>waves</strong>, and the last wave often leaves many SMs idle — <strong>tail underutilization</strong>.</p>
-<p>A <strong>persistent kernel</strong> flips this: you launch a <strong>fixed</strong> number of blocks (typically matching the SM count), and each block loops over multiple tiles:</p>
+<p>All threads in the scope test the condition; threads where it is false skip the body. This is the opposite of <code>inthreads.async</code>: one program, divergent execution — not two separate programs.</p>
+<p>This shows up most often in <strong>persistent kernels</strong>, where the number of loop iterations can leave some blocks with a "padding" iteration that does not correspond to a real tile.</p>
+<h2 id="persistent-scheduling-and-the-if-guard">Persistent scheduling and the <code>if</code> guard<a class="headerlink" href="#persistent-scheduling-and-the-if-guard" title="Permanent link">&para;</a></h2>
+<p>In Chapters 3–4, the grid grew with the problem: roughly one block per output tile. For large matrices that can mean huge launch counts. The GPU runs blocks in <strong>waves</strong>; the last wave often leaves SMs partially idle — <strong>tail underutilization</strong>.</p>
+<p>A <strong>persistent kernel</strong> fixes the launch size (often near the SM count) and lets each block iterate over multiple tiles:</p>
 <pre class="highlight"><code class="language-choreo">__co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
   int total_tiles = cdiv(M, MATMUL_WARP_M) * cdiv(N, MATMUL_WARP_N);
 
@@ -3006,16 +2754,13 @@
     }
   }
 }</code></pre>
-<p>Three new ideas work together here:</p>
-<p><strong>Fixed launch.</strong> <code>parallel block_id by NUM_SMS : block</code> creates exactly <code>NUM_SMS</code> blocks (for example, 114 on an H800 PCIe). The index <code>block_id</code> is not tied to a single output tile — it names which persistent worker you are.</p>
-<p><strong>Tile striping.</strong> <code>tile_id = tile_iter # block_id</code> composes the iteration count with the block index to produce a unique tile id. Block <code>b</code> processes tiles <code>b</code>, <code>b + NUM_SMS</code>, <code>b + 2 * NUM_SMS</code>, and so on — a stride-<code>NUM_SMS</code> walk through the linearized tile list. The <code>#</code> compose operator is the same one from Chapter 2, applied here to scheduling arithmetic instead of tensor indexing.</p>
-<p><strong>Linear-to-2D mapping.</strong> <code>block_m = tile_id / cdiv(N, MATMUL_WARP_N)</code> and <code>block_n = tile_id % cdiv(N, MATMUL_WARP_N)</code> recover the 2D tile position from the linear id, the same way you would convert a flat array index to row and column in C.</p>
-<p><strong>The <code>if</code> guard.</strong> Because <code>foreach {tile_iter}</code> runs <code>cdiv(total_tiles, NUM_SMS)</code> iterations and some blocks may have one more than needed, <code>tile_id</code> can exceed <code>total_tiles</code>. The <code>if</code> skips all TMA, MMA, and store work for those padding iterations. Without it, you would index out of bounds.</p>
-<p>The inner body — K loop, MMA, store — is identical to the non-persistent version from Chapter 4. Only the <strong>wrapper</strong> changed: fixed parallel, tile loop, compose, and guard.</p>
-<h2 id="cdiv-ceiling-division"><code>cdiv</code>: Ceiling Division<a class="headerlink" href="#cdiv-ceiling-division" title="Permanent link">&para;</a></h2>
-<p><code>cdiv(a, b)</code> computes \(\lceil a / b \rceil\) — the number of tiles when the dimension might not be evenly divisible. It appears everywhere: grid extents (<code>cdiv(M, MATMUL_WARP_M)</code>), loop bounds (<code>cdiv(K, MATMUL_TILE_K)</code>), and persistent iteration counts (<code>cdiv(total_tiles, NUM_SMS)</code>).</p>
-<p>When the last tile is partial (fewer valid elements than the tile size), real kernels pair <code>cdiv</code> with predicate masks, zero-padding, or epilogue cleanup. The tutorial stays on the clean-divisibility case, but <code>cdiv</code> is how you write tile counts that do not assume perfect division.</p>
-<h2 id="choosing-between-data-dependent-and-persistent-grids">Choosing Between Data-Dependent and Persistent Grids<a class="headerlink" href="#choosing-between-data-dependent-and-persistent-grids" title="Permanent link">&para;</a></h2>
+<p><strong><code>parallel block_id by NUM_SMS : block</code></strong> — Fixed worker count; <code>block_id</code> names which persistent worker this is, not a single output tile.</p>
+<p><strong><code>foreach {tile_iter} in [cdiv(total_tiles, NUM_SMS)]</code></strong> — Each block steps through its share of iterations; the ceiling may add one extra iteration for some blocks.</p>
+<p><strong><code>tile_id = tile_iter # block_id</code></strong> — Composes iteration with block index to stripe across the linear tile list (same <code>#</code> operator as Chapter 2, used here for scheduling).</p>
+<p><strong><code>if (tile_id &lt; total_tiles)</code></strong> — Skips DMA, MMA, and store when the stripe walks past the last real tile. This is a runtime guard, not a role split.</p>
+<p><img alt="Persistent kernel: striped tiles, block colors, and if guard for padding" src="../../assets/images/ch05/fig2_persistent_kernel_dark.png#only-dark" />
+<img alt="Persistent kernel: striped tiles, block colors, and if guard for padding" src="../../assets/images/ch05/fig2_persistent_kernel_light.png#only-light" /></p>
+<h3 id="data-dependent-vs-persistent-grids">Data-dependent vs persistent grids<a class="headerlink" href="#data-dependent-vs-persistent-grids" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -3047,8 +2792,17 @@
 </tr>
 </tbody>
 </table>
-<p>Neither changes correctness; both produce the same output modulo floating-point associativity. Persistent layout pays off when <code>total_tiles</code> greatly exceeds the SM count, which is common for large matrix problems.</p>
-<h2 id="new-syntax">New Syntax<a class="headerlink" href="#new-syntax" title="Permanent link">&para;</a></h2>
+<p>Neither layout changes the mathematical result by itself; both match modulo floating-point associativity. Persistent scheduling tends to pay off when <code>total_tiles</code> is much larger than the number of SMs.</p>
+<h2 id="parallelasync-and-stream-s-non-blocking-launch"><code>parallel.async</code> and <code>stream s</code>: non-blocking launch<a class="headerlink" href="#parallelasync-and-stream-s-non-blocking-launch" title="Permanent link">&para;</a></h2>
+<p>Everything above runs inside the kernel. Sometimes the control you need is at the <strong>host level</strong>: launch a grid without blocking the host thread, or pin different grids to different CUDA streams so they can execute concurrently on the GPU.</p>
+<pre class="highlight"><code class="language-choreo">parallel.async {px, py} by [grid_m, grid_n] : block {
+  stream s;
+  // kernel body
+}</code></pre>
+<p><strong><code>parallel.async</code></strong> returns control to the host immediately — the kernel is enqueued but the host does not wait for it to finish. This is the Croktile equivalent of <code>cudaLaunchKernel</code> with a non-default stream.</p>
+<p><strong><code>stream s</code></strong> inside the block body pins the kernel to CUDA stream <code>s</code>. Multiple <code>parallel.async</code> blocks with different streams can overlap on the GPU if there are enough SMs. Without <code>stream s</code>, the default stream serializes launches.</p>
+<p>This is <strong>host orchestration</strong>, not in-kernel control flow. It does not replace <code>inthreads.async</code> for role partitioning or <code>if</code> for runtime predicates — it decides <em>when</em> and <em>where</em> a grid runs relative to other grids.</p>
+<h2 id="new-syntax">New syntax<a class="headerlink" href="#new-syntax" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -3059,15 +2813,23 @@
 <tbody>
 <tr>
 <td><code>inthreads.async (condition)</code></td>
-<td>Only threads satisfying <code>condition</code> execute this block — structural role split</td>
+<td>Static role partitioning — only threads satisfying <code>condition</code> include this block</td>
 </tr>
 <tr>
 <td><code>if (expr) { ... }</code></td>
-<td>Runtime conditional — skip body when <code>expr</code> is false</td>
+<td>Guarded execution — runtime conditional, skip body when <code>expr</code> is false</td>
 </tr>
 <tr>
-<td><code>cdiv(a, b)</code></td>
-<td>Ceiling division</td>
+<td><code>shared event name</code></td>
+<td>Declare an event token in shared memory</td>
+</tr>
+<tr>
+<td><code>trigger name</code></td>
+<td>Signal that a condition is met (e.g., "data ready")</td>
+</tr>
+<tr>
+<td><code>wait name</code></td>
+<td>Block until the corresponding <code>trigger</code> fires</td>
 </tr>
 <tr>
 <td><code>tile_id = tile_iter # block_id</code></td>
@@ -3075,11 +2837,54 @@
 </tr>
 <tr>
 <td><code>int total_tiles = expr</code></td>
-<td>Local integer variable in a Croktile function</td>
+<td>Local integer in a Croktile function</td>
+</tr>
+<tr>
+<td><code>parallel.async ... : block</code></td>
+<td>Non-blocking async kernel launch</td>
+</tr>
+<tr>
+<td><code>stream s</code></td>
+<td>Bind kernel body to CUDA stream <code>s</code></td>
 </tr>
 </tbody>
 </table>
-<p>Warp specialization splits roles; <code>if</code> guards edge cases. But the producer and consumer in the 1P1C skeleton still run their K loops independently with no coordination — the consumer assumes the tile is ready. The <a href="../ch06-synchronization/">next chapter</a> introduces events, swap, and pipeline patterns so producer and consumer can safely overlap in time.</p>
+<h2 id="chapter-summary">Chapter summary<a class="headerlink" href="#chapter-summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Takeaway</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pipeline serialization</td>
+<td>One worker alternating load/compute wastes time; role specialization overlaps stages</td>
+</tr>
+<tr>
+<td>Static role partitioning</td>
+<td><code>inthreads.async</code> — compile-time MPMD within a kernel; separate programs for separate thread subsets</td>
+</tr>
+<tr>
+<td>Guarded execution</td>
+<td><code>if</code> — runtime SPMD predication; all threads evaluate, divergent threads are masked</td>
+</tr>
+<tr>
+<td>Events (preview)</td>
+<td><code>shared event</code> / <code>wait</code> / <code>trigger</code> — inter-role signaling; credit-based bounded buffer protocol</td>
+</tr>
+<tr>
+<td>Persistent kernels</td>
+<td>Fixed <code>NUM_SMS</code> blocks, linear tile ids, striping with <code>#</code>, guard with <code>if</code></td>
+</tr>
+<tr>
+<td>Host orchestration</td>
+<td><code>parallel.async</code> / <code>stream s</code> — orthogonal to in-kernel specialization</td>
+</tr>
+</tbody>
+</table>
+<p>The 1P1C skeleton above is incomplete: without <code>wait</code> / <code>trigger</code>, the consumer can read before the producer has written. <a href="../ch06-synchronization/">Chapter 6</a> adds the full synchronization protocol — events, <code>swap</code>, and double-buffering — so the pipeline runs safely and at full throughput.</p>
 
 
 
@@ -3135,7 +2940,7 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.top", "navigation.path", "navigation.indexes", "search.highlight", "search.suggest", "content.code.annotate", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.top", "navigation.path", "navigation.indexes", "search.highlight", "search.suggest", "content.code.annotate", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>

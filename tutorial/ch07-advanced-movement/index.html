@@ -18,6 +18,10 @@
       
       
         
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../zh/tutorial/ch07-advanced-movement/" hreflang="zh">
+        
       
       
       <link rel="icon" href="../../assets/images/favicon.svg">
@@ -151,6 +155,32 @@
     
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../zh/tutorial/ch07-advanced-movement/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
     
     
       
@@ -667,10 +697,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#swizzle-modes" class="md-nav__link">
+  <a href="#swizzle-and-bank-conflicts" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Swizzle Modes
+        Swizzle and Bank Conflicts
       
     </span>
   </a>
@@ -689,10 +719,71 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#view-and-from-arbitrary-offset-windows" class="md-nav__link">
+  <a href="#handling-irregular-access" class="md-nav__link">
     <span class="md-ellipsis">
       
-        view and from: Arbitrary-Offset Windows
+        Handling Irregular Access
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Handling Irregular Access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arbitrary-offset-windows-view-and-from" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arbitrary-offset windows: view and from
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strided-tiles-subspan-step-and-at" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strided tiles: .subspan, .step, and .at
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zero-padding-zfill" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zero-padding: .zfill
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layout-reinterpretation-span_as" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout reinterpretation: span_as
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chapter-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chapter Summary
       
     </span>
   </a>
@@ -700,65 +791,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#subspan-step-at-strided-tile-access" class="md-nav__link">
+  <a href="#new-syntax-quick-reference" class="md-nav__link">
     <span class="md-ellipsis">
       
-        .subspan, .step, .at: Strided Tile Access
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#zfill-zero-padding-out-of-bounds-tiles" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        .zfill: Zero-Padding Out-of-Bounds Tiles
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mmarowrowscale-block-dequantization" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        mma.row.row.scale: Block Dequantization
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#span_as-layout-reinterpretation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        span_as: Layout Reinterpretation
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#parallelasync-and-stream-s" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        parallel.async and stream s
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#new-syntax" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        New Syntax
+        New Syntax (quick reference)
       
     </span>
   </a>
@@ -941,33 +977,9 @@
   
   
   
-    
-    
-      
+    <li class="md-nav__item">
+      <a href="../../optimization/dense-gemm-fp16/" class="md-nav__link">
         
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/matmul-f16/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -981,50 +993,6 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Dense GEMM FP16
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
     </li>
   
@@ -1038,96 +1006,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/pattern-optimizations/" class="md-nav__link">
+      <a href="../../optimization/sparse-gemm/" class="md-nav__link">
         
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/aitune-last-mile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AI-Tune Last Mile
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/gemm-sp/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -1141,50 +1021,6 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Sparse GEMM (FP16 + E4M3)
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
     </li>
   
@@ -1198,94 +1034,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/pattern-optimizations/" class="md-nav__link">
+      <a href="../../optimization/blockscale-gemm-fp8/" class="md-nav__link">
         
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/aitune-last-mile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AI-Tune Last Mile
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/blockscale-gemm/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -1299,87 +1049,7 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Block-Scaled GEMM FP8
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/blockscale-gemm/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/blockscale-gemm/pattern-optimizations/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -2807,10 +2477,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#swizzle-modes" class="md-nav__link">
+  <a href="#swizzle-and-bank-conflicts" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Swizzle Modes
+        Swizzle and Bank Conflicts
       
     </span>
   </a>
@@ -2829,10 +2499,71 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#view-and-from-arbitrary-offset-windows" class="md-nav__link">
+  <a href="#handling-irregular-access" class="md-nav__link">
     <span class="md-ellipsis">
       
-        view and from: Arbitrary-Offset Windows
+        Handling Irregular Access
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Handling Irregular Access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arbitrary-offset-windows-view-and-from" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arbitrary-offset windows: view and from
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strided-tiles-subspan-step-and-at" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strided tiles: .subspan, .step, and .at
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zero-padding-zfill" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zero-padding: .zfill
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layout-reinterpretation-span_as" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout reinterpretation: span_as
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chapter-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chapter Summary
       
     </span>
   </a>
@@ -2840,65 +2571,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#subspan-step-at-strided-tile-access" class="md-nav__link">
+  <a href="#new-syntax-quick-reference" class="md-nav__link">
     <span class="md-ellipsis">
       
-        .subspan, .step, .at: Strided Tile Access
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#zfill-zero-padding-out-of-bounds-tiles" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        .zfill: Zero-Padding Out-of-Bounds Tiles
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mmarowrowscale-block-dequantization" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        mma.row.row.scale: Block Dequantization
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#span_as-layout-reinterpretation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        span_as: Layout Reinterpretation
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#parallelasync-and-stream-s" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        parallel.async and stream s
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#new-syntax" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        New Syntax
+        New Syntax (quick reference)
       
     </span>
   </a>
@@ -2974,29 +2650,34 @@
 
 
 <h1 id="advanced-data-movement-tma-swizzle-and-irregular-access">Advanced Data Movement: TMA, Swizzle, and Irregular Access<a class="headerlink" href="#advanced-data-movement-tma-swizzle-and-irregular-access" title="Permanent link">&para;</a></h1>
-<p>Every data movement so far has used <code>dma.copy</code> — a software-driven transfer where threads construct addresses, issue loads, and shuffle bytes into shared memory. On Hopper (SM90), NVIDIA added a dedicated hardware unit for this job: the <strong>Tensor Memory Accelerator (TMA)</strong>. TMA handles address computation, layout translation, and multi-dimensional tiling in hardware, freeing the producer warpgroup to do other work (or not exist at all).</p>
-<p>This chapter replaces <code>dma.copy</code> with <code>tma.copy</code> and introduces <strong>swizzle modes</strong> that rearrange shared-memory layout to avoid bank conflicts. It also covers the data-access tools for kernels whose tiles are not perfectly regular grids: <strong><code>view</code>/<code>from</code></strong> for arbitrary-offset windows, <strong><code>.subspan</code>/<code>.step</code>/<code>.at</code></strong> for strided access, <strong><code>.zfill</code></strong> for out-of-bounds padding, and <strong><code>span_as</code></strong> for layout reinterpretation.</p>
+<p>On CPUs, data movement is mostly invisible. You write <code>a[i] = b[j]</code>, and the cache hierarchy handles the rest — prefetching, coherence, eviction. The programmer thinks about <em>computation</em>; the hardware thinks about <em>movement</em>. On accelerators, this abstraction breaks down. GPUs have an explicit memory hierarchy (registers, shared memory, L2, HBM) and the programmer must orchestrate data movement between tiers. As hardware evolves, the movement engines themselves become more sophisticated: DMA units give way to <strong>Tensor Memory Accelerators (TMA)</strong> that understand multi-dimensional addressing natively, and <strong>swizzle</strong> modes rearrange shared-memory layouts to avoid bank conflicts that would otherwise serialize parallel accesses.</p>
+<p>The challenge for a programming model is to abstract over these engines without hiding the performance-critical choices. Croktile uses a uniform <code>copy</code> syntax — <code>dma.copy</code> and <code>tma.copy</code> share the same source/destination arrow notation — while letting the programmer opt into hardware-specific features (swizzle modes, descriptor-driven loads) when the target supports them.</p>
+<p>Chapter 6 closed the loop on <strong>safe pipelining</strong>: producers, consumers, events, and double-buffering. Every transfer in that chapter was <strong>software-driven</strong> DMA. This chapter introduces the hardware-accelerated alternatives and the irregular-access utilities that handle real-world edge cases.</p>
+<p><img alt="Software DMA vs TMA: cooperative thread loads vs descriptor-driven hardware tensor copy" src="../../assets/images/ch07/fig1_tma_vs_dma_dark.png#only-dark" />
+<img alt="Software DMA vs TMA: cooperative thread loads vs descriptor-driven hardware tensor copy" src="../../assets/images/ch07/fig1_tma_vs_dma_light.png#only-light" /></p>
 <h2 id="tmacopy-hardware-tensor-movement"><code>tma.copy</code>: Hardware Tensor Movement<a class="headerlink" href="#tmacopy-hardware-tensor-movement" title="Permanent link">&para;</a></h2>
-<p>The syntax looks almost identical to <code>dma.copy</code>:</p>
+<p>The surface syntax mirrors <code>dma.copy</code>:</p>
 <pre class="highlight"><code class="language-choreo">tma.copy lhs.subspan(WARP_M, TILE_K).at(block_m, iv_k) =&gt; lhs_load_s;</code></pre>
-<p>Same source expression, same <code>=&gt; destination</code> form. But the semantics differ:</p>
+<p><strong>Same arrow, new engine.</strong> The line looks like <code>dma.copy</code>, but the work shifts from <strong>software</strong> to <strong>hardware</strong> as follows.</p>
+<p>Same <strong>source expression</strong>, same <strong><code>=&gt;</code> destination</strong> form. The difference is <strong>who does the work</strong>:</p>
 <ul>
-<li><strong>No thread cooperation needed.</strong> DMA requires threads to collectively load a tile (each thread loads its portion). TMA issues a single descriptor-based copy from one thread (or even from the hardware pipeline itself).</li>
-<li><strong>Multi-dimensional addressing.</strong> TMA understands tensor layouts natively — it translates the <code>.subspan(...).at(...)</code> expression into a hardware descriptor without generating per-element address arithmetic.</li>
-<li><strong>Bulk completion.</strong> TMA commits an entire tile atomically; you synchronize on the whole tile, not individual elements.</li>
+<li><strong>DMA path.</strong> Threads <strong>cooperate</strong> to cover the tile; each lane participates in <strong>address math</strong> and load issue. Throughput scales with how well you keep those loads <strong>bank-friendly</strong>—often a fight on its own.</li>
+<li><strong>TMA path.</strong> One logical <strong>descriptor-based</strong> operation describes the tensor slice; the <strong>TMA</strong> expands that into the correct <strong>multi-dimensional</strong> addressing and moves the <strong>whole tile</strong> as a unit. Producer warps can <strong>overlap</strong> other work or disappear into a thinner launch pattern because the <strong>hardware</strong>, not a full warp’s worth of threads, owns the transfer semantics.</li>
 </ul>
-<p>The tradeoff is that TMA requires a <strong>tensor descriptor</strong> on the host side, which the compiler generates from the <code>__co__</code> function signature. For most kernels, this is invisible — the compiler handles it and you write <code>tma.copy</code> where you would have written <code>dma.copy</code>.</p>
-<h2 id="swizzle-modes">Swizzle Modes<a class="headerlink" href="#swizzle-modes" title="Permanent link">&para;</a></h2>
-<p>Shared memory on NVIDIA GPUs is divided into <strong>banks</strong> — 32 banks, each 4 bytes wide. When multiple threads in a warp access different addresses that map to the same bank, the accesses are serialized: a <strong>bank conflict</strong>. In a dense tile load where thread <code>t</code> reads column <code>t</code>, the access pattern often creates 2-way or 4-way conflicts that halve or quarter effective bandwidth.</p>
-<p><strong>Swizzle</strong> rearranges the column indices within each row so that threads accessing consecutive columns hit different banks. Croktile's notation:</p>
+<p><strong>What this buys you.</strong> You still <strong>synchronize</strong> on the <strong>whole tile</strong> (with events or the same pipeline discipline as Chapter 6), but you drop the <strong>per-thread</strong> load choreography for operand ingress. The compiler builds the <strong>tensor descriptor</strong> from your <code>__co__</code> signature and global layouts; in typical kernels you only write <code>tma.copy</code> where you once wrote <code>dma.copy</code>.</p>
+<h2 id="swizzle-and-bank-conflicts">Swizzle and Bank Conflicts<a class="headerlink" href="#swizzle-and-bank-conflicts" title="Permanent link">&para;</a></h2>
+<p>Shared memory is <strong>striped into banks</strong> (32 banks, 4 bytes per bank on common paths). When <strong>multiple lanes in a warp</strong> touch <strong>different addresses that map to the same bank</strong> in the same cycle, the hardware <strong>serializes</strong> those accesses—a <strong>bank conflict</strong>. Dense <strong>row-major</strong> tiles often put <strong>consecutive columns</strong> where a warp’s consecutive lanes want them, which can create <strong>2-way, 4-way, or worse</strong> conflicts and <strong>cut effective bandwidth</strong> sharply.</p>
+<p><strong>Swizzle</strong> applies a <strong>fixed XOR-style remapping</strong> to column indices within each row so that the layout threads <strong>actually read</strong> spreads accesses across banks. Croktile exposes it on the copy and on the MMA load so <strong>ingress and math agree</strong>:</p>
 <pre class="highlight"><code class="language-choreo">tma.copy.swiz&lt;3&gt; src =&gt; dst;</code></pre>
-<p>The <code>&lt;3&gt;</code> parameter controls the swizzle granularity: <code>swiz&lt;0&gt;</code> is no swizzle, <code>swiz&lt;1&gt;</code> is 64-byte, <code>swiz&lt;2&gt;</code> is 128-byte, and <code>swiz&lt;3&gt;</code> is 256-byte XOR-based remapping. Larger granularity eliminates conflicts over wider access patterns but requires the tile shape to be a multiple of the granularity.</p>
-<p>When you load operands with swizzled layout, you must read them back with the <strong>matching</strong> swizzle mode:</p>
+<p><strong>Ingress.</strong> The copy lands bytes in shared memory using swizzle pattern <strong><code>N</code></strong>.</p>
 <pre class="highlight"><code class="language-choreo">ma = mma.load.swiz&lt;3&gt; lhs_load_s.chunkat(_, iv_warp);</code></pre>
-<p><code>mma.load.swiz&lt;3&gt;</code> tells the MMA operand load that the data in shared memory was laid out with <code>swiz&lt;3&gt;</code> XOR pattern. Using <code>mma.load</code> (unswizzled) on <code>swiz&lt;3&gt;</code> data reads garbage — the addresses don't match.</p>
-<p><strong>Consistent swizzle rule:</strong> the <code>&lt;N&gt;</code> parameter on <code>tma.copy.swiz&lt;N&gt;</code> must equal the <code>&lt;N&gt;</code> on <code>mma.load.swiz&lt;N&gt;</code>. The compiler does not enforce this — it is a correctness invariant you maintain.</p>
+<p><strong>MMA read path.</strong> Operand loads must use the <strong>same</strong> <strong><code>swiz&lt;N&gt;</code></strong> so addresses match the staged layout.</p>
+<p><strong>Swizzle levels.</strong> The template argument sets the <strong>granularity</strong>: <code>swiz&lt;0&gt;</code> is identity, then <strong>64 B, 128 B, and 256 B</strong> XOR patterns for <code>&lt;1&gt;</code>, <code>&lt;2&gt;</code>, and <code>&lt;3&gt;</code>. Larger granularities defeat <strong>wider</strong> conflict patterns but require <strong>tile extents</strong> that line up with that granularity.</p>
+<p><strong>Matching rule.</strong> The <code>&lt;N&gt;</code> on <strong><code>tma.copy.swiz&lt;N&gt;</code></strong> must match <strong><code>mma.load.swiz&lt;N&gt;</code></strong>. If you load with plain <code>mma.load</code> from <strong><code>swiz&lt;3&gt;</code></strong> data, addresses disagree and you read <strong>garbage</strong>. The compiler does <strong>not</strong> enforce the pairing—it is a <strong>correctness invariant</strong> you maintain. (As introduced in <a href="../ch04-mma/#new-syntax">Chapter 4</a>, <code>mma.load.swiz&lt;N&gt;</code> is part of the MMA load family.)</p>
+<p><img alt="Bank conflicts without swizzle vs XOR swizzle spreading warp lanes across banks" src="../../assets/images/ch07/fig2_swizzle_dark.png#only-dark" />
+<img alt="Bank conflicts without swizzle vs XOR swizzle spreading warp lanes across banks" src="../../assets/images/ch07/fig2_swizzle_light.png#only-light" /></p>
 <h2 id="tma-in-a-pipelined-matmul">TMA in a Pipelined Matmul<a class="headerlink" href="#tma-in-a-pipelined-matmul" title="Permanent link">&para;</a></h2>
-<p>Here is a Hopper FP16 matmul using TMA for loads and swizzled shared memory. It builds on the 1P1C pipeline from Chapter 6:</p>
+<p>The pipeline <strong>skeleton</strong> from Chapter 6 is unchanged: <strong>ring of stages</strong>, <strong><code>wait</code> / <code>trigger</code> on events</strong>, <strong>MMA commit</strong>, and a <strong>consumer</strong> that drains tiles while a <strong>producer</strong> fills the next slot. Here the producer swaps <strong><code>dma.copy</code></strong> for <strong><code>tma.copy.swiz&lt;3&gt;</code></strong> and the consumer swaps <strong><code>mma.load</code></strong> for <strong><code>mma.load.swiz&lt;3&gt;</code></strong> on the staged buffers. The example below is a <strong>Hopper FP16</strong> matmul with the same <strong>1P1C</strong> split (<code>parallel p1 by 2 : group-4</code>) you have seen before:</p>
 <pre class="highlight"><code class="language-choreo">__co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
   parallel {block_m, block_n} by [cdiv(M, MATMUL_WARP_M), cdiv(N, MATMUL_WARP_N)] : block {
     shared event full[MATMUL_STAGES], empty[MATMUL_STAGES];
@@ -3038,54 +2719,77 @@
     }
   }
 }</code></pre>
-<p>Compared to Chapter 6's <code>dma.copy</code> version, the producer replaces <code>dma.copy ... =&gt;</code> with <code>tma.copy.swiz&lt;3&gt; ... =&gt;</code>, and the consumer replaces <code>mma.load</code> with <code>mma.load.swiz&lt;3&gt;</code>. The pipeline structure — events, ring buffer, commit — is unchanged. TMA + swizzle is a drop-in for DMA that eliminates per-thread address math and bank conflicts.</p>
-<h2 id="view-and-from-arbitrary-offset-windows"><code>view</code> and <code>from</code>: Arbitrary-Offset Windows<a class="headerlink" href="#view-and-from-arbitrary-offset-windows" title="Permanent link">&para;</a></h2>
-<p>All examples so far tile along aligned boundaries: <code>chunkat(i)</code> picks the i-th equal chunk, <code>subspan(M, K).at(block_m, iv_k)</code> picks a tile at position <code>(block_m, iv_k)</code>. But some kernels need a window that starts at an arbitrary offset, not necessarily a tile-aligned position.</p>
-<p><code>view(M, N).from(row, col)</code> creates a rectangular view of size <code>M × N</code> starting at position <code>(row, col)</code>:</p>
+<p><strong>Pipeline parity.</strong> Compared to the Chapter 6 <strong><code>dma.copy</code></strong> version, only the <strong>ingress</strong> and <strong>operand load</strong> lines change; <strong>events</strong>, <strong>staging indices</strong>, and <strong>commit</strong> stay the same. <strong>TMA</strong> removes cooperative <strong>per-thread</strong> address work on the loads; <strong>swizzle</strong> aligns shared layout with <strong>MMA</strong> access patterns. The <strong>writeback</strong> to global memory still uses <strong><code>dma.copy</code></strong> here—choose TMA or DMA for stores according to your target and compiler support.</p>
+<h2 id="handling-irregular-access">Handling Irregular Access<a class="headerlink" href="#handling-irregular-access" title="Permanent link">&para;</a></h2>
+<p>Uniform tiling with <strong><code>chunkat</code></strong> and <strong><code>subspan(...).at(...)</code></strong> covers many kernels. Real workloads also need <strong>windows at arbitrary offsets</strong>, <strong>strides between tiles</strong>, <strong>partial tiles</strong> at boundaries, and <strong>layout reinterpretation</strong>—the subsections below collect those tools under one heading.</p>
+<h3 id="arbitrary-offset-windows-view-and-from">Arbitrary-offset windows: <code>view</code> and <code>from</code><a class="headerlink" href="#arbitrary-offset-windows-view-and-from" title="Permanent link">&para;</a></h3>
+<p><strong><code>view(M, N).from(row, col)</code></strong> defines an <strong><code>M × N</code></strong> rectangle starting at <strong><code>(row, col)</code></strong> in the underlying tensor—<strong>no</strong> requirement that the origin aligns to a precomputed tile grid.</p>
 <pre class="highlight"><code class="language-choreo">patch = matrix.view(16, 16).from(37, 50);</code></pre>
-<p>This gives you a <code>[16, 16]</code> window into <code>matrix</code> starting at row 37, column 50 — no alignment requirement. If <code>(37 + 16)</code> exceeds the matrix height, you are reading out of bounds unless you use <code>.zfill</code>.</p>
-<p>The distinction matters: <code>chunkat</code> requires the tensor to be evenly divisible by the tile count; <code>view().from()</code> does not. Use <code>chunkat</code> for uniform tiling, <code>view().from()</code> for ragged or offset access.</p>
-<p>A real use case: <strong>Mixture-of-Experts (MoE) GEMM</strong>, where each expert processes a different number of tokens. The expert's slice of the input matrix starts at an offset determined at runtime, not at a tile boundary:</p>
+<p><strong>Fixed window, free origin.</strong> This is a <strong><code>[16, 16]</code></strong> slice starting at row <strong><code>37</code></strong>, column <strong><code>50</code></strong>—alignment is <strong>not</strong> required (use <strong><code>.zfill</code></strong> if the window crosses the tensor edge).</p>
+<p><strong>When to use it.</strong> <strong><code>chunkat</code></strong> needs the tensor divided evenly into a fixed number of chunks; <strong><code>view(...).from(...)</code></strong> does not. Prefer <strong><code>chunkat</code></strong> for <strong>regular</strong> tiling and <strong><code>view</code> / <code>from</code></strong> when the window is <strong>ragged</strong> or <strong>runtime-positioned</strong>.</p>
 <pre class="highlight"><code class="language-choreo">expert_lhs = lhs.view(expert_M, K).from(expert_offset, 0);
 dma.copy expert_lhs.subspan(WARP_M, TILE_K).at(block_m, iv_k) =&gt; shared;</code></pre>
-<p>Here <code>expert_offset</code> is a runtime value — the starting row of expert <code>e</code>'s token batch. <code>view().from()</code> cuts a dynamically positioned window before the rest of the pipeline (DMA, MMA, events) runs unchanged.</p>
-<h2 id="subspan-step-at-strided-tile-access"><code>.subspan</code>, <code>.step</code>, <code>.at</code>: Strided Tile Access<a class="headerlink" href="#subspan-step-at-strided-tile-access" title="Permanent link">&para;</a></h2>
-<p>You have already seen <code>subspan(M, K).at(i, j)</code> — define a tile extent and select by tile index. Adding <code>.step</code> introduces a stride between tiles:</p>
-<pre class="highlight"><code class="language-choreo">matrix.subspan(16, 16).step(32, 32).at(i, j)</code></pre>
-<p>This selects tiles of size <code>[16, 16]</code>, but <strong>separated by 32 rows and 32 columns</strong> instead of being packed contiguously. Tile <code>(0, 0)</code> starts at <code>(0, 0)</code>, tile <code>(1, 0)</code> starts at <code>(32, 0)</code>, tile <code>(0, 1)</code> starts at <code>(0, 32)</code>. The <code>.step</code> controls how far apart tiles are in each dimension.</p>
-<p>Without <code>.step</code>, tiles are packed: the step equals the tile size. <code>.step</code> is useful when:</p>
-<ul>
-<li><strong>You skip over padding or guard bands</strong> between tiles.</li>
-<li><strong>Tiles have overlap</strong> (step smaller than extent), as in stencil or convolution patterns.</li>
-<li><strong>Tiles are strided along an outer dimension</strong> for memory layout reasons.</li>
-</ul>
-<h2 id="zfill-zero-padding-out-of-bounds-tiles"><code>.zfill</code>: Zero-Padding Out-of-Bounds Tiles<a class="headerlink" href="#zfill-zero-padding-out-of-bounds-tiles" title="Permanent link">&para;</a></h2>
-<p>When the tensor dimensions are not multiples of the tile size, the last tile along each axis is <strong>partial</strong> — it extends past the tensor boundary. Reading past the end is undefined behavior in CUDA.</p>
-<p><code>.zfill</code> tells the DMA or TMA copy to fill out-of-bounds elements with zero instead of reading garbage:</p>
+<p><strong>MoE-style GEMM.</strong> In <strong>mixture-of-experts</strong> stacks, each expert’s token batch often starts at a <strong>dynamic row</strong> <code>expert_offset</code>. Slicing with <strong><code>view</code> / <code>from</code></strong> rewires the operand <strong>before</strong> the rest of the pipeline—DMA or TMA, MMA, events—<strong>unchanged</strong>.</p>
+<h3 id="strided-tiles-subspan-step-and-at">Strided tiles: <code>.subspan</code>, <code>.step</code>, and <code>.at</code><a class="headerlink" href="#strided-tiles-subspan-step-and-at" title="Permanent link">&para;</a></h3>
+<p><strong><code>subspan(M, K).at(i, j)</code></strong> selects the tile anchored at logical tile indices <strong><code>(i, j)</code></strong> with extent <strong><code>[M, K]</code></strong>. Adding <strong><code>.step(sM, sK)</code></strong> spaces tiles <strong><code>sM</code></strong> rows and <strong><code>sK</code></strong> columns apart instead of packing them contiguously:</p>
+<pre class="highlight"><code class="language-choreo">matrix.subspan(16, 16).step(32, 32).at(i, j);</code></pre>
+<p><strong>Strided tiling.</strong> Neighboring tile indices advance by <strong><code>(sM, sK)</code></strong> in <strong>global</strong> coordinates, not necessarily by the tile size.</p>
+<p><strong>What <code>.step</code> means.</strong> Tile <strong><code>(0, 0)</code></strong> still starts at <strong><code>(0, 0)</code></strong>, but tile <strong><code>(1, 0)</code></strong> starts at <strong><code>(32, 0)</code></strong> and <strong><code>(0, 1)</code></strong> at <strong><code>(0, 32)</code></strong>. Omitting <strong><code>.step</code></strong> uses a step equal to the <strong>tile size</strong> along each axis—the <strong>packed</strong> case.</p>
+<p><strong>Typical uses:</strong> skipping <strong>padding or guard bands</strong>, <strong>overlapping</strong> stencils where the step is <strong>smaller</strong> than the extent, or matching an <strong>outer layout</strong> that is not dense tile-major.</p>
+<h3 id="zero-padding-zfill">Zero-padding: <code>.zfill</code><a class="headerlink" href="#zero-padding-zfill" title="Permanent link">&para;</a></h3>
+<p>When <strong><code>M</code> or <code>K</code></strong> is <strong>not</strong> a multiple of the tile size, the <strong>last</strong> tile along an axis is <strong>partial</strong>. Reading past the tensor’s edge is <strong>undefined</strong> unless you explicitly <strong>pad</strong>.</p>
 <pre class="highlight"><code class="language-choreo">tma.copy.swiz&lt;3&gt; lhs.subspan(WARP_M, TILE_K).at(block_m, iv_k).zfill
   =&gt; lhs_load_s;</code></pre>
-<p>The <code>.zfill</code> modifier goes after the source expression. The hardware (or the generated code for DMA) checks which elements of the requested tile fall outside the tensor and writes zero for those elements, leaving the valid elements unchanged. The MMA loop proceeds as normal — the zeros contribute nothing to the accumulation, which is the correct behavior for partial tiles in GEMM.</p>
-<h2 id="mmarowrowscale-block-dequantization"><code>mma.row.row.scale</code>: Block Dequantization<a class="headerlink" href="#mmarowrowscale-block-dequantization" title="Permanent link">&para;</a></h2>
-<p>Chapter 4 introduced <code>mma.row.row mc, ma, mb</code> for FP16 × FP16. When working with <strong>FP8</strong> formats (<code>f8_e4m3</code> or <code>f8_e5m2</code>), the accumulation is in FP32 but the operands lack dynamic range. Block-scaled quantization stores one scaling factor per tile:</p>
-<pre class="highlight"><code class="language-choreo">mma.row.row.scale mc, ma, mb, sc_a, sc_b;</code></pre>
-<p>After the matrix multiply, each element of <code>mc</code> is multiplied by the corresponding scale factors <code>sc_a</code> and <code>sc_b</code>. This fuses dequantization into the MMA instruction — no separate pass needed.</p>
-<p>The scale factors <code>sc_a</code> and <code>sc_b</code> are loaded alongside operands A and B, typically from a separate metadata tensor. The compiler handles the broadcast from per-tile scale to per-element result.</p>
-<h2 id="span_as-layout-reinterpretation"><code>span_as</code>: Layout Reinterpretation<a class="headerlink" href="#span_as-layout-reinterpretation" title="Permanent link">&para;</a></h2>
-<p>Sometimes the same buffer needs to appear with different logical shapes at different points. <code>span_as</code> reinterprets the layout without copying:</p>
+<p><strong>Semantics.</strong> <strong><code>.zfill</code></strong> applies to the <strong>source</strong> side of a copy: out-of-range elements are <strong>written as zero</strong> in the destination tile. Zeros <strong>contribute nothing</strong> to a GEMM accumulation, so the <strong>MMA loop</strong> can stay <strong>uniform</strong> while remaining <strong>mathematically</strong> correct for <strong>partial</strong> edges.</p>
+<h3 id="layout-reinterpretation-span_as">Layout reinterpretation: <code>span_as</code><a class="headerlink" href="#layout-reinterpretation-span_as" title="Permanent link">&para;</a></h3>
+<p><strong><code>span_as</code></strong> <strong>reinterprets</strong> a buffer’s linear storage as another <strong>shape</strong> with the <strong>same element count</strong>—<strong>no</strong> copy.</p>
 <pre class="highlight"><code class="language-choreo">flat_buffer.span_as([rows, cols])</code></pre>
-<p>This treats the underlying storage of <code>flat_buffer</code> as a 2D tensor of shape <code>[rows, cols]</code>. The element count must match — <code>rows * cols == flat_buffer.span(0)</code> — or the compiler will reject it.</p>
-<p>A common pattern: loading a 1D strip from global memory and then reinterpreting it as a 2D tile for MMA:</p>
+<p><strong>View-only reshape.</strong> Element count is preserved; only the <strong>logical</strong> rank changes.</p>
 <pre class="highlight"><code class="language-choreo">strip_load = dma.copy data.chunkat(tile) =&gt; shared;
 tile_2d = strip_load.data.span_as([tile_m, tile_k]);
 ma = mma.load tile_2d.chunkat(_, iv_warp);</code></pre>
-<h2 id="parallelasync-and-stream-s"><code>parallel.async</code> and <code>stream s</code><a class="headerlink" href="#parallelasync-and-stream-s" title="Permanent link">&para;</a></h2>
-<p>For fire-and-forget kernel launches, Croktile provides:</p>
-<pre class="highlight"><code class="language-choreo">parallel.async {px, py} by [grid_m, grid_n] : block {
-  stream s;
-  // kernel body
-}</code></pre>
-<p><code>parallel.async</code> launches the grid without blocking the host. The <code>stream s</code> directive assigns the launch to a CUDA stream; multiple <code>parallel.async</code> blocks on different streams run concurrently. This is the Croktile equivalent of launching a kernel on a non-default stream.</p>
-<h2 id="new-syntax">New Syntax<a class="headerlink" href="#new-syntax" title="Permanent link">&para;</a></h2>
+<p><strong>1D staging to 2D MMA.</strong> <strong><code>span_as</code></strong> exposes the loaded strip as a <strong>matrix</strong> for <strong><code>chunkat</code></strong> without an extra copy.</p>
+<p><strong>Contract.</strong> <strong><code>rows * cols</code></strong> must equal the <strong>span length</strong> of the underlying storage or the compiler <strong>rejects</strong> the program.</p>
+<h2 id="chapter-summary">Chapter Summary<a class="headerlink" href="#chapter-summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Idea</th>
+<th>Role in the “advanced movement” story</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>dma.copy</code> (Ch. 6)</strong></td>
+<td>Software-driven pipelined loads—threads + address math; baseline for comparison.</td>
+</tr>
+<tr>
+<td><strong><code>tma.copy</code> / <code>tma.copy.swiz&lt;N&gt;</code></strong></td>
+<td>Descriptor-driven <strong>Hopper</strong> ingress; hardware <strong>multi-dimensional</strong> tile fetch with <strong>minimal thread overhead</strong>.</td>
+</tr>
+<tr>
+<td><strong>Swizzle + <code>mma.load.swiz&lt;N&gt;</code></strong></td>
+<td>Align <strong>shared layout</strong> with <strong>MMA</strong> reads; avoid <strong>bank conflicts</strong> via <strong>XOR</strong> remapping—<strong>matching</strong> <code>N</code> on copy and load.</td>
+</tr>
+<tr>
+<td><strong><code>view</code> / <code>from</code></strong></td>
+<td><strong>Arbitrary-offset</strong> rectangular windows for <strong>ragged</strong> or <strong>runtime</strong> slice origins.</td>
+</tr>
+<tr>
+<td><strong><code>.subspan(...).step(...).at(...)</code></strong></td>
+<td><strong>Strided</strong> tiling—overlap, padding skips, or non-packed layouts.</td>
+</tr>
+<tr>
+<td><strong><code>.zfill</code></strong></td>
+<td><strong>Safe partial tiles</strong> by zero-filling out-of-bounds elements on copy.</td>
+</tr>
+<tr>
+<td><strong><code>span_as</code></strong></td>
+<td><strong>Zero-copy</strong> shape <strong>reinterpretation</strong> for staging buffers.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="new-syntax-quick-reference">New Syntax (quick reference)<a class="headerlink" href="#new-syntax-quick-reference" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -3096,48 +2800,43 @@ ma = mma.load tile_2d.chunkat(_, iv_warp);</code></pre>
 <tbody>
 <tr>
 <td><code>tma.copy src =&gt; dst</code></td>
-<td>TMA hardware-accelerated tensor copy</td>
+<td>TMA hardware tensor copy</td>
 </tr>
 <tr>
 <td><code>tma.copy.swiz&lt;N&gt; src =&gt; dst</code></td>
-<td>TMA copy with swizzle mode (0–3)</td>
+<td>TMA copy with swizzle mode <code>N</code> (0–3)</td>
 </tr>
 <tr>
 <td><code>mma.load.swiz&lt;N&gt; src</code></td>
-<td>MMA operand load matching swizzle mode</td>
+<td>MMA operand load consistent with swizzle <code>N</code></td>
 </tr>
 <tr>
 <td><code>tensor.view(M, N).from(r, c)</code></td>
-<td>Arbitrary-offset rectangular window</td>
+<td>Arbitrary-offset <code>M × N</code> window</td>
 </tr>
 <tr>
 <td><code>.subspan(M, K).step(sM, sK).at(i, j)</code></td>
-<td>Strided tile access with explicit step</td>
+<td>Strided tile selection</td>
 </tr>
 <tr>
 <td><code>.zfill</code></td>
-<td>Zero-fill out-of-bounds elements on copy</td>
-</tr>
-<tr>
-<td><code>mma.row.row.scale mc, ma, mb, sc_a, sc_b</code></td>
-<td>MMA with per-tile block dequantization</td>
+<td>Zero-fill out-of-bounds elements on the copy source</td>
 </tr>
 <tr>
 <td><code>span_as([dims])</code></td>
-<td>Reinterpret layout without copying</td>
+<td>Reinterpret linear storage as a shaped tensor</td>
 </tr>
 <tr>
 <td><code>parallel.async ... : block</code></td>
-<td>Non-blocking (async) grid launch</td>
+<td>Non-blocking async kernel launch (see <a href="../ch05-branch-control/">Ch 5</a>)</td>
 </tr>
 <tr>
 <td><code>stream s</code></td>
-<td>Assign kernel body to a CUDA stream</td>
+<td>Bind the kernel body to CUDA stream <code>s</code> (see <a href="../ch05-branch-control/">Ch 5</a>)</td>
 </tr>
 </tbody>
 </table>
-<p>With TMA and swizzle, the memory pipeline runs faster and the code is shorter — no per-thread address arithmetic, no manual bank-conflict avoidance. <code>view</code>/<code>from</code> and <code>.zfill</code> handle the messy edges of real workloads where tiles do not divide evenly and inputs are not aligned.</p>
-<p>The <a href="../ch08-cpp-interop/">next chapter</a> leaves Croktile's high-level abstractions and shows how to drop into raw C++ when you need to — register hints, preprocessor guards, and inline PTX.</p>
+<p>The <a href="../ch08-cpp-interop/">next chapter</a> steps past pure Croktile choreography into <strong>C++ interop</strong>: <strong>register hints</strong>, <strong>preprocessor guards</strong>, and <strong>inline PTX</strong> when you need to <strong>drop down</strong> to the metal beside generated code.</p>
 
 
 
@@ -3193,7 +2892,7 @@ ma = mma.load tile_2d.chunkat(_, iv_warp);</code></pre>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.top", "navigation.path", "navigation.indexes", "search.highlight", "search.suggest", "content.code.annotate", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.top", "navigation.path", "navigation.indexes", "search.highlight", "search.suggest", "content.code.annotate", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>

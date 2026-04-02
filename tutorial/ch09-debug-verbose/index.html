@@ -18,6 +18,10 @@
       
       
         
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../zh/tutorial/ch09-debug-verbose/" hreflang="zh">
+        
       
       
       <link rel="icon" href="../../assets/images/favicon.svg">
@@ -151,6 +155,32 @@
     
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../zh/tutorial/ch09-debug-verbose/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
     
     
       
@@ -712,10 +742,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#print-and-println" class="md-nav__link">
+  <a href="#print-and-println-compile-time-inspection" class="md-nav__link">
     <span class="md-ellipsis">
       
-        print and println
+        print! and println!: compile-time inspection
       
     </span>
   </a>
@@ -723,10 +753,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#print-and-println-compile-time-queries" class="md-nav__link">
+  <a href="#print-and-println-runtime-device-output" class="md-nav__link">
     <span class="md-ellipsis">
       
-        print! and println!: Compile-Time Queries
+        print and println: runtime device output
       
     </span>
   </a>
@@ -734,10 +764,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#debug-rtti-and-gdb" class="md-nav__link">
+  <a href="#debugging-mma-heavy-kernels" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Debug RTTI and GDB
+        Debugging MMA-heavy kernels
       
     </span>
   </a>
@@ -745,10 +775,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#a-debugging-workflow" class="md-nav__link">
+  <a href="#debug-rtti-and-cuda-gdb" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A Debugging Workflow
+        Debug RTTI and cuda-gdb
       
     </span>
   </a>
@@ -756,10 +786,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#performance-note" class="md-nav__link">
+  <a href="#putting-it-together-a-systematic-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Performance Note
+        Putting it together: a systematic workflow
       
     </span>
   </a>
@@ -767,10 +797,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#new-syntax" class="md-nav__link">
+  <a href="#summary" class="md-nav__link">
     <span class="md-ellipsis">
       
-        New Syntax
+        Summary
       
     </span>
   </a>
@@ -897,33 +927,9 @@
   
   
   
-    
-    
-      
+    <li class="md-nav__item">
+      <a href="../../optimization/dense-gemm-fp16/" class="md-nav__link">
         
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/matmul-f16/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -937,50 +943,6 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Dense GEMM FP16
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
     </li>
   
@@ -994,96 +956,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/pattern-optimizations/" class="md-nav__link">
+      <a href="../../optimization/sparse-gemm/" class="md-nav__link">
         
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/aitune-last-mile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AI-Tune Last Mile
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/gemm-sp/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -1097,50 +971,6 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Sparse GEMM (FP16 + E4M3)
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
     </li>
   
@@ -1154,94 +984,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/pattern-optimizations/" class="md-nav__link">
+      <a href="../../optimization/blockscale-gemm-fp8/" class="md-nav__link">
         
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/aitune-last-mile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AI-Tune Last Mile
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/blockscale-gemm/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -1255,87 +999,7 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Block-Scaled GEMM FP8
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/blockscale-gemm/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/blockscale-gemm/pattern-optimizations/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -2752,10 +2416,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#print-and-println" class="md-nav__link">
+  <a href="#print-and-println-compile-time-inspection" class="md-nav__link">
     <span class="md-ellipsis">
       
-        print and println
+        print! and println!: compile-time inspection
       
     </span>
   </a>
@@ -2763,10 +2427,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#print-and-println-compile-time-queries" class="md-nav__link">
+  <a href="#print-and-println-runtime-device-output" class="md-nav__link">
     <span class="md-ellipsis">
       
-        print! and println!: Compile-Time Queries
+        print and println: runtime device output
       
     </span>
   </a>
@@ -2774,10 +2438,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#debug-rtti-and-gdb" class="md-nav__link">
+  <a href="#debugging-mma-heavy-kernels" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Debug RTTI and GDB
+        Debugging MMA-heavy kernels
       
     </span>
   </a>
@@ -2785,10 +2449,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#a-debugging-workflow" class="md-nav__link">
+  <a href="#debug-rtti-and-cuda-gdb" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A Debugging Workflow
+        Debug RTTI and cuda-gdb
       
     </span>
   </a>
@@ -2796,10 +2460,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#performance-note" class="md-nav__link">
+  <a href="#putting-it-together-a-systematic-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Performance Note
+        Putting it together: a systematic workflow
       
     </span>
   </a>
@@ -2807,10 +2471,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#new-syntax" class="md-nav__link">
+  <a href="#summary" class="md-nav__link">
     <span class="md-ellipsis">
       
-        New Syntax
+        Summary
       
     </span>
   </a>
@@ -2886,17 +2550,28 @@
 
 
 <h1 id="debug-and-verbose-printing-rtti-and-gdb">Debug and Verbose: Printing, RTTI, and GDB<a class="headerlink" href="#debug-and-verbose-printing-rtti-and-gdb" title="Permanent link">&para;</a></h1>
-<p>Your kernel compiles and launches without errors, but the results are wrong. Now what? Staring at warp-specialized pipeline code and hoping a bug jumps out is not a strategy. You need to observe what the kernel is actually doing — intermediate values, index calculations, tensor shapes — at the point where things go wrong.</p>
-<p>This chapter covers Croktile's built-in inspection tools: <strong><code>print</code></strong> and <strong><code>println</code></strong> for device-side output, <strong>compile-time print variants</strong> (<code>print!</code>/<code>println!</code>) for static shape queries, <strong>debug RTTI</strong> for making Croktile types visible to debuggers, and a practical workflow for narrowing bugs using <strong><code>cuda-gdb</code></strong>.</p>
-<h2 id="print-and-println"><code>print</code> and <code>println</code><a class="headerlink" href="#print-and-println" title="Permanent link">&para;</a></h2>
-<p>The simplest debugging tool. <code>print</code> writes its arguments to standard output; <code>println</code> does the same but appends a newline. Both work inside <code>__co__</code> functions and emit device-side <code>printf</code> calls in the generated CUDA:</p>
+<p>GPU kernels are <strong>opaque systems</strong>. Thousands of threads execute concurrently, shared memory is invisible from the host, and when results are wrong, there is no stack trace pointing to the bad line. This opacity is not unique to GPUs — any system where the programmer cannot directly observe intermediate state faces the same challenge: distributed systems (where is the lost message?), embedded firmware (which interrupt handler corrupted the register?), optimizing compilers (which pass broke the semantics?).</p>
+<p>The universal debugging discipline is the same everywhere: <strong>systematically narrow the search space</strong>, from cheap checks to expensive ones. Start with static analysis and compile-time assertions (free, catches whole classes of bugs). Move to targeted runtime probes (cheap, localizes the problem). Resort to interactive debuggers only when the cheaper tools have narrowed the suspect list. The cost of each level increases, so you want to catch as many bugs as possible at the cheapest level.</p>
+<p>Croktile provides tools at each level: <strong>compile-time shape printing</strong> (<code>print!</code>, <code>println!</code>) to verify tile dimensions without launching a kernel, <strong>guarded device <code>println</code></strong> for runtime inspection of specific threads, <strong><code>choreo_assert</code></strong> for invariant checks, <strong>debug RTTI</strong> for <code>cuda-gdb</code>, and a clear <strong>order of suspicion</strong> that guides where to look first.</p>
+<p>So far you have walked the full Croktile stack — element-wise addition, data movement, parallelism, tensor cores, warp specialization, pipelines, TMA, and C++ escape hatches. Each step added performance and complexity. This chapter is about what to do when the results are wrong.</p>
+<h2 id="print-and-println-compile-time-inspection"><code>print!</code> and <code>println!</code>: compile-time inspection<a class="headerlink" href="#print-and-println-compile-time-inspection" title="Permanent link">&para;</a></h2>
+<p>The bang variants (<code>print!</code>, <code>println!</code>) run at <strong>compile time</strong>, not at runtime. They print to the compiler’s output and are useful for inspecting shapes, extents, and type information <strong>without launching a kernel</strong>:</p>
+<pre class="highlight"><code class="language-choreo">__co__ void check_shapes(f32 [3, 2] b) {
+  print!("shape of b: ");
+  println!("b.span = ", b.span);
+}</code></pre>
+<p>When you compile this file, the compiler emits:</p>
+<pre class="highlight"><code>shape of b: b.span = {3, 2}</code></pre>
+<p>No GPU needed. String literals are concatenated (<code>"wor" "ld!"</code> becomes <code>"world!"</code>), which is handy for building diagnostic messages from fragments. Use <code>print!</code> / <code>println!</code> to verify that <code>chunkat</code> and <code>subspan</code> produce the tile sizes you expect before you spend time on a full kernel launch.</p>
+<h2 id="print-and-println-runtime-device-output"><code>print</code> and <code>println</code>: runtime device output<a class="headerlink" href="#print-and-println-runtime-device-output" title="Permanent link">&para;</a></h2>
+<p><strong>Runtime printing.</strong> <code>print</code> writes its arguments to standard output; <code>println</code> does the same but appends a newline. Both work inside <code>__co__</code> functions and emit device-side <code>printf</code> calls in the generated CUDA:</p>
 <pre class="highlight"><code class="language-choreo">__co__ void inspect(s32 [4, 8] data) {
   foreach i in [data.span] {
     println("element ", i, " = ", data.at(i));
   }
 }</code></pre>
-<p>Each <code>println</code> call takes a comma-separated mix of string literals and expressions. Strings are printed verbatim; expressions are evaluated and printed as their runtime value. The output order across threads is nondeterministic — GPU printf buffers are flushed asynchronously, so lines from different threads interleave unpredictably.</p>
-<p>For a specific check — say, whether tile index <code>(3, 5)</code> computes the right partial sum — guard the print with a condition:</p>
+<p>Each <code>println</code> call takes a comma-separated mix of string literals and expressions. Strings are printed verbatim; expressions are evaluated and printed as their runtime value. The output order across threads is <strong>nondeterministic</strong> — GPU <code>printf</code> buffers are flushed asynchronously, so lines from different threads interleave unpredictably.</p>
+<p><strong>Guarding output.</strong> For a specific check — say, whether tile index <code>(3, 5)</code> computes the right partial sum — guard the print with a condition:</p>
 <pre class="highlight"><code class="language-choreo">parallel {px, py} by [8, 16] : block
   parallel {qx, qy} by [16, 16] : thread {
     // ... compute ...
@@ -2905,18 +2580,11 @@
     }
   }</code></pre>
 <p>Without the guard you get one line per thread — thousands of lines for a large grid, most of which you do not care about.</p>
-<h2 id="print-and-println-compile-time-queries"><code>print!</code> and <code>println!</code>: Compile-Time Queries<a class="headerlink" href="#print-and-println-compile-time-queries" title="Permanent link">&para;</a></h2>
-<p>The bang variants (<code>print!</code>, <code>println!</code>) run at <strong>compile time</strong>, not at runtime. They print to the compiler's output and are useful for inspecting shapes, extents, and type information without launching a kernel:</p>
-<pre class="highlight"><code class="language-choreo">__co__ void check_shapes(f32 [3, 2] b) {
-  print!("shape of b: ");
-  println!("b.span = ", b.span);
-}</code></pre>
-<p>When you compile this file, the compiler emits:</p>
-<pre class="highlight"><code>shape of b: b.span = {3, 2}</code></pre>
-<p>No GPU needed. String literals are concatenated (<code>"wor" "ld!"</code> becomes <code>"world!"</code>), which is handy for building diagnostic messages from fragments. Use <code>print!</code> to verify that <code>chunkat</code> and <code>subspan</code> produce the tile sizes you expect before burning time on a full kernel launch.</p>
-<h2 id="debug-rtti-and-gdb">Debug RTTI and GDB<a class="headerlink" href="#debug-rtti-and-gdb" title="Permanent link">&para;</a></h2>
-<p>When <code>print</code>/<code>println</code> is not enough — you need to step through execution, inspect register state, or examine complex data structures — Croktile supports <strong>debug RTTI</strong> (Runtime Type Information) that makes its types visible to <code>cuda-gdb</code>.</p>
-<p>Compile with <code>-g -O0</code> to enable debug symbols and disable optimizations:</p>
+<h2 id="debugging-mma-heavy-kernels">Debugging MMA-heavy kernels<a class="headerlink" href="#debugging-mma-heavy-kernels" title="Permanent link">&para;</a></h2>
+<p>When the wrong answer comes from a <strong>tensor-core path</strong>, treat it as its own category. <strong>Suspect layout first</strong> — row versus column major, and whether the RHS is logically <code>[N, K]</code> versus <code>[K, N]</code> in memory — <strong>then indexing</strong> (which <code>block_m</code>, <code>block_n</code>, and K slice you attached with <code>.at</code> / <code>chunkat</code>), <strong>then async ordering</strong> if you introduced asynchronous copies or split producer and consumer warps. A common mistake is <strong>mislabeling <code>mma.row.row</code></strong> when the staged data is actually column-major, or using <strong><code>chunkat</code> indices that do not align</strong> with the MMA tile geometry. If you use swizzled loads (<code>tma.copy.swiz</code> / <code>mma.load.swiz</code>), a mismatch against plain row expectations shows up as a <strong>regular pattern</strong> in the error (for example every sixteenth element correct, the rest shifted) — the systematic workflow below calls that out explicitly.</p>
+<h2 id="debug-rtti-and-cuda-gdb">Debug RTTI and <code>cuda-gdb</code><a class="headerlink" href="#debug-rtti-and-cuda-gdb" title="Permanent link">&para;</a></h2>
+<p>When <code>print</code> / <code>println</code> is not enough — you need to step through execution, inspect register state, or examine complex data structures — Croktile supports <strong>debug RTTI</strong> (Runtime Type Information) that makes its types visible to <code>cuda-gdb</code>.</p>
+<p><strong>Build flags.</strong> Compile with <code>-g -O0</code> to enable debug symbols and disable optimizations:</p>
 <pre class="highlight"><code class="language-bash">croktile kernel.co -g -O0 -o kernel_debug</code></pre>
 <p>The generated code includes RTTI structs for Croktile types:</p>
 <table>
@@ -2950,7 +2618,7 @@
 </tr>
 </tbody>
 </table>
-<p>A GDB session on a debug-compiled kernel:</p>
+<p><strong>Example session.</strong> A GDB session on a debug-compiled kernel:</p>
 <pre class="highlight"><code class="language-bash">cuda-gdb -q ./kernel_debug
 (gdb) break my_kernel
 (gdb) run
@@ -2963,57 +2631,52 @@ $2 = 64
 (gdb) print __dbg_lhs.data != 0
 $3 = true</code></pre>
 <p>The <code>__dbg_</code> prefix on variable names is generated by the compiler — it makes Croktile variables visible to GDB alongside the generated C++ intermediates. You can inspect tensor dimensions, strides, and data pointers, and step through the generated code to see which iteration of a <code>foreach</code> loop produces a wrong value.</p>
-<h2 id="a-debugging-workflow">A Debugging Workflow<a class="headerlink" href="#a-debugging-workflow" title="Permanent link">&para;</a></h2>
-<p>When a kernel produces wrong results, narrow the bug systematically:</p>
+<h2 id="putting-it-together-a-systematic-workflow">Putting it together: a systematic workflow<a class="headerlink" href="#putting-it-together-a-systematic-workflow" title="Permanent link">&para;</a></h2>
+<p>The following order is deliberate: <strong>cheap compile-time checks first</strong>, then <strong>narrowed runtime prints</strong>, then <strong>pipeline semantics</strong>, <strong>layout</strong>, and finally <strong>the debugger</strong> for pointer-level bugs.</p>
+<p><img alt="Debugging workflow: shapes → one tile → sync → layout → GDB" src="../../assets/images/ch09/fig1_debug_workflow_dark.png#only-dark" />
+<img alt="Debugging workflow: shapes → one tile → sync → layout → GDB" src="../../assets/images/ch09/fig1_debug_workflow_light.png#only-light" /></p>
 <p><strong>1. Check shapes.</strong> Use <code>println!</code> at compile time to verify that all <code>chunkat</code>, <code>subspan</code>, and <code>span</code> expressions produce the tile sizes you expect. Shape bugs are the most common category — a mismatched extent silently reads or writes wrong memory regions.</p>
 <p><strong>2. Check one tile.</strong> Add a guarded <code>println</code> inside the K loop that fires only for block <code>(0, 0)</code> and one thread. Print the accumulator value after each K iteration. Compare with a hand-computed reference for that specific output element.</p>
-<p><strong>3. Check synchronization.</strong> If the value is wrong only at large K, suspect event ordering. Print <code>iv_k</code> and <code>stage</code> in both producer and consumer to verify they visit the same sequence. A common bug: the consumer's <code>trigger empty[stage]</code> fires too early, allowing the producer to overwrite a buffer the consumer is still reading.</p>
-<p><strong>4. Check layout.</strong> If the result is wrong in a pattern (e.g., every 16th element is correct, the rest are shifted), suspect a row-major vs column-major mismatch in <code>mma.row.row</code> or a swizzle mode inconsistency between <code>tma.copy.swiz&lt;N&gt;</code> and <code>mma.load.swiz&lt;N&gt;</code>.</p>
+<p><strong>3. Check synchronization.</strong> If the value is wrong only at large K, suspect event ordering. Print <code>iv_k</code> and <code>stage</code> in both producer and consumer to verify they visit the same sequence. A common bug: the consumer’s <code>trigger empty[stage]</code> fires too early, allowing the producer to overwrite a buffer the consumer is still reading.</p>
+<p><strong>4. Check layout.</strong> If the result is wrong in a pattern (e.g., every sixteenth element is correct, the rest are shifted), suspect a row-major vs column-major mismatch in <code>mma.row.row</code> or a swizzle mode inconsistency between <code>tma.copy.swiz&lt;N&gt;</code> and <code>mma.load.swiz&lt;N&gt;</code>. Cross-check with the MMA subsection above.</p>
 <p><strong>5. Use GDB for pointer bugs.</strong> If <code>println</code> shows a value that makes no sense (NaN, huge integer, zero when nonzero is expected), compile with <code>-g -O0</code> and step through in <code>cuda-gdb</code>. Inspect the tensor pointer (<code>__dbg_x.data</code>) and check whether it points to valid memory.</p>
-<h2 id="performance-note">Performance Note<a class="headerlink" href="#performance-note" title="Permanent link">&para;</a></h2>
-<p><code>print</code>/<code>println</code> are expensive. Each call serializes through a global printf buffer, which destroys throughput measurements. The debug RTTI structs also add register pressure and prevent compiler optimizations. Remove all prints and drop the <code>-g -O0</code> flags before benchmarking.</p>
-<p>A useful middle ground: keep prints behind a <code>#ifdef DEBUG_PRINT</code> macro (Chapter 8) so you can toggle them from the command line without editing the source:</p>
+<p><strong>Performance before benchmarks.</strong> <code>print</code> / <code>println</code> are expensive: each call serializes through a global <code>printf</code> buffer and destroys throughput measurements. Debug RTTI structs add register pressure and inhibit optimization. Remove all prints and drop <code>-g -O0</code> before benchmarking. A practical compromise is to keep prints behind a <code>#ifdef DEBUG_PRINT</code> macro (Chapter 8) so you can toggle them from the command line without editing the source:</p>
 <pre class="highlight"><code class="language-choreo">#ifdef DEBUG_PRINT
   println("tile_k=", iv_k, " accum=", mc);
 #endif</code></pre>
 <p>Compile with <code>croktile kernel.co -DDEBUG_PRINT</code> to enable, or without the flag for production runs.</p>
-<h2 id="new-syntax">New Syntax<a class="headerlink" href="#new-syntax" title="Permanent link">&para;</a></h2>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Syntax</th>
-<th>Meaning</th>
+<th>Construct / tool</th>
+<th>Role</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>print(expr, ...)</code></td>
-<td>Device-side printf (no newline)</td>
+<td><code>print!</code> / <code>println!</code></td>
+<td>Compile-time shape and type inspection; no kernel launch</td>
 </tr>
 <tr>
-<td><code>println(expr, ...)</code></td>
-<td>Device-side printf (with newline)</td>
+<td><code>print</code> / <code>println</code></td>
+<td>Device-side <code>printf</code>; use guards to avoid log floods</td>
 </tr>
 <tr>
-<td><code>print!("str", ...)</code></td>
-<td>Compile-time print (no newline, no launch needed)</td>
+<td>MMA debugging</td>
+<td>Layout → indexing → async ordering; watch <code>mma.*</code> vs actual memory order</td>
 </tr>
 <tr>
-<td><code>println!("str", ...)</code></td>
-<td>Compile-time print (with newline, no launch needed)</td>
+<td><code>-g -O0</code>, <code>cuda-gdb</code>, RTTI</td>
+<td>Inspect <code>__dbg_*</code> tensors, pointers, and control flow</td>
 </tr>
 <tr>
-<td><code>-g -O0</code></td>
-<td>Compiler flags for debug symbols and no optimization</td>
-</tr>
-<tr>
-<td><code>cuda-gdb</code></td>
-<td>NVIDIA debugger for stepping through GPU kernels</td>
+<td><code>#ifdef DEBUG_PRINT</code></td>
+<td>Optional printf without permanent overhead</td>
 </tr>
 </tbody>
 </table>
-<p>That wraps up the Croktile tutorial. You started from a single-element addition in Chapter 1, learned to move data in blocks (Ch 2), parallelize across thousands of threads (Ch 3), engage tensor cores (Ch 4), split warp roles (Ch 5), pipeline loads and compute (Ch 6), use hardware TMA and handle irregular access (Ch 7), escape to raw C++ when needed (Ch 8), and debug when things go wrong (Ch 9).</p>
-<p>The most productive next step is to open a benchmark kernel from the <code>croktile/benchmark/</code> directory, map its regions to the chapters here, change one constant, rebuild, and measure. Small, deliberate edits beat large rewrites — the <code>#error</code> guards will tell you when a configuration stops being legal long before you chase mysterious wrong answers on the GPU.</p>
+<p>You started from <strong>element-wise addition</strong> in Chapter 1, learned <strong>data movement</strong> (Chapter 2), <strong>parallelism</strong> (Chapter 3), <strong>tensor cores</strong> (Chapter 4), <strong>warp specialization</strong> (Chapter 5), <strong>pipelines</strong> (Chapter 6), <strong>TMA</strong> (Chapter 7), <strong>C++ interop</strong> (Chapter 8), and <strong>debugging</strong> (Chapter 9). The next productive step is to open a benchmark kernel from the <code>croktile/benchmark/</code> directory, map its regions to the chapters here, change one constant, rebuild, and measure. Small, deliberate edits beat large rewrites — the <code>#error</code> guards will tell you when a configuration stops being legal long before you chase mysterious wrong answers on the GPU.</p>
 
 
 
@@ -3069,7 +2732,7 @@ $3 = true</code></pre>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.top", "navigation.path", "navigation.indexes", "search.highlight", "search.suggest", "content.code.annotate", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.top", "navigation.path", "navigation.indexes", "search.highlight", "search.suggest", "content.code.annotate", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>

@@ -18,6 +18,10 @@
       
       
         
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../zh/tutorial/ch08-cpp-interop/" hreflang="zh">
+        
       
       
       <link rel="icon" href="../../assets/images/favicon.svg">
@@ -151,6 +155,32 @@
     
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../zh/tutorial/ch08-cpp-interop/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
     
     
       
@@ -692,82 +722,94 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
+    <nav class="md-nav" aria-label="__cpp__: Verbatim C++ Injection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#register-hints-setmaxnreg" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Register Hints: setmaxnreg
+        Register hints: setmaxnreg
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#early-returns-and-guards" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Early Returns and Guards
+        Early returns and guards
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#the-preprocessor-define-and-conditionals" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The Preprocessor: #define and Conditionals
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tile-geometry-as-macros" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tile Geometry as Macros
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#compile-time-assertions-with-error" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Compile-Time Assertions with #error
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#conditional-code-paths" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Conditional Code Paths
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#macros-inside-__cpp__-strings" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Macros Inside __cpp__ Strings
+        Macros inside __cpp__ strings
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-preprocessor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Preprocessor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Preprocessor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tile-geometry-as-macros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tile geometry as macros
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compile-time-assertions-with-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compile-time assertions with #error
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conditional-code-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conditional code paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -783,10 +825,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#new-syntax" class="md-nav__link">
+  <a href="#chapter-summary" class="md-nav__link">
     <span class="md-ellipsis">
       
-        New Syntax
+        Chapter Summary
       
     </span>
   </a>
@@ -941,33 +983,9 @@
   
   
   
-    
-    
-      
+    <li class="md-nav__item">
+      <a href="../../optimization/dense-gemm-fp16/" class="md-nav__link">
         
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/matmul-f16/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -981,50 +999,6 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Dense GEMM FP16
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
     </li>
   
@@ -1038,96 +1012,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/pattern-optimizations/" class="md-nav__link">
+      <a href="../../optimization/sparse-gemm/" class="md-nav__link">
         
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/aitune-last-mile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AI-Tune Last Mile
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/gemm-sp/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -1141,50 +1027,6 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Sparse GEMM (FP16 + E4M3)
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
     </li>
   
@@ -1198,94 +1040,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/pattern-optimizations/" class="md-nav__link">
+      <a href="../../optimization/blockscale-gemm-fp8/" class="md-nav__link">
         
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/aitune-last-mile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AI-Tune Last Mile
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/blockscale-gemm/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -1299,87 +1055,7 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Block-Scaled GEMM FP8
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/blockscale-gemm/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/blockscale-gemm/pattern-optimizations/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -2804,82 +2480,94 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
+    <nav class="md-nav" aria-label="__cpp__: Verbatim C++ Injection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#register-hints-setmaxnreg" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Register Hints: setmaxnreg
+        Register hints: setmaxnreg
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#early-returns-and-guards" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Early Returns and Guards
+        Early returns and guards
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#the-preprocessor-define-and-conditionals" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The Preprocessor: #define and Conditionals
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tile-geometry-as-macros" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tile Geometry as Macros
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#compile-time-assertions-with-error" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Compile-Time Assertions with #error
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#conditional-code-paths" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Conditional Code Paths
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#macros-inside-__cpp__-strings" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Macros Inside __cpp__ Strings
+        Macros inside __cpp__ strings
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-preprocessor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Preprocessor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Preprocessor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tile-geometry-as-macros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tile geometry as macros
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compile-time-assertions-with-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compile-time assertions with #error
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conditional-code-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conditional code paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2895,10 +2583,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#new-syntax" class="md-nav__link">
+  <a href="#chapter-summary" class="md-nav__link">
     <span class="md-ellipsis">
       
-        New Syntax
+        Chapter Summary
       
     </span>
   </a>
@@ -2974,18 +2662,20 @@
 
 
 <h1 id="c-interop-inline-code-and-the-preprocessor">C++ Interop: Inline Code and the Preprocessor<a class="headerlink" href="#c-interop-inline-code-and-the-preprocessor" title="Permanent link">&para;</a></h1>
-<p>Croktile handles tiles, pipelines, and memory levels so you don't have to spell them in CUDA. Most of the time that is exactly right. But every so often you need something the DSL does not wrap: a specific PTX instruction, an early return guarding an empty segment, or a compile-time constant shared between the <code>__co__</code> body and host C++.</p>
-<p>This chapter covers the two escape hatches: <strong><code>__cpp__</code></strong>, which injects raw C++ verbatim into the generated output, and the <strong>Croktile preprocessor</strong> — <code>#define</code>, <code>#if</code>/<code>#ifdef</code>/<code>#else</code>/<code>#endif</code>, and <code>#error</code> — for macros and conditional compilation.</p>
+<p>Every high-level language needs an escape hatch to the layer below. Python has <code>ctypes</code> and C extensions. Rust has <code>unsafe</code> blocks and <code>extern "C"</code>. Java has JNI. The reason is always the same: no matter how expressive the abstraction, some hardware feature, some legacy library, some performance-critical intrinsic lives outside the language's domain. The escape hatch lets you reach it without abandoning the rest of the system.</p>
+<p>Croktile's escape hatch is <strong><code>__cpp__</code></strong>: inject verbatim C++ or PTX into the generated code. The preprocessor — <code>#define</code>, <code>#if</code>, <code>#ifdef</code>, <code>#error</code> — serves the complementary role of <strong>compile-time configuration</strong>, the same role <code>#define</code> plays in C/C++ codebases: sharing constants between the DSL body and host code, guarding platform-specific paths, and catching configuration mistakes before they become runtime bugs.</p>
+<p>So far the tutorial has built a stack of abstractions: tiles, parallelism, MMA, pipelines, events. That is the Croktile you want to live in. This chapter is about the times you need to step outside — a single PTX instruction the compiler does not emit, a register-budget hint for warp-specialized roles, or a compile-time constant that must match in both the <code>__co__</code> body and host-side C++.</p>
+<p><img alt="Croktile kernel body with an embedded __cpp__ island for verbatim PTX/C++" src="../../assets/images/ch08/fig1_escape_hatch_dark.png#only-dark" />
+<img alt="Croktile kernel body with an embedded __cpp__ island for verbatim PTX/C++" src="../../assets/images/ch08/fig1_escape_hatch_light.png#only-light" /></p>
 <h2 id="__cpp__-verbatim-c-injection"><code>__cpp__</code>: Verbatim C++ Injection<a class="headerlink" href="#__cpp__-verbatim-c-injection" title="Permanent link">&para;</a></h2>
-<p><code>__cpp__</code> takes a string literal and pastes it, character for character, into the generated CUDA or C++ file. Whatever you put inside must be valid at the splice point — correct braces, semicolons, types, and scope.</p>
-<p>Two forms:</p>
+<p><strong>What it does.</strong> <code>__cpp__</code> takes a string literal and pastes it, character for character, into the generated CUDA or C++ file. Whatever you place there must be valid at the splice point: braces, semicolons, types, and scope must agree with the surrounding codegen. The Croktile compiler does not parse or rewrite the contents, and Croktile symbols are not magically visible inside the string — only names that actually appear in the generated output.</p>
+<p><strong>Two forms.</strong></p>
 <ul>
-<li><strong><code>__cpp__("...")</code></strong> — ordinary string, good for short one-liners.</li>
-<li><strong><code>__cpp__(R"(...)")</code></strong> — raw string literal, ideal for <code>asm volatile("...")</code> and other quote-heavy fragments where escaping every <code>"</code> would be painful.</li>
+<li><strong><code>__cpp__("...")</code></strong> — Ordinary string; best for short one-liners and simple guards.</li>
+<li><strong><code>__cpp__(R"(...)")</code></strong> — Raw string literal; use this for <code>asm volatile("...")</code> and other fragments where escaping every <code>"</code> would be painful.</li>
 </ul>
-<p>The compiler does not parse or rewrite the contents. Croktile symbols are not visible inside the string — only names that exist in the generated C++ output.</p>
-<h2 id="register-hints-setmaxnreg">Register Hints: <code>setmaxnreg</code><a class="headerlink" href="#register-hints-setmaxnreg" title="Permanent link">&para;</a></h2>
-<p>The canonical use case. In warp-specialized pipelines (Chapter 5), the producer warpgroup needs few registers (it mostly issues TMA loads) while the consumer needs many (it holds MMA accumulators). NVIDIA's PTX <code>setmaxnreg</code> instruction redistributes the register budget between roles:</p>
+<h3 id="register-hints-setmaxnreg">Register hints: <code>setmaxnreg</code><a class="headerlink" href="#register-hints-setmaxnreg" title="Permanent link">&para;</a></h3>
+<p>The canonical <code>__cpp__</code> use case is <strong>register redistribution</strong> in warp-specialized pipelines (<a href="../ch05-branch-control/">Chapter 5</a>). The producer warpgroup is register-light — it mostly issues TMA loads — while the consumer is register-heavy — it holds MMA accumulators. NVIDIA’s PTX <code>setmaxnreg</code> instruction moves the register budget between those roles:</p>
 <pre class="highlight"><code class="language-choreo">parallel p1 by 2 : group-4 {
   inthreads.async (p1 == 0) {
     __cpp__(R"(asm volatile("setmaxnreg.dec.sync.aligned.u32 40;");)");
@@ -3002,13 +2692,32 @@
     // ... WGMMA compute ...
   }
 }</code></pre>
-<p>The exact numbers (40, 216) are tuned per kernel. The <code>.dec</code>/<code>.inc</code> forms cooperate with the hardware register allocator so both roles can coexist without unnecessary spilling. Place the hint at the top of each <code>inthreads.async</code> branch, before the heavy loop.</p>
-<h2 id="early-returns-and-guards">Early Returns and Guards<a class="headerlink" href="#early-returns-and-guards" title="Permanent link">&para;</a></h2>
-<p>MoE-style GEMM kernels process variable-sized expert segments. Some launches may have zero width for a given expert. A one-line <code>__cpp__</code> injection avoids running the rest of the kernel on empty ranges:</p>
+<p><strong><code>setmaxnreg.dec</code> / <code>setmaxnreg.inc</code></strong> — The exact counts (here 40 and 216) are tuned per kernel. The <code>.dec</code> and <code>.inc</code> forms cooperate with the hardware allocator so both roles can coexist without unnecessary spilling.</p>
+<p><strong>Placement</strong> — Put the hint at the top of each <code>inthreads.async</code> branch, before the heavy loop, so the allocator sees the budget before the body runs.</p>
+<h3 id="early-returns-and-guards">Early returns and guards<a class="headerlink" href="#early-returns-and-guards" title="Permanent link">&para;</a></h3>
+<p>MoE-style GEMM kernels often process variable-sized expert segments; some launches have zero width for a given expert. A one-line <code>__cpp__</code> injection can bail out before the rest of the kernel runs:</p>
 <pre class="highlight"><code class="language-choreo">__cpp__("if (seg_end - seg_start &lt;= 0) return;\n\n");</code></pre>
-<p>The variable names (<code>seg_end</code>, <code>seg_start</code>) must match what the surrounding generated code declares. If you rename a Croktile parameter and the codegen changes its output, stale <code>__cpp__</code> strings break at compile time — which is better than silently wrong results.</p>
-<h2 id="the-preprocessor-define-and-conditionals">The Preprocessor: <code>#define</code> and Conditionals<a class="headerlink" href="#the-preprocessor-define-and-conditionals" title="Permanent link">&para;</a></h2>
-<p>Croktile's preprocessor runs before the main compiler pass. It understands:</p>
+<p><strong>Name discipline</strong> — The identifiers (<code>seg_end</code>, <code>seg_start</code>) must match what the surrounding generated code declares. If you rename a Croktile parameter and codegen changes its spelling, a stale <code>__cpp__</code> string fails at compile time — which is preferable to silently wrong results.</p>
+<h3 id="macros-inside-__cpp__-strings">Macros inside <code>__cpp__</code> strings<a class="headerlink" href="#macros-inside-__cpp__-strings" title="Permanent link">&para;</a></h3>
+<p>A common mistake is to assume the preprocessor will help inside the injected string:</p>
+<pre class="highlight"><code class="language-choreo">#define PRODUCER_MAXNREG 40
+
+inthreads.async (p1 == 0) {
+  __cpp__(R"(asm volatile("setmaxnreg.dec.sync.aligned.u32 PRODUCER_MAXNREG;");)");
+}</code></pre>
+<p><strong>Why it fails</strong> — The preprocessor does not expand macros inside string literals. The generated asm would still contain the identifier <code>PRODUCER_MAXNREG</code>, not <code>40</code>, and PTX would reject it.</p>
+<p><strong>What teams do instead</strong> — Type numeric literals inside <code>__cpp__</code> strings, and use <code>#if</code> / <code>#error</code> <em>outside</em> the strings to enforce consistency with your tile configuration:</p>
+<pre class="highlight"><code class="language-choreo">#define PRODUCER_MAXNREG 40
+#if PRODUCER_MAXNREG &gt; 50
+#error "Producer maxnreg too high for this tile config"
+#endif
+
+inthreads.async (p1 == 0) {
+  __cpp__(R"(asm volatile("setmaxnreg.dec.sync.aligned.u32 40;");)");
+}</code></pre>
+<h2 id="the-preprocessor">The Preprocessor<a class="headerlink" href="#the-preprocessor" title="Permanent link">&para;</a></h2>
+<p>Croktile’s preprocessor runs before the main compiler pass. <strong><code>#define</code></strong>, <strong><code>#if</code> / <code>#elif</code> / <code>#else</code> / <code>#endif</code></strong>, <strong><code>#ifdef</code> / <code>#ifndef</code></strong>, and <strong><code>#error</code></strong> behave like their C counterparts. Macros expand in both <code>__co__</code> regions and host C++ in the same <code>.co</code> file, so one definition can keep tile geometry and host-side checks aligned.</p>
+<p><strong>Directive reference.</strong></p>
 <table>
 <thead>
 <tr>
@@ -3027,26 +2736,25 @@
 </tr>
 <tr>
 <td><code>#ifdef</code> / <code>#ifndef</code></td>
-<td>Shorthand for "defined or not"</td>
+<td>Shorthand for whether a macro is defined</td>
 </tr>
 <tr>
 <td><code>#error message</code></td>
-<td>Force a compile-time error with a message</td>
+<td>Force a compile-time failure with a message</td>
 </tr>
 </tbody>
 </table>
-<p>Macros expand in both <code>__co__</code> regions and host C++ in the same <code>.co</code> file, so a single <code>#define</code> keeps tile geometry consistent across both worlds.</p>
-<h2 id="tile-geometry-as-macros">Tile Geometry as Macros<a class="headerlink" href="#tile-geometry-as-macros" title="Permanent link">&para;</a></h2>
-<p>Production matmul files centralize every tile dimension:</p>
+<p><strong>Limitation</strong> — Function-like macros (<code>#define MAX(a, b) ...</code>) are not supported. Use <code>constexpr</code> helpers in ordinary C++ when you need parameterized expressions.</p>
+<h3 id="tile-geometry-as-macros">Tile geometry as macros<a class="headerlink" href="#tile-geometry-as-macros" title="Permanent link">&para;</a></h3>
+<p>Production matmul sources usually centralize every tile dimension at the top of the file:</p>
 <pre class="highlight"><code class="language-choreo">#define MATMUL_WARP_M 64
 #define MATMUL_WARP_N 128
 #define MATMUL_TILE_K 64
 #define MATMUL_WARP_K 16
 #define MATMUL_STAGES 4</code></pre>
-<p>These names appear in <code>parallel ... by [cdiv(M, MATMUL_WARP_M), ...]</code>, shared memory declarations, <code>foreach</code> bounds, and host-side verification. Change one define, and every use site updates.</p>
-<p><strong>Limitation:</strong> the preprocessor does not support function-like macros. <code>#define MAX(a, b) ...</code> will not expand with arguments. Use <code>constexpr</code> functions in plain C++ where you need parameterized expressions.</p>
-<h2 id="compile-time-assertions-with-error">Compile-Time Assertions with <code>#error</code><a class="headerlink" href="#compile-time-assertions-with-error" title="Permanent link">&para;</a></h2>
-<p>Libraries pair <code>#if</code> with <code>#error</code> to enforce configuration constraints:</p>
+<p><strong>Shared contract</strong> — The same names appear in <code>parallel ... by [cdiv(M, MATMUL_WARP_M), ...]</code>, shared-memory declarations, <code>foreach</code> bounds, and host-side verification. Change one <code>#define</code>, and every use site updates together.</p>
+<h3 id="compile-time-assertions-with-error">Compile-time assertions with <code>#error</code><a class="headerlink" href="#compile-time-assertions-with-error" title="Permanent link">&para;</a></h3>
+<p>Libraries often pair <code>#if</code> with <code>#error</code> so illegal combinations fail at compile time with a clear message:</p>
 <pre class="highlight"><code class="language-choreo">#if MATMUL_SWIZ != (2 * MATMUL_TILE_K)
 #error "MATMUL_SWIZ must equal 2 * MATMUL_TILE_K for f16 kernel"
 #endif
@@ -3054,9 +2762,9 @@
 #if MATMUL_WARP_M != 64
 #error "MATMUL_WARP_M must be 64 for f16 WGMMA constraints"
 #endif</code></pre>
-<p>When someone changes a swizzle width or warp tile incompatibly, the build fails immediately with a clear message instead of producing an illegal kernel. Treat <code>#error</code> guards as living documentation of hardware constraints.</p>
-<h2 id="conditional-code-paths">Conditional Code Paths<a class="headerlink" href="#conditional-code-paths" title="Permanent link">&para;</a></h2>
-<p>Select entire regions based on a macro:</p>
+<p><strong>Living documentation</strong> — When someone changes swizzle width or warp tile incompatibly, the build stops immediately instead of emitting an illegal kernel. Treat these guards as documentation of hardware constraints, not one-off checks.</p>
+<h3 id="conditional-code-paths">Conditional code paths<a class="headerlink" href="#conditional-code-paths" title="Permanent link">&para;</a></h3>
+<p>You can select entire regions from a macro:</p>
 <pre class="highlight"><code class="language-choreo">#define PATH0
 
 __co__ foo() {
@@ -3067,35 +2775,53 @@ __co__ foo() {
     // path 1 code
   #endif
 }</code></pre>
-<p>The preprocessor keeps one branch and discards the other before Croktile parses the <code>__co__</code> body. This is compile-time elimination, not a runtime <code>if</code> — no dead code in the generated program.</p>
-<p>You can also drive variants from the command line: <code>croktile kernel.co -DMATMUL_TILE_K=128</code> overrides or defines macros without editing the source. This is how benchmark suites sweep over tile sizes without duplicating files.</p>
-<h2 id="macros-inside-__cpp__-strings">Macros Inside <code>__cpp__</code> Strings<a class="headerlink" href="#macros-inside-__cpp__-strings" title="Permanent link">&para;</a></h2>
-<p>A tempting mistake:</p>
-<pre class="highlight"><code class="language-choreo">#define PRODUCER_MAXNREG 40
-
-inthreads.async (p1 == 0) {
-  __cpp__(R"(asm volatile("setmaxnreg.dec.sync.aligned.u32 PRODUCER_MAXNREG;");)");
-}</code></pre>
-<p>This does <strong>not</strong> work. The preprocessor does not expand macros inside string literals — the generated asm will contain the identifier <code>PRODUCER_MAXNREG</code>, not the number <code>40</code>, and PTX will reject it.</p>
-<p>In practice, teams type numeric literals inside <code>__cpp__</code> strings and use <code>#if</code>/<code>#error</code> guards outside the strings to enforce consistency:</p>
-<pre class="highlight"><code class="language-choreo">#define PRODUCER_MAXNREG 40
-#if PRODUCER_MAXNREG &gt; 50
-#error "Producer maxnreg too high for this tile config"
-#endif
-
-inthreads.async (p1 == 0) {
-  __cpp__(R"(asm volatile("setmaxnreg.dec.sync.aligned.u32 40;");)");
-}</code></pre>
+<p><strong>Compile-time elimination</strong> — The preprocessor keeps one branch and discards the other before Croktile parses the <code>__co__</code> body. This is not a runtime <code>if</code>; the discarded branch never appears in the generated program.</p>
+<p><strong>Command-line defines</strong> — <code>croktile kernel.co -DMATMUL_TILE_K=128</code> defines or overrides macros without editing the source — useful for benchmark sweeps over tile sizes without duplicating files.</p>
 <h2 id="reading-a-production-co-file">Reading a Production <code>.co</code> File<a class="headerlink" href="#reading-a-production-co-file" title="Permanent link">&para;</a></h2>
-<p>When you open a benchmark kernel like <code>blockscale_gemm_e4m3_dyn_sm90_warpspec_1p1c.co</code>, read top down:</p>
+<p>When you open a benchmark kernel such as <code>blockscale_gemm_e4m3_dyn_sm90_warpspec_1p1c.co</code>, read <strong>top down</strong>:</p>
 <ol>
-<li><strong>Macros and <code>#error</code> guards</strong> — the contract: allowed tile sizes, swizzle rules, architecture flags.</li>
-<li><strong>Host setup</strong> — buffers, launch config, timing; ordinary C++.</li>
-<li><strong>The <code>__co__</code> function</strong> — orchestration: <code>parallel</code>, <code>foreach</code>, TMA/MMA, <code>inthreads.async</code>, events. Map each region back to earlier chapters.</li>
-<li><strong><code>__cpp__</code> islands</strong> — usually a handful of lines. Pause on each and identify what the hardware gets that the DSL does not spell.</li>
+<li><strong>Macros and <code>#error</code> guards</strong> — The contract: allowed tile sizes, swizzle rules, architecture flags.</li>
+<li><strong>Host setup</strong> — Buffers, launch configuration, timing; ordinary C++.</li>
+<li><strong>The <code>__co__</code> function</strong> — Orchestration: <code>parallel</code>, <code>foreach</code>, TMA/MMA, <code>inthreads.async</code>, events. Map each region back to earlier chapters.</li>
+<li><strong><code>__cpp__</code> islands</strong> — Usually a handful of lines. Pause on each and ask what the hardware receives that the DSL does not spell.</li>
 </ol>
-<p>That order prevents getting lost in a warp-specialized loop before you know which constants you can change.</p>
-<h2 id="new-syntax">New Syntax<a class="headerlink" href="#new-syntax" title="Permanent link">&para;</a></h2>
+<p>That order keeps you from diving into a warp-specialized loop before you know which constants you are allowed to change.</p>
+<h2 id="chapter-summary">Chapter Summary<a class="headerlink" href="#chapter-summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Takeaway</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>When to escape</td>
+<td>PTX instructions, register hints, host/device constants, guards — use the DSL everywhere it fits; drop down sparingly.</td>
+</tr>
+<tr>
+<td><code>__cpp__</code></td>
+<td>Verbatim paste into generated CUDA; raw strings for <code>asm</code>; names must match generated C++.</td>
+</tr>
+<tr>
+<td><code>setmaxnreg</code></td>
+<td>Canonical example: dec on producer, inc on consumer; tune per kernel; place before heavy loops.</td>
+</tr>
+<tr>
+<td>Guards / macros in strings</td>
+<td>Early <code>return</code> via <code>__cpp__</code>; macros do <strong>not</strong> expand inside string literals — use literals + <code>#error</code> outside.</td>
+</tr>
+<tr>
+<td>Preprocessor</td>
+<td><code>#define</code> for tile geometry; <code>#if</code> / <code>#error</code> for constraints; <code>#ifdef</code> for variants; <code>-D</code> for sweeps.</td>
+</tr>
+<tr>
+<td>Reading <code>.co</code> files</td>
+<td>Macros first, then host, then <code>__co__</code>, then <code>__cpp__</code> islands.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>New syntax</strong></p>
 <table>
 <thead>
 <tr>
@@ -3130,8 +2856,8 @@ inthreads.async (p1 == 0) {
 </tr>
 </tbody>
 </table>
-<p>These escape hatches close the loop: Croktile keeps everyday kernels readable and structured, while <code>__cpp__</code> and the preprocessor handle the hardware-specific details that sit below the DSL's abstraction level. Use them sparingly — one PTX hint, one guard, one pragma — and let the Croktile function own everything else.</p>
-<p>The <a href="../ch09-debug-verbose/">next chapter</a> covers the other side of the workflow: what to do when your kernel compiles but produces wrong results.</p>
+<p>The escape hatches close the loop: Croktile keeps everyday kernels readable and structured, while <code>__cpp__</code> and the preprocessor handle the hardware-specific details that sit below the abstraction. Prefer a single PTX hint, a single guard, or a single pragma over scattering raw islands through the program — let the <code>__co__</code> function own the story.</p>
+<p>The <a href="../ch09-debug-verbose/">next chapter</a> turns to the other side of the workflow: what to do when the kernel compiles but the output is wrong — debugging, verbose modes, and systematic narrowing.</p>
 
 
 
@@ -3187,7 +2913,7 @@ inthreads.async (p1 == 0) {
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.top", "navigation.path", "navigation.indexes", "search.highlight", "search.suggest", "content.code.annotate", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.top", "navigation.path", "navigation.indexes", "search.highlight", "search.suggest", "content.code.annotate", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>

@@ -18,6 +18,10 @@
       
       
         
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../zh/tutorial/ch04-mma/" hreflang="zh">
+        
       
       
       <link rel="icon" href="../../assets/images/favicon.svg">
@@ -80,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#tensor-cores-the-mma-operations" class="md-skip">
+        <a href="#tensor-contraction-the-mma-syntax" class="md-skip">
           Skip to content
         </a>
       
@@ -151,6 +155,32 @@
     
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../zh/tutorial/ch04-mma/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
     
     
       
@@ -572,10 +602,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-mma-lifecycle" class="md-nav__link">
+  <a href="#the-four-step-mma-syntax" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The MMA Lifecycle
+        The four-step MMA syntax
       
     </span>
   </a>
@@ -583,54 +613,60 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sm86-ampere-one-warp-one-mma-tile" class="md-nav__link">
+  <a href="#scaling-the-cooperation-scope" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SM86 (Ampere): One Warp, One MMA Tile
+        Scaling the cooperation scope
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scaling the cooperation scope">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#one-warp-one-tile-the-simplest-mma-matmul" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One warp, one tile: the simplest MMA matmul
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#sm90-hopper-wgmma-and-warp-groups" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#widening-the-scope-warpgroups-and-wgmma" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SM90 (Hopper): WGMMA and Warp Groups
+        Widening the scope: warpgroups and WGMMA
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#multi-warpgroup-mma" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#tiling-further-two-warpgroups-sharing-operands" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Multi-Warpgroup MMA
+        Tiling further: two warpgroups sharing operands
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#what-croktile-handles-for-you" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What Croktile Handles For You
-      
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#debugging-mma-kernels" class="md-nav__link">
+  <a href="#beyond-dense-fp16-what-else-the-four-steps-express" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Debugging MMA Kernels
+        Beyond dense FP16: what else the four steps express
       
     </span>
   </a>
@@ -641,7 +677,18 @@
   <a href="#new-syntax" class="md-nav__link">
     <span class="md-ellipsis">
       
-        New Syntax
+        New syntax
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chapter-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chapter summary
       
     </span>
   </a>
@@ -908,33 +955,9 @@
   
   
   
-    
-    
-      
+    <li class="md-nav__item">
+      <a href="../../optimization/dense-gemm-fp16/" class="md-nav__link">
         
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/matmul-f16/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -948,50 +971,6 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Dense GEMM FP16
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
     </li>
   
@@ -1005,96 +984,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/pattern-optimizations/" class="md-nav__link">
+      <a href="../../optimization/sparse-gemm/" class="md-nav__link">
         
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/aitune-last-mile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AI-Tune Last Mile
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/gemm-sp/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -1108,50 +999,6 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Sparse GEMM (FP16 + E4M3)
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
     </li>
   
@@ -1165,94 +1012,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/pattern-optimizations/" class="md-nav__link">
+      <a href="../../optimization/blockscale-gemm-fp8/" class="md-nav__link">
         
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/aitune-last-mile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AI-Tune Last Mile
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/blockscale-gemm/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -1266,87 +1027,7 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Block-Scaled GEMM FP8
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/blockscale-gemm/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/blockscale-gemm/pattern-optimizations/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -2763,10 +2444,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-mma-lifecycle" class="md-nav__link">
+  <a href="#the-four-step-mma-syntax" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The MMA Lifecycle
+        The four-step MMA syntax
       
     </span>
   </a>
@@ -2774,54 +2455,60 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sm86-ampere-one-warp-one-mma-tile" class="md-nav__link">
+  <a href="#scaling-the-cooperation-scope" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SM86 (Ampere): One Warp, One MMA Tile
+        Scaling the cooperation scope
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scaling the cooperation scope">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#one-warp-one-tile-the-simplest-mma-matmul" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One warp, one tile: the simplest MMA matmul
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#sm90-hopper-wgmma-and-warp-groups" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#widening-the-scope-warpgroups-and-wgmma" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SM90 (Hopper): WGMMA and Warp Groups
+        Widening the scope: warpgroups and WGMMA
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#multi-warpgroup-mma" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#tiling-further-two-warpgroups-sharing-operands" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Multi-Warpgroup MMA
+        Tiling further: two warpgroups sharing operands
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#what-croktile-handles-for-you" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What Croktile Handles For You
-      
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#debugging-mma-kernels" class="md-nav__link">
+  <a href="#beyond-dense-fp16-what-else-the-four-steps-express" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Debugging MMA Kernels
+        Beyond dense FP16: what else the four steps express
       
     </span>
   </a>
@@ -2832,7 +2519,18 @@
   <a href="#new-syntax" class="md-nav__link">
     <span class="md-ellipsis">
       
-        New Syntax
+        New syntax
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chapter-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chapter summary
       
     </span>
   </a>
@@ -2907,21 +2605,34 @@
   
 
 
-<h1 id="tensor-cores-the-mma-operations">Tensor cores: the <code>mma</code> operations<a class="headerlink" href="#tensor-cores-the-mma-operations" title="Permanent link">&para;</a></h1>
-<p>Chapter 3's tiled matmul computes each output element with scalar multiplies and adds — one product at a time, accumulated through a <code>foreach k</code> loop. That is how a CPU would do it. Modern GPUs have dedicated hardware called <strong>tensor cores</strong> that multiply a small matrix tile (commonly 16×16×16 for FP16) in a single macro-operation, producing orders of magnitude more throughput than scalar FMA on the same silicon.</p>
-<p>Croktile exposes tensor cores through four operations that form a fixed lifecycle: <strong>fill</strong>, <strong>load</strong>, <strong>multiply</strong>, <strong>store</strong>. This chapter replaces the scalar inner loop from Chapter 3 with that lifecycle, first on SM86 (Ampere — one warp per MMA) and then on SM90 (Hopper — warpgroup WGMMA).</p>
-<h2 id="the-mma-lifecycle">The MMA Lifecycle<a class="headerlink" href="#the-mma-lifecycle" title="Permanent link">&para;</a></h2>
-<p>Every tensor-core matmul follows the same rhythm:</p>
+<h1 id="tensor-contraction-the-mma-syntax">Tensor Contraction: the <code>mma</code> Syntax<a class="headerlink" href="#tensor-contraction-the-mma-syntax" title="Permanent link">&para;</a></h1>
+<p>Chapter 3's tiled matmul computes the inner contraction the way a CPU would: a <code>foreach k</code> loop where each iteration multiplies two scalars and accumulates into one output element. That works. It is also the slowest way to use a modern accelerator, because it ignores the hardware unit designed specifically for this job.</p>
+<p>The job is <strong>2D tensor contraction</strong> — the operation C += A × B where A, B, and C are small, fixed-shape matrix tiles. It is the inner kernel of every GEMM, every convolution expressed as an im2col matmul, every attention head's QK^T. The operation is so central that hardware vendors build dedicated units to execute it in one macro-instruction: NVIDIA calls them <strong>tensor cores</strong>, Google calls them <strong>MXUs</strong>, Intel has <strong>AMX tiles</strong>, and custom DSAs have their own variants. The tile sizes differ (16×16×16 for FP16 on NVIDIA, 128×128 systolic on TPU, 16×64 on AMX), but the mathematical shape is the same everywhere: take a tile of A, a tile of B, multiply, accumulate into C.</p>
+<p><img alt="2D tensor contraction: A[M,K] × B[K,N] → C[M,N], with different hardware implementations" src="../../assets/images/ch04/fig1_tensor_contraction_dark.png#only-dark" />
+<img alt="2D tensor contraction: A[M,K] × B[K,N] → C[M,N], with different hardware implementations" src="../../assets/images/ch04/fig1_tensor_contraction_light.png#only-light" /></p>
+<p><em>The same mathematical operation — C += A × B on tile-shaped operands — maps to different hardware implementations on different accelerators.</em></p>
+<p>What makes this hard for programmers is not the math but the <strong>register layout</strong>. On a GPU tensor core, the tile is not stored contiguously in one thread's registers. It is <strong>fragmented</strong>: 32 threads in a warp each own scattered pieces of the tile, and the exact scatter pattern depends on the datatype, the architecture generation, and whether the operand is A, B, or C. Writing raw CUDA means declaring <code>wmma::fragment</code> objects, calling <code>load_matrix_sync</code> to distribute a shared-memory tile across lanes with the correct pattern, issuing <code>mma_sync</code>, and then calling <code>store_matrix_sync</code> to reassemble the output. Get the layout wrong — say, load a column-major tile into a row-major fragment — and the result is silently incorrect.</p>
+<p><img alt="GPU tensor core register layout: threads own scattered fragments of the tile" src="../../assets/images/ch04/fig2_register_loading_dark.png#only-dark" />
+<img alt="GPU tensor core register layout: threads own scattered fragments of the tile" src="../../assets/images/ch04/fig2_register_loading_light.png#only-light" /></p>
+<p><em>Simplified view of how 32 threads in a warp own scattered register fragments of an MMA tile. The exact pattern is architecture-specific and deliberately opaque.</em></p>
+<p>Croktile's design sidesteps this complexity entirely. Instead of exposing architecture-specific fragment types, it provides <strong>four abstract operations</strong> that work on opaque register tiles: <strong>fill</strong>, <strong>load</strong>, <strong>multiply</strong>, and <strong>store</strong>. These operations describe the same 2D contraction workflow regardless of which hardware backend runs them. The compiler handles fragment layouts, lane mappings, and instruction selection for the target architecture — you describe <em>what</em> contraction to perform, not <em>how</em> registers are scattered.</p>
+<p><img alt="Croktile's four-step MMA syntax: fill, load, multiply, store" src="../../assets/images/ch04/fig3_mma_syntax_dark.png#only-dark" />
+<img alt="Croktile's four-step MMA syntax: fill, load, multiply, store" src="../../assets/images/ch04/fig3_mma_syntax_light.png#only-light" /></p>
+<p><em>The four-step MMA syntax is an abstract interface — not hardwired to GPU tensor cores. Any DSA that supports 2D tile contraction can map to these operations.</em></p>
+<h2 id="the-four-step-mma-syntax">The four-step MMA syntax<a class="headerlink" href="#the-four-step-mma-syntax" title="Permanent link">&para;</a></h2>
+<p>Every tensor-contraction kernel follows the same rhythm:</p>
 <ol>
-<li><strong><code>mma.fill 0.0</code></strong> — create a register-resident accumulator tile, initialized to zero.</li>
-<li><strong><code>mma.load</code></strong> — load an operand tile from shared memory into MMA operand registers.</li>
-<li><strong><code>mma.row.row mc, ma, mb</code></strong> — multiply operand tiles and accumulate: C += A × B.</li>
-<li><strong><code>mma.store mc, output_s</code></strong> — write the accumulator back to shared memory.</li>
+<li><strong><code>mma.fill 0.0</code></strong> — allocate an accumulator tile <code>mc</code> in registers and zero it.</li>
+<li><strong><code>mma.load</code></strong> — bring operand tiles from shared memory into opaque MMA registers <code>ma</code> and <code>mb</code>.</li>
+<li><strong><code>mma.row.row mc, ma, mb</code></strong> — issue the contraction: <strong>C += A × B</strong> into <code>mc</code>.</li>
+<li><strong><code>mma.store mc, dst</code></strong> — write <code>mc</code> from registers into shared memory.</li>
 </ol>
-<p>You loop steps 2–3 over K (loading the next K-slice of A and B each iteration, accumulating into the same <code>mc</code>), then do step 4 once to flush the result. The names <code>mc</code>, <code>ma</code>, <code>mb</code> are opaque register tiles — you never declare their sizes or lane mappings. The compiler handles that based on the target architecture.</p>
-<h2 id="sm86-ampere-one-warp-one-mma-tile">SM86 (Ampere): One Warp, One MMA Tile<a class="headerlink" href="#sm86-ampere-one-warp-one-mma-tile" title="Permanent link">&para;</a></h2>
-<p>On SM86, tensor-core MMA is scoped to a <strong>single warp</strong> (32 threads). In Croktile, that corresponds to <code>parallel ... : group</code> — one cooperative thread group the size of one warp.</p>
-<p>Here is a complete FP16 matmul kernel for SM86. The tile sizes match the Croktile benchmark defaults: all <code>MATMUL_*</code> constants are 16, so one block tile equals one MMA tile along M and N.</p>
+<p>You loop steps 2–3 over K (loading the next K-slice each iteration, accumulating into the same <code>mc</code>), then run step 4 once to flush the completed output tile. The names <code>mc</code>, <code>ma</code>, and <code>mb</code> are opaque register tiles — you do not declare per-lane layouts; the compiler derives them from the target and your layout choice (<code>row.row</code> here).</p>
+<p>The <code>.row.row</code> suffix is a <strong>layout contract</strong> — it tells the hardware how to interpret the bits in <code>ma</code> and <code>mb</code>. Both operands are row-major. If B is stored column-major in shared memory, you write <code>mma.row.col mc, ma, mb</code> instead. The full set of layout combinations is <code>row.row</code>, <code>row.col</code>, <code>col.row</code>, and <code>col.col</code>; in practice, <code>row.row</code> and <code>row.col</code> cover most kernels. Choosing the wrong variant is a correctness bug, not a performance hint — the hardware interprets register bits differently for each layout.</p>
+<h2 id="scaling-the-cooperation-scope">Scaling the cooperation scope<a class="headerlink" href="#scaling-the-cooperation-scope" title="Permanent link">&para;</a></h2>
+<p>The four-step syntax stays the same regardless of how many threads cooperate on a single contraction. What changes is the <strong>cooperation scope</strong> — one warp, one warpgroup, two warpgroups — and that progression is the story of this section.</p>
+<h3 id="one-warp-one-tile-the-simplest-mma-matmul">One warp, one tile: the simplest MMA matmul<a class="headerlink" href="#one-warp-one-tile-the-simplest-mma-matmul" title="Permanent link">&para;</a></h3>
+<p>On Ampere (SM86), tensor-core MMA is scoped to a <strong>single warp</strong> (32 threads). In Croktile, that corresponds to <code>: group</code>. Here is a complete FP16 matmul kernel where every <code>MATMUL_*</code> constant is 16, so one block tile equals one MMA tile:</p>
 <pre class="highlight"><code class="language-choreo">__co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
   parallel {block_m, block_n} by [cdiv(M, MATMUL_TILE_M), cdiv(N, MATMUL_TILE_N)] : block {
     shared f16 [MATMUL_TILE_M, MATMUL_TILE_N] output_s;
@@ -2946,16 +2657,18 @@
     dma.copy output_s =&gt; output.subspan(MATMUL_TILE_M, MATMUL_TILE_N).at(block_m, block_n);
   }
 }</code></pre>
-<p>Reading from the outside in:</p>
-<p><strong>Grid and <code>void</code> return.</strong> The function returns <code>void</code> — results are written in-place to the <code>output</code> parameter instead of being returned. This is the standard pattern for GPU kernels that accept destination pointers. <code>cdiv(M, MATMUL_TILE_M)</code> is ceiling division — the number of tiles along M, rounding up for partial tiles.</p>
-<p><strong>Block-level structure.</strong> Each block owns a <code>MATMUL_TILE_M × MATMUL_TILE_N</code> region of the output. <code>output_s</code> is shared memory staging for the result tile. Indices <code>block_m</code> and <code>block_n</code> select which region.</p>
-<p><strong>Warp-level MMA.</strong> Inside the block, <code>parallel {warp_m, warp_n} ... : group</code> enumerates warps. With tile sizes all equal to 16, the extents are 1×1 — a single warp handles the entire block tile. If you widened the block tile to 32×32 with MMA still 16×16, you would have 2×2 = 4 warps, each with its own accumulator.</p>
-<p><strong>The K loop.</strong> For each K-tile, <code>dma.copy</code> stages A and B strips into shared memory. The <code>subspan(MATMUL_TILE_M, MATMUL_TILE_K).at(block_m, iv_k)</code> syntax creates a view with explicit tile extents and selects the tile at position <code>(block_m, iv_k)</code> — the same idea as <code>chunkat</code>, but with the tile shape spelled out. Chapter 7 covers <code>subspan</code> vs <code>chunkat</code> in more detail.</p>
-<p><strong>Loading MMA operands.</strong> <code>ma = mma.load lhs_load_s.chunkat(warp_m, iv_warp_k)</code> loads the warp's A-operand tile from the shared-memory staging buffer into MMA registers. The <code>chunkat</code> selects the M × K slice for this warp and this inner K step.</p>
-<p><strong>The multiply-accumulate.</strong> <code>mma.row.row mc, ma, mb</code> is the tensor-core instruction. The <code>row.row</code> suffix states the <strong>layout contract</strong>: both A and B operands are interpreted as row-major. Choosing the wrong variant is not a performance hint — it is a correctness bug. The hardware interprets register bits differently depending on this choice.</p>
-<p><strong>Store.</strong> After the K loop, <code>mma.store mc, output_s.subspan(...).at(warp_m, warp_n)</code> writes the warp's accumulated tile from register into its sub-rectangle of shared memory. Then <code>dma.copy output_s =&gt; output.subspan(...).at(block_m, block_n)</code> copies the full block tile to global memory.</p>
-<h2 id="sm90-hopper-wgmma-and-warp-groups">SM90 (Hopper): WGMMA and Warp Groups<a class="headerlink" href="#sm90-hopper-wgmma-and-warp-groups" title="Permanent link">&para;</a></h2>
-<p>Hopper introduces <strong>Warpgroup Matrix Multiply-Accumulate (WGMMA)</strong>: the same C += A × B idea, but issued cooperatively by <strong>four warps</strong> (128 threads). In Croktile, that wider cooperation appears as <code>: group-4</code> instead of <code>: group</code>.</p>
+<p><strong><code>__co__ void</code> and in-place output.</strong> The kernel returns nothing; results go through <code>output</code>, matching the usual GPU pattern of writing through a global pointer.</p>
+<p><strong>Block grid.</strong> <code>cdiv(M, MATMUL_TILE_M)</code> is ceiling division — how many tiles along M, including partial tiles. <code>block_m</code> and <code>block_n</code> pick which output tile this block owns.</p>
+<p><strong>Warp grid and <code>mma.fill</code>.</strong> <code>parallel {warp_m, warp_n} ... : group</code> maps MMA tiles to warps. With all dimensions 16, extents are 1×1 — one warp covers the whole block tile. Wider block tiles would add warps, each with its own <code>mc</code>.</p>
+<p><strong>K loop and DMA.</strong> Each <code>iv_k</code> stage pulls A and B strips into shared memory via <code>dma.copy</code> with <code>subspan(...).at(...)</code>. Chapter 7 goes deeper on <code>subspan</code> versus <code>chunkat</code>.</p>
+<p><strong>Operand loads.</strong> <code>mma.load</code> moves the warp's tile from shared memory into <code>ma</code> / <code>mb</code>. <code>chunkat(warp_m, iv_warp_k)</code> selects the M×K slice for this warp and inner-K step.</p>
+<p><strong>Store and epilogue.</strong> After K completes, <code>mma.store</code> writes <code>mc</code> into the warp's sub-rectangle of <code>output_s</code>, then <code>dma.copy</code> sends the full block tile to global memory.</p>
+<p>This kernel is simple because the cooperation scope is narrow: 32 threads, one warp, one MMA tile at a time. The four-step syntax reads linearly and the tile geometry is obvious. But what happens when the hardware offers a wider cooperation window?</p>
+<h3 id="widening-the-scope-warpgroups-and-wgmma">Widening the scope: warpgroups and WGMMA<a class="headerlink" href="#widening-the-scope-warpgroups-and-wgmma" title="Permanent link">&para;</a></h3>
+<p>Hopper (SM90) adds <strong>Warpgroup Matrix Multiply-Accumulate (WGMMA)</strong>: the same C += A × B contraction, but issued cooperatively by <strong>four warps</strong> (128 threads). The hardware instruction is wider, the tiles are bigger, and throughput improves — but the four-step syntax does not change. The only thing that changes in Croktile is the space specifier: <code>: group-4</code> instead of <code>: group</code>.</p>
+<p><img alt="Ampere vs Hopper MMA cooperation scope" src="../../assets/images/ch04/fig4_sm86_vs_sm90_dark.png#only-dark" />
+<img alt="Ampere vs Hopper MMA cooperation scope" src="../../assets/images/ch04/fig4_sm86_vs_sm90_light.png#only-light" /></p>
+<p><em>SM86: one warp per MMA. SM90: four warps (<code>: group-4</code>) cooperate on WGMMA.</em></p>
 <pre class="highlight"><code class="language-choreo">parallel {block_m, block_n} by [cdiv(M, MATMUL_WARP_M), cdiv(N, MATMUL_WARP_N)] : block {
   shared f16 [MATMUL_WARP_M, MATMUL_TILE_K] lhs_load_s;
   shared f16 [MATMUL_WARP_N, MATMUL_TILE_K] rhs_load_s;
@@ -2979,47 +2692,13 @@
   mma.store mc, output_s;
   dma.copy output_s =&gt; output.subspan(MATMUL_WARP_M, MATMUL_WARP_N).at(block_m, block_n);
 }</code></pre>
-<p>The lifecycle is identical: fill, load, multiply, store. What changes:</p>
-<table>
-<thead>
-<tr>
-<th>Aspect</th>
-<th>SM86 (Ampere)</th>
-<th>SM90 (Hopper)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Thread scope</td>
-<td>One warp — <code>: group</code></td>
-<td>Four warps — <code>: group-4</code></td>
-</tr>
-<tr>
-<td>Accumulator init</td>
-<td><code>mma.fill 0.0</code></td>
-<td><code>mma.fill.f16 0.0f</code> (precision suffix)</td>
-</tr>
-<tr>
-<td>Global → shared</td>
-<td><code>dma.copy</code></td>
-<td>Same (or TMA — see Chapter 7)</td>
-</tr>
-<tr>
-<td>Core math</td>
-<td><code>mma.row.row mc, ma, mb</code></td>
-<td>Same mnemonic, wider hardware</td>
-</tr>
-<tr>
-<td>Store</td>
-<td><code>mma.store</code> into per-warp tile</td>
-<td><code>mma.store</code> into per-warpgroup tile</td>
-</tr>
-</tbody>
-</table>
-<p>The underscore in <code>chunkat(_, iv_warp)</code> means "no tiling on the first dimension — keep its full extent." Only K is subdivided for each MMA slice; the full M (or N) side is already in shared memory for this block.</p>
-<p><strong><code>mma.fill.f16</code> vs <code>mma.fill 0.0</code>.</strong> On Hopper, you sometimes want to specify the accumulator precision explicitly — <code>.f16</code> for FP16, <code>.f32</code> for FP32. A common pattern is FP16 operands with FP32 accumulators for numerical stability on large K. The SM86 version uses the generic <code>mma.fill 0.0</code> which infers the type.</p>
-<h2 id="multi-warpgroup-mma">Multi-Warpgroup MMA<a class="headerlink" href="#multi-warpgroup-mma" title="Permanent link">&para;</a></h2>
-<p>Chapter 3 introduced <code>parallel p1 by 2 : group-4</code> — two warpgroups in one block. Here is how that works with MMA: both groups share the same B tile but load different rows of A:</p>
+<p>Read it side by side with the SM86 kernel. Fill, load, multiply, store — the rhythm is identical. The differences are mechanical:</p>
+<p><strong><code>mma.fill.f16 0.0f</code>.</strong> Hopper often spells accumulator precision explicitly — <code>.f16</code>, <code>.f32</code>, etc. FP16 operands with FP32 accumulation is a common pattern for long K dimensions, avoiding numerical overflow in partial sums. SM86 commonly uses the shorter <code>mma.fill 0.0</code> and relies on inference.</p>
+<p><strong><code>parallel p by 1 : group-4</code>.</strong> One warpgroup (four warps) executes the inner loads and MMA. The mnemonic <code>mma.row.row</code> matches Ampere, but the hardware issue is wider.</p>
+<p><strong><code>chunkat(_, iv_warp)</code>.</strong> <code>_</code> means "do not tile that dimension" — keep the full M (or N) extent already resident in shared memory; only K is subdivided per MMA slice.</p>
+<p>That is the whole point of the abstraction: the same four operations, the same layout contract, the same <code>chunkat</code> / <code>subspan</code> expressions. The compiler maps them to different hardware instructions depending on whether the target is SM86 or SM90. You think about <em>what</em> contraction to perform; the cooperation width is a deployment detail.</p>
+<h3 id="tiling-further-two-warpgroups-sharing-operands">Tiling further: two warpgroups sharing operands<a class="headerlink" href="#tiling-further-two-warpgroups-sharing-operands" title="Permanent link">&para;</a></h3>
+<p>Chapter 3 introduced <code>parallel p1 by 2 : group-4</code> — two warpgroups in one block. With MMA, both groups can share the same B tile while loading different rows of A. This is how large block tiles get split into multiple MMA tiles without duplicating the B operand in shared memory:</p>
 <pre class="highlight"><code class="language-choreo">parallel {block_m, block_n} by [cdiv(M, MATMUL_TILE_M), cdiv(N, MATMUL_WARP_N)] : block {
   shared f16 [MATMUL_TILE_M, MATMUL_TILE_K] lhs_load_s;
   shared f16 [MATMUL_WARP_N, MATMUL_TILE_K] rhs_load_s;
@@ -3045,14 +2724,60 @@
   }
   dma.copy output_s =&gt; output.subspan(MATMUL_TILE_M, MATMUL_WARP_N).at(block_m, block_n);
 }</code></pre>
-<p>With <code>MATMUL_TILE_M = 128</code> and <code>MATMUL_WARP_M = 64</code>, the block tile is 128 rows tall and split between two warpgroups of 64 rows each. <code>p1</code> selects which half: <code>lhs_load_s.subspan(MATMUL_WARP_M, ...).at(p1, 0)</code> gives warpgroup 0 the top 64 rows and warpgroup 1 the bottom 64. Both read the same <code>rhs_load_s</code> — the reuse win.</p>
-<p>The store mirrors the load: <code>output_s.subspan(MATMUL_WARP_M, MATMUL_WARP_N).at(p1, 0)</code> ensures each warpgroup writes to its own half of the output staging buffer.</p>
-<h2 id="what-croktile-handles-for-you">What Croktile Handles For You<a class="headerlink" href="#what-croktile-handles-for-you" title="Permanent link">&para;</a></h2>
-<p>In raw CUDA, tensor-core programming means declaring <code>wmma::fragment</code> types with specific shapes, calling <code>load_matrix_sync</code>, <code>mma_sync</code>, and <code>store_matrix_sync</code>, and manually tracking row-major vs column-major variants and <code>ldmatrix</code> staging. Croktile pushes that below the surface. <code>mc</code>, <code>ma</code>, and <code>mb</code> are logical MMA tiles; the compiler maps them to the correct register layouts for your target.</p>
-<p>You still must choose: consistent layouts (<code>mma.row.row</code> must match how your data is actually stored), tile sizes that divide the hardware MMA geometry (16 for this FP16 path on SM86), and a thread hierarchy (<code>: group</code> vs <code>: group-4</code>) that matches the ISA. Croktile does not remove those constraints — it makes them readable and keeps the register mapping out of your way.</p>
-<h2 id="debugging-mma-kernels">Debugging MMA Kernels<a class="headerlink" href="#debugging-mma-kernels" title="Permanent link">&para;</a></h2>
-<p>When you get a wrong result, suspect <strong>layout first</strong> (row vs column major, and whether <code>rhs</code> is <code>[N, K]</code> vs <code>[K, N]</code>), then <strong>indexing</strong> (which <code>block_m</code>, <code>block_n</code>, and K slice you attached with <code>.at</code> / <code>chunkat</code>), then <strong>async ordering</strong> if you introduced asynchronous copies. The common mistake is mislabeling <code>mma.row.row</code> when your data is actually column-major, or using <code>chunkat</code> indices that do not align with the MMA tile geometry.</p>
-<h2 id="new-syntax">New Syntax<a class="headerlink" href="#new-syntax" title="Permanent link">&para;</a></h2>
+<p><strong>Splitting M with <code>p1</code>.</strong> With <code>MATMUL_TILE_M = 128</code> and <code>MATMUL_WARP_M = 64</code>, the block spans 128 rows; <code>p1</code> selects the upper or lower 64-row strip. <code>lhs_load_s.subspan(MATMUL_WARP_M, ...).at(p1, 0)</code> gives each warpgroup its A rows; both use the same <code>rhs_load_s</code>.</p>
+<p><strong>Mirrored store.</strong> <code>mma.store</code> targets <code>output_s.subspan(MATMUL_WARP_M, MATMUL_WARP_N).at(p1, 0)</code> so each warpgroup writes its half of the staging buffer, then one <code>dma.copy</code> emits the combined tile.</p>
+<p>The pattern scales: three warpgroups, four warpgroups, or any count that divides your block tile. The four-step syntax stays invariant; only the parallel decomposition of the tile changes.</p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>One warp (<code>: group</code>)</th>
+<th>One warpgroup (<code>: group-4</code>)</th>
+<th>Two warpgroups</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Threads</td>
+<td>32</td>
+<td>128</td>
+<td>256</td>
+</tr>
+<tr>
+<td>Accumulator</td>
+<td><code>mma.fill 0.0</code></td>
+<td><code>mma.fill.f16 0.0f</code></td>
+<td><code>mma.fill.f32 0.0f</code></td>
+</tr>
+<tr>
+<td>Tile split</td>
+<td>One MMA tile per warp</td>
+<td>One MMA tile per warpgroup</td>
+<td>Block tile split across warpgroups</td>
+</tr>
+<tr>
+<td>Operand sharing</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>B tile shared, A rows split by <code>p1</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="beyond-dense-fp16-what-else-the-four-steps-express">Beyond dense FP16: what else the four steps express<a class="headerlink" href="#beyond-dense-fp16-what-else-the-four-steps-express" title="Permanent link">&para;</a></h2>
+<p>The examples above use <code>mma.row.row</code> on dense FP16 tiles. The same four-step pattern extends to workloads the basic form cannot reach.</p>
+<p><strong>Structured sparsity.</strong> When half the elements of A follow a 2:4 zero pattern (Ampere and later), the hardware can skip the zero products and roughly double throughput — but it needs a <strong>metadata operand</strong> <code>me</code> that encodes which elements are nonzero:</p>
+<pre class="highlight"><code class="language-choreo">mma.row.row.sp mc, ma, mb, me;</code></pre>
+<p>The <code>.sp</code> suffix adds the metadata operand; everything else is the same fill-load-multiply-store rhythm. Any layout combination works: <code>mma.row.col.sp</code>, etc. You load <code>me</code> from a separate metadata tensor alongside A and B.</p>
+<p><strong>Quantized operands with per-tile scaling.</strong> FP8 operands (<code>f8_e4m3</code>, <code>f8_e5m2</code>) need per-tile dequantization so the accumulator stays numerically accurate. Croktile fuses the scaling into the contraction:</p>
+<pre class="highlight"><code class="language-choreo">mma.row.row.scale mc, ma, mb, sc_a, sc_b;</code></pre>
+<p>Each result element is scaled by <code>sc_a</code> and <code>sc_b</code> after the contraction — no separate dequant kernel needed. Alternatively, scaling can be a <strong>standalone statement</strong> when the scale source differs from the standard fused path:</p>
+<pre class="highlight"><code class="language-choreo">mma.row.row mc, ma, mb;
+mma.scale mc, sc_a, sc_b;</code></pre>
+<p>The standalone <code>mma.scale</code> appears in some MoE and mixed-precision kernels.</p>
+<p><strong>Swizzled loads and transposed stores.</strong> When shared memory uses a swizzle pattern to avoid bank conflicts (<a href="../ch07-advanced-movement/">Chapter 7</a>), the MMA load must use the matching swizzle mode: <code>mma.load.swiz&lt;N&gt;</code>. The <code>&lt;N&gt;</code> must agree between <code>tma.copy.swiz&lt;N&gt;</code> and <code>mma.load.swiz&lt;N&gt;</code> — a mismatch reads garbage. For output, <code>mma.store.transp mc, dst</code> writes the accumulator with rows and columns swapped, useful when the next stage expects column-major data.</p>
+<p><strong>Pipeline synchronization.</strong> In pipelined kernels where producer and consumer warpgroups overlap (<a href="../ch06-synchronization/">Chapter 6</a>), <code>mma.commit</code> marks the boundary between "done reading this K-slab's operands" and "safe to reuse the shared-memory buffer." It is mandatory glue in event-driven pipelines.</p>
+<p>These extensions all follow the same design principle: the four-step skeleton stays fixed, and the variant suffix communicates a specific contract to the hardware. The table below collects every variant for reference.</p>
+<h2 id="new-syntax">New syntax<a class="headerlink" href="#new-syntax" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -3063,47 +2788,102 @@
 <tbody>
 <tr>
 <td><code>mc = mma.fill 0.0</code></td>
-<td>Initialize an MMA accumulator tile to zero</td>
+<td>Initialize accumulator tile to zero</td>
+</tr>
+<tr>
+<td><code>mma.fill.f16 0.0f</code> / <code>mma.fill.f32 0.0f</code></td>
+<td>Accumulator with explicit precision</td>
 </tr>
 <tr>
 <td><code>ma = mma.load src.chunkat(...)</code></td>
 <td>Load operand tile from shared into MMA registers</td>
 </tr>
 <tr>
+<td><code>mma.load.swiz&lt;N&gt; src</code></td>
+<td>Load with swizzle mode (see <a href="../ch07-advanced-movement/">Ch 7</a>)</td>
+</tr>
+<tr>
 <td><code>mma.row.row mc, ma, mb</code></td>
-<td>C += A × B on tensor cores (row-major operands)</td>
+<td>C += A × B (both row-major)</td>
+</tr>
+<tr>
+<td><code>mma.row.col mc, ma, mb</code></td>
+<td>C += A × B (A row-major, B col-major)</td>
+</tr>
+<tr>
+<td><code>mma.row.row.sp mc, ma, mb, me</code></td>
+<td>Sparse MMA with metadata operand</td>
+</tr>
+<tr>
+<td><code>mma.row.row.scale mc, ma, mb, sc_a, sc_b</code></td>
+<td>Fused MMA + per-tile dequantization</td>
+</tr>
+<tr>
+<td><code>mma.scale mc, sc_a, sc_b</code></td>
+<td>Standalone post-MMA scaling</td>
 </tr>
 <tr>
 <td><code>mma.store mc, dst</code></td>
-<td>Write accumulator tile from registers to shared</td>
+<td>Write accumulator to shared memory</td>
 </tr>
 <tr>
-<td><code>mma.fill.f16 0.0f</code></td>
-<td>Accumulator with explicit FP16 precision</td>
+<td><code>mma.store.transp mc, dst</code></td>
+<td>Write accumulator transposed</td>
 </tr>
 <tr>
-<td><code>mma.fill.f32 0.0f</code></td>
-<td>Accumulator with FP32 precision (for mixed-precision)</td>
+<td><code>mma.commit</code></td>
+<td>Pipeline stage fence for WGMMA (see <a href="../ch06-synchronization/">Ch 6</a>)</td>
 </tr>
 <tr>
 <td><code>cdiv(a, b)</code></td>
-<td>Ceiling division: number of tiles rounding up</td>
+<td>Ceiling division</td>
 </tr>
 <tr>
 <td><code>__co__ void fn(...)</code></td>
-<td>Kernel that writes results in-place (no return value)</td>
-</tr>
-<tr>
-<td><code>subspan(M, K).at(i, j)</code></td>
-<td>View with explicit tile extents, selected by index</td>
-</tr>
-<tr>
-<td><code>chunkat(_, iv_warp)</code></td>
-<td><code>_</code> wildcard: no tiling on that dimension</td>
+<td>Kernel that writes results in-place</td>
 </tr>
 </tbody>
 </table>
-<p>The inner loop is now hardware-accelerated, but loads and compute still take turns — while tensor cores multiply, the memory system idles, and vice versa. The <a href="../ch05-branch-control/">next chapter</a> introduces warp specialization and conditional control so different threads can play different roles: one group loading data while another computes.</p>
+<h2 id="chapter-summary">Chapter summary<a class="headerlink" href="#chapter-summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Takeaway</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2D tensor contraction</td>
+<td>C += A × B on tile-shaped operands — the universal inner kernel</td>
+</tr>
+<tr>
+<td>Hardware diversity</td>
+<td>GPU tensor cores, TPU MXU, Intel AMX, custom DSAs all implement this; tile sizes and register layouts differ</td>
+</tr>
+<tr>
+<td>Four-step abstraction</td>
+<td><strong>fill → load → multiply → store</strong>; the compiler handles fragment layouts for each target</td>
+</tr>
+<tr>
+<td>Scaling cooperation</td>
+<td><code>: group</code> (one warp) → <code>: group-4</code> (one warpgroup) → multiple warpgroups — syntax stays invariant</td>
+</tr>
+<tr>
+<td>Layout contract</td>
+<td><code>mma.row.row</code>, <code>mma.row.col</code>, etc. — must match data in shared memory</td>
+</tr>
+<tr>
+<td>Sparse and quantized</td>
+<td><code>.sp</code> adds a metadata operand; <code>.scale</code> fuses per-tile dequantization</td>
+</tr>
+<tr>
+<td>Swizzle and pipeline</td>
+<td><code>mma.load.swiz&lt;N&gt;</code> matches swizzled shared layouts; <code>mma.commit</code> fences pipeline stages</td>
+</tr>
+</tbody>
+</table>
+<p>The contraction is fast, but loads and compute still take turns — while tensor cores multiply, the memory system idles. The <a href="../ch05-branch-control/">next chapter</a> introduces <strong>role specialization</strong> so different thread groups can play different roles: one group loading data while another computes, overlapping memory and math in time.</p>
 
 
 
@@ -3159,7 +2939,7 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.top", "navigation.path", "navigation.indexes", "search.highlight", "search.suggest", "content.code.annotate", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.top", "navigation.path", "navigation.indexes", "search.highlight", "search.suggest", "content.code.annotate", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>

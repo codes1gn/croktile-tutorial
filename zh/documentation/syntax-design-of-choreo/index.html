@@ -1,0 +1,3215 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://codes1gn.github.io/croktile-tutorial/zh/documentation/syntax-design-of-choreo/">
+      
+      
+        <link rel="prev" href="../operator-samples/">
+      
+      
+        <link rel="next" href="../why-symbolic-shapes/">
+      
+      
+        
+          <link rel="alternate" href="../../../documentation/syntax-design-of-choreo/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="zh">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Syntax Design - Croktile</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    
+      <link rel="stylesheet" href="../../../assets/css/custom.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="light-green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#choreo" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../" title="Croktile" class="md-header__button md-logo" aria-label="Croktile" data-md-component="logo">
+      
+  <img src="../../../assets/images/logo-2.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Croktile
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Syntax Design
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="light-green"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="green" data-md-color-accent="light-green"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../documentation/syntax-design-of-choreo/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/codes1gn/croktile-tutorial" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    codes1gn/croktile-tutorial
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="Croktile" class="md-nav__button md-logo" aria-label="Croktile" data-md-component="logo">
+      
+  <img src="../../../assets/images/logo-2.png" alt="logo">
+
+    </a>
+    Croktile
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/codes1gn/croktile-tutorial" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    codes1gn/croktile-tutorial
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../what-is-choreo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What is Good in CrokTile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../tutorial/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part I — Tutorial
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Part I — Tutorial
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch00-installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 0: Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch01-hello-croktile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 1: Hello Croktile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch02-data-movement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 2: Data Movement
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch03-parallelism/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 3: Parallelism
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch04-mma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 4: MMA Operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch05-branch-control/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 5: Branch & Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch06-synchronization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 6: Synchronization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch07-advanced-movement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 7: Advanced Movement
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch08-cpp-interop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 8: C++ Interop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/ch09-debug-verbose/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ch 9: Debug & Verbose
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../optimization/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part II — Performance Tuning Demos
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Part II — Performance Tuning Demos
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../optimization/setup-profiling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profiling Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../optimization/dense-gemm-fp16/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dense GEMM FP16
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../optimization/sparse-gemm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sparse GEMM (FP16 + E4M3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../optimization/blockscale-gemm-fp8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Block-Scaled GEMM FP8
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part III — Coding Reference
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Part III — Coding Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Program Structure
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Program Structure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../choreo-program-structure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Croktile-C++ Program Structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shaped Data
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Shaped Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shape-in-choreo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shape and MDSpan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integer-ituple/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integers and I-Tuples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../spanned-data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spanned Data and Buffers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../symbolic-shape/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dynamic Shape and Symbolic Dimension
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Loop and Parallelism
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Loop and Parallelism
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../intro-loop-parallel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About Parallelism and Iterations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parallel-in-choreo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SPMD Parallelism
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../within-loops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Loop Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Movement
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data Movement
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic-dma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The DMA Statement
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tiling-chunkat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tile Data with ChunkAt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dma-in-advance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced Data Movement
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++ Embeddings
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    C++ Embeddings
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../input-output/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inputs and Output
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../macro-in-choreo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Macro and Preprocessing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_7" id="__nav_5_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MPMD Programming
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    MPMD Programming
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../thread-masking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Thread Masking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Events for Async Execution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../general-async/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    More on Async Execution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_8" id="__nav_5_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Advanced
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../loop-in-advance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experimental Features
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_9" id="__nav_5_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optimization Patterns
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Optimization Patterns
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tileflow-opt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tileflow Optimizations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../async-dma-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Async DMA Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multi-buffering-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-buffering Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operator-samples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference Palette
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_11" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_11" id="__nav_5_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Rationales
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Design Rationales
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Syntax Design
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Syntax Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引言
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choreo-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将 Choreo 嵌入 C++
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        变量与类型
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="变量与类型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scalar-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scalar Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spanned-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Spanned Types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Spanned Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#partial-typemdspan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partial Type：mdspan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fully-typing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        完整定型（Fully-Typing）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage-qualifier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        存储限定符（Storage Qualifier）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i-tuple-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        I-Tuple Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mdspan-i-tuple" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        对 mdspan 与 i-tuple 的运算
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bounded-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bounded Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        控制结构
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="控制结构">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parallel-by" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        并行区域：parallel-by 块
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-in-where" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        with-in 块与 where 子句
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#foreach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        foreach 块
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upper-bound" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upper-bound 运算
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        异步运算：DMA 语句
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bounded-itupleinteger-chunkat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bounded-ituple/integer 与 chunkat 运算
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choreo_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        函数调用与调用 Choreo 函数
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choreo-c_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choreo 与 C++ 函数间的参数传递
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        小结
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../why-symbolic-shapes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why Symbolic Shapes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../value-numbering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Symbolic Evaluation System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dynamic-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dynamism Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part IV — Design Rationales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引言
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choreo-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将 Choreo 嵌入 C++
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        变量与类型
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="变量与类型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scalar-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scalar Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spanned-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Spanned Types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Spanned Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#partial-typemdspan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partial Type：mdspan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fully-typing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        完整定型（Fully-Typing）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage-qualifier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        存储限定符（Storage Qualifier）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i-tuple-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        I-Tuple Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mdspan-i-tuple" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        对 mdspan 与 i-tuple 的运算
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bounded-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bounded Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        控制结构
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="控制结构">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parallel-by" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        并行区域：parallel-by 块
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-in-where" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        with-in 块与 where 子句
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#foreach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        foreach 块
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upper-bound" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upper-bound 运算
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        异步运算：DMA 语句
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bounded-itupleinteger-chunkat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bounded-ituple/integer 与 chunkat 运算
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choreo_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        函数调用与调用 Choreo 函数
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choreo-c_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choreo 与 C++ 函数间的参数传递
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        小结
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="导航栏" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../" class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Part III — Coding Reference
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Design Rationales
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="choreo">Choreo 语法设计<a class="headerlink" href="#choreo" title="Permanent link">&para;</a></h1>
+<h2 id="_1">引言<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>Choreo 是一种嵌入式领域专用语言（eDSL），旨在简化加速器硬件上的数据搬运编排，减轻编写高性能 kernel 的工程师的日常负担，包括需受硬件能力约束的 tiling 策略等数据搬运复杂性。借助 Choreo，编程过程更易上手，工程师可更高效地优化这些关键环节。</p>
+<h2 id="choreo-c">将 Choreo 嵌入 C++<a class="headerlink" href="#choreo-c" title="Permanent link">&para;</a></h2>
+<p>Choreo 为嵌入 C++ 的 DSL 代码。Choreo 编译器将 Choreo 函数做 source-to-source 翻译为 C++，并隐式包含 <code>choreo.h</code>，使翻译结果能与其余 C++ 代码协同工作。下例展示用法。</p>
+<p><pre class="highlight"><code>// some C++ code
+
+__co__ void choreo_function() {
+  // choreo code
+}
+
+// another C++ code
+void foo() {
+  choreo_function();
+}
+</code></pre>
+注意：Choreo 函数以关键字 <code>\__co\__</code> 为前缀；函数体内的代码均由 Choreo 编译器翻译。其余 C++ 代码按声明名调用 Choreo 函数。</p>
+<p>此外，引入若干 Choreo 专有类型，以保证 Choreo 函数实参与调用方一致。因若干重要编程要素尚未介绍，相关细节延至数据类型说明之后再述。</p>
+<h2 id="_2">变量与类型<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>Choreo 引入四类基本类型范畴：scalar-type、spanned-type、integer-tuple-type（ituple-type）与 bounded-type，各司其职。</p>
+<ul>
+<li><strong>Scalar Type</strong>：满足程序控制需求，由 <em>Integer Type</em> 与 <em>Boolean Type</em> 构成。</li>
+<li><strong>Spanned Type</strong>：表示用于计算的数据类型（通常为张量）。除引用原始数据外，<em>spanned type</em> 还将数据与由多维范围表示的形状相关联；该「多维范围」称为 <code>mdspan</code>，对 tiling 等场景很有用，后文即将介绍。</li>
+<li><strong>Integer Tuple（I-Tuple）Type</strong>：表示一组整数值；常见用法是为多维数据引入各维上界。</li>
+<li><strong>Bounded (Integer/ITuple) Type</strong>：用于简化数据（子区域）引用的特殊类型，并与循环构造配合以迭代处理数据。</li>
+</ul>
+<p>四类中，<em>scalar</em> 与 <em>ituple</em> 较易接受，因其可对应通用语言中的元素。而 <em>spanned type</em> 与 <em>bounded type</em> 具有领域特异性，下文详述。</p>
+<h3 id="scalar-types">Scalar Types<a class="headerlink" href="#scalar-types" title="Permanent link">&para;</a></h3>
+<p>如前所述，Choreo 的 Scalar types 包含 <em>Integer Type</em> 与 <em>Boolean Type</em>。<em>Integer Type</em> 类似 C++ 的 <code>int</code> 或 <code>int32_t</code>，为有符号 32 位整数，取值范围为 $-2^{31}$ 至 $2^{31}-1$。下例展示其用于数据与函数声明：
+<pre class="highlight"><code>int a;
+__co__ int foo(int b);</code></pre>
+支持整数算术、移位与逻辑运算，语法与 C++ 内建运算一致。
+Choreo 不提供无符号标量整数，亦不提供 8/16/64 位标量整数等价物；该设计动机在于：程序控制未必需要这些类型，通常 32 位有符号整数已足够。</p>
+<p>Choreo 中 <em>Boolean Type</em> 类似 C++ 的 <code>bool</code>；布尔上的运算及与整数之间的转换，与 C++ 一致。</p>
+<h3 id="spanned-types">Spanned Types<a class="headerlink" href="#spanned-types" title="Permanent link">&para;</a></h3>
+<p>Spanned type 为<strong>复合类型</strong>，由 <strong>fundamental type</strong> 与 <strong>multi-dimensional-span（mdspan）type</strong> 组成。<em>fundamental type</em> 与 <em>mdspan</em> 均非<strong>完整类型</strong>，即二者单独均无法为带存储的数据定型。在 Choreo 中称之为 <em>partial types</em>。</p>
+<p>将类型设计为二者组合，是为了能单独操纵 <em>mdspan</em>。在 ML 场景中，数据多为多维组织；程序员常将数据分块并在存储层次间搬运，因而操纵多维数据的 <em>shape</em>（由 <em>mdspan</em> 表示）至关重要。</p>
+<p>下文将说明如何定义这些 partial types，以及如何将其组合为完整类型，以声明/定义多维数据。</p>
+<h4 id="partial-typemdspan">Partial Type：<strong>mdspan</strong><a class="headerlink" href="#partial-typemdspan" title="Permanent link">&para;</a></h4>
+<p>与多数类型系统不同，<em>mdspan</em> 作为类型实体出现时仅为 partial。称其为 <em>partial</em>，是因为 Choreo 程序无法将数据单独定义为 <em>mdspan</em> 类型；但 <em>mdspan</em> 本身可单独定义。该设计基于如下观察：loop tiling/blocking 主要关心多维数据的形状，因此 Choreo 允许程序员在不论关联何种 fundamental type 的情况下操纵 <em>mdspan</em>，以简化与形状相关的编程。</p>
+<p>同时，choreo 编译器可对 <em>mdspan</em> 做类型检查，以尽早（在适用时于执行前）发现代码错误。</p>
+<p>在 Choreo 中，mdspan 由 <code>[</code> 与 <code>]</code> 括起，维上界以 <code>,</code> 分隔。例如
+<pre class="highlight"><code>mdspan sp : [7, 8];           // defined a mdspan of 2-dimensions
+mdspan&lt;4&gt; mds : [a, 3, 4, 1]; // 'a' is an existing integer
+d : [c, 4, 28];               // 'd' is not explicit annotated. Type is deduced.</code></pre>
+如图所示，可用 <em>mdspan</em> 关键字显式定义 mdspan，并可选用尖括号中的总维数；亦可无类型标注定义 mdspan，如上例中的 <code>d</code>。（注意：<code>mds</code> 与 <code>d</code> 属于<strong>依赖类型</strong>，因其类型依赖于 <code>a</code>、<code>b</code> 等求值；程序员可为 <code>a</code>、<code>b</code> 提供运行时取值，但需付出若干运行时检查代价。）</p>
+<p>对 C++ 程序员而言，可将 mdspan 视作多维数组的性状（trait），描述多层范围；例如上例中 <code>sp</code> 定义两层范围，分别为 0..6 与 0..7。</p>
+<p>定义 mdspan 后，可通过 <code>()</code> 运算符取得各维整型尺寸。
+<pre class="highlight"><code>sp : [7, 8];
+int b = sp(0) + sp(1);   // 'b' equals to 15 (7 + 8)</code></pre>
+上例中，<code>sp(0)</code> 表示 mdspan <code>sp</code> 第一维的尺寸；各维尺寸本质上为整型，可用于整数算术。</p>
+<p>由此可从已有 mdspan 派生新的 mdspan，如下：
+<pre class="highlight"><code>sp : [6, 8];
+spn : [1, sp(0)/2, sp(1)/4]; // define a new mdspan from the existing one.</code></pre>
+该机制便于在 Choreo 代码中对多维 span 做 tiling。鉴于高性能 kernel 构造中 tiling 不可或缺，Choreo 提供语法糖以进一步简化：
+<pre class="highlight"><code>sp : [6, 8];
+spn : sp [1, (0)/2, (1)/4];  // spn is defined as [1, 3, 2]</code></pre>
+语义与前一写法相同，语法更简洁，体现 Choreo 的设计取向之一：在可行时用最少代码实现功能。</p>
+<p><strong>注意：mdspan 仅可定义，不得修改已有 mdspan；且同一 mdspan 只能定义一次。</strong></p>
+<p>除上述按<strong>逐维</strong>方式定义 mdspan 外，Choreo 还支持其他定义方式；在介绍 <em>i-tuple</em> 时再说明。</p>
+<h4 id="fully-typing">完整定型（Fully-Typing）<a class="headerlink" href="#fully-typing" title="Permanent link">&para;</a></h4>
+<p>单独 <em>mdspan</em> 无法用于定义计算数据。在 Choreo 函数中，数据定义须<strong>完整定型</strong>，由 fundamental type 与 <em>mdspan</em> 共同组成。下例说明：
+<pre class="highlight"><code>ndims : [20, 15];
+f32 [10, 10] d0;
+f16 [ndims] d1;</code></pre>
+Choreo 支持的 fundamental types 包括：</p>
+<ul>
+<li>Unsigned Integers：<em>u8/u16/u32</em></li>
+<li>Signed Integers：<em>s8/s16/s32</em></li>
+<li>Floating-points：<em>f16/bf16/f32</em></li>
+</ul>
+<p>注意：Choreo 中 <code>s32</code> 与 <code>int</code> 不同。<code>s32</code> 为 fundamental type，不能用于 fully typing。</p>
+<h4 id="storage-qualifier">存储限定符（Storage Qualifier）<a class="headerlink" href="#storage-qualifier" title="Permanent link">&para;</a></h4>
+<p>Spanned 类型数据在 Choreo 中通常较大；程序员可将其在加速器不同 memory hierarchy 间搬运以充分利用硬件。</p>
+<p>在 choreo 中定义三种 storage qualifier 以标注所定义数据：</p>
+<ul>
+<li><strong>global</strong>，</li>
+<li><strong>shared</strong>，</li>
+<li>以及 <strong>local</strong>。</li>
+</ul>
+<p>用法如下：
+<pre class="highlight"><code>ndims : [20, 15];
+local f32 [10, 10] d0;
+shared f16 [ndims] d1;</code></pre></p>
+<p>默认情况下，若无 storage qualifier，则所定义数据视为来自 <em>global</em> memory。</p>
+<h3 id="i-tuple-types">I-Tuple Types<a class="headerlink" href="#i-tuple-types" title="Permanent link">&para;</a></h3>
+<p>整数元组为整数的无序集合；如前所述，常用作（下标）索引。</p>
+<p>定义 i-tuple 时，将元素置于 <code>{</code> 与 <code>}</code> 之间。例如</p>
+<pre class="highlight"><code>ituple index = {5, 4, 3, 2, 1};  // It defines a tuple of 5 elements
+index = {a, b};  // 'a' and 'b' are existing integers</code></pre>
+<h3 id="mdspan-i-tuple">对 <em>mdspan</em> 与 <em>i-tuple</em> 的运算<a class="headerlink" href="#mdspan-i-tuple" title="Permanent link">&para;</a></h3>
+<p>Choreo 允许对 <em>i-tuple</em> 与 <em>mdspan</em> 进行特殊运算。下例对 mdspan 施加固定 tiling：
+<pre class="highlight"><code>sp : [6, 8];
+tiling_factor = {3, 2};
+spn : sp / tiling_factor;   // spn is defined as [2, 4];
+</code></pre>
+Choreo 中可通过此类 <strong>Tuple-Span Operations</strong> 定义 mdspan。支持的运算包括：</p>
+<ul>
+<li><em>mdspan</em> $/$ <em>i-tuple</em></li>
+<li><em>mdspan</em> $+$ <em>i-tuple</em></li>
+<li><em>mdspan</em> $\%$ <em>i-tuple</em></li>
+<li><em>mdspan</em> $<em>$ </em>i-tuple*</li>
+<li><em>mdspan</em> $-$ <em>i-tuple</em></li>
+</ul>
+<p>这些运算本质上均可通过 mdspan 的<em>逐维</em>定义实现；<em>tuple-span operations</em> 有助于写出更可读的代码，亦为 Choreo 所追求的目标。</p>
+<h3 id="bounded-types">Bounded Types<a class="headerlink" href="#bounded-types" title="Permanent link">&para;</a></h3>
+<p>Bounded types 包含 <strong>Bounded Scalar</strong> 与 <strong>Bounded ITuple</strong>。Bounded Scalar 取值范围为 $[0, ub)$，其中 <code>ub</code> 为上界。因此若将整数 <code>p</code> 设为 bounded，须同时关联具体上界。该关联须在 <code>parallel-by</code> 与 <code>with-in</code> 等 <em>Control Structures</em> 内显式编写，后文介绍。</p>
+<p>类似地，<em>ITuple</em> 为一组 <em>Integer</em>，亦可关联一组上界。具体而言，Choreo 中 <em>Bounded ITuple</em> 与 <em>mdspan</em> 值关联，以确定一组上界。后续章节将给出详细语法。</p>
+<h2 id="_3">控制结构<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<!-- 
+Choreo follows C++ to involve 'if-else' blocks to handle branches inside programs. However, it has significant difference with C++ on parallelization, loop, etc.
+-->
+
+<p>Choreo 在并行化、循环等方面与 C++ 有显著差异。</p>
+<h3 id="parallel-by">并行区域：<code>parallel-by</code> 块<a class="headerlink" href="#parallel-by" title="Permanent link">&para;</a></h3>
+<p>在 CPU 等系统上，可通过异步线程实现并行执行。而在 Choreo 中，采用单指令多数据（SPMD）模型作为并行化手段，类似部分 OpenMP parallel 指令及 OpenCL/CUDA 等并行语言。</p>
+<p>但构造并行区域的语法不同：采用 C 风格花括号，将并行执行的代码置于 <code>parallel-by</code> 块内。</p>
+<pre class="highlight"><code>parallel p by 6 {
+  // SPMD code
+}</code></pre>
+<p>上例展示如何用 Choreo 关键字 <code>parallel</code> 与 <code>by</code> 创建并行区域：假定有 6 个执行线程，各线程执行相同的 SPMD 代码，但 <code>p</code> 取值不同。若熟悉 CUDA 编程，可将 <code>p</code> 类比为 <code>thread index</code>；若更熟悉顺序 C/C++，也可将 <code>p</code> 视为迭代 6 次的循环变量（但各次迭代的执行次序任意）。</p>
+<p>除并行外，<code>parallel-by</code> 还有一层含义：语句中的 <code>p</code> 为与上界 $[0, 6)$ 关联的整数，称为 <strong>bounded integer</strong>，而非普通整数。在 <code>chunkat</code> 等特殊运算中（后文说明），需要 <em>bounded-integer</em> 才能正确工作，因为上界对其计算必不可少。</p>
+<h3 id="with-in-where"><code>with-in</code> 块与 <code>where</code> 子句<a class="headerlink" href="#with-in-where" title="Permanent link">&para;</a></h3>
+<p>与 <code>parallel-by</code> 类似，<code>with-in</code> 也可将 <em>i-tuple</em> 绑定到 <em>mdspan</em>。下例说明：
+<pre class="highlight"><code>with index in [10, 10] {
+  // index is ituple with 2 elements
+}</code></pre>
+此处 <code>index</code> 为含 2 个元素的 <em>i-tuple</em>。有时希望为两元素命名，可使用如下语法：
+<pre class="highlight"><code>with {x, y} in [10, 10] {...}</code></pre>
+或同时命名 <em>i-tuple</em> 与其元素：
+<pre class="highlight"><code>with index = {x, y} in [10, 10] {...}</code></pre>
+此类情形下，称 <code>index</code> 为 <strong>bounded ituple</strong>。</p>
+<p><code>with-in</code> 表面类似 <code>parallel-by</code>，但行为不同：重要区别之一是 <code>with-in</code> <strong>不</strong>隐含并行；块内代码顺序执行，仅用于创建 <em>bounded-ituple</em>。</p>
+<p>此外，可追加 <code>where</code> 子句。例如：
+<pre class="highlight"><code>with {m, n} in [M, N], {n_p, k} in [N_P, K] where n_p &lt;-&gt; n {
+  // matmul implements with m,n,K. n_p is no long useful.
+}</code></pre>
+该片段要求在所有迭代中 <code>n</code> 与 <code>n_p</code> 取值相同；因而在 <code>with-in</code> 块内，需要 <code>n_p</code> 处可用 <code>n</code> 替换，反之亦然。该机制对编写多种 AI kernel 很有用；应使用运算符 <code>&lt;-&gt;</code> 建立此类关系。</p>
+<h3 id="foreach"><code>foreach</code> 块<a class="headerlink" href="#foreach" title="Permanent link">&para;</a></h3>
+<p>由 <code>with-in</code> 定义 <em>bounded-ituple</em> 之后，可对其或 bounded-integer 进行循环。在 Choreo 中写法简洁：</p>
+<pre class="highlight"><code>with x in [10] {
+  foreach x {
+    // do something with each x
+  }
+}</code></pre>
+<h3 id="upper-bound"><code>upper-bound</code> 运算<a class="headerlink" href="#upper-bound" title="Permanent link">&para;</a></h3>
+<h3 id="dma">异步运算：DMA 语句<a class="headerlink" href="#dma" title="Permanent link">&para;</a></h3>
+<p>除并行执行外，Choreo 允许一种固定形式的异步运算：DMA 语句。</p>
+<p>概念上，DMA 语句与 SPMD 代码<strong>异步</strong>执行，类似 CPU 异步线程，但行为受 DMA 配置约束。（CPU 对异步线程的编程自由度更高。）</p>
+<p>下例展示基本 DMA 语句：
+<pre class="highlight"><code>global f32 [10] g_data;
+local f32 [10] l_data;
+f = dma.copy.async g_data =&gt; l_data;
+// ... async operations
+wait f;         // explicit wait</code></pre>
+此处利用数据搬运引擎（DTE）发起线性拷贝，将位于 global memory 的数据搬至 local memory 的 <code>data1</code>。可注意到对 <code>f</code> 的赋值：其为异步 DMA 实体的句柄，在 Choreo 中称为 DMA 操作的 <code>future</code>。程序员可写显式同步语句 <code>wait</code>，使当前线程在 <code>future</code> 完成前阻塞；否则线程与 DMA 并行继续执行。</p>
+<p>有时显式定义临时数据较为繁琐，Choreo 提供更简语法：
+<pre class="highlight"><code>global f32 [10] data;
+f = dma.copy data =&gt; local;
+... f.data;  // retrieve the 'local' data from the future</code></pre>
+此处不必指定 DMA 的目标具体地址，仅需指定目标 memory 类型。这在许多场景下有利：程序员常希望避免自行管理 scratchpad memory（SPM）。本例中 local memory 分配由编译器负责；要取得搬运后的数据，只需调用 <code>future</code> 的 <code>data</code> 成员。此外，该 dma 未标记 <code>.async</code>，故无需也不能对 <code>f</code> 执行 <code>wait</code>。</p>
+<p>DMA 操作细节繁复，编程须谨慎，应参考 DMA 手册做决策。尽管如此，Choreo 编译器仍提供大量静态与运行时检查，帮助避免常见错误。</p>
+<h3 id="bounded-itupleinteger-chunkat">Bounded-ituple/integer 与 <code>chunkat</code> 运算<a class="headerlink" href="#bounded-itupleinteger-chunkat" title="Permanent link">&para;</a></h3>
+<p><code>chunkat</code> 作用于 spanned 数据，在已有数据上构造新的 <em>mdspan</em>；在部分系统中亦称 <code>subview</code>。因 <code>chunkat</code> 接受 bounded-ituple 与 bounded-integer 作为参数，在 Choreo 中命名不同。
+<pre class="highlight"><code>global f32 [6, 10, 100] data;
+parallel p by 6 {
+  with index = {x, y} in [10, 10] {
+    // for every data move, the stride into 'data' is
+    //    stride = p*1000 + x * 100 + y * 10
+    //
+    // for each chunk, the dimensioned size for the movement is {1, 1, 10}
+    f = dma.copy data.chunkat(p, index) =&gt; local;
+  }
+}</code></pre>
+上例展示 <code>chunkat</code> 的典型用法：spanned 数据类型为 <code>f32 [6, 10, 100]</code>；<code>chunkat</code> 接收 <em>integer</em> <code>p</code> 与 <em>ituple</em> <code>index</code> 两个参数，假定将数据划分为 $6 \times 10 \times 10$ 块，对应 <code>p</code> 与 <code>index</code> 所关联的范围；每次取一块并搬运至 local 存储，沿最低维包含 10 个连续元素。</p>
+<h2 id="choreo_1">函数调用与调用 Choreo 函数<a class="headerlink" href="#choreo_1" title="Permanent link">&para;</a></h2>
+<p>Choreo 函数不得调用另一 Choreo 函数；但在 Choreo 函数内调用 C++ kernel 属常见用法。</p>
+<p><pre class="highlight"><code>void bar() {...}    // C++ kernel function
+__co__ void foo() {
+  parallel p by 6 {
+    call bar();     // Call the C++ function
+  }
+}
+</code></pre>
+上例使用 Choreo 关键字 <code>call</code> 调用既有 C++ 函数 <code>bar</code>，较为直观。</p>
+<h2 id="choreo-c_1">Choreo 与 C++ 函数间的参数传递<a class="headerlink" href="#choreo-c_1" title="Permanent link">&para;</a></h2>
+<p>向 Choreo 传参或反向传递时，需包含 Choreo 头文件 <code>choreo.h</code>。通常将原始 C++ 指针与维信息结合，构造 Choreo spanned 数据。下例说明：</p>
+<p><pre class="highlight"><code>#include "choreo.h"
+
+void bar(const float* data, unsigned size) {}
+
+__co__ void foo(f32 mdspan&lt;2&gt; d) {
+  parallel p by 6 {
+    call bar(d, |d|);     // Call the C++ function
+  }
+}
+
+void foobar(float* a) {
+  foo(choreo::make_spanview&lt;2&gt;(a, {1, 2}));
+}</code></pre>
+示例中使用 choreo 工具函数（模板）<code>make_spanview</code> 包装数据，不发生拷贝。在 Choreo 函数 <code>foo</code> 中，参数 <code>f32 mdspan&lt;2&gt;</code> 为对应实体；因存在隐式转换，可将 <code>d</code> 直接作为 C++ 函数 <code>bar</code> 的第一实参；运算 <code>|d|</code> 得到 spanned 数据 <code>d</code> 的总元素个数，用于调用 <code>bar</code>。</p>
+<p>同样，<em>Scalar Type</em> 数据也可与 Choreo 函数互传；但 <code>ituple</code> 仅在 Choreo 函数内部使用。</p>
+<h2 id="_4">小结<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>Choreo 为 SPMD 编程提供新思路：偏好 C++ 风格写法，并嵌入 C++；其核心在于减轻底层编程负担，尤其是通过 DMA 在各 memory 层之间编排数据搬运。有时亦被称为 dataflow 编程 DSL。我们开发该工具以支撑日常构建高性能 kernel 的工作，希望程序员少纠缠语言构造细节，更多关注高层概念。</p>
+<p>若您觉得其行为符合预期，欢迎反馈以便持续改进。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.top", "navigation.path", "navigation.indexes", "search.highlight", "search.suggest", "content.code.annotate", "content.code.copy", "toc.follow"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+      
+        <script src="../../../assets/js/hljs-choreo.js"></script>
+      
+        <script src="../../../assets/js/hljs-init.js"></script>
+      
+    
+  </body>
+</html>

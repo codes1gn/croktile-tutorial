@@ -18,6 +18,10 @@
       
       
         
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../zh/tutorial/ch03-parallelism/" hreflang="zh">
+        
       
       
       <link rel="icon" href="../../assets/images/favicon.svg">
@@ -80,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#parallelism-mapping-work-to-hardware" class="md-skip">
+        <a href="#parallelism-how-croktile-represents-parallel-work" class="md-skip">
           Skip to content
         </a>
       
@@ -151,6 +155,32 @@
     
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../zh/tutorial/ch03-parallelism/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
     
     
       
@@ -544,10 +574,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#parallel-and-foreach-revisited" class="md-nav__link">
+  <a href="#how-we-think-about-parallel-tasks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        parallel and foreach Revisited
+        How We Think About Parallel Tasks
       
     </span>
   </a>
@@ -555,10 +585,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#space-specifiers-where-parallelism-lives" class="md-nav__link">
+  <a href="#croktiles-two-layer-parallelism-model" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Space Specifiers: Where Parallelism Lives
+        Croktile's Two-Layer Parallelism Model
       
     </span>
   </a>
@@ -566,10 +596,93 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#nested-parallelism" class="md-nav__link">
+  <a href="#space-specifiers-and-hardware-mapping" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Nested Parallelism
+        Space Specifiers and Hardware Mapping
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Space Specifiers and Hardware Mapping">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#block-thread-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        : block — Thread Blocks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#thread-threads-within-a-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        : thread — Threads Within a Block
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#group-warps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        : group — Warps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#group-4-warpgroups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        : group-4 — Warpgroups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nesting-specifiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nesting Specifiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-shared-enables-reuse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How shared Enables Reuse
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#type-system-aside-mdspan-and-ituple" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Type System Aside: mdspan and ituple
       
     </span>
   </a>
@@ -585,27 +698,55 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#warp-groups-and-group-4" class="md-nav__link">
+    <nav class="md-nav" aria-label="Matrix Multiply: Putting It Together">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scalar-matmul-no-dma" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Warp Groups and : group-4
+        Scalar Matmul (No DMA)
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#how-shared-enables-reuse" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#dma-matmul-tiles-in-shared-memory" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How shared Enables Reuse
+        DMA Matmul: Tiles in Shared Memory
       
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gpu-resource-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GPU Resource Layout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#host-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Host Code
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -919,33 +1060,9 @@
   
   
   
-    
-    
-      
+    <li class="md-nav__item">
+      <a href="../../optimization/dense-gemm-fp16/" class="md-nav__link">
         
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/matmul-f16/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -959,50 +1076,6 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Dense GEMM FP16
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
     </li>
   
@@ -1016,96 +1089,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/pattern-optimizations/" class="md-nav__link">
+      <a href="../../optimization/sparse-gemm/" class="md-nav__link">
         
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/aitune-last-mile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AI-Tune Last Mile
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/gemm-sp/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -1119,50 +1104,6 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Sparse GEMM (FP16 + E4M3)
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
     </li>
   
@@ -1176,94 +1117,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/pattern-optimizations/" class="md-nav__link">
+      <a href="../../optimization/blockscale-gemm-fp8/" class="md-nav__link">
         
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/aitune-last-mile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AI-Tune Last Mile
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/blockscale-gemm/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -1277,87 +1132,7 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Block-Scaled GEMM FP8
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/blockscale-gemm/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/blockscale-gemm/pattern-optimizations/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -2774,10 +2549,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#parallel-and-foreach-revisited" class="md-nav__link">
+  <a href="#how-we-think-about-parallel-tasks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        parallel and foreach Revisited
+        How We Think About Parallel Tasks
       
     </span>
   </a>
@@ -2785,10 +2560,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#space-specifiers-where-parallelism-lives" class="md-nav__link">
+  <a href="#croktiles-two-layer-parallelism-model" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Space Specifiers: Where Parallelism Lives
+        Croktile's Two-Layer Parallelism Model
       
     </span>
   </a>
@@ -2796,10 +2571,93 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#nested-parallelism" class="md-nav__link">
+  <a href="#space-specifiers-and-hardware-mapping" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Nested Parallelism
+        Space Specifiers and Hardware Mapping
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Space Specifiers and Hardware Mapping">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#block-thread-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        : block — Thread Blocks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#thread-threads-within-a-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        : thread — Threads Within a Block
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#group-warps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        : group — Warps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#group-4-warpgroups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        : group-4 — Warpgroups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nesting-specifiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nesting Specifiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-shared-enables-reuse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How shared Enables Reuse
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#type-system-aside-mdspan-and-ituple" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Type System Aside: mdspan and ituple
       
     </span>
   </a>
@@ -2815,27 +2673,55 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#warp-groups-and-group-4" class="md-nav__link">
+    <nav class="md-nav" aria-label="Matrix Multiply: Putting It Together">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scalar-matmul-no-dma" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Warp Groups and : group-4
+        Scalar Matmul (No DMA)
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#how-shared-enables-reuse" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#dma-matmul-tiles-in-shared-memory" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How shared Enables Reuse
+        DMA Matmul: Tiles in Shared Memory
       
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gpu-resource-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GPU Resource Layout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#host-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Host Code
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2929,39 +2815,90 @@
   
 
 
-<h1 id="parallelism-mapping-work-to-hardware">Parallelism: Mapping Work to Hardware<a class="headerlink" href="#parallelism-mapping-work-to-hardware" title="Permanent link">&para;</a></h1>
-<p>Chapters 1 and 2 used <code>parallel</code> to spread work across the GPU — but without telling Croktile <em>how</em> to organize those instances on the hardware. The compiler chose defaults, and for element-wise operations those defaults are fine. Matrix multiply is different: it has multiple tiling levels that map naturally to different levels of the GPU hierarchy, and getting the mapping right is the difference between toy throughput and real throughput.</p>
-<p>This chapter introduces <strong>space specifiers</strong> — the annotations that map logical parallel axes to CUDA thread blocks, threads, warps, and warpgroups. By the end, you will have a tiled matrix multiply that uses <code>dma.copy =&gt; shared</code> and nested <code>parallel</code> to get data reuse across threads.</p>
-<h2 id="parallel-and-foreach-revisited"><code>parallel</code> and <code>foreach</code> Revisited<a class="headerlink" href="#parallel-and-foreach-revisited" title="Permanent link">&para;</a></h2>
-<p>Both appeared in earlier chapters, but it is worth being precise about what each one means:</p>
+<h1 id="parallelism-how-croktile-represents-parallel-work">Parallelism: How Croktile Represents Parallel Work<a class="headerlink" href="#parallelism-how-croktile-represents-parallel-work" title="Permanent link">&para;</a></h1>
+<p>The previous two chapters kept things simple: <code>parallel {i, j} by [4, 8]</code> created 32 instances, each handling one element, and we never asked where those instances actually ran. That was fine for element-wise addition and for understanding data movement — the compiler picked sensible defaults. But a GPU is not a flat bag of identical processors. It has a deep hierarchy of execution units, and mapping your work to the right level of that hierarchy is the difference between a toy demo and a real kernel.</p>
+<p>This chapter introduces parallelism as a first-class concept in Croktile: what it means, how Croktile separates the <em>logical</em> structure (what runs concurrently) from the <em>physical</em> mapping (which hardware units run it), and how you control that mapping with <strong>space specifiers</strong>.</p>
+<h2 id="how-we-think-about-parallel-tasks">How We Think About Parallel Tasks<a class="headerlink" href="#how-we-think-about-parallel-tasks" title="Permanent link">&para;</a></h2>
+<p>Before we touch any Croktile syntax, let's talk about what "parallel" actually means.</p>
+<p>Suppose you have eight independent tasks — eight tiles to add, eight rows to process, whatever. You can describe all eight at once and call them "parallel." But that statement says nothing about how many actually run at the same time. On a single CPU core, they execute one after another. On a 4-core CPU, maybe four run simultaneously. On a GPU warp, all eight might genuinely execute in lockstep.</p>
+<p><img alt="Virtual parallelism: same tasks, different hardware schedules" src="../../assets/images/ch03/fig1_virtual_parallelism_dark.png#only-dark" />
+<img alt="Virtual parallelism: same tasks, different hardware schedules" src="../../assets/images/ch03/fig1_virtual_parallelism_light.png#only-light" /></p>
+<p><em>The same eight tasks scheduled sequentially (1 core), 4-wide (CPU), and 8-wide (GPU). The tasks are identical — only the hardware changes.</em></p>
+<p>The point is that parallelism is a <strong>virtual</strong> concept. When you write "these eight tasks are independent," you are making a statement about the <em>logic</em> of your program, not about the hardware. The hardware decides how many actually run simultaneously, based on how many execution units it has and how the scheduler assigns work.</p>
+<p>This distinction matters because GPU programming languages traditionally conflate the two. In CUDA, you launch a kernel with <code>&lt;&lt;&lt;blocks, threads&gt;&gt;&gt;</code> — that is simultaneously declaring the logical structure (how many instances) and the physical mapping (how many thread blocks, how many threads per block). If you want to change the tiling, you also have to change the launch configuration. The logical and physical are tangled together.</p>
+<p>Croktile untangles them.</p>
+<h2 id="croktiles-two-layer-parallelism-model">Croktile's Two-Layer Parallelism Model<a class="headerlink" href="#croktiles-two-layer-parallelism-model" title="Permanent link">&para;</a></h2>
+<p>Croktile gives you two separate knobs:</p>
+<ol>
+<li><strong><code>parallel</code></strong> — declares that iterations are independent and <em>may</em> run concurrently. This is a logical statement.</li>
+<li><strong>Space specifiers</strong> (<code>: block</code>, <code>: thread</code>, <code>: group</code>, <code>: group-4</code>) — tell the compiler <em>which GPU hardware unit</em> each parallel axis maps to. This is a physical statement.</li>
+</ol>
+<p>And there is <code>foreach</code>, which is the opposite of <code>parallel</code>: iterations run <strong>sequentially</strong>, in order. Use <code>foreach</code> when later iterations depend on earlier ones — an accumulation loop, a K-dimension reduction, a pipeline that loads tile <em>k</em> before computing with it.</p>
+<pre class="highlight"><code class="language-choreo">parallel {px, py} by [8, 16] : block    // concurrent — mapped to thread blocks
+  foreach {tile_k} in [16]               // sequential — K-dimension loop
+    parallel {qx, qy} by [16, 16] : thread  // concurrent — mapped to threads
+      foreach k in [16]                      // sequential — inner accumulation
+        output += lhs * rhs;</code></pre>
+<p>The <code>parallel</code> lines say "these iterations are independent." The <code>: block</code> and <code>: thread</code> annotations say "put the outer ones on separate thread blocks and the inner ones on separate threads within a block." The <code>foreach</code> lines say "run these in order." No ambiguity, no conflation.</p>
+<p><img alt="Logical vs physical parallelism in Croktile" src="../../assets/images/ch03/fig2_logical_vs_physical_dark.png#only-dark" />
+<img alt="Logical vs physical parallelism in Croktile" src="../../assets/images/ch03/fig2_logical_vs_physical_light.png#only-light" /></p>
+<p><em>Left: the logical nesting the programmer writes (parallel = concurrent, foreach = sequential). Right: the GPU hardware hierarchy. Space specifiers bridge the two.</em></p>
+<p>If you omit the space specifier — just <code>parallel p by 8</code> — the compiler picks a default mapping. That is what Chapters 1 and 2 did, and it worked fine for simple cases. Explicit specifiers are how you take control when performance matters.</p>
+<p>Both <code>parallel</code> and <code>foreach</code> support multi-dimensional indices (<code>{a, b}</code> syntax), the compose operator (<code>#</code>), and the extent operator (<code>#p</code>). Everything from Chapters 1 and 2 still applies.</p>
+<h2 id="space-specifiers-and-hardware-mapping">Space Specifiers and Hardware Mapping<a class="headerlink" href="#space-specifiers-and-hardware-mapping" title="Permanent link">&para;</a></h2>
+<p>A GPU has a clear execution hierarchy. From coarsest to finest:</p>
 <ul>
-<li><code>parallel p by N</code> — creates <code>N</code> independent instances that execute concurrently. The compiler maps them to GPU execution units. Used when iterations are independent.</li>
-<li><code>foreach i in [N]</code> — runs <code>N</code> iterations <strong>sequentially</strong> within the context that contains it. Used when later iterations depend on earlier ones (like a K-dimension reduction loop in a matmul).</li>
+<li>A <strong>thread block</strong> (CTA) is a group of up to 1024 threads that share on-chip memory and can synchronize with each other.</li>
+<li>A <strong>warpgroup</strong> is four warps — 128 threads — that cooperate on wide matrix instructions (WGMMA on Hopper GPUs).</li>
+<li>A <strong>warp</strong> is 32 threads that execute in lockstep. This is the GPU's fundamental SIMD unit.</li>
+<li>A <strong>thread</strong> is a single execution context with its own registers.</li>
 </ul>
-<p>Both support <code>#p</code> (extent) and <code>#</code> compose, and both can be multi-dimensional (<code>parallel {a, b} by [M, N]</code> / <code>foreach {i, j} in [M, N]</code>).</p>
-<h2 id="space-specifiers-where-parallelism-lives">Space Specifiers: Where Parallelism Lives<a class="headerlink" href="#space-specifiers-where-parallelism-lives" title="Permanent link">&para;</a></h2>
-<p>A GPU is not a flat bag of threads. It has a hierarchy: <strong>thread blocks</strong> (also called CTAs) that live on a streaming multiprocessor, <strong>warps</strong> of 32 threads that execute in lockstep, and on newer hardware, <strong>warpgroups</strong> of 128 threads (four warps) that cooperate on wide instructions.</p>
-<p>Croktile lets you map your logical parallel dimensions to this hierarchy with <strong>space specifiers</strong> after the extent:</p>
-<pre class="highlight"><code class="language-choreo">parallel p by 16 : block     // 16 thread blocks
-parallel q by 32 : thread    // 32 threads within a block
-parallel w by 4  : group     // 4 warps (one per group)
-parallel g by 2  : group-4   // 2 warpgroups of 4 warps each (128 threads per group)</code></pre>
-<p>When you write <code>parallel p by 16 : block</code>, you are telling Croktile: "create 16 instances of this body, and map each instance to a separate thread block on the GPU." When you write <code>parallel q by 32 : thread</code>, you are saying: "within whatever block we are already in, create 32 threads."</p>
-<p>If you omit the specifier entirely — just <code>parallel p by 8</code> — Croktile picks a reasonable default. Explicit specifiers are how you control the mapping when performance matters.</p>
-<p>The hierarchy matters for data sharing. <strong>Shared memory</strong> (<code>=&gt; shared</code>) is visible to all threads in the same block but not across blocks. So if you want multiple threads to read the same DMA-loaded tile, you need those threads in the same block and the tile in shared memory. <strong>Local memory</strong> (<code>=&gt; local</code>) is private to one thread. <strong>Global memory</strong> is visible everywhere but slow.</p>
-<h2 id="nested-parallelism">Nested Parallelism<a class="headerlink" href="#nested-parallelism" title="Permanent link">&para;</a></h2>
-<p>Real GPU programs nest these levels. A common pattern:</p>
-<pre class="highlight"><code class="language-choreo">parallel {px, py} by [8, 16] : block
+<p>Croktile maps to each level with a space specifier:</p>
+<p><img alt="Space specifiers mapped to GPU execution hierarchy" src="../../assets/images/ch03/fig3_space_specifiers_dark.png#only-dark" />
+<img alt="Space specifiers mapped to GPU execution hierarchy" src="../../assets/images/ch03/fig3_space_specifiers_light.png#only-light" /></p>
+<p><em>The four space specifiers and the GPU hardware units they map to, with thread counts and typical operations at each level.</em></p>
+<h3 id="block-thread-blocks"><code>: block</code> — Thread Blocks<a class="headerlink" href="#block-thread-blocks" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-choreo">parallel {px, py} by [8, 16] : block</code></pre>
+<p>This creates an 8 × 16 = 128 block grid. Each block runs on a streaming multiprocessor (SM) and has its own allocation of shared memory. Blocks cannot communicate with each other during execution — they are truly independent.</p>
+<p>Use <code>: block</code> for the outermost tiling of your output. If your output is <code>[128, 256]</code> and each block handles a <code>[16, 16]</code> tile, you need <code>128/16 × 256/16 = 8 × 16 = 128</code> blocks.</p>
+<h3 id="thread-threads-within-a-block"><code>: thread</code> — Threads Within a Block<a class="headerlink" href="#thread-threads-within-a-block" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-choreo">parallel {qx, qy} by [16, 16] : thread</code></pre>
+<p>This creates 16 × 16 = 256 threads within the enclosing block. Each thread has its own registers but shares on-chip memory with all other threads in the same block.</p>
+<p>Use <code>: thread</code> for the finest-grain parallelism — the per-element work within a tile.</p>
+<h3 id="group-warps"><code>: group</code> — Warps<a class="headerlink" href="#group-warps" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-choreo">parallel w by 4 : group</code></pre>
+<p>This creates 4 warps, each of 32 threads. Warps execute in lockstep (all 32 threads run the same instruction simultaneously). Warp-level operations like <code>mma.sync</code> (Ampere-era tensor core instructions) operate at this granularity.</p>
+<h3 id="group-4-warpgroups"><code>: group-4</code> — Warpgroups<a class="headerlink" href="#group-4-warpgroups" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-choreo">parallel g by 2 : group-4</code></pre>
+<p>This creates 2 warpgroups, each containing 4 warps (128 threads). On Hopper GPUs (compute capability 9.0+), WGMMA instructions require a full warpgroup to cooperate. Even when you have just one warpgroup (<code>parallel p by 1 : group-4</code>), the annotation tells the compiler that these 128 threads form a cooperative unit.</p>
+<p>Multiple warpgroups per block is how you scale work along one dimension without adding more blocks — both warpgroups share the same shared memory but maintain independent accumulators. Chapter 4 puts this to work with tensor-core operations.</p>
+<h3 id="nesting-specifiers">Nesting Specifiers<a class="headerlink" href="#nesting-specifiers" title="Permanent link">&para;</a></h3>
+<p>Real kernels nest these levels. A common pattern:</p>
+<pre class="highlight"><code class="language-choreo">parallel {px, py} by [8, 16] : block {
   parallel {qx, qy} by [16, 16] : thread {
-    // each (px, py) block has 16 × 16 = 256 threads
-    // each thread is identified by (qx, qy) within its block
-  }</code></pre>
-<p>The outer <code>parallel</code> creates an 8 × 16 = 128 block grid. The inner <code>parallel</code> creates 256 threads per block. Total: 128 × 256 = 32,768 threads. The braces <code>{px, py}</code> and <code>{qx, qy}</code> introduce <strong>multi-dimensional</strong> parallel indices in one declaration — shorthand for what would otherwise be two nested <code>parallel</code> lines.</p>
+    // 128 blocks × 256 threads = 32,768 threads total
+  }
+}</code></pre>
+<p>The outer <code>parallel</code> creates the block grid. The inner <code>parallel</code> creates threads within each block. The braces <code>{px, py}</code> introduce multi-dimensional indices — shorthand for two nested <code>parallel</code> lines.</p>
+<h3 id="how-shared-enables-reuse">How <code>shared</code> Enables Reuse<a class="headerlink" href="#how-shared-enables-reuse" title="Permanent link">&para;</a></h3>
+<p>Space specifiers interact directly with memory specifiers. Recall from Chapter 2 that <code>dma.copy ... =&gt; shared</code> places data in block-scoped shared memory, while <code>=&gt; local</code> places data in thread-private local memory.</p>
+<p>The choice matters because of data reuse. Consider a tile that every thread in a block needs to read:</p>
+<p><img alt="Local vs shared memory reuse" src="../../assets/images/ch03/fig4_shared_reuse_dark.png#only-dark" />
+<img alt="Local vs shared memory reuse" src="../../assets/images/ch03/fig4_shared_reuse_light.png#only-light" /></p>
+<p><em>Left: with <code>=&gt; local</code>, each thread loads its own copy — 4× the bandwidth. Right: with <code>=&gt; shared</code>, one DMA fills shared memory and all threads read from it — 1× the bandwidth.</em></p>
+<p>The rule of thumb: if multiple threads in a block need the same data, copy it into <code>shared</code>. If each thread's working set is independent, <code>local</code> keeps data closer and avoids shared-memory bank contention.</p>
+<p>In the matmul later in this chapter, the K-tiles of <code>lhs</code> and <code>rhs</code> are loaded <code>=&gt; shared</code> because all 256 threads in the block read from them. The output accumulator stays in registers (thread-private) because each thread writes to its own element.</p>
+<h2 id="type-system-aside-mdspan-and-ituple">Type System Aside: <code>mdspan</code> and <code>ituple</code><a class="headerlink" href="#type-system-aside-mdspan-and-ituple" title="Permanent link">&para;</a></h2>
+<p>Before we build the matmul, two features of Croktile's type system are worth mentioning. You have already used them implicitly; now is a good time to name them.</p>
+<p><strong><code>mdspan</code></strong> — every tensor in Croktile carries its shape as part of its type. When you write <code>s32 [128, 256] lhs</code>, the shape <code>[128, 256]</code> is not a runtime value — it is a compile-time property. The compiler uses it to verify that every <code>.at()</code>, <code>chunkat</code>, and <code>dma.copy</code> is dimensionally consistent. If you try <code>lhs.at(i, j, k)</code> on a 2D tensor, the compiler rejects it. The expression <code>output.at(px#qx, py#qy)</code> is verified to produce indices within the output's bounds.</p>
+<p>The <code>span(i)</code> syntax extracts one dimension: <code>lhs.span(0)</code> is 128, <code>rhs.span(1)</code> is 256. The shorthand <code>lhs.span</code> copies the entire shape.</p>
+<p><strong><code>ituple</code></strong> — the <code>{px, py}</code> syntax in <code>parallel {px, py} by [8, 16]</code> introduces an <code>ituple</code>, a compile-time integer tuple. The compose operator <code>px#qx</code> combines two ituple elements into a global index. The extent operator <code>#p</code> extracts the range of a parallel variable. These are all resolved at compile time — no runtime overhead.</p>
+<p>For the full details, see the <a href="../../documentation/shape-in-choreo/">mdspan reference</a> and the <a href="../../documentation/integer-ituple/">ituple reference</a>. For now, the key takeaway is: Croktile catches shape mismatches at compile time, not at runtime.</p>
 <h2 id="matrix-multiply-putting-it-together">Matrix Multiply: Putting It Together<a class="headerlink" href="#matrix-multiply-putting-it-together" title="Permanent link">&para;</a></h2>
-<p>With <code>parallel</code>, <code>dma.copy</code>, <code>chunkat</code>, and <code>#</code>, a tiled matrix multiply is within reach. This is the first program in the tutorial that does something GPUs are famous for.</p>
-<p>The plan: multiply a <code>[128, 256]</code> matrix by a <code>[256, 256]</code> matrix to get a <code>[128, 256]</code> result. The output is tiled into a grid of blocks, and within each block, threads cooperate to load K-strips of <code>lhs</code> and <code>rhs</code> into shared memory, then compute partial products.</p>
-<p><strong>The scalar matmul (no DMA, <code>parallel</code> and <code>.at()</code> only).</strong></p>
-<p>Start with <code>parallel</code> and direct global access, no explicit data movement:</p>
+<p>With <code>parallel</code>, <code>foreach</code>, <code>dma.copy</code>, <code>chunkat</code>, <code>#</code>, and space specifiers, a tiled matrix multiply is within reach. This is the first program in the tutorial that does something GPUs are famous for.</p>
+<p>The plan: multiply a <code>[128, 256]</code> matrix by a <code>[256, 256]</code> matrix to get a <code>[128, 256]</code> result.</p>
+<h3 id="scalar-matmul-no-dma">Scalar Matmul (No DMA)<a class="headerlink" href="#scalar-matmul-no-dma" title="Permanent link">&para;</a></h3>
+<p>Start with just <code>parallel</code> and <code>.at()</code> — global memory, no explicit data movement:</p>
 <pre class="highlight"><code class="language-choreo">__co__ s32 [128, 256] matmul(s32 [128, 256] lhs, s32 [256, 256] rhs) {
   s32 [lhs.span(0), rhs.span(1)] output;
 
@@ -2972,19 +2909,22 @@ parallel g by 2  : group-4   // 2 warpgroups of 4 warps each (128 threads per gr
 
   return output;
 }</code></pre>
+<p><img alt="Scalar matmul output tiling grid" src="../../assets/images/ch03/fig5_scalar_matmul_dark.png#only-dark" />
+<img alt="Scalar matmul output tiling grid" src="../../assets/images/ch03/fig5_scalar_matmul_light.png#only-light" /></p>
+<p><em>The [128, 256] output divided into a 16 × 64 tile grid. Each (p, q) pair owns one tile.</em></p>
 <p>This is dense — here is what each piece does.</p>
-<p><strong>Output shape from operand dimensions.</strong> The line <code>s32 [lhs.span(0), rhs.span(1)] output</code> builds the output shape from the inputs: <code>lhs.span(0)</code> is 128 (rows of the left matrix) and <code>rhs.span(1)</code> is 256 (columns of the right matrix). This is the <code>span(i)</code> syntax from Chapter 2 — pick one dimension instead of copying the whole shape.</p>
-<p><strong>Multi-axis parallel.</strong> <code>parallel p by 16, q by 64</code> declares two parallel indices at once with a comma. This creates a 16 × 64 = 1024-way parallel grid. Each <code>(p, q)</code> pair owns a tile of the output matrix.</p>
+<p><strong>Output shape from operand dimensions.</strong> <code>s32 [lhs.span(0), rhs.span(1)] output</code> builds the output shape from the inputs: <code>lhs.span(0)</code> is 128 (rows of the left matrix) and <code>rhs.span(1)</code> is 256 (columns of the right matrix).</p>
+<p><strong>Multi-axis parallel.</strong> <code>parallel p by 16, q by 64</code> declares two parallel indices with a comma. This creates a 16 × 64 = 1024-way parallel grid. Each <code>(p, q)</code> pair owns a tile of the output.</p>
 <p><strong>Named tuple destructuring.</strong> <code>foreach index = {m, n, k} in [128 / #p, 256 / #q, 256]</code> introduces three nested loop indices — <code>m</code>, <code>n</code>, <code>k</code> — bound to a tuple called <code>index</code>. The trip counts are:</p>
 <ul>
 <li><code>128 / #p = 128 / 16 = 8</code> rows per tile</li>
 <li><code>256 / #q = 256 / 64 = 4</code> columns per tile</li>
 <li><code>256</code> for the full contraction dimension</li>
 </ul>
-<p><strong>Composed global indices.</strong> <code>p#m</code> and <code>q#n</code> compose the tile index with the within-tile offset to form a global position (outer # inner, same convention as Chapter 2). <code>p</code> selects which of the 16 row-tiles, <code>m</code> runs 0..7 within that tile, so <code>p#m</code> covers the full 0..127 range across all tiles.</p>
-<p><strong>The arithmetic.</strong> <code>output.at(p#m, q#n) += lhs.at(p#m, k) * rhs.at(k, q#n)</code> is the textbook dot product: for each output element, sum products along the K dimension. Every <code>.at()</code> call here reads from global memory — which is where DMA comes in.</p>
-<p><strong>Adding DMA: tiles in shared memory.</strong></p>
-<p>The scalar version works but every multiply reads from global memory. Bringing the K-tiles into shared memory first allows all threads in a block to reuse them:</p>
+<p><strong>Composed global indices.</strong> <code>p#m</code> composes the tile index with the within-tile offset. <code>p</code> selects which of the 16 row-tiles, <code>m</code> runs 0..7 within that tile, so <code>p#m</code> covers 0..127 across all tiles.</p>
+<p><strong>The arithmetic.</strong> <code>output.at(p#m, q#n) += lhs.at(p#m, k) * rhs.at(k, q#n)</code> is the textbook dot product: for each output element, sum products along K. Every <code>.at()</code> here reads from global memory.</p>
+<h3 id="dma-matmul-tiles-in-shared-memory">DMA Matmul: Tiles in Shared Memory<a class="headerlink" href="#dma-matmul-tiles-in-shared-memory" title="Permanent link">&para;</a></h3>
+<p>The scalar version works but every multiply reads from global memory. Bringing K-tiles into shared memory lets all threads in a block reuse them:</p>
 <pre class="highlight"><code class="language-choreo">__co__ s32 [128, 256] matmul(s32 [128, 256] lhs, s32 [256, 256] rhs) {
   s32 [lhs.span(0), rhs.span(1)] output;
 
@@ -3002,24 +2942,33 @@ parallel g by 2  : group-4   // 2 warpgroups of 4 warps each (128 threads per gr
 
   return output;
 }</code></pre>
-<p>What changed:</p>
+<p><img alt="DMA matmul: block grid with shared memory and K-loop" src="../../assets/images/ch03/fig6_dma_matmul_dark.png#only-dark" />
+<img alt="DMA matmul: block grid with shared memory and K-loop" src="../../assets/images/ch03/fig6_dma_matmul_light.png#only-light" /></p>
+<p><em>One block in detail: the K-loop loads lhs and rhs tiles into shared memory via <code>dma.copy</code>, then 256 threads compute partial products from the shared copies.</em></p>
+<p>What changed from the scalar version:</p>
 <ol>
 <li>
 <p>The outer <code>parallel</code> now uses <code>: block</code> with brace-form indices <code>{px, py}</code>. An 8 × 16 grid of blocks covers the output.</p>
 </li>
 <li>
-<p>A <code>foreach</code> over <code>tile_k</code> walks the K dimension in 16 steps. Each step copies one strip of <code>lhs</code> and one strip of <code>rhs</code> into <code>shared</code> memory with <code>dma.copy ... =&gt; shared</code>. The destination is <code>shared</code> instead of <code>local</code> because all threads in the block need to read the same tile.</p>
+<p>A <code>foreach</code> over <code>tile_k</code> walks the K dimension in 16 steps. Each step copies one strip of <code>lhs</code> and one strip of <code>rhs</code> into <code>shared</code> memory with <code>dma.copy ... =&gt; shared</code>.</p>
 </li>
 <li>
 <p>An inner <code>parallel {qx, qy} by [16, 16] : thread</code> creates 256 threads within each block. Each thread owns one output element within the block's tile.</p>
 </li>
 <li>
-<p>The arithmetic reads from <code>lhs_load.data</code> and <code>rhs_load.data</code> — the shared-memory copies — instead of from global <code>lhs</code> and <code>rhs</code>.</p>
+<p>The arithmetic reads from <code>lhs_load.data</code> and <code>rhs_load.data</code> — the shared-memory copies — instead of global <code>lhs</code> and <code>rhs</code>.</p>
 </li>
 </ol>
-<p>The composed indices work in two layers now: <code>px#qx</code> composes block index <code>px</code> with thread index <code>qx</code> to form the global row; <code>py#qy</code> does the same for columns.</p>
-<p><strong>Dimension arithmetic.</strong> With <code>[8, 16]</code> blocks, each block owns <code>128/8 = 16</code> rows and <code>256/16 = 16</code> columns. The inner <code>[16, 16]</code> threads subdivide that into one element per thread. Along K, 16 tiles of <code>256/16 = 16</code> elements each cover the full contraction. For each <code>tile_k</code>, <code>chunkat(px, tile_k)</code> selects the rows owned by block <code>px</code> and the K-range owned by <code>tile_k</code>; <code>chunkat(tile_k, py)</code> selects the K-range and the columns owned by block <code>py</code>.</p>
-<p><strong>Host code.</strong> The host side uses the same <code>make_spandata</code> / <code>.view()</code> pattern:</p>
+<p>The composed indices work in two layers: <code>px#qx</code> composes block index <code>px</code> with thread index <code>qx</code> to form the global row; <code>py#qy</code> does the same for columns.</p>
+<p><strong>Dimension arithmetic.</strong> With <code>[8, 16]</code> blocks, each block owns <code>128/8 = 16</code> rows and <code>256/16 = 16</code> columns. The inner <code>[16, 16]</code> threads subdivide that into one element per thread. Along K, 16 tiles of <code>256/16 = 16</code> elements each cover the full contraction.</p>
+<h3 id="gpu-resource-layout">GPU Resource Layout<a class="headerlink" href="#gpu-resource-layout" title="Permanent link">&para;</a></h3>
+<p>Here is how the matmul code maps to actual GPU hardware:</p>
+<p><img alt="Matmul code mapped to GPU resources" src="../../assets/images/ch03/fig7_matmul_gpu_layout_dark.png#only-dark" />
+<img alt="Matmul code mapped to GPU resources" src="../../assets/images/ch03/fig7_matmul_gpu_layout_light.png#only-light" /></p>
+<p><em>Left: Croktile code with nested parallel and foreach. Right: GPU hardware — 128 blocks distributed across SMs, each with shared memory and 256 threads.</em></p>
+<h3 id="host-code">Host Code<a class="headerlink" href="#host-code" title="Permanent link">&para;</a></h3>
+<p>The host side uses the same <code>make_spandata</code> / <code>.view()</code> pattern from earlier chapters:</p>
 <pre class="highlight"><code class="language-choreo">int main() {
   auto lhs = choreo::make_spandata&lt;choreo::s32&gt;(128, 256);
   auto rhs = choreo::make_spandata&lt;choreo::s32&gt;(256, 256);
@@ -3038,21 +2987,7 @@ parallel g by 2  : group-4   // 2 warpgroups of 4 warps each (128 threads per gr
 
   std::cout &lt;&lt; "Test Passed\n" &lt;&lt; std::endl;
 }</code></pre>
-<p>Nothing here is new — <code>make_spandata</code> creates the buffers, <code>matmul(lhs.view(), rhs.view())</code> calls the Croktile function, and the triple loop verifies against a scalar reference. The host program stays boring so the Croktile function stays the star.</p>
-<h2 id="warp-groups-and-group-4">Warp Groups and <code>: group-4</code><a class="headerlink" href="#warp-groups-and-group-4" title="Permanent link">&para;</a></h2>
-<p>On Hopper-class GPUs (compute capability 9.0+), NVIDIA introduced <strong>warpgroup</strong> cooperation: four warps (128 threads) issuing wide matrix instructions together. Croktile calls this <code>: group-4</code>:</p>
-<pre class="highlight"><code class="language-choreo">parallel p by 1 : group-4 {
-  // body executes as a warpgroup of 128 threads
-}</code></pre>
-<p>Even when the parallel count is 1 (one warpgroup instance), the <code>: group-4</code> annotation tells the compiler that this body's 128 threads form a cooperative unit for instructions like WGMMA. You will see this in Chapter 4 when we add tensor-core operations.</p>
-<p>You can also launch <strong>multiple</strong> warpgroups per block:</p>
-<pre class="highlight"><code class="language-choreo">parallel p1 by 2 : group-4 {
-  // two warpgroups, indexed by p1 = 0 and p1 = 1
-}</code></pre>
-<p>This is how you scale a block's work along one dimension without adding more blocks — both warpgroups share the same shared memory but maintain independent accumulators. Chapter 4 will put this to work.</p>
-<h2 id="how-shared-enables-reuse">How <code>shared</code> Enables Reuse<a class="headerlink" href="#how-shared-enables-reuse" title="Permanent link">&para;</a></h2>
-<p>The DMA matmul uses <code>=&gt; shared</code> instead of <code>=&gt; local</code> for a reason: in the inner loop, every thread in the <code>[16, 16]</code> grid reads from the <strong>same</strong> <code>lhs_load.data</code> and <code>rhs_load.data</code>. Thread <code>(qx=3, qy=7)</code> reads <code>lhs_load.data.at(3, k)</code> — the same row that thread <code>(qx=3, qy=0)</code> reads. If each thread had its own private copy in <code>local</code>, the same data would be loaded 16 times (once per column thread). Shared memory stores it once for the whole block.</p>
-<p>The rule of thumb: if multiple threads in a block need the same data, copy it into <code>shared</code>. If each thread's working set is independent, <code>local</code> keeps data closer and avoids shared-memory bank contention.</p>
+<p>Nothing new here. The host program stays boring so the Croktile function stays the star.</p>
 <h2 id="tracing-one-output-element">Tracing One Output Element<a class="headerlink" href="#tracing-one-output-element" title="Permanent link">&para;</a></h2>
 <p>Pick global position <code>(row=37, col=50)</code> in the output. Which block and thread own it?</p>
 <p>Blocks partition 128 rows into 8 tiles of 16: <code>px = 37 / 16 = 2</code>, offset <code>qx = 37 % 16 = 5</code>. Columns partition 256 into 16 tiles of 16: <code>py = 50 / 16 = 3</code>, offset <code>qy = 50 % 16 = 2</code>. So block <code>(2, 3)</code>, thread <code>(5, 2)</code>.</p>
@@ -3101,6 +3036,14 @@ parallel g by 2  : group-4   // 2 warpgroups of 4 warps each (128 threads per gr
 <tr>
 <td><code>parallel p by A, q by B</code></td>
 <td>Comma-separated parallel axes</td>
+</tr>
+<tr>
+<td><code>lhs.span(0)</code></td>
+<td>Extract one dimension of a tensor's shape</td>
+</tr>
+<tr>
+<td><code>p#m</code></td>
+<td>Compose outer tile index <code>p</code> with inner offset <code>m</code></td>
 </tr>
 </tbody>
 </table>
@@ -3160,7 +3103,7 @@ parallel g by 2  : group-4   // 2 warpgroups of 4 warps each (128 threads per gr
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.top", "navigation.path", "navigation.indexes", "search.highlight", "search.suggest", "content.code.annotate", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.top", "navigation.path", "navigation.indexes", "search.highlight", "search.suggest", "content.code.annotate", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>

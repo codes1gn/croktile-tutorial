@@ -18,6 +18,10 @@
       
       
         
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../zh/tutorial/ch02-data-movement/" hreflang="zh">
+        
       
       
       <link rel="icon" href="../../assets/images/favicon.svg">
@@ -151,6 +155,32 @@
     
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../zh/tutorial/ch02-data-movement/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
     
     
       
@@ -604,13 +634,63 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#memory-hierarchy-where-data-lives" class="md-nav__link">
+  <a href="#memory-specifiers-where-data-lives" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Memory Hierarchy: Where Data Lives
+        Memory Specifiers: Where Data Lives
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Memory Specifiers: Where Data Lives">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-abstraction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Abstraction
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-three-levels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Three Levels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mapping-to-gpu-hardware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mapping to GPU Hardware
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choosing-a-specifier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing a Specifier
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -941,33 +1021,9 @@
   
   
   
-    
-    
-      
+    <li class="md-nav__item">
+      <a href="../../optimization/dense-gemm-fp16/" class="md-nav__link">
         
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/matmul-f16/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -981,50 +1037,6 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Dense GEMM FP16
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
     </li>
   
@@ -1038,96 +1050,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/pattern-optimizations/" class="md-nav__link">
+      <a href="../../optimization/sparse-gemm/" class="md-nav__link">
         
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/matmul-f16/aitune-last-mile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AI-Tune Last Mile
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/gemm-sp/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -1141,50 +1065,6 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Sparse GEMM (FP16 + E4M3)
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
     </li>
   
@@ -1198,94 +1078,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/pattern-optimizations/" class="md-nav__link">
+      <a href="../../optimization/blockscale-gemm-fp8/" class="md-nav__link">
         
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/gemm-sp/aitune-last-mile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AI-Tune Last Mile
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../optimization/blockscale-gemm/" class="md-nav__link ">
-              
   
   
   <span class="md-ellipsis">
@@ -1299,87 +1093,7 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Block-Scaled GEMM FP8
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/blockscale-gemm/baseline-analysis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Baseline Analysis
-  
-
-    
-  </span>
-  
-  
-
       </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../optimization/blockscale-gemm/pattern-optimizations/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Pattern Optimizations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -2884,13 +2598,63 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#memory-hierarchy-where-data-lives" class="md-nav__link">
+  <a href="#memory-specifiers-where-data-lives" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Memory Hierarchy: Where Data Lives
+        Memory Specifiers: Where Data Lives
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Memory Specifiers: Where Data Lives">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-abstraction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Abstraction
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-three-levels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Three Levels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mapping-to-gpu-hardware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mapping to GPU Hardware
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choosing-a-specifier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing a Specifier
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2978,13 +2742,21 @@
 <p>The trouble is that hardware does not actually work this way. A GPU does not fetch one 32-bit integer from memory at a time. It fetches contiguous blocks — 128 bytes, 256 bytes, sometimes more — in a single transaction, and it stages those blocks through a hierarchy of caches and on-chip buffers before any arithmetic touches them. There is a fundamental mismatch between the per-element programming model and the per-block hardware reality. Bridging that gap — thinking in blocks, managing memory levels, wiring up transfers — is the single biggest reason GPU programming is hard for newcomers.</p>
 <p>Croktile is designed around this insight. Instead of forcing you to think element-by-element and then hope the compiler or hardware will figure out the block structure, Croktile gives you <strong>data-block-level primitives</strong>: you name a rectangular chunk of a tensor with <code>chunkat</code>, move it between memory levels with <code>dma.copy</code>, and then work on it in-place. The programming model matches what the hardware actually does.</p>
 <p>This chapter rewrites Chapter 1's element-wise addition to use these block-level primitives. The math is identical — every element of <code>lhs</code> is still added to the corresponding element of <code>rhs</code> — but the code now explicitly describes which blocks of data move where, and the computation happens on whole tiles rather than individual scalars.</p>
-<p><img alt="Per-element vs data-block programming model comparison" src="../../assets/images/ch02/fig1_element_vs_block.png" /></p>
+<p><img alt="Per-element vs data-block programming model comparison" src="../../assets/images/ch02/fig1_element_vs_block_dark.png#only-dark" />
+<img alt="Per-element vs data-block programming model comparison" src="../../assets/images/ch02/fig1_element_vs_block_light.png#only-light" /></p>
 <p><em>Left: per-element view — each thread fetches one element individually. Right: data-block view — one DMA moves an entire tile at once.</em></p>
 <details>
 <summary>Animated version</summary>
-<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;">
-  <source src="/croktile-tutorial/assets/videos/ch02/anim1_element_vs_block.mp4" type="video/mp4" />
+
+<div markdown>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;" class="only-dark">
+  <source src="/croktile-tutorial/assets/videos/ch02/anim1_element_vs_block_dark.mp4" type="video/mp4" />
 </video>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;" class="only-light">
+  <source src="/croktile-tutorial/assets/videos/ch02/anim1_element_vs_block_light.mp4" type="video/mp4" />
+</video>
+</div>
+
 </details>
 
 <h2 id="tiled-element-wise-addition">Tiled Element-Wise Addition<a class="headerlink" href="#tiled-element-wise-addition" title="Permanent link">&para;</a></h2>
@@ -3020,13 +2792,21 @@ int main() {
 <pre class="highlight"><code class="language-bash">croktile tiled_add.co -o tiled_add
 ./tiled_add</code></pre>
 <p>Same <code>Test Passed</code>. The result is identical to Chapter 1's version — the math has not changed, only how data moves through memory.</p>
-<p><img alt="Tiled addition: load, compute, store flow" src="../../assets/images/ch02/fig2_tiled_add.png" /></p>
+<p><img alt="Tiled addition: load, compute, store flow" src="../../assets/images/ch02/fig2_tiled_add_dark.png#only-dark" />
+<img alt="Tiled addition: load, compute, store flow" src="../../assets/images/ch02/fig2_tiled_add_light.png#only-light" /></p>
 <p><em>Tiled addition for tile = 2: DMA loads both operand chunks into local memory, element-wise addition runs on the tile, and the result writes back to the output vector.</em></p>
 <details>
 <summary>Animated version</summary>
-<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;">
-  <source src="/croktile-tutorial/assets/videos/ch02/anim2_tiled_add.mp4" type="video/mp4" />
+
+<div markdown>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;" class="only-dark">
+  <source src="/croktile-tutorial/assets/videos/ch02/anim2_tiled_add_dark.mp4" type="video/mp4" />
 </video>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;" class="only-light">
+  <source src="/croktile-tutorial/assets/videos/ch02/anim2_tiled_add_light.mp4" type="video/mp4" />
+</video>
+</div>
+
 </details>
 
 <p>Here is what is new.</p>
@@ -3037,66 +2817,62 @@ int main() {
 <pre class="highlight"><code class="language-choreo">matrix.chunkat(row_tile, col_tile)</code></pre>
 <p>Each dimension is divided independently. If <code>matrix</code> has shape <code>[64, 128]</code> and you declare <code>parallel {r, c} by [4, 8]</code>, then <code>matrix.chunkat(r, c)</code> gives you a <code>[16, 16]</code> piece at tile position <code>(r, c)</code>. Croktile figures out the chunk size from the tensor shape and the number of tiles along each axis.</p>
 <p>The key thing to remember: <code>chunkat</code> does not copy data. It is a <strong>view</strong> — a description of which rectangle of the original tensor you mean. The actual movement happens in <code>dma.copy</code>.</p>
-<p><img alt="chunkat 2D tile selection semantics" src="../../assets/images/ch02/fig3_chunkat.png" /></p>
+<p><img alt="chunkat 2D tile selection semantics" src="../../assets/images/ch02/fig3_chunkat_dark.png#only-dark" />
+<img alt="chunkat 2D tile selection semantics" src="../../assets/images/ch02/fig3_chunkat_light.png#only-light" /></p>
 <p><em>A [64, 128] tensor divided into 4 × 8 tiles. <code>chunkat(1, 3)</code> selects the [16, 16] sub-tensor at row-tile 1, column-tile 3.</em></p>
 <details>
 <summary>Animated version</summary>
-<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;">
-  <source src="/croktile-tutorial/assets/videos/ch02/anim3_chunkat.mp4" type="video/mp4" />
+
+<div markdown>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;" class="only-dark">
+  <source src="/croktile-tutorial/assets/videos/ch02/anim3_chunkat_dark.mp4" type="video/mp4" />
 </video>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;" class="only-light">
+  <source src="/croktile-tutorial/assets/videos/ch02/anim3_chunkat_light.mp4" type="video/mp4" />
+</video>
+</div>
+
 </details>
 
 <h2 id="dmacopy-bulk-transfer-between-memory-levels"><code>dma.copy</code>: Bulk Transfer Between Memory Levels<a class="headerlink" href="#dmacopy-bulk-transfer-between-memory-levels" title="Permanent link">&para;</a></h2>
 <pre class="highlight"><code class="language-choreo">lhs_load = dma.copy lhs.chunkat(tile) =&gt; local;</code></pre>
 <p>This copies the chunk selected by <code>chunkat(tile)</code> from wherever <code>lhs</code> lives (by default, global device memory) into <code>local</code> memory — fast, on-chip storage close to the compute units. The result, <code>lhs_load</code>, is a <strong>DMA future</strong>: a handle that represents the in-flight (or completed) transfer.</p>
-<p>The <code>=&gt; local</code> part is the <strong>destination memory specifier</strong>. Croktile has three levels:</p>
-<table>
-<thead>
-<tr>
-<th>Specifier</th>
-<th>What it means</th>
-<th>Analogy</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>global</code></td>
-<td>Device-wide memory (large, slow)</td>
-<td>DRAM</td>
-</tr>
-<tr>
-<td><code>shared</code></td>
-<td>Block-scoped on-chip memory (fast, visible to all threads in a block)</td>
-<td>CUDA shared memory</td>
-</tr>
-<tr>
-<td><code>local</code></td>
-<td>Thread-private on-chip storage (fastest, private)</td>
-<td>Registers or per-thread scratch</td>
-</tr>
-</tbody>
-</table>
-<p>For now the examples use <code>local</code> because each tile runs independently — there is no cross-tile cooperation, so thread-private storage is the natural choice. Chapter 3 will introduce <code>shared</code> when multiple threads need to read the same tile.</p>
+<p>The <code>=&gt; local</code> part is the <strong>destination memory specifier</strong>. We discuss memory specifiers in detail below, after covering the rest of the syntax.</p>
+<p><img alt="dma.copy — bulk memory transfer" src="../../assets/images/ch02/fig_dma_copy_dark.png#only-dark" />
+<img alt="dma.copy — bulk memory transfer" src="../../assets/images/ch02/fig_dma_copy_light.png#only-light" /></p>
+<p><em><code>dma.copy</code> transfers a chunk from global memory to local memory and returns a DMA future handle.</em></p>
 <h2 id="futures-and-data">Futures and <code>.data</code><a class="headerlink" href="#futures-and-data" title="Permanent link">&para;</a></h2>
 <p>After <code>dma.copy</code>, the variable <code>lhs_load</code> is not a tensor — it is a <strong>future</strong> that tracks the transfer. To get at the actual data, you use <code>.data</code>:</p>
 <pre class="highlight"><code class="language-choreo">lhs_load.data.at(i)</code></pre>
 <p><code>lhs_load.data</code> is a spanned tensor in local memory with the shape of the chunk that was copied. You index into it with <code>.at(i)</code> exactly like you indexed into <code>lhs</code> in Chapter 1 — except now you are reading from fast memory instead of global memory.</p>
 <p>Why the indirection? Because in later chapters you will issue copies that run <strong>asynchronously</strong> — the hardware starts moving data while your program does other work. The future is what lets you refer to "the data that will be there when the transfer finishes" without blocking immediately. For now, the copies are synchronous and <code>.data</code> is always valid right after the <code>dma.copy</code> line, but the pattern is the same.</p>
+<p><img alt="Futures and .data" src="../../assets/images/ch02/fig_future_data_dark.png#only-dark" />
+<img alt="Futures and .data" src="../../assets/images/ch02/fig_future_data_light.png#only-light" /></p>
+<p><em>A DMA future tracks the transfer. Access the copied data through <code>.data</code>, which gives you a spanned tensor in local memory.</em></p>
 <h2 id="the-compose-operator">The <code>#</code> Compose Operator<a class="headerlink" href="#the-compose-operator" title="Permanent link">&para;</a></h2>
 <p>Look at the output indexing:</p>
 <pre class="highlight"><code class="language-choreo">output.at(tile # i)</code></pre>
 <p>The <code>#</code> operator composes a <strong>tile index</strong> <code>tile</code> with a <strong>local offset</strong> <code>i</code> to produce a <strong>global index</strong> into <code>output</code>. The rule is <strong>outer # inner</strong>: the higher-level index goes on the left, the element offset within that tile goes on the right. Since <code>tile</code> selects which chunk of 16 elements to work on, and <code>i</code> runs from 0 to 15 within that chunk, <code>tile # i</code> gives the position in the full 128-element vector: concretely <code>tile * 16 + i</code>.</p>
 <p>You need <code>#</code> because <code>lhs_load.data.at(i)</code> uses a <strong>local</strong> index (position within the tile), but <code>output.at(...)</code> uses a <strong>global</strong> index (position in the full output tensor). The compose operator bridges the two coordinate systems. Read <code>tile # i</code> as "element <code>i</code> within tile <code>tile</code>."</p>
 <p>This <code>#</code> operator appears in one dimension here. In Chapter 3, when tiling a 2D matrix with parallel indices <code>p</code> and <code>q</code>, the pattern is <code>output.at(p#m, q#n)</code> — same idea, just more axes.</p>
+<p><img alt="The # Compose Operator" src="../../assets/images/ch02/fig_compose_dark.png#only-dark" />
+<img alt="The # Compose Operator" src="../../assets/images/ch02/fig_compose_light.png#only-light" /></p>
+<p><em><code>tile # i</code> composes tile index 2 with local offset 3 to produce global index 35. The rule is always outer # inner.</em></p>
 <h2 id="the-extent-operator">The <code>#</code> Extent Operator<a class="headerlink" href="#the-extent-operator" title="Permanent link">&para;</a></h2>
 <p>In the inner loop:</p>
 <pre class="highlight"><code class="language-choreo">foreach i in [128 / #tile]</code></pre>
 <p><code>#tile</code> means "the <strong>extent</strong> of the tile axis" — how many tiles there are along that dimension. Here <code>#tile</code> is 8 (because <code>parallel tile by 8</code> declared 8 tiles), so <code>128 / #tile</code> is 16 — the number of elements in each tile. This is the trip count of the inner loop: you visit every element position within one tile.</p>
 <p>The <code>#</code> symbol does double duty in Croktile: before a name in an expression (<code>#tile</code>) it means the <strong>extent</strong> of that index; between two names (<code>tile # i</code>) it means <strong>compose</strong>. Context tells you which is which — <code>#</code> as extent always appears as a prefix, and <code>#</code> as compose always appears as an infix between two operands.</p>
+<p><img alt="The # Extent Operator" src="../../assets/images/ch02/fig_extent_dark.png#only-dark" />
+<img alt="The # Extent Operator" src="../../assets/images/ch02/fig_extent_light.png#only-light" /></p>
+<p><em><code>#tile</code> as a prefix gives the extent (count = 8). <code>tile # i</code> as an infix composes indices. Context disambiguates.</em></p>
 <h2 id="spani-picking-one-dimension"><code>span(i)</code>: Picking One Dimension<a class="headerlink" href="#spani-picking-one-dimension" title="Permanent link">&para;</a></h2>
 <p>Chapter 1 used <code>lhs.span</code> to copy the <em>entire</em> shape of an input. Sometimes you want just one dimension. <code>lhs.span(0)</code> gives the size along the first axis, <code>rhs.span(1)</code> gives the size along the second, and so on. This matters when your output has a different rank than your inputs — for example, a matmul where the output shape <code>[M, N]</code> comes from <code>lhs.span(0)</code> and <code>rhs.span(1)</code>:</p>
 <pre class="highlight"><code class="language-choreo">s32 [lhs.span(0), rhs.span(1)] output;</code></pre>
 <p><code>span(i)</code> is not needed yet in this 1D example, but it becomes important the moment you tile 2D tensors.</p>
+<p><img alt="span(i) — Picking One Dimension" src="../../assets/images/ch02/fig_span_dark.png#only-dark" />
+<img alt="span(i) — Picking One Dimension" src="../../assets/images/ch02/fig_span_light.png#only-light" /></p>
+<p><em><code>lhs.span</code> copies the full shape. <code>lhs.span(0)</code> picks just the first dimension, <code>lhs.span(1)</code> picks the second.</em></p>
 <h2 id="2d-tiled-addition">2D Tiled Addition<a class="headerlink" href="#2d-tiled-addition" title="Permanent link">&para;</a></h2>
 <p>The same pattern works on matrices. Here is a <code>[64, 128]</code> addition tiled into <code>[4, 8]</code> chunks of size <code>[16, 16]</code>:</p>
 <pre class="highlight"><code class="language-choreo">__co__ s32 [64, 128] tiled_add_2d(s32 [64, 128] lhs, s32 [64, 128] rhs) {
@@ -3114,14 +2890,57 @@ int main() {
 }</code></pre>
 <p>Every construct generalizes naturally to higher dimensions: <code>chunkat(tr, tc)</code> takes two tile indices, <code>foreach {i, j}</code> introduces two inner indices, <code>tr # i</code> and <code>tc # j</code> compose along each axis (outer # inner), and <code>#tr</code> / <code>#tc</code> give the tile counts (4 and 8 respectively) so the inner loop bounds compute to <code>16</code> and <code>16</code>.</p>
 <p>The host code is the same pattern as before — <code>make_spandata&lt;choreo::s32&gt;(64, 128)</code>, <code>.view()</code>, verify with nested loops.</p>
-<h2 id="memory-hierarchy-where-data-lives">Memory Hierarchy: Where Data Lives<a class="headerlink" href="#memory-hierarchy-where-data-lives" title="Permanent link">&para;</a></h2>
-<p>The examples used <code>=&gt; local</code> for all copies. In practice, you choose the destination based on who needs access:</p>
+<h2 id="memory-specifiers-where-data-lives">Memory Specifiers: Where Data Lives<a class="headerlink" href="#memory-specifiers-where-data-lives" title="Permanent link">&para;</a></h2>
+<p>Every <code>dma.copy</code> ends with <code>=&gt; local</code>, <code>=&gt; shared</code>, or <code>=&gt; global</code>. These are <strong>memory specifiers</strong> — Croktile's abstraction over the GPU's physical memory hierarchy. Understanding what they mean, and what hardware they map to, is worth a detour.</p>
+<h3 id="the-abstraction">The Abstraction<a class="headerlink" href="#the-abstraction" title="Permanent link">&para;</a></h3>
+<p>A modern GPU has several levels of storage, each with a different size, speed, and visibility scope. Writing raw CUDA forces you to manage these levels by hand: you <code>cudaMalloc</code> global buffers, declare <code>__shared__</code> arrays with explicit sizes, and hope that the compiler maps your local variables to registers. It is one of the steepest parts of the learning curve.</p>
+<p>Croktile's memory specifiers are a deliberate simplification. Instead of worrying about CUDA's <code>__shared__</code> declarations, register pressure, or cache line alignment, you just tell <code>dma.copy</code> <em>where</em> to put the data. The compiler handles the rest — allocation sizes, bank-conflict avoidance, register spilling — so you can focus on the data flow.</p>
+<h3 id="the-three-levels">The Three Levels<a class="headerlink" href="#the-three-levels" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong><code>local</code></strong> — only the thread that issued the <code>dma.copy</code> can see this data. Good when there is no sharing, or when each thread works on its own independent slice.</li>
-<li><strong><code>shared</code></strong> — all threads in the same block can see this data. Essential when multiple threads collaborate on the same tile (which is the standard pattern for matmul and reductions). We will use <code>shared</code> in the next chapter.</li>
-<li><strong><code>global</code></strong> — device-wide, largest and slowest. Input and output tensors start here; you copy pieces into <code>shared</code> or <code>local</code> for fast access, then copy results back.</li>
+<li>
+<p><strong><code>global</code></strong> — device-wide memory. This is HBM (High Bandwidth Memory) or GDDR on the physical chip — large (tens of gigabytes) but relatively slow to access. All threads across all thread blocks can see it. Input and output tensors start here. In CUDA terms, this is what you get from <code>cudaMalloc</code>.</p>
+</li>
+<li>
+<p><strong><code>shared</code></strong> — block-scoped on-chip SRAM. Each Streaming Multiprocessor (SM) has a pool of fast, low-latency memory (typically 100–228 KB) that is visible to all threads within the same thread block. In CUDA, this is <code>__shared__</code> memory. Use it when multiple threads need to read the same tile — the standard pattern in matmul, reductions, and stencil operations. We will use <code>shared</code> in the next chapter.</p>
+</li>
+<li>
+<p><strong><code>local</code></strong> — thread-private storage. This maps to registers and per-thread scratch space on the SM — the fastest level, but visible only to the thread that owns it. In CUDA, these are your local variables that the compiler assigns to registers. Good when there is no sharing, or when each thread works on its own independent slice.</p>
+</li>
 </ul>
-<p>The choice does not change the Croktile function's semantics — only performance. You could replace every <code>=&gt; local</code> with <code>=&gt; shared</code> and the program would still produce the same result, just with different speed characteristics.</p>
+<h3 id="mapping-to-gpu-hardware">Mapping to GPU Hardware<a class="headerlink" href="#mapping-to-gpu-hardware" title="Permanent link">&para;</a></h3>
+<p>The figure below shows how these three specifiers correspond to the physical GPU layout. Notice the hierarchy: data moves from global (large, slow) through shared (medium, fast) to local (small, fastest). Croktile's <code>dma.copy</code> lets you express these movements directly.</p>
+<p><img alt="Memory Specifiers → GPU Hardware" src="../../assets/images/ch02/fig_memory_hierarchy_dark.png#only-dark" />
+<img alt="Memory Specifiers → GPU Hardware" src="../../assets/images/ch02/fig_memory_hierarchy_light.png#only-light" /></p>
+<p><em>Croktile's <code>global</code>, <code>shared</code>, and <code>local</code> specifiers map directly to GPU hardware levels: HBM/DRAM, per-SM shared memory, and per-thread registers.</em></p>
+<h3 id="choosing-a-specifier">Choosing a Specifier<a class="headerlink" href="#choosing-a-specifier" title="Permanent link">&para;</a></h3>
+<p>The choice does not change the Croktile function's semantics — only performance. You could replace every <code>=&gt; local</code> with <code>=&gt; shared</code> and the program would still produce the same result, just with different speed characteristics. The rule of thumb:</p>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Use</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Each tile is independent, no sharing</td>
+<td><code>local</code></td>
+<td>Fastest, no synchronization needed</td>
+</tr>
+<tr>
+<td>Multiple threads collaborate on the same tile</td>
+<td><code>shared</code></td>
+<td>Visible to all threads in the block</td>
+</tr>
+<tr>
+<td>Writing results back to the output tensor</td>
+<td><code>global</code></td>
+<td>Output must be device-visible</td>
+</tr>
+</tbody>
+</table>
+<p>For now the examples use <code>local</code> because each tile runs independently. Chapter 3 will introduce <code>shared</code> when multiple threads need to read the same tile for a tiled matrix multiply.</p>
 <h2 id="what-changed-from-chapter-1">What Changed from Chapter 1<a class="headerlink" href="#what-changed-from-chapter-1" title="Permanent link">&para;</a></h2>
 <p>Nothing about the math changed. Every element of <code>lhs</code> is still added to the corresponding element of <code>rhs</code>. What changed is the <strong>granularity</strong> of memory access: instead of 128 individual reads and writes, we issue 8 bulk copies per input tensor, each moving 16 contiguous elements into fast memory. The compute loop then runs entirely on local data.</p>
 <p>The new vocabulary:</p>
@@ -3223,7 +3042,7 @@ int main() {
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.top", "navigation.path", "navigation.indexes", "search.highlight", "search.suggest", "content.code.annotate", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.top", "navigation.path", "navigation.indexes", "search.highlight", "search.suggest", "content.code.annotate", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
