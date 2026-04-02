@@ -82,11 +82,11 @@ render_static ch07_fig4_view_from.py ViewFrom fig4_view_from "$DOCS/images/ch07"
 render_static ch07_fig5_subspan_step.py SubspanStep fig5_subspan_step "$DOCS/images/ch07"
 render_static ch07_fig6_zfill.py ZFill fig6_zfill "$DOCS/images/ch07"
 render_static ch07_fig7_span_as.py SpanAs fig7_span_as "$DOCS/images/ch07"
+render_static ch07_fig8_expressiveness.py ExpressivenessVsPerformance fig8_expressiveness "$DOCS/images/ch07"
 
 echo "=== Ch08 ==="
 mkdir -p "$DOCS/images/ch08"
-render_static ch08_fig1_escape_hatch.py Ch08Fig1EscapeHatch fig1_escape_hatch "$DOCS/images/ch08"
-render_static ch08_fig2_compilation_flow.py CompilationFlow fig2_compilation_flow "$DOCS/images/ch08"
+render_static ch08_fig1_compilation_flow.py Ch08CompilationFlow fig1_compilation_flow "$DOCS/images/ch08"
 
 echo "=== Ch09 ==="
 mkdir -p "$DOCS/images/ch09"

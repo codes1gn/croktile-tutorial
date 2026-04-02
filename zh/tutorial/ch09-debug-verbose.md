@@ -20,7 +20,7 @@ __co__ void check_shapes(f32 [3, 2] b) {
 编译该文件时，编译器会输出：
 
 ```
-shape of b: b.span = {3, 2}
+shape of b: b.span = [3, 2]
 ```
 
 无需 GPU。字符串字面量会被拼接（`"wor" "ld!"` 变为 `"world!"`）。在投入完整内核启动之前，可用 `print!` / `println!` 验证 `chunkat` 与 `subspan` 是否产生你期望的分块尺寸。
@@ -78,10 +78,10 @@ croqtile kernel.co -v -o kernel
 编译器支持通过 `-rtc`（或 `--runtime-check`）进行分级运行时检查：
 
 ```bash
-croqtile kernel.co -rtc high -o kernel
+croqtile kernel.co -rtc=high -o kernel
 ```
 
-级别：`entry`、`low`、`medium`、`high`、`all`、`none`。级别越高会插入更多边界检查与校验，代价是性能。开发阶段可使用 `high` 或 `all`，生产环境使用 `none`。
+级别：`none`、`entry`（默认）、`low`、`medium`、`high`、`all`。每一级是上一级的超集。开发阶段可使用 `high` 或 `all`，生产环境使用 `none`。
 
 ## 调试大量依赖 MMA 的内核
 
@@ -126,24 +126,12 @@ $3 = true
 
 变量名上的 `__dbg_` 前缀由编译器生成——它使 Croqtile 变量与生成的 C++ 中间代码一并可见。
 
-## 综合应用：系统化工作流
-
-上述顺序是有意为之：**先做廉价的编译期检查**，再是**收窄范围的运行时打印**，然后是**流水线语义**、**布局**，最后才是**调试器**。
+## 综合应用
 
 ![Debugging workflow: shapes -> one tile -> sync -> layout -> GDB](../assets/images/ch09/fig1_debug_workflow_dark.png#only-dark)
 ![Debugging workflow: shapes -> one tile -> sync -> layout -> GDB](../assets/images/ch09/fig1_debug_workflow_light.png#only-light)
 
-**1. 检查形状。** 在编译期使用 `println!`，确认所有 `chunkat`、`subspan` 与 `span` 表达式产生的分块尺寸符合预期。
-
-**2. 检查单个分块。** 在 K 循环内添加带条件的 `println`，仅对块 `(0, 0)` 与某一个线程触发。在每次 K 迭代后打印累加器，并与手算参考值比对。
-
-**3. 检查同步。** 若仅在 K 很大时值错误，应怀疑事件顺序。在生产者与消费者两侧打印 `iv_k` 与 `stage`，确认二者访问同一序列。常见缺陷：消费者的 `trigger empty[stage]` 触发过早。
-
-**4. 检查布局。** 若结果呈模式性错误（例如每第十六个元素正确，其余错位），应怀疑 `mma.row.row` 中行主序与列主序失配，或 `tma.copy.swiz<N>` 与 `mma.load.swiz<N>` 之间的 swizzle 模式不一致。
-
-**5. 用 GDB 查指针类缺陷。** 若 `println` 显示的值不合理（NaN、巨大整数、本应为非零却为零），使用 `-g` 编译并在 `cuda-gdb` 中单步执行。检查张量指针（`__dbg_x.data`）。
-
-**性能提示。** `print` / `println` 代价很高：每次调用都经全局 `printf` 缓冲区串行化，会严重拉低吞吐。Debug RTTI 会增加寄存器压力。基准测试前应移除所有打印并去掉 `-g`。实用折衷是使用 `#ifdef DEBUG_PRINT`（第 8 章）：
+由廉价到昂贵依次排查：`println!`（编译期形状）→ 带条件的 `println` 只看一块（运行时数值）→ 事件/阶段打印（同步）→ 模式分析（布局）→ `cuda-gdb`（指针类缺陷）。运行时打印用 `#ifdef` 守卫，使之在生产构建中消失：
 
 ```choreo
 #ifdef DEBUG_PRINT
@@ -151,7 +139,10 @@ $3 = true
 #endif
 ```
 
-使用 `croqtile kernel.co -DDEBUG_PRINT` 编译以启用，或不带该标志用于生产运行。
+```bash
+croqtile kernel.co -DDEBUG_PRINT -o kernel    # 调试构建
+croqtile kernel.co -o kernel                   # 生产构建
+```
 
 ## 小结
 
@@ -160,7 +151,7 @@ $3 = true
 | `print!` / `println!` | 编译期 | 几乎无——无需启动内核 |
 | `assert(expr, "msg")` | 运行时 | 低——违反时中止 |
 | `print` / `println` | 运行时 | 中——经 `printf` 串行化 |
-| `-rtc high` | 运行时 | 中——边界检查 |
+| `-rtc=high` | 运行时 | 中——边界检查 |
 | `-v` / `--verbose` | 编译器 | 几乎无——显示子进程调用 |
 | `-g` + `cuda-gdb` + RTTI | 运行时 | 高——调试符号，无优化 |
 
