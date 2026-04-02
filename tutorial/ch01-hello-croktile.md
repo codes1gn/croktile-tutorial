@@ -123,7 +123,34 @@ croktile ele_add.co -o ele_add               # specify output name
 croktile -es -t cuda ele_add.co -o out.cu    # emit CUDA source only
 ```
 
-The `-es` flag stops after transpilation, letting you inspect the generated CUDA code. The `-t` flag selects the target platform. See [Chapter 0](ch00-installation.md) for the full set of compiler flags.
+The `-es` flag stops after transpilation, letting you inspect the generated CUDA code. The `-t` flag selects the target platform.
+
+To see all available options, run `croktile --help`:
+
+```bash
+croktile --help
+```
+
+This prints the full set of compiler flags — output naming, target selection, verbosity, and diagnostic options. It is worth scanning once so you know what is available when you need it.
+
+![Terminal: compile and run Croktile](../assets/images/ch01/compile_and_run_dark.png#only-dark)
+![Terminal: compile and run Croktile](../assets/images/ch01/compile_and_run_light.png#only-light)
+
+*Compiling and running a Croktile program, plus the `--help` output.*
+
+<details>
+<summary>Animated version</summary>
+
+<div markdown>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;" class="only-dark">
+  <source src="/croktile-tutorial/assets/videos/ch01/compile_and_run_dark.mp4" type="video/mp4" />
+</video>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;" class="only-light">
+  <source src="/croktile-tutorial/assets/videos/ch01/compile_and_run_light.mp4" type="video/mp4" />
+</video>
+</div>
+
+</details>
 
 ## What You Have So Far
 

@@ -6,22 +6,22 @@ Animation 2: Tiled Addition — step by step.
 4. Element-wise addition in local
 5. Write result back to output
 """
+import sys
+import os
+
+sys.path.insert(0, os.path.dirname(__file__))
+from theme import parse_theme
 from manim import *
 
-BG = "#1a1a2e"
-LHS_C = "#2196F3"
-RHS_C = "#FF9800"
-OUT_C = "#4CAF50"
-LOCAL_C = "#1B5E20"
-ARROW_C = "#90CAF9"
+C, THEME = parse_theme()
 
 
 class TiledAddAnim(Scene):
     def construct(self):
-        self.camera.background_color = BG
+        self.camera.background_color = C["bg"]
 
         title = Text("Tiled Addition: Step by Step", font_size=28,
-                      color=WHITE, font="Monospace")
+                      color=C["fg"], font="Monospace")
         title.to_edge(UP, buff=0.3)
         self.play(Write(title), run_time=0.6)
 
@@ -31,28 +31,28 @@ class TiledAddAnim(Scene):
 
         # Step 1: show vectors
         step1 = Text("Step 1: Two input vectors, split into 8 tiles",
-                      font_size=16, color=GREY_B, font="Monospace")
+                      font_size=16, color=C["fg2"], font="Monospace")
         step1.move_to(UP * 2.5)
         self.play(FadeIn(step1), run_time=0.3)
 
-        lhs_lbl = Text("lhs [128]", font_size=14, color=LHS_C, font="Monospace")
+        lhs_lbl = Text("lhs [128]", font_size=14, color=C["lhs_c"], font="Monospace")
         lhs_lbl.move_to(LEFT * 4 + UP * 1.6)
-        rhs_lbl = Text("rhs [128]", font_size=14, color=RHS_C, font="Monospace")
+        rhs_lbl = Text("rhs [128]", font_size=14, color=C["rhs_c"], font="Monospace")
         rhs_lbl.move_to(LEFT * 4 + UP * 0.5)
 
         lhs_tiles = VGroup()
         rhs_tiles = VGroup()
         for i in range(n_tiles):
-            lr = Rectangle(width=cw - 0.04, height=0.4, fill_color=LHS_C,
-                           fill_opacity=0.3, stroke_color=LHS_C, stroke_width=1)
+            lr = Rectangle(width=cw - 0.04, height=0.4, fill_color=C["lhs_c"],
+                           fill_opacity=0.3, stroke_color=C["lhs_c"], stroke_width=1)
             lr.move_to([ox + i * cw, 1.6, 0])
-            lt = Text(str(i), font_size=10, color=WHITE, font="Monospace").move_to(lr)
+            lt = Text(str(i), font_size=10, color=C["fg"], font="Monospace").move_to(lr)
             lhs_tiles.add(VGroup(lr, lt))
 
-            rr = Rectangle(width=cw - 0.04, height=0.4, fill_color=RHS_C,
-                           fill_opacity=0.3, stroke_color=RHS_C, stroke_width=1)
+            rr = Rectangle(width=cw - 0.04, height=0.4, fill_color=C["rhs_c"],
+                           fill_opacity=0.3, stroke_color=C["rhs_c"], stroke_width=1)
             rr.move_to([ox + i * cw, 0.5, 0])
-            rt = Text(str(i), font_size=10, color=WHITE, font="Monospace").move_to(rr)
+            rt = Text(str(i), font_size=10, color=C["fg"], font="Monospace").move_to(rr)
             rhs_tiles.add(VGroup(rr, rt))
 
         self.play(FadeIn(lhs_lbl), FadeIn(rhs_lbl),
@@ -61,51 +61,51 @@ class TiledAddAnim(Scene):
         self.wait(0.5)
 
         # Step 2: highlight tile 2
-        step2 = Text("Step 2: Select tile = 2", font_size=16, color=GREY_B, font="Monospace")
+        step2 = Text("Step 2: Select tile = 2", font_size=16, color=C["fg2"], font="Monospace")
         self.play(
             FadeOut(step1), FadeIn(step2.move_to(UP * 2.5)),
-            lhs_tiles[2][0].animate.set_fill(LHS_C, 0.8).set_stroke(YELLOW, 2),
-            rhs_tiles[2][0].animate.set_fill(RHS_C, 0.8).set_stroke(YELLOW, 2),
+            lhs_tiles[2][0].animate.set_fill(C["lhs_c"], 0.8).set_stroke(C["yellow"], 2),
+            rhs_tiles[2][0].animate.set_fill(C["rhs_c"], 0.8).set_stroke(C["yellow"], 2),
             run_time=0.5
         )
         self.wait(0.5)
 
         # Step 3: DMA load into local
         step3 = Text("Step 3: dma.copy both tiles => local",
-                      font_size=16, color=GREY_B, font="Monospace")
+                      font_size=16, color=C["fg2"], font="Monospace")
 
-        local_box = Rectangle(width=5, height=1.8, fill_color=LOCAL_C,
-                              fill_opacity=0.08, stroke_color=LOCAL_C, stroke_width=1.5)
+        local_box = Rectangle(width=5, height=1.8, fill_color=C["green_dk"],
+                              fill_opacity=0.08, stroke_color=C["green_dk"], stroke_width=1.5)
         local_box.move_to(DOWN * 1.3)
-        local_lbl = Text("Local Memory", font_size=14, color=LOCAL_C, font="Monospace")
+        local_lbl = Text("Local Memory", font_size=14, color=C["green_dk"], font="Monospace")
         local_lbl.move_to(DOWN * 0.25)
 
         lhs_local = VGroup()
         rhs_local = VGroup()
         ncells = 4
         for i in range(ncells):
-            lr = Rectangle(width=0.5, height=0.35, fill_color=LHS_C,
-                           fill_opacity=0.5, stroke_color=LHS_C, stroke_width=1)
+            lr = Rectangle(width=0.5, height=0.35, fill_color=C["lhs_c"],
+                           fill_opacity=0.5, stroke_color=C["lhs_c"], stroke_width=1)
             lr.move_to([-1.5 + i * 0.55, -1.0, 0])
-            lt = Text(f"a{32+i}", font_size=8, color=WHITE, font="Monospace").move_to(lr)
+            lt = Text(f"a{32+i}", font_size=8, color=C["fg"], font="Monospace").move_to(lr)
             lhs_local.add(VGroup(lr, lt))
 
-            rr = Rectangle(width=0.5, height=0.35, fill_color=RHS_C,
-                           fill_opacity=0.5, stroke_color=RHS_C, stroke_width=1)
+            rr = Rectangle(width=0.5, height=0.35, fill_color=C["rhs_c"],
+                           fill_opacity=0.5, stroke_color=C["rhs_c"], stroke_width=1)
             rr.move_to([1.0 + i * 0.55, -1.0, 0])
-            rt = Text(f"b{32+i}", font_size=8, color=WHITE, font="Monospace").move_to(rr)
+            rt = Text(f"b{32+i}", font_size=8, color=C["fg"], font="Monospace").move_to(rr)
             rhs_local.add(VGroup(rr, rt))
 
-        dots_l = Text("...", font_size=12, color=GREY_B, font="Monospace")
+        dots_l = Text("...", font_size=12, color=C["fg2"], font="Monospace")
         dots_l.next_to(lhs_local, RIGHT, buff=0.08)
-        dots_r = Text("...", font_size=12, color=GREY_B, font="Monospace")
+        dots_r = Text("...", font_size=12, color=C["fg2"], font="Monospace")
         dots_r.next_to(rhs_local, RIGHT, buff=0.08)
 
         arr_l = Arrow(lhs_tiles[2][0].get_bottom(), [-1.0, -0.6, 0],
-                      buff=0.1, stroke_width=2, color=ARROW_C,
+                      buff=0.1, stroke_width=2, color=C["arrow_c"],
                       max_tip_length_to_length_ratio=0.1)
         arr_r = Arrow(rhs_tiles[2][0].get_bottom(), [1.5, -0.6, 0],
-                      buff=0.1, stroke_width=2, color=ARROW_C,
+                      buff=0.1, stroke_width=2, color=C["arrow_c"],
                       max_tip_length_to_length_ratio=0.1)
 
         self.play(
@@ -124,22 +124,22 @@ class TiledAddAnim(Scene):
 
         # Step 4: Element-wise add
         step4 = Text("Step 4: Element-wise add in local",
-                      font_size=16, color=GREY_B, font="Monospace")
+                      font_size=16, color=C["fg2"], font="Monospace")
 
-        plus = Text("+", font_size=24, color=WHITE, font="Monospace")
+        plus = Text("+", font_size=24, color=C["fg"], font="Monospace")
         plus.move_to([0, -1.0, 0])
-        eq = Text("=", font_size=20, color=WHITE, font="Monospace")
+        eq = Text("=", font_size=20, color=C["fg"], font="Monospace")
         eq.move_to([0, -1.7, 0])
 
         result = VGroup()
         for i in range(ncells):
-            rr = Rectangle(width=0.55, height=0.35, fill_color=OUT_C,
-                           fill_opacity=0.5, stroke_color=OUT_C, stroke_width=1)
+            rr = Rectangle(width=0.55, height=0.35, fill_color=C["out_c"],
+                           fill_opacity=0.5, stroke_color=C["out_c"], stroke_width=1)
             rr.move_to([-0.9 + i * 0.6, -2.0, 0])
-            rt = Text(f"a+b", font_size=8, color=WHITE, font="Monospace").move_to(rr)
+            rt = Text(f"a+b", font_size=8, color=C["fg"], font="Monospace").move_to(rr)
             result.add(VGroup(rr, rt))
 
-        dots_o = Text("...", font_size=12, color=GREY_B, font="Monospace")
+        dots_o = Text("...", font_size=12, color=C["fg2"], font="Monospace")
         dots_o.next_to(result, RIGHT, buff=0.08)
 
         self.play(
@@ -156,23 +156,23 @@ class TiledAddAnim(Scene):
 
         # Step 5: Write back
         step5 = Text("Step 5: Write result to output[tile]",
-                      font_size=16, color=GREY_B, font="Monospace")
+                      font_size=16, color=C["fg2"], font="Monospace")
 
-        out_lbl = Text("output [128]", font_size=14, color=OUT_C, font="Monospace")
+        out_lbl = Text("output [128]", font_size=14, color=C["out_c"], font="Monospace")
         out_lbl.move_to(LEFT * 4 + DOWN * 3.0)
 
         out_tiles = VGroup()
         for i in range(n_tiles):
             rr = Rectangle(width=cw - 0.04, height=0.4,
-                           fill_color=OUT_C,
+                           fill_color=C["out_c"],
                            fill_opacity=0.15 if i != 2 else 0.7,
-                           stroke_color=OUT_C, stroke_width=1)
+                           stroke_color=C["out_c"], stroke_width=1)
             rr.move_to([ox + i * cw, -3.0, 0])
-            rt = Text(str(i), font_size=10, color=WHITE, font="Monospace").move_to(rr)
+            rt = Text(str(i), font_size=10, color=C["fg"], font="Monospace").move_to(rr)
             out_tiles.add(VGroup(rr, rt))
 
         store_arr = Arrow([0, -2.3, 0], [ox + 2 * cw, -2.7, 0],
-                          buff=0.1, stroke_width=2, color=OUT_C,
+                          buff=0.1, stroke_width=2, color=C["out_c"],
                           max_tip_length_to_length_ratio=0.1)
 
         self.play(
@@ -185,7 +185,7 @@ class TiledAddAnim(Scene):
         self.wait(0.3)
 
         done = Text("Repeat for all 8 tiles", font_size=18,
-                     color=YELLOW, font="Monospace")
+                     color=C["yellow"], font="Monospace")
         done.move_to(DOWN * 3.6)
         self.play(FadeOut(step5), FadeIn(done), run_time=0.4)
         self.wait(2)

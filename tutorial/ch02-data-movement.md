@@ -8,15 +8,23 @@ Croktile is designed around this insight. Instead of forcing you to think elemen
 
 This chapter rewrites Chapter 1's element-wise addition to use these block-level primitives. The math is identical — every element of `lhs` is still added to the corresponding element of `rhs` — but the code now explicitly describes which blocks of data move where, and the computation happens on whole tiles rather than individual scalars.
 
-![Per-element vs data-block programming model comparison](../assets/images/ch02/fig1_element_vs_block.png)
+![Per-element vs data-block programming model comparison](../assets/images/ch02/fig1_element_vs_block_dark.png#only-dark)
+![Per-element vs data-block programming model comparison](../assets/images/ch02/fig1_element_vs_block_light.png#only-light)
 
 *Left: per-element view — each thread fetches one element individually. Right: data-block view — one DMA moves an entire tile at once.*
 
 <details>
 <summary>Animated version</summary>
-<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;">
-  <source src="/croktile-tutorial/assets/videos/ch02/anim1_element_vs_block.mp4" type="video/mp4" />
+
+<div markdown>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;" class="only-dark">
+  <source src="/croktile-tutorial/assets/videos/ch02/anim1_element_vs_block_dark.mp4" type="video/mp4" />
 </video>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;" class="only-light">
+  <source src="/croktile-tutorial/assets/videos/ch02/anim1_element_vs_block_light.mp4" type="video/mp4" />
+</video>
+</div>
+
 </details>
 
 ## Tiled Element-Wise Addition
@@ -62,15 +70,23 @@ croktile tiled_add.co -o tiled_add
 
 Same `Test Passed`. The result is identical to Chapter 1's version — the math has not changed, only how data moves through memory.
 
-![Tiled addition: load, compute, store flow](../assets/images/ch02/fig2_tiled_add.png)
+![Tiled addition: load, compute, store flow](../assets/images/ch02/fig2_tiled_add_dark.png#only-dark)
+![Tiled addition: load, compute, store flow](../assets/images/ch02/fig2_tiled_add_light.png#only-light)
 
 *Tiled addition for tile = 2: DMA loads both operand chunks into local memory, element-wise addition runs on the tile, and the result writes back to the output vector.*
 
 <details>
 <summary>Animated version</summary>
-<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;">
-  <source src="/croktile-tutorial/assets/videos/ch02/anim2_tiled_add.mp4" type="video/mp4" />
+
+<div markdown>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;" class="only-dark">
+  <source src="/croktile-tutorial/assets/videos/ch02/anim2_tiled_add_dark.mp4" type="video/mp4" />
 </video>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;" class="only-light">
+  <source src="/croktile-tutorial/assets/videos/ch02/anim2_tiled_add_light.mp4" type="video/mp4" />
+</video>
+</div>
+
 </details>
 
 Here is what is new.
@@ -93,15 +109,23 @@ Each dimension is divided independently. If `matrix` has shape `[64, 128]` and y
 
 The key thing to remember: `chunkat` does not copy data. It is a **view** — a description of which rectangle of the original tensor you mean. The actual movement happens in `dma.copy`.
 
-![chunkat 2D tile selection semantics](../assets/images/ch02/fig3_chunkat.png)
+![chunkat 2D tile selection semantics](../assets/images/ch02/fig3_chunkat_dark.png#only-dark)
+![chunkat 2D tile selection semantics](../assets/images/ch02/fig3_chunkat_light.png#only-light)
 
 *A [64, 128] tensor divided into 4 × 8 tiles. `chunkat(1, 3)` selects the [16, 16] sub-tensor at row-tile 1, column-tile 3.*
 
 <details>
 <summary>Animated version</summary>
-<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;">
-  <source src="/croktile-tutorial/assets/videos/ch02/anim3_chunkat.mp4" type="video/mp4" />
+
+<div markdown>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;" class="only-dark">
+  <source src="/croktile-tutorial/assets/videos/ch02/anim3_chunkat_dark.mp4" type="video/mp4" />
 </video>
+<video controls style="max-width: 100%; border-radius: 8px; margin: 1em 0;" class="only-light">
+  <source src="/croktile-tutorial/assets/videos/ch02/anim3_chunkat_light.mp4" type="video/mp4" />
+</video>
+</div>
+
 </details>
 
 ## `dma.copy`: Bulk Transfer Between Memory Levels
@@ -112,15 +136,12 @@ lhs_load = dma.copy lhs.chunkat(tile) => local;
 
 This copies the chunk selected by `chunkat(tile)` from wherever `lhs` lives (by default, global device memory) into `local` memory — fast, on-chip storage close to the compute units. The result, `lhs_load`, is a **DMA future**: a handle that represents the in-flight (or completed) transfer.
 
-The `=> local` part is the **destination memory specifier**. Croktile has three levels:
+The `=> local` part is the **destination memory specifier**. We discuss memory specifiers in detail below, after covering the rest of the syntax.
 
-| Specifier | What it means | Analogy |
-|-----------|--------------|---------|
-| `global` | Device-wide memory (large, slow) | DRAM |
-| `shared` | Block-scoped on-chip memory (fast, visible to all threads in a block) | CUDA shared memory |
-| `local` | Thread-private on-chip storage (fastest, private) | Registers or per-thread scratch |
+![dma.copy — bulk memory transfer](../assets/images/ch02/fig_dma_copy_dark.png#only-dark)
+![dma.copy — bulk memory transfer](../assets/images/ch02/fig_dma_copy_light.png#only-light)
 
-For now the examples use `local` because each tile runs independently — there is no cross-tile cooperation, so thread-private storage is the natural choice. Chapter 3 will introduce `shared` when multiple threads need to read the same tile.
+*`dma.copy` transfers a chunk from global memory to local memory and returns a DMA future handle.*
 
 ## Futures and `.data`
 
@@ -133,6 +154,11 @@ lhs_load.data.at(i)
 `lhs_load.data` is a spanned tensor in local memory with the shape of the chunk that was copied. You index into it with `.at(i)` exactly like you indexed into `lhs` in Chapter 1 — except now you are reading from fast memory instead of global memory.
 
 Why the indirection? Because in later chapters you will issue copies that run **asynchronously** — the hardware starts moving data while your program does other work. The future is what lets you refer to "the data that will be there when the transfer finishes" without blocking immediately. For now, the copies are synchronous and `.data` is always valid right after the `dma.copy` line, but the pattern is the same.
+
+![Futures and .data](../assets/images/ch02/fig_future_data_dark.png#only-dark)
+![Futures and .data](../assets/images/ch02/fig_future_data_light.png#only-light)
+
+*A DMA future tracks the transfer. Access the copied data through `.data`, which gives you a spanned tensor in local memory.*
 
 ## The `#` Compose Operator
 
@@ -148,6 +174,11 @@ You need `#` because `lhs_load.data.at(i)` uses a **local** index (position with
 
 This `#` operator appears in one dimension here. In Chapter 3, when tiling a 2D matrix with parallel indices `p` and `q`, the pattern is `output.at(p#m, q#n)` — same idea, just more axes.
 
+![The # Compose Operator](../assets/images/ch02/fig_compose_dark.png#only-dark)
+![The # Compose Operator](../assets/images/ch02/fig_compose_light.png#only-light)
+
+*`tile # i` composes tile index 2 with local offset 3 to produce global index 35. The rule is always outer # inner.*
+
 ## The `#` Extent Operator
 
 In the inner loop:
@@ -160,6 +191,11 @@ foreach i in [128 / #tile]
 
 The `#` symbol does double duty in Croktile: before a name in an expression (`#tile`) it means the **extent** of that index; between two names (`tile # i`) it means **compose**. Context tells you which is which — `#` as extent always appears as a prefix, and `#` as compose always appears as an infix between two operands.
 
+![The # Extent Operator](../assets/images/ch02/fig_extent_dark.png#only-dark)
+![The # Extent Operator](../assets/images/ch02/fig_extent_light.png#only-light)
+
+*`#tile` as a prefix gives the extent (count = 8). `tile # i` as an infix composes indices. Context disambiguates.*
+
 ## `span(i)`: Picking One Dimension
 
 Chapter 1 used `lhs.span` to copy the *entire* shape of an input. Sometimes you want just one dimension. `lhs.span(0)` gives the size along the first axis, `rhs.span(1)` gives the size along the second, and so on. This matters when your output has a different rank than your inputs — for example, a matmul where the output shape `[M, N]` comes from `lhs.span(0)` and `rhs.span(1)`:
@@ -169,6 +205,11 @@ s32 [lhs.span(0), rhs.span(1)] output;
 ```
 
 `span(i)` is not needed yet in this 1D example, but it becomes important the moment you tile 2D tensors.
+
+![span(i) — Picking One Dimension](../assets/images/ch02/fig_span_dark.png#only-dark)
+![span(i) — Picking One Dimension](../assets/images/ch02/fig_span_light.png#only-light)
+
+*`lhs.span` copies the full shape. `lhs.span(0)` picks just the first dimension, `lhs.span(1)` picks the second.*
 
 ## 2D Tiled Addition
 
@@ -194,15 +235,44 @@ Every construct generalizes naturally to higher dimensions: `chunkat(tr, tc)` ta
 
 The host code is the same pattern as before — `make_spandata<choreo::s32>(64, 128)`, `.view()`, verify with nested loops.
 
-## Memory Hierarchy: Where Data Lives
+## Memory Specifiers: Where Data Lives
 
-The examples used `=> local` for all copies. In practice, you choose the destination based on who needs access:
+Every `dma.copy` ends with `=> local`, `=> shared`, or `=> global`. These are **memory specifiers** — Croktile's abstraction over the GPU's physical memory hierarchy. Understanding what they mean, and what hardware they map to, is worth a detour.
 
-- **`local`** — only the thread that issued the `dma.copy` can see this data. Good when there is no sharing, or when each thread works on its own independent slice.
-- **`shared`** — all threads in the same block can see this data. Essential when multiple threads collaborate on the same tile (which is the standard pattern for matmul and reductions). We will use `shared` in the next chapter.
-- **`global`** — device-wide, largest and slowest. Input and output tensors start here; you copy pieces into `shared` or `local` for fast access, then copy results back.
+### The Abstraction
 
-The choice does not change the Croktile function's semantics — only performance. You could replace every `=> local` with `=> shared` and the program would still produce the same result, just with different speed characteristics.
+A modern GPU has several levels of storage, each with a different size, speed, and visibility scope. Writing raw CUDA forces you to manage these levels by hand: you `cudaMalloc` global buffers, declare `__shared__` arrays with explicit sizes, and hope that the compiler maps your local variables to registers. It is one of the steepest parts of the learning curve.
+
+Croktile's memory specifiers are a deliberate simplification. Instead of worrying about CUDA's `__shared__` declarations, register pressure, or cache line alignment, you just tell `dma.copy` *where* to put the data. The compiler handles the rest — allocation sizes, bank-conflict avoidance, register spilling — so you can focus on the data flow.
+
+### The Three Levels
+
+- **`global`** — device-wide memory. This is HBM (High Bandwidth Memory) or GDDR on the physical chip — large (tens of gigabytes) but relatively slow to access. All threads across all thread blocks can see it. Input and output tensors start here. In CUDA terms, this is what you get from `cudaMalloc`.
+
+- **`shared`** — block-scoped on-chip SRAM. Each Streaming Multiprocessor (SM) has a pool of fast, low-latency memory (typically 100–228 KB) that is visible to all threads within the same thread block. In CUDA, this is `__shared__` memory. Use it when multiple threads need to read the same tile — the standard pattern in matmul, reductions, and stencil operations. We will use `shared` in the next chapter.
+
+- **`local`** — thread-private storage. This maps to registers and per-thread scratch space on the SM — the fastest level, but visible only to the thread that owns it. In CUDA, these are your local variables that the compiler assigns to registers. Good when there is no sharing, or when each thread works on its own independent slice.
+
+### Mapping to GPU Hardware
+
+The figure below shows how these three specifiers correspond to the physical GPU layout. Notice the hierarchy: data moves from global (large, slow) through shared (medium, fast) to local (small, fastest). Croktile's `dma.copy` lets you express these movements directly.
+
+![Memory Specifiers → GPU Hardware](../assets/images/ch02/fig_memory_hierarchy_dark.png#only-dark)
+![Memory Specifiers → GPU Hardware](../assets/images/ch02/fig_memory_hierarchy_light.png#only-light)
+
+*Croktile's `global`, `shared`, and `local` specifiers map directly to GPU hardware levels: HBM/DRAM, per-SM shared memory, and per-thread registers.*
+
+### Choosing a Specifier
+
+The choice does not change the Croktile function's semantics — only performance. You could replace every `=> local` with `=> shared` and the program would still produce the same result, just with different speed characteristics. The rule of thumb:
+
+| Situation | Use | Why |
+|-----------|-----|-----|
+| Each tile is independent, no sharing | `local` | Fastest, no synchronization needed |
+| Multiple threads collaborate on the same tile | `shared` | Visible to all threads in the block |
+| Writing results back to the output tensor | `global` | Output must be device-visible |
+
+For now the examples use `local` because each tile runs independently. Chapter 3 will introduce `shared` when multiple threads need to read the same tile for a tiled matrix multiply.
 
 ## What Changed from Chapter 1
 

@@ -110,3 +110,13 @@ a:hover {
   text-transform: none;
   letter-spacing: normal;
 }
+
+[data-md-color-scheme="default"] video.only-dark,
+[data-md-color-scheme="default"] .only-dark {
+  display: none;
+}
+
+[data-md-color-scheme="slate"] video.only-light,
+[data-md-color-scheme="slate"] .only-light {
+  display: none;
+}

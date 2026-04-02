@@ -10,7 +10,6 @@ theme:
   favicon: assets/images/favicon.svg
   logo: assets/images/logo-2.png
   features:
-    - navigation.instant
     - navigation.top
     - navigation.path
     - navigation.indexes
@@ -47,6 +46,21 @@ extra_css:
   - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css
   - assets/css/custom.css
 
+plugins:
+  - search
+  - i18n:
+      docs_structure: folder
+      fallback_to_default: true
+      reconfigure_material: true
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: zh
+          name: 中文
+          build: true
+
 markdown_extensions:
   - pymdownx.highlight:
       use_pygments: false
@@ -81,20 +95,9 @@ nav:
   - "Part II — Performance Tuning Demos":
     - Overview: optimization/index.md
     - "Profiling Setup": optimization/setup-profiling.md
-    - "Dense GEMM FP16":
-      - Overview: optimization/matmul-f16/index.md
-      - Baseline Analysis: optimization/matmul-f16/baseline-analysis.md
-      - Pattern Optimizations: optimization/matmul-f16/pattern-optimizations.md
-      - AI-Tune Last Mile: optimization/matmul-f16/aitune-last-mile.md
-    - "Sparse GEMM (FP16 + E4M3)":
-      - Overview: optimization/gemm-sp/index.md
-      - Baseline Analysis: optimization/gemm-sp/baseline-analysis.md
-      - Pattern Optimizations: optimization/gemm-sp/pattern-optimizations.md
-      - AI-Tune Last Mile: optimization/gemm-sp/aitune-last-mile.md
-    - "Block-Scaled GEMM FP8":
-      - Overview: optimization/blockscale-gemm/index.md
-      - Baseline Analysis: optimization/blockscale-gemm/baseline-analysis.md
-      - Pattern Optimizations: optimization/blockscale-gemm/pattern-optimizations.md
+    - "Dense GEMM FP16": optimization/dense-gemm-fp16.md
+    - "Sparse GEMM (FP16 + E4M3)": optimization/sparse-gemm.md
+    - "Block-Scaled GEMM FP8": optimization/blockscale-gemm-fp8.md
 
   - "Part III — Coding Reference":
     - Home: documentation/index.md
