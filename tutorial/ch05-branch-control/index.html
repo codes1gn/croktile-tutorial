@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://codes1gn.github.io/croktile-tutorial/tutorial/ch05-branch-control/">
+        <link rel="canonical" href="https://codes1gn.github.io/croqtile-tutorial/tutorial/ch05-branch-control/">
       
       
         <link rel="prev" href="../ch04-mma/">
@@ -29,7 +29,7 @@
     
     
       
-        <title>Ch 5: Branch & Control - Croktile</title>
+        <title>Ch 5: Branch & Control - Croqtile</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#role-specialization-and-control-flow" class="md-skip">
+        <a href="#control-flow-divergence-concurrency-and-coordination" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Croktile" class="md-header__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../.." title="Croqtile" class="md-header__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../assets/images/logo-2.png" alt="logo">
 
@@ -113,7 +113,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Croktile
+            Croqtile
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -227,13 +227,13 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/codes1gn/croktile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/codes1gn/croqtile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
       </div>
@@ -263,22 +263,22 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Croktile" class="md-nav__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../.." title="Croqtile" class="md-nav__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../assets/images/logo-2.png" alt="logo">
 
     </a>
-    Croktile
+    Croqtile
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/codes1gn/croktile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/codes1gn/croqtile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
     </div>
@@ -326,7 +326,7 @@
   <span class="md-ellipsis">
     
   
-    What is Good in CrokTile
+    What is Good in CroqTile
   
 
     
@@ -458,14 +458,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../ch01-hello-croktile/" class="md-nav__link">
+      <a href="../ch01-hello-croqtile/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Ch 1: Hello Croktile
+    Ch 1: Hello Croqtile
   
 
     
@@ -630,10 +630,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#static-role-partitioning-with-inthreadsasync" class="md-nav__link">
+  <a href="#predicated-execution-with-if" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Static role partitioning with inthreads.async
+        Predicated execution with if
       
     </span>
   </a>
@@ -641,32 +641,77 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#coordinating-roles-events-at-a-glance" class="md-nav__link">
+  <a href="#structured-concurrent-regions-with-inthreadsasync" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Coordinating roles: events at a glance
+        Structured concurrent regions with inthreads.async
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Structured concurrent regions with inthreads.async">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-canonical-pattern-1-producer-1-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The canonical pattern: 1 producer + 1 consumer
       
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#role-specialization-in-practice-a-1p1c-matmul" class="md-nav__link">
+  <a href="#inter-region-signaling-with-events" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Role specialization in practice: a 1P1C matmul
+        Inter-region signaling with events
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Inter-region signaling with events">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#event-arrays-for-multi-stage-pipelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Event arrays for multi-stage pipelines
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#guarded-execution-with-if" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#bootstrap-protocol" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Guarded execution with if
+        Bootstrap protocol
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-1p1c-matmul-skeleton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A 1P1C matmul skeleton
       
     </span>
   </a>
@@ -702,10 +747,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#parallelasync-and-stream-s-non-blocking-launch" class="md-nav__link">
+  <a href="#parallelasync-and-stream-s-host-level-concurrency" class="md-nav__link">
     <span class="md-ellipsis">
       
-        parallel.async and stream s: non-blocking launch
+        parallel.async and stream s: host-level concurrency
       
     </span>
   </a>
@@ -1198,7 +1243,7 @@
   <span class="md-ellipsis">
     
   
-    Croktile-C++ Program Structure
+    Croqtile-C++ Program Structure
   
 
     
@@ -2455,10 +2500,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#static-role-partitioning-with-inthreadsasync" class="md-nav__link">
+  <a href="#predicated-execution-with-if" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Static role partitioning with inthreads.async
+        Predicated execution with if
       
     </span>
   </a>
@@ -2466,32 +2511,77 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#coordinating-roles-events-at-a-glance" class="md-nav__link">
+  <a href="#structured-concurrent-regions-with-inthreadsasync" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Coordinating roles: events at a glance
+        Structured concurrent regions with inthreads.async
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Structured concurrent regions with inthreads.async">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-canonical-pattern-1-producer-1-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The canonical pattern: 1 producer + 1 consumer
       
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#role-specialization-in-practice-a-1p1c-matmul" class="md-nav__link">
+  <a href="#inter-region-signaling-with-events" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Role specialization in practice: a 1P1C matmul
+        Inter-region signaling with events
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Inter-region signaling with events">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#event-arrays-for-multi-stage-pipelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Event arrays for multi-stage pipelines
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#guarded-execution-with-if" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#bootstrap-protocol" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Guarded execution with if
+        Bootstrap protocol
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-1p1c-matmul-skeleton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A 1P1C matmul skeleton
       
     </span>
   </a>
@@ -2527,10 +2617,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#parallelasync-and-stream-s-non-blocking-launch" class="md-nav__link">
+  <a href="#parallelasync-and-stream-s-host-level-concurrency" class="md-nav__link">
     <span class="md-ellipsis">
       
-        parallel.async and stream s: non-blocking launch
+        parallel.async and stream s: host-level concurrency
       
     </span>
   </a>
@@ -2627,29 +2717,82 @@
   
 
 
-<h1 id="role-specialization-and-control-flow">Role Specialization and Control Flow<a class="headerlink" href="#role-specialization-and-control-flow" title="Permanent link">&para;</a></h1>
-<p>Chapter 4's matmul kernels have a structural limitation: every thread in the block runs the same program — load, multiply, store, repeat. While the tensor cores are busy multiplying, the memory system idles. While DMA fetches the next K-slab, the tensor cores have nothing to do. Load and compute take turns; neither runs at full throughput.</p>
-<p>This is not a GPU-specific problem. It is the universal bottleneck of <strong>pipeline-stage serialization</strong>. Any system where a single worker alternates between two activities — reading data and processing data — wastes time during each transition. The classic solution, whether in CPU thread pools, Unix pipelines, or factory assembly lines, is <strong>role specialization</strong>: assign different workers to different stages, let each worker focus on one job, and let the stages overlap in time.</p>
-<p>The GPU twist is that CUDA's default execution model is <strong>SPMD</strong> — Single Program, Multiple Data. Every thread in a warp runs the same instruction stream. Overlapping memory and compute within a single kernel requires either instruction-level interleaving (which the hardware scheduler does poorly for large tiles) or explicit <strong>warp specialization</strong> where the programmer manually partitions warps and coordinates them with barriers. In raw CUDA, this means raw <code>__syncthreads()</code>, shared-memory flags, and careful reasoning about which warp is doing what.</p>
-<p>Croktile takes a different approach. Instead of leaving role boundaries implicit in control-flow tricks, it makes them a <strong>first-class language construct</strong>: <code>inthreads.async</code> assigns different instruction streams to different thread subsets at compile time. The compiler can emit truly separate programs for each role, and the runtime schedules them concurrently. The figure below shows the difference:</p>
-<p><img alt="Uniform vs role-specialized execution: sequential alternation vs overlapping stages" src="../../assets/images/ch05/fig1_role_comparison_dark.png#only-dark" />
-<img alt="Uniform vs role-specialized execution: sequential alternation vs overlapping stages" src="../../assets/images/ch05/fig1_role_comparison_light.png#only-light" /></p>
-<p><em>Left: one warpgroup alternates DMA and MMA — no overlap. Right: two warpgroups with static roles — producer DMA and consumer MMA execute concurrently, roughly halving wall-clock time.</em></p>
-<p>Croktile provides three control-flow primitives, each for a different purpose:</p>
+<h1 id="control-flow-divergence-concurrency-and-coordination">Control Flow: Divergence, Concurrency, and Coordination<a class="headerlink" href="#control-flow-divergence-concurrency-and-coordination" title="Permanent link">&para;</a></h1>
+<p>Every programming language that targets a parallel machine must answer one question: <strong>what happens when different threads need to do different things?</strong></p>
+<p>On a CPU, the answer is trivial — each core has its own program counter, so each thread runs whatever code it likes. On a GPU, the answer is deeply constrained. The SIMT (Single Instruction, Multiple Thread) execution model groups threads into <strong>warps</strong> of 32 that share a single instruction pointer. When a branch sends some threads one way and other threads another way, the hardware cannot simply fork — it must <strong>serialize</strong> the divergent paths and mask inactive threads. This is the fundamental tension of GPU programming languages: the hardware wants uniformity, but real programs need heterogeneity.</p>
+<p>CUDA exposes exactly one control-flow primitive for this: <code>if</code>. All threads evaluate the condition; threads where it is false are masked (deactivated); both paths execute sequentially within the warp. This is <strong>predicated execution</strong> — simple, universal, and sometimes ruinously expensive. A warp that diverges on an <code>if</code> runs both sides, throwing away half its throughput on each.</p>
+<p>But predicated execution is not enough. Consider a matmul kernel where one group of threads should continuously fetch tiles from global memory while another group continuously multiplies tiles on the tensor cores. This is not a data-dependent branch — it is two <strong>structurally different programs</strong> that happen to share an address space. Trying to express this with <code>if</code> means one program pauses while the other runs. There is no overlap, no pipeline.</p>
+<p>Croqtile introduces two additional control-flow primitives to fill this gap:</p>
 <ul>
-<li><strong><code>inthreads.async</code></strong> — <strong>static role partitioning</strong>: compile-time assignment of different programs to different thread subsets. Analogous to MPMD (Multiple Program, Multiple Data) within a single kernel.</li>
-<li><strong><code>if</code></strong> — <strong>guarded execution</strong>: runtime predication where all threads evaluate a condition and divergent threads are masked. Standard SPMD control flow.</li>
-<li><strong><code>shared event</code></strong> / <strong><code>wait</code></strong> / <strong><code>trigger</code></strong> — <strong>inter-role signaling</strong>: the coordination mechanism that lets statically-partitioned roles communicate safely.</li>
+<li><strong><code>inthreads.async</code></strong> — <strong>structured concurrent regions</strong>: compile-time partitioning of threads into groups that run <strong>different programs simultaneously</strong>. The compiler generates separate instruction streams; the hardware schedules them independently.</li>
+<li><strong><code>shared event</code> / <code>wait</code> / <code>trigger</code></strong> — <strong>inter-region signaling</strong>: lightweight synchronization tokens that let concurrent regions communicate safely.</li>
 </ul>
-<h2 id="static-role-partitioning-with-inthreadsasync">Static role partitioning with <code>inthreads.async</code><a class="headerlink" href="#static-role-partitioning-with-inthreadsasync" title="Permanent link">&para;</a></h2>
-<p><code>inthreads.async (condition)</code> means: only threads for which <code>condition</code> is true <strong>have this block in their program at all</strong>. It is not "every thread evaluates the condition and some skip the body" — that is what <code>if</code> does. The distinction is fundamental:</p>
-<ul>
-<li><strong><code>inthreads.async</code></strong>: the compiler generates separate instruction streams for each role. Threads in the false subset never see the body — it is not in their binary. The <code>.async</code> suffix means the roles execute <strong>concurrently and independently</strong> on different hardware resources (different warpgroups, different functional units).</li>
-<li><strong><code>if</code></strong>: one instruction stream, one program. All threads evaluate the predicate; threads where it is false are masked. Divergence within a warp stalls one side.</li>
-</ul>
-<p>Why both? Because they solve different problems. <code>inthreads.async</code> is for <strong>persistent role assignment</strong> — the producer stays a producer for the entire kernel lifetime. <code>if</code> is for <strong>data-dependent decisions</strong> — skip this tile if the index is out of bounds. You would not use <code>if</code> for warp specialization (it does not produce real concurrency), and you would not use <code>inthreads.async</code> for a bounds check (it is a compile-time construct, not a runtime predicate).</p>
-<p>Without <code>.async</code>, <code>inthreads</code> would mean sequential, blocking role execution — thread subsets take turns. The <code>.async</code> modifier is what enables the overlapping pipeline execution in the figure above.</p>
-<p>The canonical pattern is <strong>one producer + one consumer (1P1C)</strong> for matmul:</p>
+<p>Together with <code>if</code>, these three primitives cover the full spectrum of control flow in a GPU kernel: data-dependent branching, structural program composition, and inter-program coordination.</p>
+<h2 id="predicated-execution-with-if">Predicated execution with <code>if</code><a class="headerlink" href="#predicated-execution-with-if" title="Permanent link">&para;</a></h2>
+<p>Croqtile's <code>if</code> behaves like its C counterpart:</p>
+<pre class="highlight"><code class="language-choreo">if (tile_id &lt; total_tiles) {
+  // body executes only when the condition is true
+}</code></pre>
+<p>All threads in scope evaluate the condition. Threads where it is false skip the body. Within a single warp, if some threads take the branch and others do not, the hardware <strong>serializes</strong> the two paths — threads on the skipped side sit idle while the taken side runs, then vice versa. This is <strong>warp divergence</strong>, and it is the price of runtime flexibility.</p>
+<p><strong>When to use <code>if</code>:</strong> data-dependent decisions that cannot be resolved at compile time. Bounds checks, partial-tile guards, conditional accumulation. The condition can depend on runtime values — loop indices, input data, tile coordinates.</p>
+<p><strong>Cost model:</strong> divergence within a warp serializes both paths. Divergence across warps (where all threads in each warp agree) costs nothing — the hardware simply skips the not-taken path. The practical rule: keep <code>if</code> conditions <strong>warp-uniform</strong> (all 32 threads agree) whenever possible.</p>
+<h2 id="structured-concurrent-regions-with-inthreadsasync">Structured concurrent regions with <code>inthreads.async</code><a class="headerlink" href="#structured-concurrent-regions-with-inthreadsasync" title="Permanent link">&para;</a></h2>
+<p><code>inthreads.async</code> solves a fundamentally different problem than <code>if</code>. Instead of asking "should this thread execute this code?" at runtime, it says "this group of threads runs this program, that group runs that program" at <strong>compile time</strong>.</p>
+<pre class="highlight"><code class="language-choreo">parallel p1 by 2 : group-4 {
+
+  inthreads.async (p1 == 0) {
+    // program A: only warpgroup 0 compiles and runs this
+  }
+
+  inthreads.async (p1 == 1) {
+    // program B: only warpgroup 1 compiles and runs this
+  }
+}</code></pre>
+<p>The distinction from <code>if</code> is structural, not just performance:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><code>if</code> (predicated execution)</th>
+<th><code>inthreads.async</code> (structured concurrency)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Resolution</strong></td>
+<td>Runtime — every thread evaluates the condition</td>
+<td>Compile time — thread assignment is fixed</td>
+</tr>
+<tr>
+<td><strong>Instruction streams</strong></td>
+<td>One program; divergent threads masked</td>
+<td>Separate programs per region</td>
+</tr>
+<tr>
+<td><strong>Execution</strong></td>
+<td>Serial within a warp if divergent</td>
+<td>Concurrent across warpgroups</td>
+</tr>
+<tr>
+<td><strong>PL analogy</strong></td>
+<td><code>if</code>/<code>else</code> in any language</td>
+<td><code>async</code>/<code>spawn</code> in structured concurrency (Trio, Go goroutines, Cilk)</td>
+</tr>
+<tr>
+<td><strong>GPU analogy</strong></td>
+<td>SPMD with masking</td>
+<td>MPMD within a single kernel launch</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why "structured"?</strong> The regions are lexically scoped — the compiler knows at parse time which threads belong to which region. There is no dynamic spawn, no unbounded concurrency. Each <code>inthreads.async</code> block is a static partition. This is what makes it amenable to compile-time analysis: the compiler can allocate registers differently for each region, emit different instruction schedules, and verify that shared resources are used safely.</p>
+<p><strong>The <code>.async</code> modifier.</strong> Without <code>.async</code>, <code>inthreads</code> would execute regions sequentially — thread subsets take turns. The <code>.async</code> suffix is the concurrency modifier: it tells the compiler and hardware that the regions may overlap in time. This is analogous to the <code>async</code> keyword in structured concurrency frameworks — it marks a region as independently schedulable.</p>
+<p>The figure below shows the effect. The top timeline shows a single warpgroup alternating between DMA and MMA (sequential, no overlap). The bottom shows two warpgroups with <code>inthreads.async</code> — the producer's DMA and the consumer's MMA overlap in time:</p>
+<p><img alt="Uniform vs structured-concurrent execution: sequential alternation vs overlapping regions" src="../../assets/images/ch05/fig1_role_comparison_dark.png#only-dark" />
+<img alt="Uniform vs structured-concurrent execution: sequential alternation vs overlapping regions" src="../../assets/images/ch05/fig1_role_comparison_light.png#only-light" /></p>
+<p><em>Top: one warpgroup alternates DMA and MMA — each waits for the other. Bottom: <code>inthreads.async</code> partitions into two concurrent programs — DMA and MMA overlap, roughly halving wall-clock time.</em></p>
+<h3 id="the-canonical-pattern-1-producer-1-consumer">The canonical pattern: 1 producer + 1 consumer<a class="headerlink" href="#the-canonical-pattern-1-producer-1-consumer" title="Permanent link">&para;</a></h3>
+<p>The most common use of <code>inthreads.async</code> is the <strong>1P1C</strong> (one producer, one consumer) split for matmul:</p>
 <pre class="highlight"><code class="language-choreo">parallel p1 by 2 : group-4 {
 
   inthreads.async (p1 == 0) {
@@ -2662,19 +2805,34 @@
     // run MMA on shared memory, accumulate results
   }
 }</code></pre>
-<p><strong><code>parallel p1 by 2 : group-4</code></strong> — Two warpgroups, four warps each (128 threads per warpgroup), indexed by <code>p1</code>.</p>
-<p><strong><code>inthreads.async (p1 == 0)</code></strong> — Warpgroup 0 compiles and executes the producer body; warpgroup 1 never sees this code.</p>
+<p><strong><code>parallel p1 by 2 : group-4</code></strong> — Two warpgroups (128 threads each), indexed by <code>p1</code>.</p>
+<p><strong><code>inthreads.async (p1 == 0)</code></strong> — Warpgroup 0 compiles and runs the producer body; warpgroup 1 never sees this code.</p>
 <p><strong><code>inthreads.async (p1 == 1)</code></strong> — Warpgroup 1 runs the consumer body. The two blocks are separate programs sharing an address space.</p>
-<h2 id="coordinating-roles-events-at-a-glance">Coordinating roles: events at a glance<a class="headerlink" href="#coordinating-roles-events-at-a-glance" title="Permanent link">&para;</a></h2>
-<p>Static role partitioning gives you two concurrent programs — but they share the same shared memory. The producer writes data that the consumer reads. Without coordination, the consumer might read a tile before the producer has finished writing it (a race condition), or the producer might overwrite a tile the consumer is still reading (a data hazard).</p>
-<p>Croktile uses <strong>events</strong> as the signaling mechanism between roles. An event is a lightweight synchronization token declared in shared memory:</p>
+<p>But sharing an address space is exactly what makes this dangerous. Without coordination, the consumer might read a buffer before the producer has finished writing it. This is where events come in.</p>
+<h2 id="inter-region-signaling-with-events">Inter-region signaling with events<a class="headerlink" href="#inter-region-signaling-with-events" title="Permanent link">&para;</a></h2>
+<p>When <code>inthreads.async</code> creates concurrent regions, those regions need a way to communicate. Croqtile provides <strong>events</strong> — lightweight synchronization tokens declared in shared memory:</p>
 <pre class="highlight"><code class="language-choreo">shared event full;
 shared event empty;</code></pre>
-<p>The producer calls <code>trigger full</code> after writing a tile to signal "data is ready." The consumer calls <code>wait full</code> before reading, blocking until the signal arrives. Symmetrically, the consumer triggers <code>empty</code> after it finishes reading (the buffer can be reused), and the producer waits on <code>empty</code> before writing the next tile.</p>
-<p>This is a <strong>credit-based bounded buffer</strong> protocol — the same pattern used in network flow control and OS bounded queues. <code>full</code> is the "data available" credit; <code>empty</code> is the "buffer free" credit.</p>
-<p>Chapter 6 develops this into the full double-buffering and software-pipelined matmul. For now, the important point is that events are the glue between <code>inthreads.async</code> roles — they turn two independent programs into a coordinated pipeline.</p>
-<h2 id="role-specialization-in-practice-a-1p1c-matmul">Role specialization in practice: a 1P1C matmul<a class="headerlink" href="#role-specialization-in-practice-a-1p1c-matmul" title="Permanent link">&para;</a></h2>
-<p>Here is how the split sits inside a Hopper matmul. Event-based synchronization is omitted on purpose; <a href="../ch06-synchronization/">Chapter 6</a> adds the full pipeline protocol. Focus on who does what:</p>
+<p>Events have two operations:</p>
+<ul>
+<li><strong><code>trigger name</code></strong> — signal that a condition is met (e.g., "data is ready")</li>
+<li><strong><code>wait name</code></strong> — block until the corresponding <code>trigger</code> fires</li>
+</ul>
+<p>The producer calls <code>trigger full</code> after writing a tile to signal "data ready." The consumer calls <code>wait full</code> before reading, blocking until the signal arrives. Symmetrically, the consumer triggers <code>empty</code> after finishing its read (the buffer can be reused), and the producer waits on <code>empty</code> before writing the next tile.</p>
+<p>This is a <strong>credit-based bounded buffer</strong> protocol — the same pattern used in operating systems (semaphores), network flow control (TCP window), and hardware (warp barriers). <code>full</code> is the "data available" credit; <code>empty</code> is the "buffer free" credit.</p>
+<h3 id="event-arrays-for-multi-stage-pipelines">Event arrays for multi-stage pipelines<a class="headerlink" href="#event-arrays-for-multi-stage-pipelines" title="Permanent link">&para;</a></h3>
+<p>For pipelines with multiple buffered stages, declare event arrays:</p>
+<pre class="highlight"><code class="language-choreo">shared event full[MATMUL_STAGES], empty[MATMUL_STAGES];</code></pre>
+<p>Each physical buffer slot gets its own <code>full</code>/<code>empty</code> pair. The ring index <code>stage = iv_k % MATMUL_STAGES</code> maps the unbounded K iteration to a fixed number of physical slots. With four stages, the producer can run several tiles ahead before blocking on <code>wait empty</code>.</p>
+<h3 id="bootstrap-protocol">Bootstrap protocol<a class="headerlink" href="#bootstrap-protocol" title="Permanent link">&para;</a></h3>
+<p>The consumer must <strong>seed</strong> the <code>empty</code> credits before the K-loop starts:</p>
+<pre class="highlight"><code class="language-choreo">foreach {s} in [MATMUL_STAGES] {
+  trigger empty[s];
+}</code></pre>
+<p>Without this bootstrap, the producer's first <code>wait empty[0]</code> blocks forever — a deadlock, not a mysterious MMA bug. This is a common pitfall: every bounded buffer protocol requires initial credits.</p>
+<p><a href="../ch06-synchronization/">Chapter 6</a> develops the full double-buffered and multi-stage pipeline kernels that put these primitives to work. The examples there compose <code>inthreads.async</code>, events, <code>swap</code>, and <code>mma.commit</code> into complete, runnable matmul pipelines.</p>
+<h2 id="a-1p1c-matmul-skeleton">A 1P1C matmul skeleton<a class="headerlink" href="#a-1p1c-matmul-skeleton" title="Permanent link">&para;</a></h2>
+<p>Here is how the three primitives sit together inside a Hopper matmul. Event-based synchronization is omitted — <a href="../ch06-synchronization/">Chapter 6</a> adds the full pipeline protocol. Focus on the program structure:</p>
 <pre class="highlight"><code class="language-choreo">__co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
   parallel {block_m, block_n} by [cdiv(M, MATMUL_WARP_M), cdiv(N, MATMUL_WARP_N)] : block {
     shared f16 [MATMUL_WARP_M, MATMUL_TILE_K] lhs_load_s;
@@ -2684,7 +2842,6 @@ shared event empty;</code></pre>
     parallel p1 by 2 : group-4 {
 
       inthreads.async (p1 == 0) {
-        // Producer: walk K, load tiles into shared
         foreach {iv_k} in [cdiv(K, MATMUL_TILE_K)] {
           dma.copy lhs.subspan(MATMUL_WARP_M, MATMUL_TILE_K).at(block_m, iv_k) =&gt; lhs_load_s;
           dma.copy rhs.chunkat(block_n, iv_k) =&gt; rhs_load_s;
@@ -2692,7 +2849,6 @@ shared event empty;</code></pre>
       }
 
       inthreads.async (p1 == 1) {
-        // Consumer: walk K, MMA on loaded tiles
         mc = mma.fill.f16 0.0f;
         foreach {iv_k} in [cdiv(K, MATMUL_TILE_K)] {
           foreach {iv_warp} in [cdiv(MATMUL_TILE_K, MATMUL_WARP_K)] {
@@ -2707,18 +2863,11 @@ shared event empty;</code></pre>
     }
   }
 }</code></pre>
-<p><strong>Producer <code>foreach</code></strong> — Walks the K dimension with <code>cdiv(K, MATMUL_TILE_K)</code> steps; only warpgroup 0 issues <code>dma.copy</code> into <code>lhs_load_s</code> and <code>rhs_load_s</code>.</p>
-<p><strong>Consumer <code>mma.fill</code> / <code>mma.row.row</code> / <code>mma.store</code></strong> — Warpgroup 1 never issues those DMA fills; it only reads shared memory, accumulates in <code>mc</code>, and writes the result tile.</p>
-<p><strong>Missing coordination</strong> — The two sides both loop over K independently. The consumer assumes each K-slab is ready when it reads; making that assumption true is synchronization (<a href="../ch06-synchronization/">Chapter 6</a>).</p>
-<h2 id="guarded-execution-with-if">Guarded execution with <code>if</code><a class="headerlink" href="#guarded-execution-with-if" title="Permanent link">&para;</a></h2>
-<p>Sometimes you need a predicate every thread evaluates at runtime. Croktile's <code>if</code> behaves like C:</p>
-<pre class="highlight"><code class="language-choreo">if (tile_id &lt; total_tiles) {
-  // only execute this body when the condition is true
-}</code></pre>
-<p>All threads in the scope test the condition; threads where it is false skip the body. This is the opposite of <code>inthreads.async</code>: one program, divergent execution — not two separate programs.</p>
-<p>This shows up most often in <strong>persistent kernels</strong>, where the number of loop iterations can leave some blocks with a "padding" iteration that does not correspond to a real tile.</p>
+<p><strong>Producer <code>foreach</code></strong> — Walks K with <code>cdiv(K, MATMUL_TILE_K)</code> steps; warpgroup 0 issues <code>dma.copy</code> into shared memory.</p>
+<p><strong>Consumer <code>mma</code> path</strong> — Warpgroup 1 never touches those DMAs; it reads shared memory, accumulates in <code>mc</code>, and writes the result.</p>
+<p><strong>Missing coordination</strong> — Both sides loop over K independently. The consumer assumes each K-slab is ready when it reads. Making that assumption correct requires events (<a href="../ch06-synchronization/">Chapter 6</a>).</p>
 <h2 id="persistent-scheduling-and-the-if-guard">Persistent scheduling and the <code>if</code> guard<a class="headerlink" href="#persistent-scheduling-and-the-if-guard" title="Permanent link">&para;</a></h2>
-<p>In Chapters 3–4, the grid grew with the problem: roughly one block per output tile. For large matrices that can mean huge launch counts. The GPU runs blocks in <strong>waves</strong>; the last wave often leaves SMs partially idle — <strong>tail underutilization</strong>.</p>
+<p>In Chapters 3–4, the grid grew with the problem: roughly one block per output tile. For large matrices that means large launch counts, and the last wave of blocks often leaves SMs partially idle — <strong>tail underutilization</strong>.</p>
 <p>A <strong>persistent kernel</strong> fixes the launch size (often near the SM count) and lets each block iterate over multiple tiles:</p>
 <pre class="highlight"><code class="language-choreo">__co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
   int total_tiles = cdiv(M, MATMUL_WARP_M) * cdiv(N, MATMUL_WARP_N);
@@ -2754,10 +2903,9 @@ shared event empty;</code></pre>
     }
   }
 }</code></pre>
-<p><strong><code>parallel block_id by NUM_SMS : block</code></strong> — Fixed worker count; <code>block_id</code> names which persistent worker this is, not a single output tile.</p>
-<p><strong><code>foreach {tile_iter} in [cdiv(total_tiles, NUM_SMS)]</code></strong> — Each block steps through its share of iterations; the ceiling may add one extra iteration for some blocks.</p>
-<p><strong><code>tile_id = tile_iter # block_id</code></strong> — Composes iteration with block index to stripe across the linear tile list (same <code>#</code> operator as Chapter 2, used here for scheduling).</p>
-<p><strong><code>if (tile_id &lt; total_tiles)</code></strong> — Skips DMA, MMA, and store when the stripe walks past the last real tile. This is a runtime guard, not a role split.</p>
+<p><strong><code>parallel block_id by NUM_SMS : block</code></strong> — Fixed worker count.</p>
+<p><strong><code>tile_id = tile_iter # block_id</code></strong> — Composes iteration with block index to stripe across tiles.</p>
+<p><strong><code>if (tile_id &lt; total_tiles)</code></strong> — The <code>if</code> guard: a runtime predicate that skips the body for padding iterations. This is exactly the use case <code>if</code> is designed for — a data-dependent decision, not a structural partition.</p>
 <p><img alt="Persistent kernel: striped tiles, block colors, and if guard for padding" src="../../assets/images/ch05/fig2_persistent_kernel_dark.png#only-dark" />
 <img alt="Persistent kernel: striped tiles, block colors, and if guard for padding" src="../../assets/images/ch05/fig2_persistent_kernel_light.png#only-light" /></p>
 <h3 id="data-dependent-vs-persistent-grids">Data-dependent vs persistent grids<a class="headerlink" href="#data-dependent-vs-persistent-grids" title="Permanent link">&para;</a></h3>
@@ -2792,16 +2940,15 @@ shared event empty;</code></pre>
 </tr>
 </tbody>
 </table>
-<p>Neither layout changes the mathematical result by itself; both match modulo floating-point associativity. Persistent scheduling tends to pay off when <code>total_tiles</code> is much larger than the number of SMs.</p>
-<h2 id="parallelasync-and-stream-s-non-blocking-launch"><code>parallel.async</code> and <code>stream s</code>: non-blocking launch<a class="headerlink" href="#parallelasync-and-stream-s-non-blocking-launch" title="Permanent link">&para;</a></h2>
-<p>Everything above runs inside the kernel. Sometimes the control you need is at the <strong>host level</strong>: launch a grid without blocking the host thread, or pin different grids to different CUDA streams so they can execute concurrently on the GPU.</p>
+<h2 id="parallelasync-and-stream-s-host-level-concurrency"><code>parallel.async</code> and <code>stream s</code>: host-level concurrency<a class="headerlink" href="#parallelasync-and-stream-s-host-level-concurrency" title="Permanent link">&para;</a></h2>
+<p>Everything above runs inside a kernel. Sometimes you need concurrency at the <strong>host level</strong>: launch a grid without blocking the CPU, or pin different grids to different CUDA streams so they can execute concurrently on the GPU.</p>
 <pre class="highlight"><code class="language-choreo">parallel.async {px, py} by [grid_m, grid_n] : block {
   stream s;
   // kernel body
 }</code></pre>
-<p><strong><code>parallel.async</code></strong> returns control to the host immediately — the kernel is enqueued but the host does not wait for it to finish. This is the Croktile equivalent of <code>cudaLaunchKernel</code> with a non-default stream.</p>
-<p><strong><code>stream s</code></strong> inside the block body pins the kernel to CUDA stream <code>s</code>. Multiple <code>parallel.async</code> blocks with different streams can overlap on the GPU if there are enough SMs. Without <code>stream s</code>, the default stream serializes launches.</p>
-<p>This is <strong>host orchestration</strong>, not in-kernel control flow. It does not replace <code>inthreads.async</code> for role partitioning or <code>if</code> for runtime predicates — it decides <em>when</em> and <em>where</em> a grid runs relative to other grids.</p>
+<p><strong><code>parallel.async</code></strong> returns control to the host immediately — the kernel is enqueued but the host does not wait for completion. This is the Croqtile equivalent of <code>cudaLaunchKernel</code> with a non-default stream.</p>
+<p><strong><code>stream s</code></strong> pins the kernel to CUDA stream <code>s</code>. Multiple <code>parallel.async</code> blocks with different streams can overlap on the GPU if there are enough SMs.</p>
+<p>This is <strong>host orchestration</strong>, orthogonal to in-kernel control flow. It does not replace <code>inthreads.async</code> for thread partitioning or <code>if</code> for runtime predicates — it decides <em>when</em> and <em>where</em> a grid runs relative to other grids.</p>
 <h2 id="new-syntax">New syntax<a class="headerlink" href="#new-syntax" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -2812,20 +2959,24 @@ shared event empty;</code></pre>
 </thead>
 <tbody>
 <tr>
-<td><code>inthreads.async (condition)</code></td>
-<td>Static role partitioning — only threads satisfying <code>condition</code> include this block</td>
+<td><code>if (expr) { ... }</code></td>
+<td>Predicated execution — runtime conditional, divergent threads masked</td>
 </tr>
 <tr>
-<td><code>if (expr) { ... }</code></td>
-<td>Guarded execution — runtime conditional, skip body when <code>expr</code> is false</td>
+<td><code>inthreads.async (condition)</code></td>
+<td>Structured concurrent region — compile-time thread partitioning</td>
 </tr>
 <tr>
 <td><code>shared event name</code></td>
-<td>Declare an event token in shared memory</td>
+<td>Declare a synchronization token in shared memory</td>
+</tr>
+<tr>
+<td><code>shared event name[N]</code></td>
+<td>Declare N synchronization tokens</td>
 </tr>
 <tr>
 <td><code>trigger name</code></td>
-<td>Signal that a condition is met (e.g., "data ready")</td>
+<td>Signal that a condition is met</td>
 </tr>
 <tr>
 <td><code>wait name</code></td>
@@ -2833,19 +2984,19 @@ shared event empty;</code></pre>
 </tr>
 <tr>
 <td><code>tile_id = tile_iter # block_id</code></td>
-<td>Compose iteration index with block index for tile striping</td>
+<td>Compose indices for tile striping</td>
 </tr>
 <tr>
 <td><code>int total_tiles = expr</code></td>
-<td>Local integer in a Croktile function</td>
+<td>Local integer variable</td>
 </tr>
 <tr>
 <td><code>parallel.async ... : block</code></td>
-<td>Non-blocking async kernel launch</td>
+<td>Non-blocking kernel launch</td>
 </tr>
 <tr>
 <td><code>stream s</code></td>
-<td>Bind kernel body to CUDA stream <code>s</code></td>
+<td>Bind kernel to CUDA stream <code>s</code></td>
 </tr>
 </tbody>
 </table>
@@ -2853,38 +3004,40 @@ shared event empty;</code></pre>
 <table>
 <thead>
 <tr>
-<th>Topic</th>
-<th>Takeaway</th>
+<th>Concept</th>
+<th>Primitive</th>
+<th>When to use</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Pipeline serialization</td>
-<td>One worker alternating load/compute wastes time; role specialization overlaps stages</td>
+<td>Predicated execution</td>
+<td><code>if</code></td>
+<td>Data-dependent decisions (bounds, conditions)</td>
 </tr>
 <tr>
-<td>Static role partitioning</td>
-<td><code>inthreads.async</code> — compile-time MPMD within a kernel; separate programs for separate thread subsets</td>
+<td>Structured concurrency</td>
+<td><code>inthreads.async</code></td>
+<td>Compile-time thread partitioning (producer/consumer, heterogeneous roles)</td>
 </tr>
 <tr>
-<td>Guarded execution</td>
-<td><code>if</code> — runtime SPMD predication; all threads evaluate, divergent threads are masked</td>
+<td>Inter-region signaling</td>
+<td><code>shared event</code> / <code>wait</code> / <code>trigger</code></td>
+<td>Coordination between concurrent regions</td>
 </tr>
 <tr>
-<td>Events (preview)</td>
-<td><code>shared event</code> / <code>wait</code> / <code>trigger</code> — inter-role signaling; credit-based bounded buffer protocol</td>
+<td>Host concurrency</td>
+<td><code>parallel.async</code> / <code>stream s</code></td>
+<td>Multi-kernel overlap, non-blocking launch</td>
 </tr>
 <tr>
-<td>Persistent kernels</td>
-<td>Fixed <code>NUM_SMS</code> blocks, linear tile ids, striping with <code>#</code>, guard with <code>if</code></td>
-</tr>
-<tr>
-<td>Host orchestration</td>
-<td><code>parallel.async</code> / <code>stream s</code> — orthogonal to in-kernel specialization</td>
+<td>Persistent scheduling</td>
+<td><code>if</code> + <code>foreach</code> + <code>#</code></td>
+<td>Fixed grid size, tile striping with padding guard</td>
 </tr>
 </tbody>
 </table>
-<p>The 1P1C skeleton above is incomplete: without <code>wait</code> / <code>trigger</code>, the consumer can read before the producer has written. <a href="../ch06-synchronization/">Chapter 6</a> adds the full synchronization protocol — events, <code>swap</code>, and double-buffering — so the pipeline runs safely and at full throughput.</p>
+<p>The 1P1C skeleton above is incomplete: without <code>wait</code> / <code>trigger</code>, the consumer can read before the producer has finished writing. <a href="../ch06-synchronization/">Chapter 6</a> adds the full synchronization protocols — <code>swap</code> for single-schedule double buffering, events for multi-warpgroup pipelines — so the pipeline runs safely and at full throughput.</p>
 
 
 

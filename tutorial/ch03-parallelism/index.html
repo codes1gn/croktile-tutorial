@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://codes1gn.github.io/croktile-tutorial/tutorial/ch03-parallelism/">
+        <link rel="canonical" href="https://codes1gn.github.io/croqtile-tutorial/tutorial/ch03-parallelism/">
       
       
         <link rel="prev" href="../ch02-data-movement/">
@@ -29,7 +29,7 @@
     
     
       
-        <title>Ch 3: Parallelism - Croktile</title>
+        <title>Ch 3: Parallelism - Croqtile</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#parallelism-how-croktile-represents-parallel-work" class="md-skip">
+        <a href="#parallelism-how-croqtile-represents-parallel-work" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Croktile" class="md-header__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../.." title="Croqtile" class="md-header__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../assets/images/logo-2.png" alt="logo">
 
@@ -113,7 +113,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Croktile
+            Croqtile
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -227,13 +227,13 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/codes1gn/croktile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/codes1gn/croqtile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
       </div>
@@ -263,22 +263,22 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Croktile" class="md-nav__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../.." title="Croqtile" class="md-nav__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../assets/images/logo-2.png" alt="logo">
 
     </a>
-    Croktile
+    Croqtile
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/codes1gn/croktile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/codes1gn/croqtile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
     </div>
@@ -326,7 +326,7 @@
   <span class="md-ellipsis">
     
   
-    What is Good in CrokTile
+    What is Good in CroqTile
   
 
     
@@ -458,14 +458,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../ch01-hello-croktile/" class="md-nav__link">
+      <a href="../ch01-hello-croqtile/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Ch 1: Hello Croktile
+    Ch 1: Hello Croqtile
   
 
     
@@ -585,10 +585,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#croktiles-two-layer-parallelism-model" class="md-nav__link">
+  <a href="#croqtiles-two-layer-parallelism-model" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Croktile's Two-Layer Parallelism Model
+        Croqtile's Two-Layer Parallelism Model
       
     </span>
   </a>
@@ -1292,7 +1292,7 @@
   <span class="md-ellipsis">
     
   
-    Croktile-C++ Program Structure
+    Croqtile-C++ Program Structure
   
 
     
@@ -2560,10 +2560,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#croktiles-two-layer-parallelism-model" class="md-nav__link">
+  <a href="#croqtiles-two-layer-parallelism-model" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Croktile's Two-Layer Parallelism Model
+        Croqtile's Two-Layer Parallelism Model
       
     </span>
   </a>
@@ -2815,20 +2815,20 @@
   
 
 
-<h1 id="parallelism-how-croktile-represents-parallel-work">Parallelism: How Croktile Represents Parallel Work<a class="headerlink" href="#parallelism-how-croktile-represents-parallel-work" title="Permanent link">&para;</a></h1>
+<h1 id="parallelism-how-croqtile-represents-parallel-work">Parallelism: How Croqtile Represents Parallel Work<a class="headerlink" href="#parallelism-how-croqtile-represents-parallel-work" title="Permanent link">&para;</a></h1>
 <p>The previous two chapters kept things simple: <code>parallel {i, j} by [4, 8]</code> created 32 instances, each handling one element, and we never asked where those instances actually ran. That was fine for element-wise addition and for understanding data movement — the compiler picked sensible defaults. But a GPU is not a flat bag of identical processors. It has a deep hierarchy of execution units, and mapping your work to the right level of that hierarchy is the difference between a toy demo and a real kernel.</p>
-<p>This chapter introduces parallelism as a first-class concept in Croktile: what it means, how Croktile separates the <em>logical</em> structure (what runs concurrently) from the <em>physical</em> mapping (which hardware units run it), and how you control that mapping with <strong>space specifiers</strong>.</p>
+<p>This chapter introduces parallelism as a first-class concept in Croqtile: what it means, how Croqtile separates the <em>logical</em> structure (what runs concurrently) from the <em>physical</em> mapping (which hardware units run it), and how you control that mapping with <strong>space specifiers</strong>.</p>
 <h2 id="how-we-think-about-parallel-tasks">How We Think About Parallel Tasks<a class="headerlink" href="#how-we-think-about-parallel-tasks" title="Permanent link">&para;</a></h2>
-<p>Before we touch any Croktile syntax, let's talk about what "parallel" actually means.</p>
+<p>Before we touch any Croqtile syntax, let's talk about what "parallel" actually means.</p>
 <p>Suppose you have eight independent tasks — eight tiles to add, eight rows to process, whatever. You can describe all eight at once and call them "parallel." But that statement says nothing about how many actually run at the same time. On a single CPU core, they execute one after another. On a 4-core CPU, maybe four run simultaneously. On a GPU warp, all eight might genuinely execute in lockstep.</p>
 <p><img alt="Virtual parallelism: same tasks, different hardware schedules" src="../../assets/images/ch03/fig1_virtual_parallelism_dark.png#only-dark" />
 <img alt="Virtual parallelism: same tasks, different hardware schedules" src="../../assets/images/ch03/fig1_virtual_parallelism_light.png#only-light" /></p>
 <p><em>The same eight tasks scheduled sequentially (1 core), 4-wide (CPU), and 8-wide (GPU). The tasks are identical — only the hardware changes.</em></p>
 <p>The point is that parallelism is a <strong>virtual</strong> concept. When you write "these eight tasks are independent," you are making a statement about the <em>logic</em> of your program, not about the hardware. The hardware decides how many actually run simultaneously, based on how many execution units it has and how the scheduler assigns work.</p>
 <p>This distinction matters because GPU programming languages traditionally conflate the two. In CUDA, you launch a kernel with <code>&lt;&lt;&lt;blocks, threads&gt;&gt;&gt;</code> — that is simultaneously declaring the logical structure (how many instances) and the physical mapping (how many thread blocks, how many threads per block). If you want to change the tiling, you also have to change the launch configuration. The logical and physical are tangled together.</p>
-<p>Croktile untangles them.</p>
-<h2 id="croktiles-two-layer-parallelism-model">Croktile's Two-Layer Parallelism Model<a class="headerlink" href="#croktiles-two-layer-parallelism-model" title="Permanent link">&para;</a></h2>
-<p>Croktile gives you two separate knobs:</p>
+<p>Croqtile untangles them.</p>
+<h2 id="croqtiles-two-layer-parallelism-model">Croqtile's Two-Layer Parallelism Model<a class="headerlink" href="#croqtiles-two-layer-parallelism-model" title="Permanent link">&para;</a></h2>
+<p>Croqtile gives you two separate knobs:</p>
 <ol>
 <li><strong><code>parallel</code></strong> — declares that iterations are independent and <em>may</em> run concurrently. This is a logical statement.</li>
 <li><strong>Space specifiers</strong> (<code>: block</code>, <code>: thread</code>, <code>: group</code>, <code>: group-4</code>) — tell the compiler <em>which GPU hardware unit</em> each parallel axis maps to. This is a physical statement.</li>
@@ -2840,8 +2840,8 @@
       foreach k in [16]                      // sequential — inner accumulation
         output += lhs * rhs;</code></pre>
 <p>The <code>parallel</code> lines say "these iterations are independent." The <code>: block</code> and <code>: thread</code> annotations say "put the outer ones on separate thread blocks and the inner ones on separate threads within a block." The <code>foreach</code> lines say "run these in order." No ambiguity, no conflation.</p>
-<p><img alt="Logical vs physical parallelism in Croktile" src="../../assets/images/ch03/fig2_logical_vs_physical_dark.png#only-dark" />
-<img alt="Logical vs physical parallelism in Croktile" src="../../assets/images/ch03/fig2_logical_vs_physical_light.png#only-light" /></p>
+<p><img alt="Logical vs physical parallelism in Croqtile" src="../../assets/images/ch03/fig2_logical_vs_physical_dark.png#only-dark" />
+<img alt="Logical vs physical parallelism in Croqtile" src="../../assets/images/ch03/fig2_logical_vs_physical_light.png#only-light" /></p>
 <p><em>Left: the logical nesting the programmer writes (parallel = concurrent, foreach = sequential). Right: the GPU hardware hierarchy. Space specifiers bridge the two.</em></p>
 <p>If you omit the space specifier — just <code>parallel p by 8</code> — the compiler picks a default mapping. That is what Chapters 1 and 2 did, and it worked fine for simple cases. Explicit specifiers are how you take control when performance matters.</p>
 <p>Both <code>parallel</code> and <code>foreach</code> support multi-dimensional indices (<code>{a, b}</code> syntax), the compose operator (<code>#</code>), and the extent operator (<code>#p</code>). Everything from Chapters 1 and 2 still applies.</p>
@@ -2853,7 +2853,7 @@
 <li>A <strong>warp</strong> is 32 threads that execute in lockstep. This is the GPU's fundamental SIMD unit.</li>
 <li>A <strong>thread</strong> is a single execution context with its own registers.</li>
 </ul>
-<p>Croktile maps to each level with a space specifier:</p>
+<p>Croqtile maps to each level with a space specifier:</p>
 <p><img alt="Space specifiers mapped to GPU execution hierarchy" src="../../assets/images/ch03/fig3_space_specifiers_dark.png#only-dark" />
 <img alt="Space specifiers mapped to GPU execution hierarchy" src="../../assets/images/ch03/fig3_space_specifiers_light.png#only-light" /></p>
 <p><em>The four space specifiers and the GPU hardware units they map to, with thread counts and typical operations at each level.</em></p>
@@ -2889,11 +2889,11 @@
 <p>The rule of thumb: if multiple threads in a block need the same data, copy it into <code>shared</code>. If each thread's working set is independent, <code>local</code> keeps data closer and avoids shared-memory bank contention.</p>
 <p>In the matmul later in this chapter, the K-tiles of <code>lhs</code> and <code>rhs</code> are loaded <code>=&gt; shared</code> because all 256 threads in the block read from them. The output accumulator stays in registers (thread-private) because each thread writes to its own element.</p>
 <h2 id="type-system-aside-mdspan-and-ituple">Type System Aside: <code>mdspan</code> and <code>ituple</code><a class="headerlink" href="#type-system-aside-mdspan-and-ituple" title="Permanent link">&para;</a></h2>
-<p>Before we build the matmul, two features of Croktile's type system are worth mentioning. You have already used them implicitly; now is a good time to name them.</p>
-<p><strong><code>mdspan</code></strong> — every tensor in Croktile carries its shape as part of its type. When you write <code>s32 [128, 256] lhs</code>, the shape <code>[128, 256]</code> is not a runtime value — it is a compile-time property. The compiler uses it to verify that every <code>.at()</code>, <code>chunkat</code>, and <code>dma.copy</code> is dimensionally consistent. If you try <code>lhs.at(i, j, k)</code> on a 2D tensor, the compiler rejects it. The expression <code>output.at(px#qx, py#qy)</code> is verified to produce indices within the output's bounds.</p>
+<p>Before we build the matmul, two features of Croqtile's type system are worth mentioning. You have already used them implicitly; now is a good time to name them.</p>
+<p><strong><code>mdspan</code></strong> — every tensor in Croqtile carries its shape as part of its type. When you write <code>s32 [128, 256] lhs</code>, the shape <code>[128, 256]</code> is not a runtime value — it is a compile-time property. The compiler uses it to verify that every <code>.at()</code>, <code>chunkat</code>, and <code>dma.copy</code> is dimensionally consistent. If you try <code>lhs.at(i, j, k)</code> on a 2D tensor, the compiler rejects it. The expression <code>output.at(px#qx, py#qy)</code> is verified to produce indices within the output's bounds.</p>
 <p>The <code>span(i)</code> syntax extracts one dimension: <code>lhs.span(0)</code> is 128, <code>rhs.span(1)</code> is 256. The shorthand <code>lhs.span</code> copies the entire shape.</p>
 <p><strong><code>ituple</code></strong> — the <code>{px, py}</code> syntax in <code>parallel {px, py} by [8, 16]</code> introduces an <code>ituple</code>, a compile-time integer tuple. The compose operator <code>px#qx</code> combines two ituple elements into a global index. The extent operator <code>#p</code> extracts the range of a parallel variable. These are all resolved at compile time — no runtime overhead.</p>
-<p>For the full details, see the <a href="../../documentation/shape-in-choreo/">mdspan reference</a> and the <a href="../../documentation/integer-ituple/">ituple reference</a>. For now, the key takeaway is: Croktile catches shape mismatches at compile time, not at runtime.</p>
+<p>For the full details, see the <a href="../../documentation/shape-in-choreo/">mdspan reference</a> and the <a href="../../documentation/integer-ituple/">ituple reference</a>. For now, the key takeaway is: Croqtile catches shape mismatches at compile time, not at runtime.</p>
 <h2 id="matrix-multiply-putting-it-together">Matrix Multiply: Putting It Together<a class="headerlink" href="#matrix-multiply-putting-it-together" title="Permanent link">&para;</a></h2>
 <p>With <code>parallel</code>, <code>foreach</code>, <code>dma.copy</code>, <code>chunkat</code>, <code>#</code>, and space specifiers, a tiled matrix multiply is within reach. This is the first program in the tutorial that does something GPUs are famous for.</p>
 <p>The plan: multiply a <code>[128, 256]</code> matrix by a <code>[256, 256]</code> matrix to get a <code>[128, 256]</code> result.</p>
@@ -2966,7 +2966,7 @@
 <p>Here is how the matmul code maps to actual GPU hardware:</p>
 <p><img alt="Matmul code mapped to GPU resources" src="../../assets/images/ch03/fig7_matmul_gpu_layout_dark.png#only-dark" />
 <img alt="Matmul code mapped to GPU resources" src="../../assets/images/ch03/fig7_matmul_gpu_layout_light.png#only-light" /></p>
-<p><em>Left: Croktile code with nested parallel and foreach. Right: GPU hardware — 128 blocks distributed across SMs, each with shared memory and 256 threads.</em></p>
+<p><em>Left: Croqtile code with nested parallel and foreach. Right: GPU hardware — 128 blocks distributed across SMs, each with shared memory and 256 threads.</em></p>
 <h3 id="host-code">Host Code<a class="headerlink" href="#host-code" title="Permanent link">&para;</a></h3>
 <p>The host side uses the same <code>make_spandata</code> / <code>.view()</code> pattern from earlier chapters:</p>
 <pre class="highlight"><code class="language-choreo">int main() {
@@ -2987,7 +2987,7 @@
 
   std::cout &lt;&lt; "Test Passed\n" &lt;&lt; std::endl;
 }</code></pre>
-<p>Nothing new here. The host program stays boring so the Croktile function stays the star.</p>
+<p>Nothing new here. The host program stays boring so the Croqtile function stays the star.</p>
 <h2 id="tracing-one-output-element">Tracing One Output Element<a class="headerlink" href="#tracing-one-output-element" title="Permanent link">&para;</a></h2>
 <p>Pick global position <code>(row=37, col=50)</code> in the output. Which block and thread own it?</p>
 <p>Blocks partition 128 rows into 8 tiles of 16: <code>px = 37 / 16 = 2</code>, offset <code>qx = 37 % 16 = 5</code>. Columns partition 256 into 16 tiles of 16: <code>py = 50 / 16 = 3</code>, offset <code>qy = 50 % 16 = 2</code>. So block <code>(2, 3)</code>, thread <code>(5, 2)</code>.</p>

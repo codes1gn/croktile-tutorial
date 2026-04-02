@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://codes1gn.github.io/croktile-tutorial/tutorial/ch06-synchronization/">
+        <link rel="canonical" href="https://codes1gn.github.io/croqtile-tutorial/tutorial/ch06-synchronization/">
       
       
         <link rel="prev" href="../ch05-branch-control/">
@@ -29,7 +29,7 @@
     
     
       
-        <title>Ch 6: Synchronization - Croktile</title>
+        <title>Ch 6: Synchronization - Croqtile</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#synchronization-pipelines-events-and-double-buffering" class="md-skip">
+        <a href="#synchronization-in-practice-pipelines-buffers-and-events" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Croktile" class="md-header__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../.." title="Croqtile" class="md-header__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../assets/images/logo-2.png" alt="logo">
 
@@ -113,7 +113,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Croktile
+            Croqtile
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -227,13 +227,13 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/codes1gn/croktile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/codes1gn/croqtile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
       </div>
@@ -263,22 +263,22 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Croktile" class="md-nav__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../.." title="Croqtile" class="md-nav__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../assets/images/logo-2.png" alt="logo">
 
     </a>
-    Croktile
+    Croqtile
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/codes1gn/croktile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/codes1gn/croqtile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
     </div>
@@ -326,7 +326,7 @@
   <span class="md-ellipsis">
     
   
-    What is Good in CrokTile
+    What is Good in CroqTile
   
 
     
@@ -458,14 +458,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../ch01-hello-croktile/" class="md-nav__link">
+      <a href="../ch01-hello-croqtile/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Ch 1: Hello Croktile
+    Ch 1: Hello Croqtile
   
 
     
@@ -658,27 +658,38 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-you-cannot-just-overlap-without-coordination" class="md-nav__link">
+  <a href="#double-buffering-with-swap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why You Cannot "Just Overlap" Without Coordination
+        Double buffering with swap
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Double buffering with swap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-three-phases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The three phases
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#double-buffering-with-swap" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#swap-names-not-bytes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Double Buffering with swap
+        swap: names, not bytes
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Double Buffering with swap">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
   <a href="#with-tile_k-in-16" class="md-nav__link">
@@ -714,32 +725,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#the-three-phases" class="md-nav__link">
+  <a href="#__co__-auto-return-type" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The three phases
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#swap-names-not-bytes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        swap: names, not bytes
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#auto-return-type" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        auto return type
+        __co__ auto return type
       
     </span>
   </a>
@@ -752,22 +741,55 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#events-in-action-the-full-pipeline" class="md-nav__link">
+  <a href="#why-you-cannot-just-overlap-without-events" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Events in action: the full pipeline
+        Why you cannot "just overlap" without events
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Events in action: the full pipeline">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-full-1p1c-event-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The full 1P1C event pipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The full 1P1C event pipeline">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1p1c-kernel-with-events" class="md-nav__link">
+  <a href="#walking-through-the-kernel" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1P1C kernel with events
+        Walking through the kernel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#credit-flow-for-one-stage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Credit flow for one stage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debugging-tip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debugging tip
       
     </span>
   </a>
@@ -776,17 +798,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#credit-flow-for-one-stage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Credit Flow for One Stage
-      
-    </span>
-  </a>
   
 </li>
       
@@ -794,7 +805,7 @@
   <a href="#new-syntax" class="md-nav__link">
     <span class="md-ellipsis">
       
-        New Syntax
+        New syntax
       
     </span>
   </a>
@@ -1248,7 +1259,7 @@
   <span class="md-ellipsis">
     
   
-    Croktile-C++ Program Structure
+    Croqtile-C++ Program Structure
   
 
     
@@ -2505,27 +2516,38 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-you-cannot-just-overlap-without-coordination" class="md-nav__link">
+  <a href="#double-buffering-with-swap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why You Cannot "Just Overlap" Without Coordination
+        Double buffering with swap
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Double buffering with swap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-three-phases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The three phases
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#double-buffering-with-swap" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#swap-names-not-bytes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Double Buffering with swap
+        swap: names, not bytes
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Double Buffering with swap">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
   <a href="#with-tile_k-in-16" class="md-nav__link">
@@ -2561,32 +2583,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#the-three-phases" class="md-nav__link">
+  <a href="#__co__-auto-return-type" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The three phases
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#swap-names-not-bytes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        swap: names, not bytes
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#auto-return-type" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        auto return type
+        __co__ auto return type
       
     </span>
   </a>
@@ -2599,22 +2599,55 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#events-in-action-the-full-pipeline" class="md-nav__link">
+  <a href="#why-you-cannot-just-overlap-without-events" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Events in action: the full pipeline
+        Why you cannot "just overlap" without events
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Events in action: the full pipeline">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-full-1p1c-event-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The full 1P1C event pipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The full 1P1C event pipeline">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1p1c-kernel-with-events" class="md-nav__link">
+  <a href="#walking-through-the-kernel" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1P1C kernel with events
+        Walking through the kernel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#credit-flow-for-one-stage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Credit flow for one stage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debugging-tip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debugging tip
       
     </span>
   </a>
@@ -2623,17 +2656,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#credit-flow-for-one-stage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Credit Flow for One Stage
-      
-    </span>
-  </a>
   
 </li>
       
@@ -2641,7 +2663,7 @@
   <a href="#new-syntax" class="md-nav__link">
     <span class="md-ellipsis">
       
-        New Syntax
+        New syntax
       
     </span>
   </a>
@@ -2727,19 +2749,13 @@
   
 
 
-<h1 id="synchronization-pipelines-events-and-double-buffering">Synchronization: Pipelines, Events, and Double Buffering<a class="headerlink" href="#synchronization-pipelines-events-and-double-buffering" title="Permanent link">&para;</a></h1>
-<p>Wherever two workers share a buffer — a CPU thread writing to a queue while another reads from it, a network adapter filling a ring buffer while the driver drains it, a shell pipe connecting <code>grep</code> to <code>sort</code> — the same problem appears: <strong>producer-consumer synchronization</strong>. The producer must not overwrite data the consumer is still reading; the consumer must not read data the producer has not finished writing. The classical solutions are well-known from any operating systems course: semaphores, bounded buffers, credit-based flow control. They all establish a happens-before relationship between "write complete" and "read begins."</p>
-<p>On a GPU, the challenge is performance. Traditional synchronization primitives — mutexes, condition variables, CAS loops — are far too expensive when thousands of threads share the same memory. The GPU needs something lightweight: hardware-supported barriers, named events, and explicit credit protocols that compile to a few PTX instructions rather than spin loops. This is exactly what Croktile provides.</p>
-<p>Chapter 5 carved the matmul into two roles with <code>inthreads.async</code>: a <strong>producer</strong> warpgroup that issues loads, and a <strong>consumer</strong> warpgroup that runs MMA. It also introduced <code>shared event</code>, <code>wait</code>, and <code>trigger</code> as the signaling mechanism between roles. This chapter puts those primitives to work in a full pipeline and adds <strong><code>swap</code> / <code>rotate</code></strong> for multi-buffering, <strong><code>dma.copy.async</code></strong> for non-blocking copies, and the <strong>prologue / steady-state / epilogue</strong> pattern that structures the K-loop.</p>
-<p>We start from the single-buffer case (same program counter loads and computes), then add double buffering with <code>swap</code>, then graduate to the full event-driven pipeline where producer and consumer run as separate programs.</p>
-<h2 id="why-you-cannot-just-overlap-without-coordination">Why You Cannot "Just Overlap" Without Coordination<a class="headerlink" href="#why-you-cannot-just-overlap-without-coordination" title="Permanent link">&para;</a></h2>
-<p>Walk the K loop of a tiled matmul with <strong>one</strong> staging buffer. Each iteration must: copy the A- and B-tiles into shared memory, wait until those copies are visible, then run MMA on that tile. If you tried to start the <em>next</em> iteration's copies while MMA still reads the same buffer, you would <strong>overwrite</strong> bytes the tensor cores are consuming. No amount of wishful scheduling fixes that; you need a happens-before relationship between "bytes landed" and "MMA reads them."</p>
-<p>In hand-written CUDA, people enforce that with <strong>barriers</strong> (<code>__syncthreads</code>), <strong>atomics</strong>, or <strong>CUDA events</strong> wired between streams. The bookkeeping explodes quickly: you track which phase owns which buffer, which fence clears which hazard, and you hope every path through the loop matches. Croktile narrows the design space: <strong>events</strong> for cross-role signaling, <strong><code>swap</code></strong> for rotating buffer <em>names</em> without copying data, and explicit <strong><code>wait</code> / <code>trigger</code></strong> so the credit flow stays visible in the source.</p>
-<p>The picture below contrasts a strict <strong>load-then-compute</strong> staircase with <strong>double-buffered</strong> overlap: same logical work, less idle time on the memory or math side when the pipeline fills.</p>
-<p><img alt="Sequential vs double-buffered K-tile timelines (schematic)" src="../../assets/images/ch06/fig1_pipeline_timeline_dark.png#only-dark" />
-<img alt="Sequential vs double-buffered K-tile timelines (schematic)" src="../../assets/images/ch06/fig1_pipeline_timeline_light.png#only-light" /></p>
-<h2 id="double-buffering-with-swap">Double Buffering with <code>swap</code><a class="headerlink" href="#double-buffering-with-swap" title="Permanent link">&para;</a></h2>
-<p>Give the K-loop <strong>two</strong> logical buffers. While MMA drains buffer 0, DMA fills buffer 1 with the next tile. After the math step, <strong>swap</strong> the handles: what was "next" becomes "current," and the freed slot is ready for the following load. Croktile spells this with <code>dma.copy.async</code> (non-blocking copy), <code>dma.any</code> (a placeholder future), <code>swap</code> (exchange futures), and a three-phase loop.</p>
+<h1 id="synchronization-in-practice-pipelines-buffers-and-events">Synchronization in Practice: Pipelines, Buffers, and Events<a class="headerlink" href="#synchronization-in-practice-pipelines-buffers-and-events" title="Permanent link">&para;</a></h1>
+<p>Chapter 5 introduced three control-flow primitives: <strong><code>if</code></strong> for predicated execution, <strong><code>inthreads.async</code></strong> for structured concurrent regions, and <strong>events</strong> (<code>shared event</code> / <code>wait</code> / <code>trigger</code>) for inter-region signaling. This chapter puts them to work. You will see two progressively complex kernel patterns, each demonstrating how the primitives compose to solve real synchronization problems.</p>
+<p>The first pattern — <strong>double buffering with <code>swap</code></strong> — uses a single thread group that interleaves loading and computing within one program. No <code>inthreads.async</code>, no events: just two buffer handles and a rotation. The second pattern — <strong>the full 1P1C event pipeline</strong> — splits loading and computing into separate concurrent programs with <code>inthreads.async</code> and coordinates them with event arrays.</p>
+<p>Both patterns solve the same underlying problem: <strong>you cannot read a buffer while someone is writing to it</strong>. They differ in how they structure the solution.</p>
+<h2 id="double-buffering-with-swap">Double buffering with <code>swap</code><a class="headerlink" href="#double-buffering-with-swap" title="Permanent link">&para;</a></h2>
+<p>Give the K-loop <strong>two</strong> logical buffers. While the math drains buffer 0, DMA fills buffer 1 with the next tile. After the math step, <strong>swap</strong> the handles: what was "next" becomes "current," and the freed slot is ready for the following load.</p>
+<p>Croqtile spells this with <code>dma.copy.async</code> (non-blocking copy), <code>dma.any</code> (a placeholder future), <code>swap</code> (exchange future handles), and a three-phase loop:</p>
 <pre class="highlight"><code class="language-choreo">__co__ auto matmul(s32 [M, K] lhs, s32 [K, N] rhs) {
   s32 [lhs.span(0), rhs.span(1)] output;
 
@@ -2775,36 +2791,28 @@
 
   return output;
 }</code></pre>
-<h3 id="with-tile_k-in-16"><strong><code>with tile_k in 16</code></strong><a class="headerlink" href="#with-tile_k-in-16" title="Permanent link">&para;</a></h3>
-<pre class="highlight"><code class="language-choreo">with tile_k in 16 {</code></pre>
-<p>Opens a <strong>scoped region</strong> and binds <code>tile_k</code> as a tile axis with extent 16. Inside the block, <code>tile_k</code> is the chunk index for <code>chunkat</code> along K, and <code>#tile_k</code> is 16 — "within this scope, K is divided into 16 tiles."</p>
-<h3 id="dmaany-placeholder-futures"><strong><code>dma.any</code>: placeholder futures</strong><a class="headerlink" href="#dmaany-placeholder-futures" title="Permanent link">&para;</a></h3>
-<pre class="highlight"><code class="language-choreo">lf1 = dma.any;
-rf1 = dma.any;</code></pre>
-<p><code>dma.any</code> is a future that does not yet represent a transfer. It exists so the type system has something to <code>swap</code> against on the first steady-state iteration. Before any use of <code>lf1.data</code>, a real <code>dma.copy</code> has been assigned.</p>
-<h3 id="foreach-tile_k1-sliced-iteration"><strong><code>foreach tile_k(1:)</code>: sliced iteration</strong><a class="headerlink" href="#foreach-tile_k1-sliced-iteration" title="Permanent link">&para;</a></h3>
-<pre class="highlight"><code class="language-choreo">foreach tile_k(1:) {</code></pre>
-<p><code>(1:)</code> means tile indices <code>1, 2, …</code> through the end. Tile 0 was loaded in the prologue into <code>lf0</code>/<code>rf0</code>.</p>
-<h3 id="the-three-phases"><strong>The three phases</strong><a class="headerlink" href="#the-three-phases" title="Permanent link">&para;</a></h3>
-<p><strong>Prologue.</strong> Issue loads for tile 0 into <code>lf0</code>/<code>rf0</code>. No compute yet.</p>
-<p><strong>Steady state.</strong> For each later tile: start loads into <code>lf1</code>/<code>rf1</code>, compute on <code>lf0</code>/<code>rf0</code> from the previous iteration, then <code>swap</code> so names track the active buffers. New copies land in <code>lf1</code>/<code>rf1</code> <strong>before</strong> the compute reads <code>lf0</code>/<code>rf0</code>, so you never read a buffer being overwritten.</p>
+<h3 id="the-three-phases">The three phases<a class="headerlink" href="#the-three-phases" title="Permanent link">&para;</a></h3>
+<p><strong>Prologue.</strong> Issue loads for tile 0 into <code>lf0</code>/<code>rf0</code>. No compute yet — the first tile must land before anything can multiply it.</p>
+<p><strong>Steady state.</strong> For each subsequent tile: start loads into <code>lf1</code>/<code>rf1</code>, compute on <code>lf0</code>/<code>rf0</code> from the previous iteration, then <code>swap</code> so names track the active buffers. New copies land in <code>lf1</code>/<code>rf1</code> <strong>before</strong> the compute reads <code>lf0</code>/<code>rf0</code>, so you never read a buffer being overwritten.</p>
 <p><strong>Epilogue.</strong> After the last swap, <code>lf0</code>/<code>rf0</code> hold the final tile; one more compute pass drains them.</p>
-<h3 id="swap-names-not-bytes"><strong><code>swap</code>: names, not bytes</strong><a class="headerlink" href="#swap-names-not-bytes" title="Permanent link">&para;</a></h3>
-<p><code>swap(lf0, lf1)</code> exchanges <strong>future handles</strong>. Shared-memory contents stay where the hardware placed them; only Croktile-level names rotate. The same idiom in CUDA is often a <code>^ 1</code> buffer index or a boolean phase; here the intent is explicit. For triple buffering, <code>rotate(f0, f1, f2)</code> cycles three handles in one step.</p>
-<p><em>Note: this example uses <code>s32</code> with scalar accumulation and <code>with tile_k</code> scoping — a deliberately simplified kernel style to isolate the <code>swap</code> mechanism. The same <code>swap</code> pattern applies verbatim to FP16/MMA kernels from Chapter 4; only the compute body changes.</em></p>
-<h3 id="auto-return-type"><strong><code>auto</code> return type</strong><a class="headerlink" href="#auto-return-type" title="Permanent link">&para;</a></h3>
-<p><code>__co__ auto matmul(...)</code> lets Croktile infer the result type from <code>return output</code>, which keeps the signature aligned with shape expressions.</p>
-<h2 id="events-in-action-the-full-pipeline">Events in action: the full pipeline<a class="headerlink" href="#events-in-action-the-full-pipeline" title="Permanent link">&para;</a></h2>
-<p><code>swap</code> works when <strong>one</strong> thread group interleaves loads and MMA in a single schedule. Warp specialization (<a href="../ch05-branch-control/">Chapter 5</a>) puts loading and computing on <strong>different</strong> warpgroups with different program counters. They cannot share a <code>swap</code> schedule line-by-line; they need <strong>events</strong> — the signaling mechanism introduced in Chapter 5.</p>
-<p>Recall: <code>shared event</code> declares a synchronization token, <code>trigger</code> signals "condition met," and <code>wait</code> blocks until the signal arrives. Here we put them to work with multiple pipeline stages:</p>
-<pre class="highlight"><code class="language-choreo">shared event full[MATMUL_STAGES], empty[MATMUL_STAGES];</code></pre>
-<p>With an array of events, each physical buffer slot gets its own <code>full</code>/<code>empty</code> pair. The convention is:</p>
-<ul>
-<li><code>full[s]</code> — stage <code>s</code> has been filled; the consumer may read it.</li>
-<li><code>empty[s]</code> — the consumer has released stage <code>s</code>; the producer may overwrite it.</li>
-</ul>
-<p>Staging for tiles that many threads share still lives in <strong><code>=&gt; shared</code></strong>; Chapter 2 and Chapter 3 already covered <strong>local</strong> vs <strong>shared</strong> placement — the new ingredient here is <em>who</em> waits on <em>which</em> event, not the memory space alone.</p>
-<h3 id="1p1c-kernel-with-events"><strong>1P1C kernel with events</strong><a class="headerlink" href="#1p1c-kernel-with-events" title="Permanent link">&para;</a></h3>
+<h3 id="swap-names-not-bytes"><code>swap</code>: names, not bytes<a class="headerlink" href="#swap-names-not-bytes" title="Permanent link">&para;</a></h3>
+<p><code>swap(lf0, lf1)</code> exchanges <strong>future handles</strong> — the Croqtile-level names that refer to buffers. Shared-memory contents stay where the hardware placed them; only the names rotate. In CUDA, the same idiom is often a <code>^ 1</code> buffer index or a boolean phase variable. For triple buffering, <code>rotate(f0, f1, f2)</code> cycles three handles in one step.</p>
+<h3 id="with-tile_k-in-16"><code>with tile_k in 16</code><a class="headerlink" href="#with-tile_k-in-16" title="Permanent link">&para;</a></h3>
+<p>Opens a scoped region and binds <code>tile_k</code> as a tile axis with extent 16. Inside the block, <code>tile_k</code> is the chunk index for <code>chunkat</code> along K, and <code>#tile_k</code> is 16.</p>
+<h3 id="dmaany-placeholder-futures"><code>dma.any</code>: placeholder futures<a class="headerlink" href="#dmaany-placeholder-futures" title="Permanent link">&para;</a></h3>
+<p><code>dma.any</code> creates a future that does not yet represent a transfer. It gives the type system something to <code>swap</code> against on the first steady-state iteration. Before any use of <code>lf1.data</code>, a real <code>dma.copy</code> has been assigned.</p>
+<h3 id="foreach-tile_k1-sliced-iteration"><code>foreach tile_k(1:)</code>: sliced iteration<a class="headerlink" href="#foreach-tile_k1-sliced-iteration" title="Permanent link">&para;</a></h3>
+<p><code>(1:)</code> means tile indices <code>1, 2, ...</code> through the end. Tile 0 was loaded in the prologue.</p>
+<h3 id="__co__-auto-return-type"><code>__co__ auto</code> return type<a class="headerlink" href="#__co__-auto-return-type" title="Permanent link">&para;</a></h3>
+<p><code>__co__ auto matmul(...)</code> lets the compiler infer the return type from <code>return output</code>.</p>
+<p><em>This example uses <code>s32</code> with scalar accumulation — a simplified style to isolate the <code>swap</code> mechanism. The same pattern applies to FP16/MMA kernels from Chapter 4.</em></p>
+<h2 id="why-you-cannot-just-overlap-without-events">Why you cannot "just overlap" without events<a class="headerlink" href="#why-you-cannot-just-overlap-without-events" title="Permanent link">&para;</a></h2>
+<p>The <code>swap</code> pattern works because one thread group controls both loading and computing — it knows the order. Warp specialization (<a href="../ch05-branch-control/">Chapter 5</a>) puts them on <strong>different</strong> warpgroups with different program counters. They cannot share a <code>swap</code> schedule; they need a signaling mechanism.</p>
+<p>The picture below contrasts a strict load-then-compute staircase with double-buffered overlap: same logical work, less idle time.</p>
+<p><img alt="Sequential vs double-buffered K-tile timelines (schematic)" src="../../assets/images/ch06/fig1_pipeline_timeline_dark.png#only-dark" />
+<img alt="Sequential vs double-buffered K-tile timelines (schematic)" src="../../assets/images/ch06/fig1_pipeline_timeline_light.png#only-light" /></p>
+<h2 id="the-full-1p1c-event-pipeline">The full 1P1C event pipeline<a class="headerlink" href="#the-full-1p1c-event-pipeline" title="Permanent link">&para;</a></h2>
+<p>This kernel combines <code>inthreads.async</code> (from Chapter 5) with event arrays to build a complete multi-stage pipeline. The producer and consumer run as separate concurrent programs, coordinated entirely through <code>wait</code> / <code>trigger</code>:</p>
 <pre class="highlight"><code class="language-choreo">__co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
   parallel {block_m, block_n} by [cdiv(M, MATMUL_WARP_M), cdiv(N, MATMUL_WARP_N)] : block {
     shared event full[MATMUL_STAGES], empty[MATMUL_STAGES];
@@ -2848,16 +2856,19 @@ rf1 = dma.any;</code></pre>
     }
   }
 }</code></pre>
-<p><strong>Ring index.</strong> <code>stage = iv_k % MATMUL_STAGES</code> maps the unbounded K iteration to a fixed number of physical slots — double buffering generalized to N buffers. With four stages, the producer can run several tiles ahead before blocking on <code>wait empty</code>.</p>
-<p><strong>Producer path.</strong> For each <code>iv_k</code>, <code>wait empty[stage]</code> acquires a free slot, the <code>dma.copy</code> lines fill <code>lhs_load_s</code>/<code>rhs_load_s</code> at that <code>stage</code>, then <code>trigger full[stage]</code> hands the slot to the consumer. If you drop the initial <code>trigger empty</code> bootstrap in the consumer prologue, the first <code>wait empty</code> never completes — a deadlock, not a mysterious MMA bug.</p>
-<p><strong>Consumer path.</strong> The loop <code>foreach {s} in [MATMUL_STAGES] { trigger empty[s]; }</code> runs <strong>before</strong> the K-loop so every stage starts with an <strong>empty</strong> credit. Otherwise the producer would wait forever on the first tile. Then each <code>iv_k</code>: <code>wait full[stage]</code>, MMA over that stage, <code>mma.commit</code>, <code>trigger empty[stage]</code> to release the slot. Skipping <code>mma.commit</code> or signaling <code>empty</code> before the math is really done risks reuse while operands are still live — another form of undersynchronization.</p>
-<p><strong><code>mma.commit</code>.</strong> Hopper WGMMA overlaps issue and accumulation; <code>mma.commit</code> is the fence that completes one K-slab's contribution to <code>mc</code> before that stage's shared buffer may be logically reused. Treat it as required glue between "done with this stage" and <code>trigger empty</code>.</p>
-<h2 id="credit-flow-for-one-stage">Credit Flow for One Stage<a class="headerlink" href="#credit-flow-for-one-stage" title="Permanent link">&para;</a></h2>
-<p>The diagram matches the code: bootstrap grants empty credits; the producer waits on <code>empty</code>, fills, signals <code>full</code>; the consumer waits on <code>full</code>, computes, signals <code>empty</code>. When <code>iv_k</code> wraps modulo <code>MATMUL_STAGES</code>, the same physical stage re-enters the cycle — the ring is safe because <code>wait</code>/<code>trigger</code> serialize access, not because modulo arithmetic is magic.</p>
+<h3 id="walking-through-the-kernel">Walking through the kernel<a class="headerlink" href="#walking-through-the-kernel" title="Permanent link">&para;</a></h3>
+<p><strong>Ring index.</strong> <code>stage = iv_k % MATMUL_STAGES</code> maps the unbounded K iteration to a fixed number of physical buffer slots — double buffering generalized to N buffers.</p>
+<p><strong>Producer path.</strong> For each <code>iv_k</code>, <code>wait empty[stage]</code> acquires a free slot. The <code>dma.copy</code> lines fill <code>lhs_load_s</code> / <code>rhs_load_s</code> at that stage. Then <code>trigger full[stage]</code> hands the slot to the consumer.</p>
+<p><strong>Consumer bootstrap.</strong> The loop <code>foreach {s} in [MATMUL_STAGES] { trigger empty[s]; }</code> runs <strong>before</strong> the K-loop so every stage starts with an <code>empty</code> credit. Without this, the producer blocks forever on its first <code>wait empty</code> — a deadlock.</p>
+<p><strong>Consumer path.</strong> Each <code>iv_k</code>: <code>wait full[stage]</code> blocks until the producer has filled that slot, then MMA over the tile, <code>mma.commit</code>, and <code>trigger empty[stage]</code> to release the slot for reuse.</p>
+<p><strong><code>mma.commit</code>.</strong> Hopper WGMMA overlaps instruction issue and accumulation. <code>mma.commit</code> is the fence that completes one K-slab's contribution to <code>mc</code> before that stage's shared buffer may be reused. Omitting it risks reading stale data — the MMA might still be consuming operands when the producer overwrites the buffer.</p>
+<h3 id="credit-flow-for-one-stage">Credit flow for one stage<a class="headerlink" href="#credit-flow-for-one-stage" title="Permanent link">&para;</a></h3>
+<p>The diagram matches the code: bootstrap grants empty credits; the producer waits on <code>empty</code>, fills, signals <code>full</code>; the consumer waits on <code>full</code>, computes, signals <code>empty</code>. When <code>iv_k</code> wraps modulo <code>MATMUL_STAGES</code>, the same physical stage re-enters the cycle.</p>
 <p><img alt="Event credit flow for one pipeline stage" src="../../assets/images/ch06/fig2_event_credit_flow_dark.png#only-dark" />
 <img alt="Event credit flow for one pipeline stage" src="../../assets/images/ch06/fig2_event_credit_flow_light.png#only-light" /></p>
-<p>If something looks wrong after you edit a pipeline, verify <strong>event order and trip counts</strong> before you chase MMA layout: producer and consumer must use the same <code>cdiv(K, MATMUL_TILE_K)</code> loop, and too few stages shifts pressure to <code>wait full</code> when the consumer outruns the producer.</p>
-<h2 id="new-syntax">New Syntax<a class="headerlink" href="#new-syntax" title="Permanent link">&para;</a></h2>
+<h3 id="debugging-tip">Debugging tip<a class="headerlink" href="#debugging-tip" title="Permanent link">&para;</a></h3>
+<p>If something looks wrong after editing a pipeline, verify <strong>event order and trip counts</strong> before chasing MMA layout bugs: producer and consumer must use the same <code>cdiv(K, MATMUL_TILE_K)</code> loop bound, and too few stages shifts pressure to <code>wait full</code> when the consumer outruns the producer.</p>
+<h2 id="new-syntax">New syntax<a class="headerlink" href="#new-syntax" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -2866,18 +2877,6 @@ rf1 = dma.any;</code></pre>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td><code>shared event name[N]</code></td>
-<td>Declare N named synchronization events in shared scope</td>
-</tr>
-<tr>
-<td><code>wait event</code></td>
-<td>Block until <code>event</code> has been signaled</td>
-</tr>
-<tr>
-<td><code>trigger event</code></td>
-<td>Signal <code>event</code>, waking any waiters</td>
-</tr>
 <tr>
 <td><code>dma.copy.async src =&gt; dst</code></td>
 <td>Non-blocking copy (returns immediately)</td>
@@ -2916,38 +2915,26 @@ rf1 = dma.any;</code></pre>
 <table>
 <thead>
 <tr>
-<th>Idea</th>
-<th>Role</th>
+<th>Pattern</th>
+<th>Primitives used</th>
+<th>When to use</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Data races</td>
-<td>Unsynchronized overlap lets loads clobber MMA operands or read partial tiles.</td>
+<td><code>swap</code> double buffering</td>
+<td><code>dma.copy</code>, <code>dma.any</code>, <code>swap</code>, <code>with</code></td>
+<td>Single thread group interleaving load and compute</td>
 </tr>
 <tr>
-<td>CUDA-style fixes</td>
-<td>Barriers, atomics, and manual event wiring work but scale poorly in complexity.</td>
-</tr>
-<tr>
-<td><code>swap</code> / <code>rotate</code></td>
-<td>Rotate <strong>futures</strong> so double- or multi-buffering stays explicit in one program.</td>
-</tr>
-<tr>
-<td><code>shared event</code></td>
-<td>Coordinate <strong>different</strong> warpgroups with <code>wait</code> / <code>trigger</code> and a credit discipline.</td>
-</tr>
-<tr>
-<td>Bootstrap <code>empty</code></td>
-<td>Required so the producer's first <code>wait empty</code> can succeed.</td>
-</tr>
-<tr>
-<td><code>mma.commit</code></td>
-<td>Separates completed math for one K-slab from reuse of shared staging.</td>
+<td>1P1C event pipeline</td>
+<td><code>inthreads.async</code>, <code>shared event[]</code>, <code>wait</code>, <code>trigger</code>, <code>mma.commit</code></td>
+<td>Separate producer/consumer warpgroups with multi-stage pipeline</td>
 </tr>
 </tbody>
 </table>
-<p>The pipeline is now safe for split roles. The <a href="../ch07-advanced-movement/">next chapter</a> moves on to hardware-accelerated <strong>TMA</strong>, <strong>swizzled</strong> shared layouts, and <strong><code>view</code> / <code>from</code></strong> for irregular access — the same synchronization ideas, with richer movement primitives underneath.</p>
+<p>Both patterns achieve the same goal — overlapping memory and compute — but at different levels of complexity. Start with <code>swap</code> for simpler kernels; graduate to events when you need warp specialization.</p>
+<p>The <a href="../ch07-advanced-movement/">next chapter</a> moves on to hardware-accelerated <strong>TMA</strong>, <strong>swizzled</strong> shared layouts, and <strong><code>view</code> / <code>from</code></strong> for irregular access — the same synchronization patterns from this chapter, with richer data movement primitives underneath.</p>
 
 
 

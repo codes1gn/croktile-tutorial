@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://codes1gn.github.io/croktile-tutorial/tutorial/ch09-debug-verbose/">
+        <link rel="canonical" href="https://codes1gn.github.io/croqtile-tutorial/tutorial/ch09-debug-verbose/">
       
       
         <link rel="prev" href="../ch08-cpp-interop/">
@@ -29,7 +29,7 @@
     
     
       
-        <title>Ch 9: Debug & Verbose - Croktile</title>
+        <title>Ch 9: Debug & Verbose - Croqtile</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#debug-and-verbose-printing-rtti-and-gdb" class="md-skip">
+        <a href="#debug-and-verbose-printing-assertions-and-gdb" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Croktile" class="md-header__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../.." title="Croqtile" class="md-header__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../assets/images/logo-2.png" alt="logo">
 
@@ -113,7 +113,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Croktile
+            Croqtile
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -227,13 +227,13 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/codes1gn/croktile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/codes1gn/croqtile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
       </div>
@@ -263,22 +263,22 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Croktile" class="md-nav__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../.." title="Croqtile" class="md-nav__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../assets/images/logo-2.png" alt="logo">
 
     </a>
-    Croktile
+    Croqtile
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/codes1gn/croktile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/codes1gn/croqtile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
     </div>
@@ -326,7 +326,7 @@
   <span class="md-ellipsis">
     
   
-    What is Good in CrokTile
+    What is Good in CroqTile
   
 
     
@@ -458,14 +458,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../ch01-hello-croktile/" class="md-nav__link">
+      <a href="../ch01-hello-croqtile/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Ch 1: Hello Croktile
+    Ch 1: Hello Croqtile
   
 
     
@@ -757,6 +757,39 @@
     <span class="md-ellipsis">
       
         print and println: runtime device output
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assert-runtime-invariant-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        assert: runtime invariant checks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verbose-mode-v" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verbose mode: -v
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#runtime-checks-rtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime checks: -rtc
       
     </span>
   </a>
@@ -1159,7 +1192,7 @@
   <span class="md-ellipsis">
     
   
-    Croktile-C++ Program Structure
+    Croqtile-C++ Program Structure
   
 
     
@@ -2438,6 +2471,39 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#assert-runtime-invariant-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        assert: runtime invariant checks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verbose-mode-v" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verbose mode: -v
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#runtime-checks-rtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime checks: -rtc
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#debugging-mma-heavy-kernels" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2549,29 +2615,28 @@
   
 
 
-<h1 id="debug-and-verbose-printing-rtti-and-gdb">Debug and Verbose: Printing, RTTI, and GDB<a class="headerlink" href="#debug-and-verbose-printing-rtti-and-gdb" title="Permanent link">&para;</a></h1>
+<h1 id="debug-and-verbose-printing-assertions-and-gdb">Debug and Verbose: Printing, Assertions, and GDB<a class="headerlink" href="#debug-and-verbose-printing-assertions-and-gdb" title="Permanent link">&para;</a></h1>
 <p>GPU kernels are <strong>opaque systems</strong>. Thousands of threads execute concurrently, shared memory is invisible from the host, and when results are wrong, there is no stack trace pointing to the bad line. This opacity is not unique to GPUs — any system where the programmer cannot directly observe intermediate state faces the same challenge: distributed systems (where is the lost message?), embedded firmware (which interrupt handler corrupted the register?), optimizing compilers (which pass broke the semantics?).</p>
-<p>The universal debugging discipline is the same everywhere: <strong>systematically narrow the search space</strong>, from cheap checks to expensive ones. Start with static analysis and compile-time assertions (free, catches whole classes of bugs). Move to targeted runtime probes (cheap, localizes the problem). Resort to interactive debuggers only when the cheaper tools have narrowed the suspect list. The cost of each level increases, so you want to catch as many bugs as possible at the cheapest level.</p>
-<p>Croktile provides tools at each level: <strong>compile-time shape printing</strong> (<code>print!</code>, <code>println!</code>) to verify tile dimensions without launching a kernel, <strong>guarded device <code>println</code></strong> for runtime inspection of specific threads, <strong><code>choreo_assert</code></strong> for invariant checks, <strong>debug RTTI</strong> for <code>cuda-gdb</code>, and a clear <strong>order of suspicion</strong> that guides where to look first.</p>
-<p>So far you have walked the full Croktile stack — element-wise addition, data movement, parallelism, tensor cores, warp specialization, pipelines, TMA, and C++ escape hatches. Each step added performance and complexity. This chapter is about what to do when the results are wrong.</p>
+<p>The universal debugging discipline is the same everywhere: <strong>systematically narrow the search space</strong>, from cheap checks to expensive ones. Start with static analysis and compile-time assertions (free, catches whole classes of bugs). Move to targeted runtime probes (cheap, localizes the problem). Resort to interactive debuggers only when the cheaper tools have narrowed the suspect list.</p>
+<p>Croqtile provides tools at each level: <strong>compile-time shape printing</strong> (<code>print!</code>, <code>println!</code>) to verify tile dimensions without launching a kernel, <strong>runtime assertions</strong> (<code>assert</code>) for invariant checks, <strong>guarded device <code>println</code></strong> for runtime inspection of specific threads, <strong>debug RTTI</strong> for <code>cuda-gdb</code>, and a <strong>verbose mode</strong> (<code>-v</code>) to see what the compiler is actually doing under the hood.</p>
 <h2 id="print-and-println-compile-time-inspection"><code>print!</code> and <code>println!</code>: compile-time inspection<a class="headerlink" href="#print-and-println-compile-time-inspection" title="Permanent link">&para;</a></h2>
-<p>The bang variants (<code>print!</code>, <code>println!</code>) run at <strong>compile time</strong>, not at runtime. They print to the compiler’s output and are useful for inspecting shapes, extents, and type information <strong>without launching a kernel</strong>:</p>
+<p>The bang variants (<code>print!</code>, <code>println!</code>) run at <strong>compile time</strong>, not at runtime. They print to the compiler's output and are useful for inspecting shapes, extents, and type information without launching a kernel:</p>
 <pre class="highlight"><code class="language-choreo">__co__ void check_shapes(f32 [3, 2] b) {
   print!("shape of b: ");
   println!("b.span = ", b.span);
 }</code></pre>
 <p>When you compile this file, the compiler emits:</p>
 <pre class="highlight"><code>shape of b: b.span = {3, 2}</code></pre>
-<p>No GPU needed. String literals are concatenated (<code>"wor" "ld!"</code> becomes <code>"world!"</code>), which is handy for building diagnostic messages from fragments. Use <code>print!</code> / <code>println!</code> to verify that <code>chunkat</code> and <code>subspan</code> produce the tile sizes you expect before you spend time on a full kernel launch.</p>
+<p>No GPU needed. String literals are concatenated (<code>"wor" "ld!"</code> becomes <code>"world!"</code>). Use <code>print!</code> / <code>println!</code> to verify that <code>chunkat</code> and <code>subspan</code> produce the tile sizes you expect before you spend time on a full kernel launch.</p>
 <h2 id="print-and-println-runtime-device-output"><code>print</code> and <code>println</code>: runtime device output<a class="headerlink" href="#print-and-println-runtime-device-output" title="Permanent link">&para;</a></h2>
-<p><strong>Runtime printing.</strong> <code>print</code> writes its arguments to standard output; <code>println</code> does the same but appends a newline. Both work inside <code>__co__</code> functions and emit device-side <code>printf</code> calls in the generated CUDA:</p>
+<p>Without the bang, <code>print</code> and <code>println</code> emit device-side <code>printf</code> calls in the generated CUDA:</p>
 <pre class="highlight"><code class="language-choreo">__co__ void inspect(s32 [4, 8] data) {
   foreach i in [data.span] {
     println("element ", i, " = ", data.at(i));
   }
 }</code></pre>
-<p>Each <code>println</code> call takes a comma-separated mix of string literals and expressions. Strings are printed verbatim; expressions are evaluated and printed as their runtime value. The output order across threads is <strong>nondeterministic</strong> — GPU <code>printf</code> buffers are flushed asynchronously, so lines from different threads interleave unpredictably.</p>
-<p><strong>Guarding output.</strong> For a specific check — say, whether tile index <code>(3, 5)</code> computes the right partial sum — guard the print with a condition:</p>
+<p>Each call takes a comma-separated mix of string literals and expressions. The output order across threads is <strong>nondeterministic</strong> — GPU <code>printf</code> buffers are flushed asynchronously.</p>
+<p><strong>Guarding output.</strong> For a specific check, guard the print with a condition:</p>
 <pre class="highlight"><code class="language-choreo">parallel {px, py} by [8, 16] : block
   parallel {qx, qy} by [16, 16] : thread {
     // ... compute ...
@@ -2579,18 +2644,31 @@
       println("partial sum = ", accum);
     }
   }</code></pre>
-<p>Without the guard you get one line per thread — thousands of lines for a large grid, most of which you do not care about.</p>
+<p>Without the guard you get one line per thread — thousands of lines for a large grid.</p>
+<h2 id="assert-runtime-invariant-checks"><code>assert</code>: runtime invariant checks<a class="headerlink" href="#assert-runtime-invariant-checks" title="Permanent link">&para;</a></h2>
+<p>Croqtile's <code>assert</code> builtin checks an invariant at runtime and aborts the kernel with a message if it fails:</p>
+<pre class="highlight"><code class="language-choreo">assert(stage &lt; MATMUL_STAGES, "stage index out of bounds");</code></pre>
+<p>On the device, this compiles to a <code>printf</code> of the message followed by an abort. Use assertions to catch index-out-of-range, null pointer, and other "this should never happen" conditions early.</p>
+<h2 id="verbose-mode-v">Verbose mode: <code>-v</code><a class="headerlink" href="#verbose-mode-v" title="Permanent link">&para;</a></h2>
+<p>Pass <code>-v</code> (or <code>--verbose</code>) to the compiler to see the external commands it invokes — which preprocessor, which code generator, which <code>nvcc</code> invocation:</p>
+<pre class="highlight"><code class="language-bash">croqtile kernel.co -v -o kernel</code></pre>
+<p>This is useful when you suspect the compiler is passing wrong flags to <code>nvcc</code> or when you need to see the exact generated file paths for manual inspection.</p>
+<h2 id="runtime-checks-rtc">Runtime checks: <code>-rtc</code><a class="headerlink" href="#runtime-checks-rtc" title="Permanent link">&para;</a></h2>
+<p>The compiler supports graduated runtime checking with <code>-rtc</code> (or <code>--runtime-check</code>):</p>
+<pre class="highlight"><code class="language-bash">croqtile kernel.co -rtc high -o kernel</code></pre>
+<p>Levels: <code>entry</code>, <code>low</code>, <code>medium</code>, <code>high</code>, <code>all</code>, <code>none</code>. Higher levels insert more bounds checks and validation at the cost of performance. Use <code>high</code> or <code>all</code> during development, <code>none</code> for production.</p>
 <h2 id="debugging-mma-heavy-kernels">Debugging MMA-heavy kernels<a class="headerlink" href="#debugging-mma-heavy-kernels" title="Permanent link">&para;</a></h2>
-<p>When the wrong answer comes from a <strong>tensor-core path</strong>, treat it as its own category. <strong>Suspect layout first</strong> — row versus column major, and whether the RHS is logically <code>[N, K]</code> versus <code>[K, N]</code> in memory — <strong>then indexing</strong> (which <code>block_m</code>, <code>block_n</code>, and K slice you attached with <code>.at</code> / <code>chunkat</code>), <strong>then async ordering</strong> if you introduced asynchronous copies or split producer and consumer warps. A common mistake is <strong>mislabeling <code>mma.row.row</code></strong> when the staged data is actually column-major, or using <strong><code>chunkat</code> indices that do not align</strong> with the MMA tile geometry. If you use swizzled loads (<code>tma.copy.swiz</code> / <code>mma.load.swiz</code>), a mismatch against plain row expectations shows up as a <strong>regular pattern</strong> in the error (for example every sixteenth element correct, the rest shifted) — the systematic workflow below calls that out explicitly.</p>
+<p>When the wrong answer comes from a tensor-core path, suspect <strong>layout first</strong> — row versus column major, and whether the RHS is <code>[N, K]</code> versus <code>[K, N]</code> in memory. Then check <strong>indexing</strong> (which <code>block_m</code>, <code>block_n</code>, and K slice you attached with <code>.at</code> / <code>chunkat</code>). Then check <strong>async ordering</strong> if you introduced asynchronous copies or split producer and consumer warps.</p>
+<p>A common mistake is mislabeling <code>mma.row.row</code> when the staged data is actually column-major, or using <code>chunkat</code> indices that do not align with the MMA tile geometry. If you use swizzled loads (<code>tma.copy.swiz</code> / <code>mma.load.swiz</code>), a mismatch shows up as a regular pattern in the error (e.g., every sixteenth element correct, the rest shifted).</p>
 <h2 id="debug-rtti-and-cuda-gdb">Debug RTTI and <code>cuda-gdb</code><a class="headerlink" href="#debug-rtti-and-cuda-gdb" title="Permanent link">&para;</a></h2>
-<p>When <code>print</code> / <code>println</code> is not enough — you need to step through execution, inspect register state, or examine complex data structures — Croktile supports <strong>debug RTTI</strong> (Runtime Type Information) that makes its types visible to <code>cuda-gdb</code>.</p>
-<p><strong>Build flags.</strong> Compile with <code>-g -O0</code> to enable debug symbols and disable optimizations:</p>
-<pre class="highlight"><code class="language-bash">croktile kernel.co -g -O0 -o kernel_debug</code></pre>
-<p>The generated code includes RTTI structs for Croktile types:</p>
+<p>When <code>print</code> / <code>println</code> is not enough, Croqtile supports debug RTTI (Runtime Type Information) that makes its types visible to <code>cuda-gdb</code>.</p>
+<p>Compile with <code>-g</code> to enable debug symbols:</p>
+<pre class="highlight"><code class="language-bash">croqtile kernel.co -g -o kernel_debug</code></pre>
+<p>The generated code includes RTTI structs for Croqtile types:</p>
 <table>
 <thead>
 <tr>
-<th>Croktile type</th>
+<th>Croqtile type</th>
 <th>GDB type</th>
 <th>Fields</th>
 </tr>
@@ -2618,7 +2696,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Example session.</strong> A GDB session on a debug-compiled kernel:</p>
+<p><strong>Example session:</strong></p>
 <pre class="highlight"><code class="language-bash">cuda-gdb -q ./kernel_debug
 (gdb) break my_kernel
 (gdb) run
@@ -2630,53 +2708,64 @@ $1 = 32
 $2 = 64
 (gdb) print __dbg_lhs.data != 0
 $3 = true</code></pre>
-<p>The <code>__dbg_</code> prefix on variable names is generated by the compiler — it makes Croktile variables visible to GDB alongside the generated C++ intermediates. You can inspect tensor dimensions, strides, and data pointers, and step through the generated code to see which iteration of a <code>foreach</code> loop produces a wrong value.</p>
+<p>The <code>__dbg_</code> prefix on variable names is generated by the compiler — it makes Croqtile variables visible alongside the generated C++ intermediates.</p>
 <h2 id="putting-it-together-a-systematic-workflow">Putting it together: a systematic workflow<a class="headerlink" href="#putting-it-together-a-systematic-workflow" title="Permanent link">&para;</a></h2>
-<p>The following order is deliberate: <strong>cheap compile-time checks first</strong>, then <strong>narrowed runtime prints</strong>, then <strong>pipeline semantics</strong>, <strong>layout</strong>, and finally <strong>the debugger</strong> for pointer-level bugs.</p>
-<p><img alt="Debugging workflow: shapes → one tile → sync → layout → GDB" src="../../assets/images/ch09/fig1_debug_workflow_dark.png#only-dark" />
-<img alt="Debugging workflow: shapes → one tile → sync → layout → GDB" src="../../assets/images/ch09/fig1_debug_workflow_light.png#only-light" /></p>
-<p><strong>1. Check shapes.</strong> Use <code>println!</code> at compile time to verify that all <code>chunkat</code>, <code>subspan</code>, and <code>span</code> expressions produce the tile sizes you expect. Shape bugs are the most common category — a mismatched extent silently reads or writes wrong memory regions.</p>
-<p><strong>2. Check one tile.</strong> Add a guarded <code>println</code> inside the K loop that fires only for block <code>(0, 0)</code> and one thread. Print the accumulator value after each K iteration. Compare with a hand-computed reference for that specific output element.</p>
-<p><strong>3. Check synchronization.</strong> If the value is wrong only at large K, suspect event ordering. Print <code>iv_k</code> and <code>stage</code> in both producer and consumer to verify they visit the same sequence. A common bug: the consumer’s <code>trigger empty[stage]</code> fires too early, allowing the producer to overwrite a buffer the consumer is still reading.</p>
-<p><strong>4. Check layout.</strong> If the result is wrong in a pattern (e.g., every sixteenth element is correct, the rest are shifted), suspect a row-major vs column-major mismatch in <code>mma.row.row</code> or a swizzle mode inconsistency between <code>tma.copy.swiz&lt;N&gt;</code> and <code>mma.load.swiz&lt;N&gt;</code>. Cross-check with the MMA subsection above.</p>
-<p><strong>5. Use GDB for pointer bugs.</strong> If <code>println</code> shows a value that makes no sense (NaN, huge integer, zero when nonzero is expected), compile with <code>-g -O0</code> and step through in <code>cuda-gdb</code>. Inspect the tensor pointer (<code>__dbg_x.data</code>) and check whether it points to valid memory.</p>
-<p><strong>Performance before benchmarks.</strong> <code>print</code> / <code>println</code> are expensive: each call serializes through a global <code>printf</code> buffer and destroys throughput measurements. Debug RTTI structs add register pressure and inhibit optimization. Remove all prints and drop <code>-g -O0</code> before benchmarking. A practical compromise is to keep prints behind a <code>#ifdef DEBUG_PRINT</code> macro (Chapter 8) so you can toggle them from the command line without editing the source:</p>
+<p>The ordering is deliberate: <strong>cheap compile-time checks first</strong>, then <strong>narrowed runtime prints</strong>, then <strong>pipeline semantics</strong>, <strong>layout</strong>, and finally <strong>the debugger</strong>.</p>
+<p><img alt="Debugging workflow: shapes -&gt; one tile -&gt; sync -&gt; layout -&gt; GDB" src="../../assets/images/ch09/fig1_debug_workflow_dark.png#only-dark" />
+<img alt="Debugging workflow: shapes -&gt; one tile -&gt; sync -&gt; layout -&gt; GDB" src="../../assets/images/ch09/fig1_debug_workflow_light.png#only-light" /></p>
+<p><strong>1. Check shapes.</strong> Use <code>println!</code> at compile time to verify that all <code>chunkat</code>, <code>subspan</code>, and <code>span</code> expressions produce the tile sizes you expect.</p>
+<p><strong>2. Check one tile.</strong> Add a guarded <code>println</code> inside the K loop that fires only for block <code>(0, 0)</code> and one thread. Print the accumulator after each K iteration and compare with a hand-computed reference.</p>
+<p><strong>3. Check synchronization.</strong> If the value is wrong only at large K, suspect event ordering. Print <code>iv_k</code> and <code>stage</code> in both producer and consumer to verify they visit the same sequence. A common bug: the consumer's <code>trigger empty[stage]</code> fires too early.</p>
+<p><strong>4. Check layout.</strong> If the result is wrong in a pattern (every sixteenth element correct, the rest shifted), suspect a row-major vs column-major mismatch in <code>mma.row.row</code> or a swizzle mode inconsistency between <code>tma.copy.swiz&lt;N&gt;</code> and <code>mma.load.swiz&lt;N&gt;</code>.</p>
+<p><strong>5. Use GDB for pointer bugs.</strong> If <code>println</code> shows values that make no sense (NaN, huge integer, zero when nonzero is expected), compile with <code>-g</code> and step through in <code>cuda-gdb</code>. Inspect the tensor pointer (<code>__dbg_x.data</code>).</p>
+<p><strong>Performance caveat.</strong> <code>print</code> / <code>println</code> are expensive: each call serializes through a global <code>printf</code> buffer and destroys throughput. Debug RTTI adds register pressure. Remove all prints and drop <code>-g</code> before benchmarking. A practical compromise is <code>#ifdef DEBUG_PRINT</code> (Chapter 8):</p>
 <pre class="highlight"><code class="language-choreo">#ifdef DEBUG_PRINT
   println("tile_k=", iv_k, " accum=", mc);
 #endif</code></pre>
-<p>Compile with <code>croktile kernel.co -DDEBUG_PRINT</code> to enable, or without the flag for production runs.</p>
+<p>Compile with <code>croqtile kernel.co -DDEBUG_PRINT</code> to enable, or without the flag for production runs.</p>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Construct / tool</th>
-<th>Role</th>
+<th>Tool</th>
+<th>Level</th>
+<th>Cost</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>print!</code> / <code>println!</code></td>
-<td>Compile-time shape and type inspection; no kernel launch</td>
+<td>Compile-time</td>
+<td>Free — no kernel launch</td>
+</tr>
+<tr>
+<td><code>assert(expr, "msg")</code></td>
+<td>Runtime</td>
+<td>Low — aborts on violation</td>
 </tr>
 <tr>
 <td><code>print</code> / <code>println</code></td>
-<td>Device-side <code>printf</code>; use guards to avoid log floods</td>
+<td>Runtime</td>
+<td>Medium — serialized <code>printf</code></td>
 </tr>
 <tr>
-<td>MMA debugging</td>
-<td>Layout → indexing → async ordering; watch <code>mma.*</code> vs actual memory order</td>
+<td><code>-rtc high</code></td>
+<td>Runtime</td>
+<td>Medium — bounds checks</td>
 </tr>
 <tr>
-<td><code>-g -O0</code>, <code>cuda-gdb</code>, RTTI</td>
-<td>Inspect <code>__dbg_*</code> tensors, pointers, and control flow</td>
+<td><code>-v</code> / <code>--verbose</code></td>
+<td>Compiler</td>
+<td>Free — shows subprocess invocations</td>
 </tr>
 <tr>
-<td><code>#ifdef DEBUG_PRINT</code></td>
-<td>Optional printf without permanent overhead</td>
+<td><code>-g</code> + <code>cuda-gdb</code> + RTTI</td>
+<td>Runtime</td>
+<td>High — debug symbols, no optimization</td>
 </tr>
 </tbody>
 </table>
-<p>You started from <strong>element-wise addition</strong> in Chapter 1, learned <strong>data movement</strong> (Chapter 2), <strong>parallelism</strong> (Chapter 3), <strong>tensor cores</strong> (Chapter 4), <strong>warp specialization</strong> (Chapter 5), <strong>pipelines</strong> (Chapter 6), <strong>TMA</strong> (Chapter 7), <strong>C++ interop</strong> (Chapter 8), and <strong>debugging</strong> (Chapter 9). The next productive step is to open a benchmark kernel from the <code>croktile/benchmark/</code> directory, map its regions to the chapters here, change one constant, rebuild, and measure. Small, deliberate edits beat large rewrites — the <code>#error</code> guards will tell you when a configuration stops being legal long before you chase mysterious wrong answers on the GPU.</p>
+<p>You started from element-wise addition in Chapter 1, learned data movement (Chapter 2), parallelism (Chapter 3), tensor cores (Chapter 4), control flow (Chapter 5), pipelining (Chapter 6), TMA (Chapter 7), C++ interop (Chapter 8), and debugging (Chapter 9). The next step is to open a benchmark kernel from the <code>croqtile/benchmark/</code> directory, map its regions to the chapters here, change one constant, rebuild, and measure.</p>
 
 
 

@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://codes1gn.github.io/croktile-tutorial/tutorial/ch08-cpp-interop/">
+        <link rel="canonical" href="https://codes1gn.github.io/croqtile-tutorial/tutorial/ch08-cpp-interop/">
       
       
         <link rel="prev" href="../ch07-advanced-movement/">
@@ -29,7 +29,7 @@
     
     
       
-        <title>Ch 8: C++ Interop - Croktile</title>
+        <title>Ch 8: C++ Interop - Croqtile</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#c-interop-inline-code-and-the-preprocessor" class="md-skip">
+        <a href="#c-interop-device-functions-inline-code-and-the-preprocessor" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Croktile" class="md-header__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../.." title="Croqtile" class="md-header__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../assets/images/logo-2.png" alt="logo">
 
@@ -113,7 +113,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Croktile
+            Croqtile
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -227,13 +227,13 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/codes1gn/croktile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/codes1gn/croqtile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
       </div>
@@ -263,22 +263,22 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Croktile" class="md-nav__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../.." title="Croqtile" class="md-nav__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../assets/images/logo-2.png" alt="logo">
 
     </a>
-    Croktile
+    Croqtile
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/codes1gn/croktile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/codes1gn/croqtile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
     </div>
@@ -326,7 +326,7 @@
   <span class="md-ellipsis">
     
   
-    What is Good in CrokTile
+    What is Good in CroqTile
   
 
     
@@ -458,14 +458,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../ch01-hello-croktile/" class="md-nav__link">
+      <a href="../ch01-hello-croqtile/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Ch 1: Hello Croktile
+    Ch 1: Hello Croqtile
   
 
     
@@ -714,15 +714,37 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#__cpp__-verbatim-c-injection" class="md-nav__link">
+  <a href="#how-co-files-compile" class="md-nav__link">
     <span class="md-ellipsis">
       
-        __cpp__: Verbatim C++ Injection
+        How .co files compile
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="__cpp__: Verbatim C++ Injection">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#__device__-functions-cuda-alongside-croqtile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __device__ functions: CUDA alongside Croqtile
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#__cpp__-verbatim-c-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __cpp__: verbatim C++ injection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="__cpp__: verbatim C++ injection">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -767,12 +789,12 @@
   <a href="#the-preprocessor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Preprocessor
+        The preprocessor
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="The Preprocessor">
+    <nav class="md-nav" aria-label="The preprocessor">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -817,7 +839,7 @@
   <a href="#reading-a-production-co-file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reading a Production .co File
+        Reading a production .co file
       
     </span>
   </a>
@@ -828,7 +850,7 @@
   <a href="#chapter-summary" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Chapter Summary
+        Chapter summary
       
     </span>
   </a>
@@ -1215,7 +1237,7 @@
   <span class="md-ellipsis">
     
   
-    Croktile-C++ Program Structure
+    Croqtile-C++ Program Structure
   
 
     
@@ -2472,15 +2494,37 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#__cpp__-verbatim-c-injection" class="md-nav__link">
+  <a href="#how-co-files-compile" class="md-nav__link">
     <span class="md-ellipsis">
       
-        __cpp__: Verbatim C++ Injection
+        How .co files compile
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="__cpp__: Verbatim C++ Injection">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#__device__-functions-cuda-alongside-croqtile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __device__ functions: CUDA alongside Croqtile
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#__cpp__-verbatim-c-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __cpp__: verbatim C++ injection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="__cpp__: verbatim C++ injection">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2525,12 +2569,12 @@
   <a href="#the-preprocessor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Preprocessor
+        The preprocessor
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="The Preprocessor">
+    <nav class="md-nav" aria-label="The preprocessor">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2575,7 +2619,7 @@
   <a href="#reading-a-production-co-file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reading a Production .co File
+        Reading a production .co file
       
     </span>
   </a>
@@ -2586,7 +2630,7 @@
   <a href="#chapter-summary" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Chapter Summary
+        Chapter summary
       
     </span>
   </a>
@@ -2661,25 +2705,84 @@
   
 
 
-<h1 id="c-interop-inline-code-and-the-preprocessor">C++ Interop: Inline Code and the Preprocessor<a class="headerlink" href="#c-interop-inline-code-and-the-preprocessor" title="Permanent link">&para;</a></h1>
-<p>Every high-level language needs an escape hatch to the layer below. Python has <code>ctypes</code> and C extensions. Rust has <code>unsafe</code> blocks and <code>extern "C"</code>. Java has JNI. The reason is always the same: no matter how expressive the abstraction, some hardware feature, some legacy library, some performance-critical intrinsic lives outside the language's domain. The escape hatch lets you reach it without abandoning the rest of the system.</p>
-<p>Croktile's escape hatch is <strong><code>__cpp__</code></strong>: inject verbatim C++ or PTX into the generated code. The preprocessor — <code>#define</code>, <code>#if</code>, <code>#ifdef</code>, <code>#error</code> — serves the complementary role of <strong>compile-time configuration</strong>, the same role <code>#define</code> plays in C/C++ codebases: sharing constants between the DSL body and host code, guarding platform-specific paths, and catching configuration mistakes before they become runtime bugs.</p>
-<p>So far the tutorial has built a stack of abstractions: tiles, parallelism, MMA, pipelines, events. That is the Croktile you want to live in. This chapter is about the times you need to step outside — a single PTX instruction the compiler does not emit, a register-budget hint for warp-specialized roles, or a compile-time constant that must match in both the <code>__co__</code> body and host-side C++.</p>
-<p><img alt="Croktile kernel body with an embedded __cpp__ island for verbatim PTX/C++" src="../../assets/images/ch08/fig1_escape_hatch_dark.png#only-dark" />
-<img alt="Croktile kernel body with an embedded __cpp__ island for verbatim PTX/C++" src="../../assets/images/ch08/fig1_escape_hatch_light.png#only-light" /></p>
-<h2 id="__cpp__-verbatim-c-injection"><code>__cpp__</code>: Verbatim C++ Injection<a class="headerlink" href="#__cpp__-verbatim-c-injection" title="Permanent link">&para;</a></h2>
-<p><strong>What it does.</strong> <code>__cpp__</code> takes a string literal and pastes it, character for character, into the generated CUDA or C++ file. Whatever you place there must be valid at the splice point: braces, semicolons, types, and scope must agree with the surrounding codegen. The Croktile compiler does not parse or rewrite the contents, and Croktile symbols are not magically visible inside the string — only names that actually appear in the generated output.</p>
-<p><strong>Two forms.</strong></p>
+<h1 id="c-interop-device-functions-inline-code-and-the-preprocessor">C++ Interop: Device Functions, Inline Code, and the Preprocessor<a class="headerlink" href="#c-interop-device-functions-inline-code-and-the-preprocessor" title="Permanent link">&para;</a></h1>
+<p>Every high-level language needs an escape hatch to the layer below. Python has <code>ctypes</code> and C extensions. Rust has <code>unsafe</code> blocks and <code>extern "C"</code>. Java has JNI. The reason is always the same: no matter how expressive the abstraction, some hardware feature, some legacy library, some performance-critical intrinsic lives outside the language's domain.</p>
+<p>Croqtile's interoperability story has three parts:</p>
+<ol>
+<li><strong><code>__device__</code> functions</strong> — Standard CUDA device functions that coexist with <code>__co__</code> functions in the same <code>.co</code> file. The compiler passes them through unchanged.</li>
+<li><strong><code>__cpp__</code></strong> — Inject verbatim C++ or PTX into the generated code for hardware-specific instructions the DSL does not emit.</li>
+<li><strong>The preprocessor</strong> — <code>#define</code>, <code>#if</code>, <code>#ifdef</code>, <code>#error</code> for compile-time configuration, the same role <code>#define</code> plays in C/C++ codebases.</li>
+</ol>
+<p>So far the tutorial has built a stack of abstractions: tiles, parallelism, MMA, pipelines, events, TMA. That is the Croqtile you want to live in. This chapter is about the times you need to step outside.</p>
+<p><img alt="Croqtile kernel body with an embedded __cpp__ island for verbatim PTX/C++" src="../../assets/images/ch08/fig1_escape_hatch_dark.png#only-dark" />
+<img alt="Croqtile kernel body with an embedded __cpp__ island for verbatim PTX/C++" src="../../assets/images/ch08/fig1_escape_hatch_light.png#only-light" /></p>
+<h2 id="how-co-files-compile">How <code>.co</code> files compile<a class="headerlink" href="#how-co-files-compile" title="Permanent link">&para;</a></h2>
+<p>A <code>.co</code> file can contain three kinds of code: host C++ (ordinary functions, <code>main()</code>), <code>__co__</code> functions (Croqtile-managed kernels), and <code>__device__</code> functions (standard CUDA device code). The Croqtile compiler processes each differently:</p>
+<p><img alt=".co file compilation flow: source -&gt; compiler -&gt; host C++ and device CUDA -&gt; nvcc -&gt; binary" src="../../assets/images/ch08/fig2_compilation_flow_dark.png#only-dark" />
+<img alt=".co file compilation flow: source -&gt; compiler -&gt; host C++ and device CUDA -&gt; nvcc -&gt; binary" src="../../assets/images/ch08/fig2_compilation_flow_light.png#only-light" /></p>
 <ul>
-<li><strong><code>__cpp__("...")</code></strong> — Ordinary string; best for short one-liners and simple guards.</li>
-<li><strong><code>__cpp__(R"(...)")</code></strong> — Raw string literal; use this for <code>asm volatile("...")</code> and other fragments where escaping every <code>"</code> would be painful.</li>
+<li><strong><code>__co__</code> functions</strong> are transformed into <code>__global__</code> CUDA kernels with generated launch configurations, shared memory declarations, and register allocation.</li>
+<li><strong><code>__device__</code> functions</strong> are passed through to the device compilation unit <strong>unchanged</strong>. The Croqtile compiler does not rewrite them — they appear in the generated CUDA exactly as you wrote them.</li>
+<li><strong>Host code</strong> (everything else) becomes the host-side C++ that sets up buffers, launches kernels, and handles I/O.</li>
+</ul>
+<h2 id="__device__-functions-cuda-alongside-croqtile"><code>__device__</code> functions: CUDA alongside Croqtile<a class="headerlink" href="#__device__-functions-cuda-alongside-croqtile" title="Permanent link">&para;</a></h2>
+<p>When an algorithm needs a helper function that operates at the warp or thread level — a custom reduction, a sorting network, a special math function — writing it as a standard CUDA <code>__device__</code> function is often the natural choice. Croqtile does not need to manage these; they are plain CUDA.</p>
+<p>A <code>__co__</code> function can call a <code>__device__</code> function using the <code>call</code> keyword:</p>
+<pre class="highlight"><code class="language-choreo">template &lt;int K&gt;
+__device__ void warp_topk(f32* vals, s32* idxs);
+
+template &lt;typename T&gt;
+__device__ __forceinline__ T SHFL_XOR(T var, int lane_mask, int width) {
+  return __shfl_xor_sync(uint32_t(-1), var, lane_mask, width);
+}
+
+__co__ void moe_topk(f32 [N_TOKENS, N_EXPERTS] scores,
+                     s32 [N_TOKENS, K]&amp; topk_ids,
+                     f32 [N_TOKENS, K]&amp; topk_scores,
+                     int N_BLOCK) {
+  parallel n by N_BLOCK : block {
+    foreach m in [ |scores.span| / N_THREAD / N_BLOCK ] {
+      shared_scores = dma.copy scores.chunkat(n#m, _) =&gt; shared;
+
+      parallel gid by [N_THREAD / 32] : group {
+        parallel tid by 32 : thread {
+          score = shared_scores.data.span_as(|shared_scores.data.span|).at(gid # tid);
+
+          local s32 [K] frag_idx{-1};
+          local f32 [K] frag_val{-1.0f};
+          frag_idx.at(0) = tid;
+          frag_val.at(0) = score;
+
+          call warp_topk&lt;8&gt;(frag_val, frag_idx);
+
+          inthreads (tid == 0) {
+            foreach k in K {
+              topk_ids.at(n#m, gid#k) = frag_idx.at(k);
+              topk_scores.at(n#m, gid#k) = frag_val.at(k);
+            }
+          }
+        }
+      }
+    }
+  }
+}</code></pre>
+<p><strong><code>__device__ void warp_topk&lt;K&gt;</code></strong> — A templated device function implementing warp-level top-K selection using shuffle instructions. It operates on raw pointers (<code>f32*</code>, <code>s32*</code>), not Croqtile spans.</p>
+<p><strong><code>__device__ T SHFL_XOR</code></strong> — A warp shuffle intrinsic wrapper. The <code>__forceinline__</code> and <code>__shfl_xor_sync</code> are standard CUDA — Croqtile passes them through.</p>
+<p><strong><code>call warp_topk&lt;8&gt;(...)</code></strong> — The <code>call</code> keyword invokes a <code>__device__</code> function from within a <code>__co__</code> body. Arguments are passed by pointer; the compiler handles the address translation between Croqtile spans and raw pointers.</p>
+<p><strong><code>inthreads (tid == 0)</code></strong> — Only thread 0 in each warp writes back results. Note this uses <code>inthreads</code> without <code>.async</code> — a sequential thread filter, not a concurrent region.</p>
+<p>This pattern — Croqtile handles the parallelism, tiling, and memory orchestration; <code>__device__</code> functions handle the per-warp algorithm — is common in production kernels like MoE (mixture-of-experts) top-K, custom reductions, and specialized math.</p>
+<h2 id="__cpp__-verbatim-c-injection"><code>__cpp__</code>: verbatim C++ injection<a class="headerlink" href="#__cpp__-verbatim-c-injection" title="Permanent link">&para;</a></h2>
+<p><code>__cpp__</code> takes a string literal and pastes it, character for character, into the generated CUDA file. Whatever you place there must be valid at the splice point. The Croqtile compiler does not parse or rewrite the contents.</p>
+<p><strong>Two forms:</strong></p>
+<ul>
+<li><strong><code>__cpp__("...")</code></strong> — Ordinary string; best for short one-liners.</li>
+<li><strong><code>__cpp__(R"(...)")</code></strong> — Raw string literal; use for <code>asm volatile</code> where escaping every <code>"</code> would be painful.</li>
 </ul>
 <h3 id="register-hints-setmaxnreg">Register hints: <code>setmaxnreg</code><a class="headerlink" href="#register-hints-setmaxnreg" title="Permanent link">&para;</a></h3>
-<p>The canonical <code>__cpp__</code> use case is <strong>register redistribution</strong> in warp-specialized pipelines (<a href="../ch05-branch-control/">Chapter 5</a>). The producer warpgroup is register-light — it mostly issues TMA loads — while the consumer is register-heavy — it holds MMA accumulators. NVIDIA’s PTX <code>setmaxnreg</code> instruction moves the register budget between those roles:</p>
+<p>The canonical <code>__cpp__</code> use case is register redistribution in warp-specialized pipelines (<a href="../ch05-branch-control/">Chapter 5</a>). The producer warpgroup is register-light (mostly TMA loads), while the consumer is register-heavy (MMA accumulators). PTX's <code>setmaxnreg</code> instruction moves the register budget:</p>
 <pre class="highlight"><code class="language-choreo">parallel p1 by 2 : group-4 {
   inthreads.async (p1 == 0) {
     __cpp__(R"(asm volatile("setmaxnreg.dec.sync.aligned.u32 40;");)");
-    // producer: register-light, decrease to 40
     foreach {iv_k} in [cdiv(K, MATMUL_TILE_K)] {
       // ... TMA loads ...
     }
@@ -2687,26 +2790,23 @@
 
   inthreads.async (p1 == 1) {
     __cpp__(R"(asm volatile("setmaxnreg.inc.sync.aligned.u32 216;");)");
-    // consumer: register-heavy, increase to 216
     mc = mma.fill.f16 0.0f;
     // ... WGMMA compute ...
   }
 }</code></pre>
-<p><strong><code>setmaxnreg.dec</code> / <code>setmaxnreg.inc</code></strong> — The exact counts (here 40 and 216) are tuned per kernel. The <code>.dec</code> and <code>.inc</code> forms cooperate with the hardware allocator so both roles can coexist without unnecessary spilling.</p>
-<p><strong>Placement</strong> — Put the hint at the top of each <code>inthreads.async</code> branch, before the heavy loop, so the allocator sees the budget before the body runs.</p>
+<p><strong>Placement</strong> — Put the hint at the top of each <code>inthreads.async</code> branch, before the heavy loop.</p>
 <h3 id="early-returns-and-guards">Early returns and guards<a class="headerlink" href="#early-returns-and-guards" title="Permanent link">&para;</a></h3>
-<p>MoE-style GEMM kernels often process variable-sized expert segments; some launches have zero width for a given expert. A one-line <code>__cpp__</code> injection can bail out before the rest of the kernel runs:</p>
+<p>MoE-style kernels often process variable-sized expert segments; some launches have zero width:</p>
 <pre class="highlight"><code class="language-choreo">__cpp__("if (seg_end - seg_start &lt;= 0) return;\n\n");</code></pre>
-<p><strong>Name discipline</strong> — The identifiers (<code>seg_end</code>, <code>seg_start</code>) must match what the surrounding generated code declares. If you rename a Croktile parameter and codegen changes its spelling, a stale <code>__cpp__</code> string fails at compile time — which is preferable to silently wrong results.</p>
+<p>The identifiers must match what the surrounding generated code declares.</p>
 <h3 id="macros-inside-__cpp__-strings">Macros inside <code>__cpp__</code> strings<a class="headerlink" href="#macros-inside-__cpp__-strings" title="Permanent link">&para;</a></h3>
-<p>A common mistake is to assume the preprocessor will help inside the injected string:</p>
+<p>A common mistake: assuming the preprocessor expands macros inside string literals.</p>
 <pre class="highlight"><code class="language-choreo">#define PRODUCER_MAXNREG 40
 
 inthreads.async (p1 == 0) {
   __cpp__(R"(asm volatile("setmaxnreg.dec.sync.aligned.u32 PRODUCER_MAXNREG;");)");
 }</code></pre>
-<p><strong>Why it fails</strong> — The preprocessor does not expand macros inside string literals. The generated asm would still contain the identifier <code>PRODUCER_MAXNREG</code>, not <code>40</code>, and PTX would reject it.</p>
-<p><strong>What teams do instead</strong> — Type numeric literals inside <code>__cpp__</code> strings, and use <code>#if</code> / <code>#error</code> <em>outside</em> the strings to enforce consistency with your tile configuration:</p>
+<p>This fails — the preprocessor does not expand inside strings. Use numeric literals inside <code>__cpp__</code> and <code>#if</code> / <code>#error</code> outside to enforce consistency:</p>
 <pre class="highlight"><code class="language-choreo">#define PRODUCER_MAXNREG 40
 #if PRODUCER_MAXNREG &gt; 50
 #error "Producer maxnreg too high for this tile config"
@@ -2715,9 +2815,8 @@ inthreads.async (p1 == 0) {
 inthreads.async (p1 == 0) {
   __cpp__(R"(asm volatile("setmaxnreg.dec.sync.aligned.u32 40;");)");
 }</code></pre>
-<h2 id="the-preprocessor">The Preprocessor<a class="headerlink" href="#the-preprocessor" title="Permanent link">&para;</a></h2>
-<p>Croktile’s preprocessor runs before the main compiler pass. <strong><code>#define</code></strong>, <strong><code>#if</code> / <code>#elif</code> / <code>#else</code> / <code>#endif</code></strong>, <strong><code>#ifdef</code> / <code>#ifndef</code></strong>, and <strong><code>#error</code></strong> behave like their C counterparts. Macros expand in both <code>__co__</code> regions and host C++ in the same <code>.co</code> file, so one definition can keep tile geometry and host-side checks aligned.</p>
-<p><strong>Directive reference.</strong></p>
+<h2 id="the-preprocessor">The preprocessor<a class="headerlink" href="#the-preprocessor" title="Permanent link">&para;</a></h2>
+<p>Croqtile's preprocessor runs before the main compiler pass. Macros expand in both <code>__co__</code> regions and host C++ in the same <code>.co</code> file, so one definition keeps tile geometry and host-side checks aligned.</p>
 <table>
 <thead>
 <tr>
@@ -2744,17 +2843,16 @@ inthreads.async (p1 == 0) {
 </tr>
 </tbody>
 </table>
-<p><strong>Limitation</strong> — Function-like macros (<code>#define MAX(a, b) ...</code>) are not supported. Use <code>constexpr</code> helpers in ordinary C++ when you need parameterized expressions.</p>
+<p>Function-like macros (<code>#define MAX(a, b) ...</code>) are not supported. Use <code>constexpr</code> helpers in ordinary C++.</p>
 <h3 id="tile-geometry-as-macros">Tile geometry as macros<a class="headerlink" href="#tile-geometry-as-macros" title="Permanent link">&para;</a></h3>
-<p>Production matmul sources usually centralize every tile dimension at the top of the file:</p>
+<p>Production matmul sources centralize tile dimensions at the top:</p>
 <pre class="highlight"><code class="language-choreo">#define MATMUL_WARP_M 64
 #define MATMUL_WARP_N 128
 #define MATMUL_TILE_K 64
 #define MATMUL_WARP_K 16
 #define MATMUL_STAGES 4</code></pre>
-<p><strong>Shared contract</strong> — The same names appear in <code>parallel ... by [cdiv(M, MATMUL_WARP_M), ...]</code>, shared-memory declarations, <code>foreach</code> bounds, and host-side verification. Change one <code>#define</code>, and every use site updates together.</p>
+<p>The same names appear in <code>parallel</code>, shared-memory declarations, <code>foreach</code> bounds, and host-side verification.</p>
 <h3 id="compile-time-assertions-with-error">Compile-time assertions with <code>#error</code><a class="headerlink" href="#compile-time-assertions-with-error" title="Permanent link">&para;</a></h3>
-<p>Libraries often pair <code>#if</code> with <code>#error</code> so illegal combinations fail at compile time with a clear message:</p>
 <pre class="highlight"><code class="language-choreo">#if MATMUL_SWIZ != (2 * MATMUL_TILE_K)
 #error "MATMUL_SWIZ must equal 2 * MATMUL_TILE_K for f16 kernel"
 #endif
@@ -2762,31 +2860,28 @@ inthreads.async (p1 == 0) {
 #if MATMUL_WARP_M != 64
 #error "MATMUL_WARP_M must be 64 for f16 WGMMA constraints"
 #endif</code></pre>
-<p><strong>Living documentation</strong> — When someone changes swizzle width or warp tile incompatibly, the build stops immediately instead of emitting an illegal kernel. Treat these guards as documentation of hardware constraints, not one-off checks.</p>
+<p>Treat these guards as documentation of hardware constraints.</p>
 <h3 id="conditional-code-paths">Conditional code paths<a class="headerlink" href="#conditional-code-paths" title="Permanent link">&para;</a></h3>
-<p>You can select entire regions from a macro:</p>
 <pre class="highlight"><code class="language-choreo">#define PATH0
 
 __co__ foo() {
-  // ...
   #ifdef PATH0
     // path 0 code
   #else
     // path 1 code
   #endif
 }</code></pre>
-<p><strong>Compile-time elimination</strong> — The preprocessor keeps one branch and discards the other before Croktile parses the <code>__co__</code> body. This is not a runtime <code>if</code>; the discarded branch never appears in the generated program.</p>
-<p><strong>Command-line defines</strong> — <code>croktile kernel.co -DMATMUL_TILE_K=128</code> defines or overrides macros without editing the source — useful for benchmark sweeps over tile sizes without duplicating files.</p>
-<h2 id="reading-a-production-co-file">Reading a Production <code>.co</code> File<a class="headerlink" href="#reading-a-production-co-file" title="Permanent link">&para;</a></h2>
-<p>When you open a benchmark kernel such as <code>blockscale_gemm_e4m3_dyn_sm90_warpspec_1p1c.co</code>, read <strong>top down</strong>:</p>
+<p>The preprocessor keeps one branch and discards the other before Croqtile parses the <code>__co__</code> body. Command-line defines: <code>croqtile kernel.co -DMATMUL_TILE_K=128</code>.</p>
+<h2 id="reading-a-production-co-file">Reading a production <code>.co</code> file<a class="headerlink" href="#reading-a-production-co-file" title="Permanent link">&para;</a></h2>
+<p>When you open a benchmark kernel, read top down:</p>
 <ol>
 <li><strong>Macros and <code>#error</code> guards</strong> — The contract: allowed tile sizes, swizzle rules, architecture flags.</li>
+<li><strong><code>__device__</code> functions</strong> — Helper algorithms (top-K, reductions, shuffle wrappers) that Croqtile passes through.</li>
 <li><strong>Host setup</strong> — Buffers, launch configuration, timing; ordinary C++.</li>
 <li><strong>The <code>__co__</code> function</strong> — Orchestration: <code>parallel</code>, <code>foreach</code>, TMA/MMA, <code>inthreads.async</code>, events. Map each region back to earlier chapters.</li>
 <li><strong><code>__cpp__</code> islands</strong> — Usually a handful of lines. Pause on each and ask what the hardware receives that the DSL does not spell.</li>
 </ol>
-<p>That order keeps you from diving into a warp-specialized loop before you know which constants you are allowed to change.</p>
-<h2 id="chapter-summary">Chapter Summary<a class="headerlink" href="#chapter-summary" title="Permanent link">&para;</a></h2>
+<h2 id="chapter-summary">Chapter summary<a class="headerlink" href="#chapter-summary" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -2796,28 +2891,24 @@ __co__ foo() {
 </thead>
 <tbody>
 <tr>
-<td>When to escape</td>
-<td>PTX instructions, register hints, host/device constants, guards — use the DSL everywhere it fits; drop down sparingly.</td>
+<td><code>__device__</code> functions</td>
+<td>Standard CUDA device code in <code>.co</code> files; passed through unchanged; called with <code>call</code> from <code>__co__</code></td>
 </tr>
 <tr>
 <td><code>__cpp__</code></td>
-<td>Verbatim paste into generated CUDA; raw strings for <code>asm</code>; names must match generated C++.</td>
+<td>Verbatim paste into generated CUDA; raw strings for <code>asm</code>; names must match generated C++</td>
+</tr>
+<tr>
+<td><code>call</code> keyword</td>
+<td>Invoke <code>__device__</code> functions from <code>__co__</code> bodies</td>
 </tr>
 <tr>
 <td><code>setmaxnreg</code></td>
-<td>Canonical example: dec on producer, inc on consumer; tune per kernel; place before heavy loops.</td>
-</tr>
-<tr>
-<td>Guards / macros in strings</td>
-<td>Early <code>return</code> via <code>__cpp__</code>; macros do <strong>not</strong> expand inside string literals — use literals + <code>#error</code> outside.</td>
+<td>Register redistribution: <code>dec</code> on producer, <code>inc</code> on consumer</td>
 </tr>
 <tr>
 <td>Preprocessor</td>
-<td><code>#define</code> for tile geometry; <code>#if</code> / <code>#error</code> for constraints; <code>#ifdef</code> for variants; <code>-D</code> for sweeps.</td>
-</tr>
-<tr>
-<td>Reading <code>.co</code> files</td>
-<td>Macros first, then host, then <code>__co__</code>, then <code>__cpp__</code> islands.</td>
+<td><code>#define</code> for tile geometry; <code>#if</code> / <code>#error</code> for constraints; <code>#ifdef</code> for variants; <code>-D</code> for sweeps</td>
 </tr>
 </tbody>
 </table>
@@ -2830,6 +2921,14 @@ __co__ foo() {
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>__device__ fn()</code></td>
+<td>Standard CUDA device function (pass-through)</td>
+</tr>
+<tr>
+<td><code>call fn(args)</code></td>
+<td>Invoke a <code>__device__</code> function from <code>__co__</code></td>
+</tr>
 <tr>
 <td><code>__cpp__("...")</code></td>
 <td>Inject verbatim C++ (ordinary string)</td>
@@ -2856,7 +2955,6 @@ __co__ foo() {
 </tr>
 </tbody>
 </table>
-<p>The escape hatches close the loop: Croktile keeps everyday kernels readable and structured, while <code>__cpp__</code> and the preprocessor handle the hardware-specific details that sit below the abstraction. Prefer a single PTX hint, a single guard, or a single pragma over scattering raw islands through the program — let the <code>__co__</code> function own the story.</p>
 <p>The <a href="../ch09-debug-verbose/">next chapter</a> turns to the other side of the workflow: what to do when the kernel compiles but the output is wrong — debugging, verbose modes, and systematic narrowing.</p>
 
 

@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://codes1gn.github.io/croktile-tutorial/optimization/blockscale-gemm-fp8/">
+        <link rel="canonical" href="https://codes1gn.github.io/croqtile-tutorial/optimization/blockscale-gemm-fp8/">
       
       
         <link rel="prev" href="../sparse-gemm/">
@@ -29,7 +29,7 @@
     
     
       
-        <title>Block-Scaled GEMM FP8 - Croktile</title>
+        <title>Block-Scaled GEMM FP8 - Croqtile</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#how-to-optimize-a-croktile-block-scaled-fp8-gemm-a-worklog" class="md-skip">
+        <a href="#how-to-optimize-a-croqtile-block-scaled-fp8-gemm-a-worklog" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Croktile" class="md-header__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../.." title="Croqtile" class="md-header__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../assets/images/logo-2.png" alt="logo">
 
@@ -113,7 +113,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Croktile
+            Croqtile
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -227,13 +227,13 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/codes1gn/croktile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/codes1gn/croqtile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
       </div>
@@ -263,22 +263,22 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Croktile" class="md-nav__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../.." title="Croqtile" class="md-nav__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../assets/images/logo-2.png" alt="logo">
 
     </a>
-    Croktile
+    Croqtile
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/codes1gn/croktile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/codes1gn/croqtile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
     </div>
@@ -326,7 +326,7 @@
   <span class="md-ellipsis">
     
   
-    What is Good in CrokTile
+    What is Good in CroqTile
   
 
     
@@ -456,14 +456,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/ch01-hello-croktile/" class="md-nav__link">
+      <a href="../../tutorial/ch01-hello-croqtile/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Ch 1: Hello Croktile
+    Ch 1: Hello Croqtile
   
 
     
@@ -1198,7 +1198,7 @@
   <span class="md-ellipsis">
     
   
-    Croktile-C++ Program Structure
+    Croqtile-C++ Program Structure
   
 
     
@@ -2627,9 +2627,9 @@
   
 
 
-<h1 id="how-to-optimize-a-croktile-block-scaled-fp8-gemm-a-worklog">How to Optimize a Croktile Block-Scaled FP8 GEMM: a Worklog<a class="headerlink" href="#how-to-optimize-a-croktile-block-scaled-fp8-gemm-a-worklog" title="Permanent link">&para;</a></h1>
+<h1 id="how-to-optimize-a-croqtile-block-scaled-fp8-gemm-a-worklog">How to Optimize a Croqtile Block-Scaled FP8 GEMM: a Worklog<a class="headerlink" href="#how-to-optimize-a-croqtile-block-scaled-fp8-gemm-a-worklog" title="Permanent link">&para;</a></h1>
 <p>In this post, I'll optimize an FP8 E4M3 matrix multiply with <strong>per-block scaling</strong> on Hopper (SM90a), measured on H800 PCIe (114 SMs). Operands are E4M3, the accumulator stays in FP16, and along K every 128-element tile carries FP32 scale factors so inner products stay useful after quantization. This is the same family of tricks used in MXFP8-style training: FP8 for density, scales for fidelity.</p>
-<p>What makes block-scaled GEMM interesting for optimization is that <strong>scales are first-class operands</strong>. Every K-tile iteration pulls matrix data <strong>and</strong> scale metadata. The Croktile surface expresses this as <code>mma.row.row.scale</code> instead of a plain <code>mma.row.row</code> — same tiling discipline, extra operands, same pressure to hide TMA latency, but with a third critical path (scale fetch) that does not exist in dense or 2:4 sparse GEMM.</p>
+<p>What makes block-scaled GEMM interesting for optimization is that <strong>scales are first-class operands</strong>. Every K-tile iteration pulls matrix data <strong>and</strong> scale metadata. The Croqtile surface expresses this as <code>mma.row.row.scale</code> instead of a plain <code>mma.row.row</code> — same tiling discipline, extra operands, same pressure to hide TMA latency, but with a third critical path (scale fetch) that does not exist in dense or 2:4 sparse GEMM.</p>
 <table>
 <thead>
 <tr>
@@ -2763,7 +2763,7 @@
 </tr>
 <tr>
 <td><code>tileN</code></td>
-<td>Tile along N explicitly in Croktile structure</td>
+<td>Tile along N explicitly in Croqtile structure</td>
 </tr>
 <tr>
 <td><code>..._warpspec_persis_1p1c.co</code></td>
@@ -2773,7 +2773,7 @@
 </table>
 <p>These document that scale DMA to SMEM is a viable alternative when register pressure or load scheduling hurts WGMMA issue interval.</p>
 <h2 id="reproduction">Reproduction<a class="headerlink" href="#reproduction" title="Permanent link">&para;</a></h2>
-<pre class="highlight"><code class="language-bash">./croktile -gs -t cute -arch=sm_90a --use-warpspec --stmatrix \
+<pre class="highlight"><code class="language-bash">./croqtile -gs -t cute -arch=sm_90a --use-warpspec --stmatrix \
   benchmark/performance/blockscale_gemm_v2/blockscale_gemm_e4m3_dyn_sm90_warpspec_1p1c.co \
   -o /tmp/bs.cute.result &amp;&amp; bash /tmp/bs.cute.result --execute</code></pre>
 <p>Pre-generated iter049/051/053/066 trees ship with <code>run.sh</code> for bit-identical reproduction. Full iteration history: 71 iterations in <code>README_blockscale_gemm_e4m3_aitune_2026-03-22.md</code>.</p>

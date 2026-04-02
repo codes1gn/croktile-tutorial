@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://codes1gn.github.io/croktile-tutorial/zh/tutorial/ch08-cpp-interop/">
+        <link rel="canonical" href="https://codes1gn.github.io/croqtile-tutorial/zh/tutorial/ch08-cpp-interop/">
       
       
         <link rel="prev" href="../ch07-advanced-movement/">
@@ -29,7 +29,7 @@
     
     
       
-        <title>Ch 8: C++ Interop - Croktile</title>
+        <title>Ch 8: C++ Interop - Croqtile</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#c" class="md-skip">
+        <a href="#c-__device__" class="md-skip">
           跳转至
         </a>
       
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="页眉">
-    <a href="../../" title="Croktile" class="md-header__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../../" title="Croqtile" class="md-header__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../../assets/images/logo-2.png" alt="logo">
 
@@ -113,7 +113,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Croktile
+            Croqtile
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -227,13 +227,13 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/codes1gn/croktile-tutorial" title="前往仓库" class="md-source" data-md-component="source">
+        <a href="https://github.com/codes1gn/croqtile-tutorial" title="前往仓库" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
       </div>
@@ -263,22 +263,22 @@
 
 <nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../" title="Croktile" class="md-nav__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../../" title="Croqtile" class="md-nav__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../../assets/images/logo-2.png" alt="logo">
 
     </a>
-    Croktile
+    Croqtile
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/codes1gn/croktile-tutorial" title="前往仓库" class="md-source" data-md-component="source">
+      <a href="https://github.com/codes1gn/croqtile-tutorial" title="前往仓库" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
     </div>
@@ -326,7 +326,7 @@
   <span class="md-ellipsis">
     
   
-    What is Good in CrokTile
+    What is Good in CroqTile
   
 
     
@@ -458,14 +458,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../ch01-hello-croktile/" class="md-nav__link">
+      <a href="../ch01-hello-croqtile/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Ch 1: Hello Croktile
+    Ch 1: Hello Croqtile
   
 
     
@@ -714,6 +714,28 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#co" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        .co 文件如何编译
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#__device__-cuda-croqtile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __device__ 函数：CUDA 与 Croqtile 并存
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#__cpp__-c" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -790,7 +812,7 @@
   <a href="#error" class="md-nav__link">
     <span class="md-ellipsis">
       
-        以 #error 做编译期断言
+        使用 #error 的编译期断言
       
     </span>
   </a>
@@ -814,10 +836,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#co" class="md-nav__link">
+  <a href="#co_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        阅读生产级 .co 文件
+        如何阅读生产级 .co 文件
       
     </span>
   </a>
@@ -1215,7 +1237,7 @@
   <span class="md-ellipsis">
     
   
-    Croktile-C++ Program Structure
+    Croqtile-C++ Program Structure
   
 
     
@@ -2472,6 +2494,28 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#co" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        .co 文件如何编译
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#__device__-cuda-croqtile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __device__ 函数：CUDA 与 Croqtile 并存
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#__cpp__-c" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2548,7 +2592,7 @@
   <a href="#error" class="md-nav__link">
     <span class="md-ellipsis">
       
-        以 #error 做编译期断言
+        使用 #error 的编译期断言
       
     </span>
   </a>
@@ -2572,10 +2616,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#co" class="md-nav__link">
+  <a href="#co_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        阅读生产级 .co 文件
+        如何阅读生产级 .co 文件
       
     </span>
   </a>
@@ -2661,25 +2705,84 @@
   
 
 
-<h1 id="c">C++ 互操作：内联代码与预处理器<a class="headerlink" href="#c" title="Permanent link">&para;</a></h1>
-<p>每种高级语言都需要一个通向底层的逃生通道。Python 有 <code>ctypes</code> 和 C 扩展。Rust 有 <code>unsafe</code> 块和 <code>extern "C"</code>。Java 有 JNI。原因始终相同：无论抽象层多富有表达力，总有某些硬件特性、某个遗留库、某条性能关键的内建指令超出该语言的领域。逃生通道让你在不放弃系统其余部分的前提下触及它们。</p>
-<p>鳄霸（Croktile）的逃生通道是 <strong><code>__cpp__</code></strong>：向生成的代码中逐字注入 C++ 或 PTX。预处理器——<code>#define</code>、<code>#if</code>、<code>#ifdef</code>、<code>#error</code>——则承担<strong>编译期配置</strong>的角色，功能与 C/C++ 代码库中的 <code>#define</code> 一致：在 DSL 函数体与宿主代码间共享常量、保护平台相关路径、在配置错误变为运行时 bug 之前捕获它们。</p>
-<p>至此，本教程已搭建起完整的抽象栈：tile、并行、MMA、流水线、事件。这就是你希望长期使用的鳄霸。本章讲述需要走出这一层的时刻——编译器不会发出的某条 PTX 指令、使 warp 特化角色干净共存的寄存器预算提示，或在 <code>__co__</code> 函数体与宿主 C++ 两侧都必须一致的编译期常量。</p>
-<p><img alt="鳄霸内核体中嵌入用于逐字 PTX/C++ 的 __cpp__ 孤岛" src="../../../assets/images/ch08/fig1_escape_hatch_dark.png#only-dark" />
-<img alt="鳄霸内核体中嵌入用于逐字 PTX/C++ 的 __cpp__ 孤岛" src="../../../assets/images/ch08/fig1_escape_hatch_light.png#only-light" /></p>
-<h2 id="__cpp__-c"><code>__cpp__</code>：逐字 C++ 注入<a class="headerlink" href="#__cpp__-c" title="Permanent link">&para;</a></h2>
-<p><strong>作用。</strong> <code>__cpp__</code> 接收一个字符串字面量，并将其<strong>逐字符</strong>粘贴到生成的 CUDA 或 C++ 文件中。置于该处的内容必须在拼接点合法：花括号、分号、类型与作用域须与周围代码生成一致。鳄霸编译器不会解析或改写其内容，鳄霸符号也不会在字符串内自动可见——只有实际出现在生成输出中的名称才有效。</p>
-<p><strong>两种形式。</strong></p>
+<h1 id="c-__device__">C++ 互操作：<code>__device__</code> 函数、内联代码与预处理器<a class="headerlink" href="#c-__device__" title="Permanent link">&para;</a></h1>
+<p>每一种高级语言都需要一条通往更底层机制的逃生通道。Python 有 <code>ctypes</code> 与 C 扩展，Rust 有 <code>unsafe</code> 块与 <code>extern "C"</code>，Java 有 JNI。原因总是一样的：无论抽象多么富有表现力，总有某些硬件特性、某些遗留库、某些性能攸关的内建能力处在该语言域之外。</p>
+<p>鳄霸（Croqtile）的互操作叙事包含三个部分：</p>
+<ol>
+<li><strong><code>__device__</code> 函数</strong> — 标准 CUDA device 函数，与 <code>__co__</code> 函数共存于同一 <code>.co</code> 文件中。编译器对它们原样透传。</li>
+<li><strong><code>__cpp__</code></strong> — 将逐字 C++ 或 PTX 注入到生成代码中，用于 DSL 无法发出的硬件相关指令。</li>
+<li><strong>预处理器</strong> — <code>#define</code>、<code>#if</code>、<code>#ifdef</code>、<code>#error</code>，用于编译期配置，与 C/C++ 代码库中 <code>#define</code> 所扮演的角色相同。</li>
+</ol>
+<p>至此，本教程已堆叠起一整座抽象栈：tile、并行、MMA、流水线、事件、TMA。那是你希望在鳄霸中长期栖居的世界。本章讨论的是你需要暂时跨出去的那些时刻。</p>
+<p><img alt="Croqtile kernel body with an embedded __cpp__ island for verbatim PTX/C++" src="../../../assets/images/ch08/fig1_escape_hatch_dark.png#only-dark" />
+<img alt="Croqtile kernel body with an embedded __cpp__ island for verbatim PTX/C++" src="../../../assets/images/ch08/fig1_escape_hatch_light.png#only-light" /></p>
+<h2 id="co"><code>.co</code> 文件如何编译<a class="headerlink" href="#co" title="Permanent link">&para;</a></h2>
+<p><code>.co</code> 文件可包含三类代码：host C++（普通函数、<code>main()</code>）、<code>__co__</code> 函数（由鳄霸管理的 kernel），以及 <code>__device__</code> 函数（标准 CUDA device 代码）。鳄霸编译器对它们的处理方式各不相同：</p>
+<p><img alt=".co file compilation flow: source -&gt; compiler -&gt; host C++ and device CUDA -&gt; nvcc -&gt; binary" src="../../../assets/images/ch08/fig2_compilation_flow_dark.png#only-dark" />
+<img alt=".co file compilation flow: source -&gt; compiler -&gt; host C++ and device CUDA -&gt; nvcc -&gt; binary" src="../../../assets/images/ch08/fig2_compilation_flow_light.png#only-light" /></p>
 <ul>
-<li><strong><code>__cpp__("...")</code></strong> ——普通字符串；适合简短单行与简单守卫。</li>
-<li><strong><code>__cpp__(R"(...)")</code></strong> ——原始字符串字面量；用于 <code>asm volatile("...")</code> 等若对每个 <code>"</code> 转义会很繁琐的片段。</li>
+<li><strong><code>__co__</code> 函数</strong> 被变换为带生成 launch 配置、共享内存声明与寄存器分配的 <code>__global__</code> CUDA kernel。</li>
+<li><strong><code>__device__</code> 函数</strong> 原样进入 device 编译单元，<strong>不做改写</strong>。鳄霸编译器不会重写它们 —— 它们在你生成的 CUDA 中与你书写时完全一致。</li>
+<li><strong>Host 代码</strong>（其余一切）成为负责建立缓冲区、启动 kernel 与处理 I/O 的 host 侧 C++。</li>
+</ul>
+<h2 id="__device__-cuda-croqtile"><code>__device__</code> 函数：CUDA 与 Croqtile 并存<a class="headerlink" href="#__device__-cuda-croqtile" title="Permanent link">&para;</a></h2>
+<p>当算法需要在线程或 warp 粒度上运作的辅助函数 —— 例如自定义归约、排序网络、特殊数学函数 —— 将其写成标准 CUDA <code>__device__</code> 函数往往是自然之选。鳄霸无需管理这些；它们就是普通 CUDA。</p>
+<p><code>__co__</code> 函数可使用 <code>call</code> 关键字调用 <code>__device__</code> 函数：</p>
+<pre class="highlight"><code class="language-choreo">template &lt;int K&gt;
+__device__ void warp_topk(f32* vals, s32* idxs);
+
+template &lt;typename T&gt;
+__device__ __forceinline__ T SHFL_XOR(T var, int lane_mask, int width) {
+  return __shfl_xor_sync(uint32_t(-1), var, lane_mask, width);
+}
+
+__co__ void moe_topk(f32 [N_TOKENS, N_EXPERTS] scores,
+                     s32 [N_TOKENS, K]&amp; topk_ids,
+                     f32 [N_TOKENS, K]&amp; topk_scores,
+                     int N_BLOCK) {
+  parallel n by N_BLOCK : block {
+    foreach m in [ |scores.span| / N_THREAD / N_BLOCK ] {
+      shared_scores = dma.copy scores.chunkat(n#m, _) =&gt; shared;
+
+      parallel gid by [N_THREAD / 32] : group {
+        parallel tid by 32 : thread {
+          score = shared_scores.data.span_as(|shared_scores.data.span|).at(gid # tid);
+
+          local s32 [K] frag_idx{-1};
+          local f32 [K] frag_val{-1.0f};
+          frag_idx.at(0) = tid;
+          frag_val.at(0) = score;
+
+          call warp_topk&lt;8&gt;(frag_val, frag_idx);
+
+          inthreads (tid == 0) {
+            foreach k in K {
+              topk_ids.at(n#m, gid#k) = frag_idx.at(k);
+              topk_scores.at(n#m, gid#k) = frag_val.at(k);
+            }
+          }
+        }
+      }
+    }
+  }
+}</code></pre>
+<p><strong><code>__device__ void warp_topk&lt;K&gt;</code></strong> — 使用 shuffle 指令实现 warp 级 top-K 选择的模板 device 函数。它操作原始指针（<code>f32*</code>、<code>s32*</code>），而非 Croqtile spans。</p>
+<p><strong><code>__device__ T SHFL_XOR</code></strong> — warp shuffle 内建封装。<code>__forceinline__</code> 与 <code>__shfl_xor_sync</code> 为标准 CUDA —— Croqtile 原样透传。</p>
+<p><strong><code>call warp_topk&lt;8&gt;(...)</code></strong> — <code>call</code> 关键字在 <code>__co__</code> 主体内调用 <code>__device__</code> 函数。参数按指针传递；编译器负责在 Croqtile span 与原始指针之间完成地址转换。</p>
+<p><strong><code>inthreads (tid == 0)</code></strong> — 每个 warp 中只有线程 0 写回结果。注意此处使用不带 <code>.async</code> 的 <code>inthreads</code> —— 为顺序线程过滤，而非并发区域。</p>
+<p>这一模式 —— Croqtile 负责并行、tiling 与内存编排；<code>__device__</code> 函数负责 per-warp 算法 —— 在 MoE（mixture-of-experts）top-K、自定义归约与专用数学等生产级 kernel 中十分常见。</p>
+<h2 id="__cpp__-c"><code>__cpp__</code>：逐字 C++ 注入<a class="headerlink" href="#__cpp__-c" title="Permanent link">&para;</a></h2>
+<p><code>__cpp__</code> 接收一个字符串字面量，并逐字符粘贴到生成的 CUDA 文件中。置于该处的任何内容在拼接点都必须合法。鳄霸编译器既不解析也不改写其内容。</p>
+<p><strong>两种形式：</strong></p>
+<ul>
+<li><strong><code>__cpp__("...")</code></strong> — 普通字符串；最适合短单行。</li>
+<li><strong><code>__cpp__(R"(...)")</code></strong> — 原始字符串字面量；在需要 <code>asm volatile</code> 且为每个 <code>"</code> 转义会很痛苦时使用。</li>
 </ul>
 <h3 id="setmaxnreg">寄存器提示：<code>setmaxnreg</code><a class="headerlink" href="#setmaxnreg" title="Permanent link">&para;</a></h3>
-<p>典型的 <code>__cpp__</code> 用例是在 warp 特化流水线（<a href="../ch05-branch-control/">第 5 章</a>）中进行<strong>寄存器重分配</strong>。生产者 warpgroup 寄存器占用较轻——主要发出 TMA 加载——而消费者较重——持有 MMA 累加器。NVIDIA PTX 的 <code>setmaxnreg</code> 指令在这些角色之间移动寄存器预算：</p>
+<p>典型的 <code>__cpp__</code> 用例是 warp 特化流水线中的寄存器再分配（<a href="../ch05-branch-control/">第 5 章</a>）。producer warpgroup 寄存器占用较轻（多为 TMA load），而 consumer 较重（MMA 累加器）。PTX 的 <code>setmaxnreg</code> 指令用于移动寄存器预算：</p>
 <pre class="highlight"><code class="language-choreo">parallel p1 by 2 : group-4 {
   inthreads.async (p1 == 0) {
     __cpp__(R"(asm volatile("setmaxnreg.dec.sync.aligned.u32 40;");)");
-    // producer: register-light, decrease to 40
     foreach {iv_k} in [cdiv(K, MATMUL_TILE_K)] {
       // ... TMA loads ...
     }
@@ -2687,26 +2790,23 @@
 
   inthreads.async (p1 == 1) {
     __cpp__(R"(asm volatile("setmaxnreg.inc.sync.aligned.u32 216;");)");
-    // consumer: register-heavy, increase to 216
     mc = mma.fill.f16 0.0f;
     // ... WGMMA compute ...
   }
 }</code></pre>
-<p><strong><code>setmaxnreg.dec</code> / <code>setmaxnreg.inc</code></strong> ——具体数值（此处为 40 与 216）按内核调优。<code>.dec</code> 与 <code>.inc</code> 形式与硬件分配器协同，使两种角色能共存而不必无谓地 spill。</p>
-<p><strong>放置位置</strong> ——将提示放在每个 <code>inthreads.async</code> 分支顶部、重循环之前，以便分配器在主体执行前看到预算。</p>
+<p><strong>放置位置</strong> — 将提示放在每个 <code>inthreads.async</code> 分支的顶部、重循环之前。</p>
 <h3 id="_1">提前返回与守卫<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
-<p>MoE 风格 GEMM 内核常处理可变大小的专家片段；某些启动对给定专家宽度为零。一行 <code>__cpp__</code> 注入即可在其余内核逻辑运行前退出：</p>
+<p>MoE 风格 kernel 常处理可变长度的 expert 段；某些 launch 宽度为零：</p>
 <pre class="highlight"><code class="language-choreo">__cpp__("if (seg_end - seg_start &lt;= 0) return;\n\n");</code></pre>
-<p><strong>命名纪律</strong> ——标识符（<code>seg_end</code>、<code>seg_start</code>）须与周围生成代码中的声明一致。若重命名鳄霸参数导致代码生成改名，过时的 <code>__cpp__</code> 字符串会在编译时报错——这优于悄无声息的错误结果。</p>
+<p>标识符须与周围生成代码所声明的一致。</p>
 <h3 id="__cpp__"><code>__cpp__</code> 字符串内的宏<a class="headerlink" href="#__cpp__" title="Permanent link">&para;</a></h3>
-<p>常见误区是以为预处理器会在注入字符串内起作用：</p>
+<p>常见误区：以为预处理器会在字符串字面量内展开宏。</p>
 <pre class="highlight"><code class="language-choreo">#define PRODUCER_MAXNREG 40
 
 inthreads.async (p1 == 0) {
   __cpp__(R"(asm volatile("setmaxnreg.dec.sync.aligned.u32 PRODUCER_MAXNREG;");)");
 }</code></pre>
-<p><strong>失败原因</strong> ——预处理器不会在字符串字面量内展开宏。生成的汇编仍会包含标识符 <code>PRODUCER_MAXNREG</code> 而非 <code>40</code>，PTX 会拒绝。</p>
-<p><strong>团队常见做法</strong> ——在 <code>__cpp__</code> 字符串内直接写数值字面量，并在字符串<strong>之外</strong>用 <code>#if</code> / <code>#error</code> 与 tile 配置强制一致：</p>
+<p>这会失败 —— 预处理器不会在字符串内展开。在 <code>__cpp__</code> 中使用数字字面量，并在其外使用 <code>#if</code> / <code>#error</code> 以强制一致性：</p>
 <pre class="highlight"><code class="language-choreo">#define PRODUCER_MAXNREG 40
 #if PRODUCER_MAXNREG &gt; 50
 #error "Producer maxnreg too high for this tile config"
@@ -2716,8 +2816,7 @@ inthreads.async (p1 == 0) {
   __cpp__(R"(asm volatile("setmaxnreg.dec.sync.aligned.u32 40;");)");
 }</code></pre>
 <h2 id="_2">预处理器<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>鳄霸预处理器在主编译阶段之前运行。<strong><code>#define</code></strong>、<strong><code>#if</code> / <code>#elif</code> / <code>#else</code> / <code>#endif</code></strong>、<strong><code>#ifdef</code> / <code>#ifndef</code></strong> 与 <strong><code>#error</code></strong> 的行为与其 C 语言对应物类似。宏在同一 <code>.co</code> 文件的 <code>__co__</code> 区域与宿主 C++ 中均会展开，因而一份定义可同时约束 tile 几何与宿主侧检查。</p>
-<p><strong>指令参考。</strong></p>
+<p>鳄霸的预处理器在主编译遍之前运行。宏在同一 <code>.co</code> 文件的 <code>__co__</code> 区域与 host C++ 中都会展开，因此一份定义即可使 tile 几何与 host 侧检查保持一致。</p>
 <table>
 <thead>
 <tr>
@@ -2728,7 +2827,7 @@ inthreads.async (p1 == 0) {
 <tbody>
 <tr>
 <td><code>#define NAME value</code></td>
-<td>对象式宏：文本替换</td>
+<td>类对象宏：文本替换</td>
 </tr>
 <tr>
 <td><code>#if</code> / <code>#elif</code> / <code>#else</code> / <code>#endif</code></td>
@@ -2744,17 +2843,16 @@ inthreads.async (p1 == 0) {
 </tr>
 </tbody>
 </table>
-<p><strong>限制</strong> ——不支持函数式宏（<code>#define MAX(a, b) ...</code>）。需要参数化表达式时，请在普通 C++ 中使用 <code>constexpr</code> 辅助函数。</p>
+<p>不支持函数式宏（<code>#define MAX(a, b) ...</code>）。请在普通 C++ 中使用 <code>constexpr</code> 辅助函数。</p>
 <h3 id="tile">以宏表示 tile 几何<a class="headerlink" href="#tile" title="Permanent link">&para;</a></h3>
-<p>生产级矩阵乘法源码通常在文件顶部集中定义所有 tile 维度：</p>
+<p>生产级 matmul 源码通常在文件顶部集中定义 tile 尺寸：</p>
 <pre class="highlight"><code class="language-choreo">#define MATMUL_WARP_M 64
 #define MATMUL_WARP_N 128
 #define MATMUL_TILE_K 64
 #define MATMUL_WARP_K 16
 #define MATMUL_STAGES 4</code></pre>
-<p><strong>共享契约</strong> ——同一组名称出现在 <code>parallel ... by [cdiv(M, MATMUL_WARP_M), ...]</code>、共享内存声明、<code>foreach</code> 边界与宿主侧校验中。修改一处 <code>#define</code>，所有使用点一并更新。</p>
-<h3 id="error">以 <code>#error</code> 做编译期断言<a class="headerlink" href="#error" title="Permanent link">&para;</a></h3>
-<p>库代码常将 <code>#if</code> 与 <code>#error</code> 配对，使非法组合在编译期以明确消息失败：</p>
+<p>相同名字出现在 <code>parallel</code>、共享内存声明、<code>foreach</code> 边界以及 host 侧校验中。</p>
+<h3 id="error">使用 <code>#error</code> 的编译期断言<a class="headerlink" href="#error" title="Permanent link">&para;</a></h3>
 <pre class="highlight"><code class="language-choreo">#if MATMUL_SWIZ != (2 * MATMUL_TILE_K)
 #error "MATMUL_SWIZ must equal 2 * MATMUL_TILE_K for f16 kernel"
 #endif
@@ -2762,30 +2860,27 @@ inthreads.async (p1 == 0) {
 #if MATMUL_WARP_M != 64
 #error "MATMUL_WARP_M must be 64 for f16 WGMMA constraints"
 #endif</code></pre>
-<p><strong>活文档</strong> ——当有人不兼容地修改 swizzle 宽度或 warp tile 时，构建会立即中止，而非生成非法内核。应将这些守卫视为硬件约束的文档化，而非一次性检查。</p>
+<p>将这些守卫视为对硬件约束的文档化说明。</p>
 <h3 id="_3">条件代码路径<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>可根据宏选择整个代码区域：</p>
 <pre class="highlight"><code class="language-choreo">#define PATH0
 
 __co__ foo() {
-  // ...
   #ifdef PATH0
     // path 0 code
   #else
     // path 1 code
   #endif
 }</code></pre>
-<p><strong>编译期消除</strong> ——预处理器在鳄霸解析 <code>__co__</code> 函数体之前保留一分支并丢弃另一分支。这不是运行时的 <code>if</code>；被丢弃分支不会出现在生成程序中。</p>
-<p><strong>命令行定义</strong> ——<code>croktile kernel.co -DMATMUL_TILE_K=128</code> 可在不编辑源码的情况下定义或覆盖宏——便于在基准测试中扫描 tile 大小而无需复制文件。</p>
-<h2 id="co">阅读生产级 <code>.co</code> 文件<a class="headerlink" href="#co" title="Permanent link">&para;</a></h2>
-<p>打开诸如 <code>blockscale_gemm_e4m3_dyn_sm90_warpspec_1p1c.co</code> 的基准内核时，请<strong>自上而下</strong>阅读：</p>
+<p>预处理器在鳄霸解析 <code>__co__</code> 主体之前保留一分支并丢弃另一分支。命令行定义：<code>croqtile kernel.co -DMATMUL_TILE_K=128</code>。</p>
+<h2 id="co_1">如何阅读生产级 <code>.co</code> 文件<a class="headerlink" href="#co_1" title="Permanent link">&para;</a></h2>
+<p>打开基准 kernel 时，自上而下阅读：</p>
 <ol>
-<li><strong>宏与 <code>#error</code> 守卫</strong> ——契约：允许的 tile 大小、swizzle 规则、架构标志。</li>
-<li><strong>宿主设置</strong> ——缓冲区、启动配置、计时；普通 C++。</li>
-<li><strong><code>__co__</code> 函数</strong> ——编排：<code>parallel</code>、<code>foreach</code>、TMA/MMA、<code>inthreads.async</code>、事件。将每个区域对应回前面章节。</li>
-<li><strong><code>__cpp__</code> 孤岛</strong> ——通常仅数行。在每处停顿并追问：硬件收到了 DSL 未写明的什么。</li>
+<li><strong>宏与 <code>#error</code> 守卫</strong> — 契约：允许的 tile 尺寸、swizzle 规则、架构标志。</li>
+<li><strong><code>__device__</code> 函数</strong> — Croqtile 原样透传的辅助算法（top-K、归约、shuffle 封装等）。</li>
+<li><strong>Host 设置</strong> — 缓冲区、launch 配置、计时；普通 C++。</li>
+<li><strong><code>__co__</code> 函数</strong> — 编排：<code>parallel</code>、<code>foreach</code>、TMA/MMA、<code>inthreads.async</code>、事件。将每个区域映射回先前章节。</li>
+<li><strong><code>__cpp__</code> 岛</strong> — 通常寥寥数行。在每一处停顿，追问硬件收到了哪些 DSL 未显式写出的内容。</li>
 </ol>
-<p>按此顺序可避免在尚未弄清允许修改哪些常量之前就扎进 warp 特化循环。</p>
 <h2 id="_4">本章小结<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -2796,28 +2891,24 @@ __co__ foo() {
 </thead>
 <tbody>
 <tr>
-<td>何时下沉</td>
-<td>PTX 指令、寄存器提示、宿主/设备常量、守卫——DSL 能覆盖处尽量用 DSL；下沉须克制。</td>
+<td><code>__device__</code> 函数</td>
+<td><code>.co</code> 文件中的标准 CUDA device 代码；原样透传；在 <code>__co__</code> 中用 <code>call</code> 调用</td>
 </tr>
 <tr>
 <td><code>__cpp__</code></td>
-<td>逐字粘贴进生成 CUDA；<code>asm</code> 用原始字符串；名称须与生成 C++ 一致。</td>
+<td>逐字粘贴到生成的 CUDA；<code>asm</code> 宜用原始字符串；名称须与生成 C++ 一致</td>
+</tr>
+<tr>
+<td><code>call</code> 关键字</td>
+<td>从 <code>__co__</code> 主体内调用 <code>__device__</code> 函数</td>
 </tr>
 <tr>
 <td><code>setmaxnreg</code></td>
-<td>典型示例：生产者 dec、消费者 inc；按内核调优；置于重循环之前。</td>
-</tr>
-<tr>
-<td>守卫 / 字符串内宏</td>
-<td>经 <code>__cpp__</code> 提前 <code>return</code>；宏<strong>不会</strong>在字符串字面量内展开——用字面量并在字符串外用 <code>#error</code>。</td>
+<td>寄存器再分配：producer 上 <code>dec</code>，consumer 上 <code>inc</code></td>
 </tr>
 <tr>
 <td>预处理器</td>
-<td><code>#define</code> 表示 tile 几何；<code>#if</code> / <code>#error</code> 表示约束；<code>#ifdef</code> 表示变体；<code>-D</code> 用于扫描。</td>
-</tr>
-<tr>
-<td>阅读 <code>.co</code> 文件</td>
-<td>先宏，再宿主，再 <code>__co__</code>，最后 <code>__cpp__</code> 孤岛。</td>
+<td>用 <code>#define</code> 表示 tile 几何；<code>#if</code> / <code>#error</code> 表示约束；<code>#ifdef</code> 表示变体；<code>-D</code> 用于扫描</td>
 </tr>
 </tbody>
 </table>
@@ -2831,6 +2922,14 @@ __co__ foo() {
 </thead>
 <tbody>
 <tr>
+<td><code>__device__ fn()</code></td>
+<td>标准 CUDA device 函数（透传）</td>
+</tr>
+<tr>
+<td><code>call fn(args)</code></td>
+<td>从 <code>__co__</code> 调用 <code>__device__</code> 函数</td>
+</tr>
+<tr>
 <td><code>__cpp__("...")</code></td>
 <td>注入逐字 C++（普通字符串）</td>
 </tr>
@@ -2840,7 +2939,7 @@ __co__ foo() {
 </tr>
 <tr>
 <td><code>#define NAME value</code></td>
-<td>对象式宏</td>
+<td>类对象宏</td>
 </tr>
 <tr>
 <td><code>#if expr</code> / <code>#elif</code> / <code>#else</code> / <code>#endif</code></td>
@@ -2856,8 +2955,7 @@ __co__ foo() {
 </tr>
 </tbody>
 </table>
-<p>逃生通道形成闭环：鳄霸使日常内核保持可读与结构化，而 <code>__cpp__</code> 与预处理器处理位于抽象之下的硬件相关细节。宁可一条 PTX 提示、一条守卫或一条 pragma，也不要在程序中到处散落原始孤岛——让 <code>__co__</code> 函数承载主线叙事。</p>
-<p><a href="../ch09-debug-verbose/">下一章</a>转向工作流的另一面：内核能编译但结果错误时该怎么办——调试、详细模式与系统化收窄。</p>
+<p><a href="../ch09-debug-verbose/">下一章</a>转向工作流的另一面：kernel 已能编译但结果错误时该如何处理 —— 调试、verbose 模式与系统化缩小问题范围。</p>
 
 
 

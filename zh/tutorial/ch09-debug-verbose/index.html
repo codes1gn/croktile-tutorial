@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://codes1gn.github.io/croktile-tutorial/zh/tutorial/ch09-debug-verbose/">
+        <link rel="canonical" href="https://codes1gn.github.io/croqtile-tutorial/zh/tutorial/ch09-debug-verbose/">
       
       
         <link rel="prev" href="../ch08-cpp-interop/">
@@ -29,7 +29,7 @@
     
     
       
-        <title>Ch 9: Debug & Verbose - Croktile</title>
+        <title>Ch 9: Debug & Verbose - Croqtile</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#rtti-gdb" class="md-skip">
+        <a href="#gdb" class="md-skip">
           跳转至
         </a>
       
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="页眉">
-    <a href="../../" title="Croktile" class="md-header__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../../" title="Croqtile" class="md-header__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../../assets/images/logo-2.png" alt="logo">
 
@@ -113,7 +113,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Croktile
+            Croqtile
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -227,13 +227,13 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/codes1gn/croktile-tutorial" title="前往仓库" class="md-source" data-md-component="source">
+        <a href="https://github.com/codes1gn/croqtile-tutorial" title="前往仓库" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
       </div>
@@ -263,22 +263,22 @@
 
 <nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../" title="Croktile" class="md-nav__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../../" title="Croqtile" class="md-nav__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../../assets/images/logo-2.png" alt="logo">
 
     </a>
-    Croktile
+    Croqtile
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/codes1gn/croktile-tutorial" title="前往仓库" class="md-source" data-md-component="source">
+      <a href="https://github.com/codes1gn/croqtile-tutorial" title="前往仓库" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
     </div>
@@ -326,7 +326,7 @@
   <span class="md-ellipsis">
     
   
-    What is Good in CrokTile
+    What is Good in CroqTile
   
 
     
@@ -458,14 +458,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../ch01-hello-croktile/" class="md-nav__link">
+      <a href="../ch01-hello-croqtile/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Ch 1: Hello Croktile
+    Ch 1: Hello Croqtile
   
 
     
@@ -745,7 +745,7 @@
   <a href="#print-println" class="md-nav__link">
     <span class="md-ellipsis">
       
-        print! 与 println!：编译期检查
+        print! 与 println!：编译期检视
       
     </span>
   </a>
@@ -756,7 +756,40 @@
   <a href="#print-println_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        print 与 println：运行时设备输出
+        print 与 println：运行时设备端输出
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        assert：运行时不变量检查
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#-v" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        详细模式：-v
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#-rtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        运行时检查：-rtc
       
     </span>
   </a>
@@ -767,7 +800,7 @@
   <a href="#mma" class="md-nav__link">
     <span class="md-ellipsis">
       
-        调试 MMA 密集型内核
+        调试大量依赖 MMA 的内核
       
     </span>
   </a>
@@ -775,10 +808,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#rtti-cuda-gdb" class="md-nav__link">
+  <a href="#debug-rtti-cuda-gdb" class="md-nav__link">
     <span class="md-ellipsis">
       
-        调试 RTTI 与 cuda-gdb
+        Debug RTTI 与 cuda-gdb
       
     </span>
   </a>
@@ -789,7 +822,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        综合：系统化工作流
+        综合应用：系统化工作流
       
     </span>
   </a>
@@ -1159,7 +1192,7 @@
   <span class="md-ellipsis">
     
   
-    Croktile-C++ Program Structure
+    Croqtile-C++ Program Structure
   
 
     
@@ -2419,7 +2452,7 @@
   <a href="#print-println" class="md-nav__link">
     <span class="md-ellipsis">
       
-        print! 与 println!：编译期检查
+        print! 与 println!：编译期检视
       
     </span>
   </a>
@@ -2430,7 +2463,40 @@
   <a href="#print-println_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        print 与 println：运行时设备输出
+        print 与 println：运行时设备端输出
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        assert：运行时不变量检查
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#-v" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        详细模式：-v
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#-rtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        运行时检查：-rtc
       
     </span>
   </a>
@@ -2441,7 +2507,7 @@
   <a href="#mma" class="md-nav__link">
     <span class="md-ellipsis">
       
-        调试 MMA 密集型内核
+        调试大量依赖 MMA 的内核
       
     </span>
   </a>
@@ -2449,10 +2515,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#rtti-cuda-gdb" class="md-nav__link">
+  <a href="#debug-rtti-cuda-gdb" class="md-nav__link">
     <span class="md-ellipsis">
       
-        调试 RTTI 与 cuda-gdb
+        Debug RTTI 与 cuda-gdb
       
     </span>
   </a>
@@ -2463,7 +2529,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        综合：系统化工作流
+        综合应用：系统化工作流
       
     </span>
   </a>
@@ -2549,29 +2615,28 @@
   
 
 
-<h1 id="rtti-gdb">调试与详细输出：打印、RTTI 与 GDB<a class="headerlink" href="#rtti-gdb" title="Permanent link">&para;</a></h1>
-<p>GPU 内核是<strong>不透明系统</strong>。成千上万的线程并发执行，共享内存从宿主端不可见，结果错误时也没有堆栈跟踪指向出错的行。这种不透明性并非 GPU 独有——任何程序员无法直接观察中间状态的系统都面临同样的挑战：分布式系统（丢失的消息在哪里？）、嵌入式固件（哪个中断处理程序破坏了寄存器？）、优化编译器（哪个 pass 破坏了语义？）。</p>
-<p>通用的调试准则在各处相同：<strong>从廉价检查到昂贵检查，系统地缩小搜索空间</strong>。先用静态分析与编译期断言（零成本，可捕获整类 bug）；再用定向的运行时探针（成本较低，可定位问题）；仅在更便宜的工具已缩小嫌疑范围后才求助于交互式调试器。每一层的成本递增，因此你希望在最便宜的层面尽可能多地捕获 bug。</p>
-<p>鳄霸（Croktile）在每个层面都提供工具：<strong>编译期形状打印</strong>（<code>print!</code>、<code>println!</code>）在不启动内核的前提下验证 tile 维度，<strong>带守卫的设备端 <code>println</code></strong> 用于特定线程的运行时检查，<strong><code>choreo_assert</code></strong> 用于不变量检查，<strong>供 <code>cuda-gdb</code> 使用的调试 RTTI</strong>，以及清晰的<strong>怀疑顺序</strong>指引排查方向。</p>
-<p>至此你已走过完整的鳄霸栈——逐元素加法、数据搬运、并行、张量核心、warp 特化、流水线、TMA 与 C++ 逃生通道。每一步都增加了性能与复杂度。本章讲述结果出错时该怎么办。</p>
-<h2 id="print-println"><code>print!</code> 与 <code>println!</code>：编译期检查<a class="headerlink" href="#print-println" title="Permanent link">&para;</a></h2>
-<p>带感叹号的形式（<code>print!</code>、<code>println!</code>）在<strong>编译期</strong>运行，而非运行时。它们打印到编译器输出，适用于在不启动内核的情况下检查形状、范围与类型信息：</p>
+<h1 id="gdb">调试与详细输出：打印、断言与 GDB<a class="headerlink" href="#gdb" title="Permanent link">&para;</a></h1>
+<p>GPU 内核是<strong>不透明系统</strong>：成千上万线程并发执行，共享内存在主机侧不可见，且当结果错误时，没有栈回溯能指向出错行。这种不透明性并非 GPU 独有——凡是程序员无法直接观察中间状态的系统都会面临同样挑战：分布式系统（丢失的消息在哪？）、嵌入式固件（哪个中断处理程序损坏了寄存器？）、优化编译器（哪趟优化破坏了语义？）。</p>
+<p>通用的调试纪律在各地相同：<strong>系统地缩小搜索空间</strong>，从廉价检查到昂贵检查。先做静态分析与编译期断言（几乎无成本，可捕获整类缺陷）。再转向有针对性的运行时探针（成本低，能定位问题）。仅当更廉价的手段已缩小嫌疑范围时，才动用交互式调试器。</p>
+<p>Croqtile（鳄霸）在每一层都提供工具：<strong>编译期形状打印</strong>（<code>print!</code>、<code>println!</code>），可在不启动内核的情况下核对分块维度；<strong>运行时断言</strong>（<code>assert</code>）用于不变量检查；<strong>带条件的设备端 <code>println</code></strong> 用于在特定线程上做运行时检视；面向 <code>cuda-gdb</code> 的 <strong>debug RTTI</strong>；以及 <strong>详细模式</strong>（<code>-v</code>），用于查看编译器在底层实际调用了哪些外部命令。</p>
+<h2 id="print-println"><code>print!</code> 与 <code>println!</code>：编译期检视<a class="headerlink" href="#print-println" title="Permanent link">&para;</a></h2>
+<p>带感叹号的变体（<code>print!</code>、<code>println!</code>）在<strong>编译期</strong>执行，而非运行时。它们输出到编译器日志，适用于在不启动内核的情况下检视形状、范围与类型信息：</p>
 <pre class="highlight"><code class="language-choreo">__co__ void check_shapes(f32 [3, 2] b) {
   print!("shape of b: ");
   println!("b.span = ", b.span);
 }</code></pre>
-<p>编译此文件时，编译器会输出：</p>
+<p>编译该文件时，编译器会输出：</p>
 <pre class="highlight"><code>shape of b: b.span = {3, 2}</code></pre>
-<p>无需 GPU。字符串字面量会拼接（<code>"wor" "ld!"</code> 变为 <code>"world!"</code>），便于由片段拼装诊断信息。在投入完整内核启动前，用 <code>print!</code> / <code>println!</code> 验证 <code>chunkat</code> 与 <code>subspan</code> 是否产生你预期的 tile 大小。</p>
-<h2 id="print-println_1"><code>print</code> 与 <code>println</code>：运行时设备输出<a class="headerlink" href="#print-println_1" title="Permanent link">&para;</a></h2>
-<p><strong>运行时打印。</strong> <code>print</code> 将参数写到标准输出；<code>println</code> 相同但追加换行。二者均可在 <code>__co__</code> 函数内使用，并在生成 CUDA 中发出设备端 <code>printf</code> 调用：</p>
+<p>无需 GPU。字符串字面量会被拼接（<code>"wor" "ld!"</code> 变为 <code>"world!"</code>）。在投入完整内核启动之前，可用 <code>print!</code> / <code>println!</code> 验证 <code>chunkat</code> 与 <code>subspan</code> 是否产生你期望的分块尺寸。</p>
+<h2 id="print-println_1"><code>print</code> 与 <code>println</code>：运行时设备端输出<a class="headerlink" href="#print-println_1" title="Permanent link">&para;</a></h2>
+<p>不带感叹号时，<code>print</code> 与 <code>println</code> 会在生成的 CUDA 中发出设备端 <code>printf</code> 调用：</p>
 <pre class="highlight"><code class="language-choreo">__co__ void inspect(s32 [4, 8] data) {
   foreach i in [data.span] {
     println("element ", i, " = ", data.at(i));
   }
 }</code></pre>
-<p>每次 <code>println</code> 调用接受逗号分隔的字符串字面量与表达式混合。字符串原样打印；表达式求值后打印其运行时值。跨线程的<strong>输出顺序非确定性</strong>——GPU <code>printf</code> 缓冲区异步刷新，不同线程的行会不可预测地交错。</p>
-<p><strong>守卫输出。</strong> 针对特定检查——例如 tile 索引 <code>(3, 5)</code> 是否算对部分和——用条件守卫打印：</p>
+<p>每次调用接受由逗号分隔的字符串字面量与表达式混合。各线程之间的输出顺序<strong>不确定</strong>——GPU 的 <code>printf</code> 缓冲区异步刷新。</p>
+<p><strong>对输出加条件。</strong> 针对特定检查，请用条件守卫打印：</p>
 <pre class="highlight"><code class="language-choreo">parallel {px, py} by [8, 16] : block
   parallel {qx, qy} by [16, 16] : thread {
     // ... compute ...
@@ -2579,18 +2644,31 @@
       println("partial sum = ", accum);
     }
   }</code></pre>
-<p>若无守卫，每个线程一行——大网格下成千上万行，大多无关。</p>
-<h2 id="mma">调试 MMA 密集型内核<a class="headerlink" href="#mma" title="Permanent link">&para;</a></h2>
-<p>若错误答案来自<strong>张量核心路径</strong>，应单独归类处理。<strong>先怀疑布局</strong>——行主序与列主序，以及 RHS 在内存中逻辑上是 <code>[N, K]</code> 还是 <code>[K, N]</code>——<strong>再怀疑索引</strong>（<code>block_m</code>、<code>block_n</code> 以及用 <code>.at</code> / <code>chunkat</code> 附着的 K 切片），若引入了异步拷贝或拆分生产者与消费者 warp，则<strong>再怀疑异步次序</strong>。常见错误包括：分阶段数据实为列主序却<strong>误标 <code>mma.row.row</code></strong>，或使用的 <strong><code>chunkat</code> 索引与 MMA tile 几何不对齐</strong>。若使用 swizzle 加载（<code>tma.copy.swiz</code> / <code>mma.load.swiz</code>），与朴素行主期望不一致会表现为误差中的<strong>规则模式</strong>（例如每第 16 个元素正确，其余偏移）——下文系统化流程会明确点出这一点。</p>
-<h2 id="rtti-cuda-gdb">调试 RTTI 与 <code>cuda-gdb</code><a class="headerlink" href="#rtti-cuda-gdb" title="Permanent link">&para;</a></h2>
-<p>当 <code>print</code> / <code>println</code> 不足——需要单步执行、检查寄存器状态或检视复杂数据结构时——鳄霸支持<strong>调试 RTTI</strong>（运行时类型信息），使其类型对 <code>cuda-gdb</code> 可见。</p>
-<p><strong>编译选项。</strong> 使用 <code>-g -O0</code> 启用调试符号并关闭优化：</p>
-<pre class="highlight"><code class="language-bash">croktile kernel.co -g -O0 -o kernel_debug</code></pre>
-<p>生成代码包含鳄霸类型的 RTTI 结构：</p>
+<p>若无守卫，则每个线程一行——对大网格会产生成千上万行输出。</p>
+<h2 id="assert"><code>assert</code>：运行时不变量检查<a class="headerlink" href="#assert" title="Permanent link">&para;</a></h2>
+<p>Croqtile 的内建 <code>assert</code> 在运行时检查不变量；若失败则中止内核并附带消息：</p>
+<pre class="highlight"><code class="language-choreo">assert(stage &lt; MATMUL_STAGES, "stage index out of bounds");</code></pre>
+<p>在设备上，这会编译为先 <code>printf</code> 消息再 <code>abort</code>。可用断言尽早捕获越界索引、空指针及其他「本不应发生」的情形。</p>
+<h2 id="-v">详细模式：<code>-v</code><a class="headerlink" href="#-v" title="Permanent link">&para;</a></h2>
+<p>向编译器传入 <code>-v</code>（或 <code>--verbose</code>）可查看其调用的外部命令——哪个预处理器、哪个代码生成器、哪次 <code>nvcc</code> 调用：</p>
+<pre class="highlight"><code class="language-bash">croqtile kernel.co -v -o kernel</code></pre>
+<p>当你怀疑编译器向 <code>nvcc</code> 传错了标志，或需要查看生成文件的确切路径以便手动检查时，这很有用。</p>
+<h2 id="-rtc">运行时检查：<code>-rtc</code><a class="headerlink" href="#-rtc" title="Permanent link">&para;</a></h2>
+<p>编译器支持通过 <code>-rtc</code>（或 <code>--runtime-check</code>）进行分级运行时检查：</p>
+<pre class="highlight"><code class="language-bash">croqtile kernel.co -rtc high -o kernel</code></pre>
+<p>级别：<code>entry</code>、<code>low</code>、<code>medium</code>、<code>high</code>、<code>all</code>、<code>none</code>。级别越高会插入更多边界检查与校验，代价是性能。开发阶段可使用 <code>high</code> 或 <code>all</code>，生产环境使用 <code>none</code>。</p>
+<h2 id="mma">调试大量依赖 MMA 的内核<a class="headerlink" href="#mma" title="Permanent link">&para;</a></h2>
+<p>若错误答案来自 Tensor Core 路径，应<strong>先怀疑布局</strong>——行主序与列主序，以及右操作数在内存中是 <code>[N, K]</code> 还是 <code>[K, N]</code>。再检查<strong>索引</strong>（你用 <code>.at</code> / <code>chunkat</code> 绑定的 <code>block_m</code>、<code>block_n</code> 与 K 分块）。若引入了异步拷贝或拆分了生产者与消费者 warp，再检查<strong>异步顺序</strong>。</p>
+<p>常见错误包括在分阶段数据实际为列主序时误标 <code>mma.row.row</code>，或使用与 MMA 分块几何不对齐的 <code>chunkat</code> 索引。若使用打乱加载（<code>tma.copy.swiz</code> / <code>mma.load.swiz</code>），失配往往表现为误差中的规则模式（例如每第十六个元素正确，其余错位）。</p>
+<h2 id="debug-rtti-cuda-gdb">Debug RTTI 与 <code>cuda-gdb</code><a class="headerlink" href="#debug-rtti-cuda-gdb" title="Permanent link">&para;</a></h2>
+<p>当 <code>print</code> / <code>println</code> 仍不足时，Croqtile 支持 debug RTTI（Runtime Type Information），使其类型对 <code>cuda-gdb</code> 可见。</p>
+<p>使用 <code>-g</code> 编译以启用调试符号：</p>
+<pre class="highlight"><code class="language-bash">croqtile kernel.co -g -o kernel_debug</code></pre>
+<p>生成代码包含 Croqtile 类型的 RTTI 结构：</p>
 <table>
 <thead>
 <tr>
-<th>鳄霸类型</th>
+<th>Croqtile 类型</th>
 <th>GDB 类型</th>
 <th>字段</th>
 </tr>
@@ -2599,12 +2677,12 @@
 <tr>
 <td>带形状张量（<code>s32 [M, N]</code>）</td>
 <td><code>choreo::rtti::spanned&lt;int, 2&gt;</code></td>
-<td><code>.span.data[]</code>（维度）、<code>.stride.data[]</code>（步长）、<code>.data</code>（指针）</td>
+<td><code>.span.data[]</code>（维度），<code>.stride.data[]</code>（步长），<code>.data</code>（指针）</td>
 </tr>
 <tr>
 <td>索引元组</td>
 <td><code>choreo::rtti::bounded_ituple&lt;N&gt;</code></td>
-<td><code>.data[]</code>（取值）、<code>.ub[]</code>（上界）</td>
+<td><code>.data[]</code>（取值），<code>.ub[]</code>（上界）</td>
 </tr>
 <tr>
 <td>整数元组</td>
@@ -2618,7 +2696,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>示例会话。</strong> 对调试编译内核的一次 GDB 会话：</p>
+<p><strong>示例会话：</strong></p>
 <pre class="highlight"><code class="language-bash">cuda-gdb -q ./kernel_debug
 (gdb) break my_kernel
 (gdb) run
@@ -2630,53 +2708,64 @@ $1 = 32
 $2 = 64
 (gdb) print __dbg_lhs.data != 0
 $3 = true</code></pre>
-<p>变量名上的 <code>__dbg_</code> 前缀由编译器生成——使鳄霸变量与生成 C++ 中间代码一起在 GDB 中可见。可检查张量维度、步长与数据指针，并在生成代码中单步查看 <code>foreach</code> 循环的哪次迭代产生错误值。</p>
-<h2 id="_1">综合：系统化工作流<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>以下顺序是有意为之：<strong>先做廉价编译期检查</strong>，再<strong>收窄运行时打印</strong>，接着<strong>流水线语义</strong>、<strong>布局</strong>，最后针对指针级 bug 使用<strong>调试器</strong>。</p>
-<p><img alt="调试工作流：形状 → 单 tile → 同步 → 布局 → GDB" src="../../../assets/images/ch09/fig1_debug_workflow_dark.png#only-dark" />
-<img alt="调试工作流：形状 → 单 tile → 同步 → 布局 → GDB" src="../../../assets/images/ch09/fig1_debug_workflow_light.png#only-light" /></p>
-<p><strong>1. 检查形状。</strong> 编译期用 <code>println!</code> 验证所有 <code>chunkat</code>、<code>subspan</code> 与 <code>span</code> 表达式是否产生预期 tile 大小。形状 bug 最常见——范围不一致会静默读写错误内存区域。</p>
-<p><strong>2. 检查单个 tile。</strong> 在 K 循环内添加带守卫的 <code>println</code>，仅对块 <code>(0, 0)</code> 与单个线程触发。每次 K 迭代后打印累加器值。与该输出元素的手算参考值比对。</p>
-<p><strong>3. 检查同步。</strong> 若仅在大 K 时值错误，怀疑事件次序。在生产者与消费者两侧打印 <code>iv_k</code> 与 <code>stage</code>，验证二者访问同一序列。常见 bug：消费者的 <code>trigger empty[stage]</code> 过早触发，使生产者在消费者仍读取时覆盖缓冲区。</p>
-<p><strong>4. 检查布局。</strong> 若结果呈模式性错误（例如每第 16 个元素正确，其余偏移），怀疑 <code>mma.row.row</code> 的行/列主序不匹配，或 <code>tma.copy.swiz&lt;N&gt;</code> 与 <code>mma.load.swiz&lt;N&gt;</code> 的 swizzle 模式不一致。与上文 MMA 小节交叉核对。</p>
-<p><strong>5. 指针 bug 用 GDB。</strong> 若 <code>println</code> 显示毫无道理的值（NaN、巨大整数、期望非零却为零），以 <code>-g -O0</code> 编译并在 <code>cuda-gdb</code> 中单步。检查张量指针（<code>__dbg_x.data</code>）是否指向有效内存。</p>
-<p><strong>基准测试前的性能。</strong> <code>print</code> / <code>println</code> 代价高：每次调用经全局 <code>printf</code> 缓冲区串行化并破坏吞吐测量。调试 RTTI 结构增加寄存器压力并抑制优化。基准测试前应移除所有打印并去掉 <code>-g -O0</code>。实用折衷是将打印置于 <code>#ifdef DEBUG_PRINT</code> 宏之后（第 8 章），以便从命令行开关而无需改源码：</p>
+<p>变量名上的 <code>__dbg_</code> 前缀由编译器生成——它使 Croqtile 变量与生成的 C++ 中间代码一并可见。</p>
+<h2 id="_1">综合应用：系统化工作流<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>上述顺序是有意为之：<strong>先做廉价的编译期检查</strong>，再是<strong>收窄范围的运行时打印</strong>，然后是<strong>流水线语义</strong>、<strong>布局</strong>，最后才是<strong>调试器</strong>。</p>
+<p><img alt="Debugging workflow: shapes -&gt; one tile -&gt; sync -&gt; layout -&gt; GDB" src="../../../assets/images/ch09/fig1_debug_workflow_dark.png#only-dark" />
+<img alt="Debugging workflow: shapes -&gt; one tile -&gt; sync -&gt; layout -&gt; GDB" src="../../../assets/images/ch09/fig1_debug_workflow_light.png#only-light" /></p>
+<p><strong>1. 检查形状。</strong> 在编译期使用 <code>println!</code>，确认所有 <code>chunkat</code>、<code>subspan</code> 与 <code>span</code> 表达式产生的分块尺寸符合预期。</p>
+<p><strong>2. 检查单个分块。</strong> 在 K 循环内添加带条件的 <code>println</code>，仅对块 <code>(0, 0)</code> 与某一个线程触发。在每次 K 迭代后打印累加器，并与手算参考值比对。</p>
+<p><strong>3. 检查同步。</strong> 若仅在 K 很大时值错误，应怀疑事件顺序。在生产者与消费者两侧打印 <code>iv_k</code> 与 <code>stage</code>，确认二者访问同一序列。常见缺陷：消费者的 <code>trigger empty[stage]</code> 触发过早。</p>
+<p><strong>4. 检查布局。</strong> 若结果呈模式性错误（例如每第十六个元素正确，其余错位），应怀疑 <code>mma.row.row</code> 中行主序与列主序失配，或 <code>tma.copy.swiz&lt;N&gt;</code> 与 <code>mma.load.swiz&lt;N&gt;</code> 之间的 swizzle 模式不一致。</p>
+<p><strong>5. 用 GDB 查指针类缺陷。</strong> 若 <code>println</code> 显示的值不合理（NaN、巨大整数、本应为非零却为零），使用 <code>-g</code> 编译并在 <code>cuda-gdb</code> 中单步执行。检查张量指针（<code>__dbg_x.data</code>）。</p>
+<p><strong>性能提示。</strong> <code>print</code> / <code>println</code> 代价很高：每次调用都经全局 <code>printf</code> 缓冲区串行化，会严重拉低吞吐。Debug RTTI 会增加寄存器压力。基准测试前应移除所有打印并去掉 <code>-g</code>。实用折衷是使用 <code>#ifdef DEBUG_PRINT</code>（第 8 章）：</p>
 <pre class="highlight"><code class="language-choreo">#ifdef DEBUG_PRINT
   println("tile_k=", iv_k, " accum=", mc);
 #endif</code></pre>
-<p>使用 <code>croktile kernel.co -DDEBUG_PRINT</code> 编译以启用；不带该标志则为生产运行。</p>
+<p>使用 <code>croqtile kernel.co -DDEBUG_PRINT</code> 编译以启用，或不带该标志用于生产运行。</p>
 <h2 id="_2">小结<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>构造 / 工具</th>
-<th>作用</th>
+<th>工具</th>
+<th>层级</th>
+<th>代价</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>print!</code> / <code>println!</code></td>
-<td>编译期形状与类型检查；无需启动内核</td>
+<td>编译期</td>
+<td>几乎无——无需启动内核</td>
+</tr>
+<tr>
+<td><code>assert(expr, "msg")</code></td>
+<td>运行时</td>
+<td>低——违反时中止</td>
 </tr>
 <tr>
 <td><code>print</code> / <code>println</code></td>
-<td>设备端 <code>printf</code>；用守卫避免日志洪水</td>
+<td>运行时</td>
+<td>中——经 <code>printf</code> 串行化</td>
 </tr>
 <tr>
-<td>MMA 调试</td>
-<td>布局 → 索引 → 异步次序；对照 <code>mma.*</code> 与实际内存序</td>
+<td><code>-rtc high</code></td>
+<td>运行时</td>
+<td>中——边界检查</td>
 </tr>
 <tr>
-<td><code>-g -O0</code>、<code>cuda-gdb</code>、RTTI</td>
-<td>检查 <code>__dbg_*</code> 张量、指针与控制流</td>
+<td><code>-v</code> / <code>--verbose</code></td>
+<td>编译器</td>
+<td>几乎无——显示子进程调用</td>
 </tr>
 <tr>
-<td><code>#ifdef DEBUG_PRINT</code></td>
-<td>可选 printf，无永久开销</td>
+<td><code>-g</code> + <code>cuda-gdb</code> + RTTI</td>
+<td>运行时</td>
+<td>高——调试符号，无优化</td>
 </tr>
 </tbody>
 </table>
-<p>你从第 1 章的<strong>逐元素加法</strong>出发，依次学习了<strong>数据搬运</strong>（第 2 章）、<strong>并行</strong>（第 3 章）、<strong>张量核心</strong>（第 4 章）、<strong>warp 特化</strong>（第 5 章）、<strong>流水线</strong>（第 6 章）、<strong>TMA</strong>（第 7 章）、<strong>C++ 互操作</strong>（第 8 章）与<strong>调试</strong>（第 9 章）。下一步可打开 <code>croktile/benchmark/</code> 目录中的基准内核，将其各区域映射到本章，修改一个常量，重建并测量。小而刻意的修改优于大重写——在 GPU 上追逐神秘错误答案之前，<code>#error</code> 守卫会早早告诉你配置何时不再合法。</p>
+<p>你从第 1 章的元素级加法起步，依次学习了数据搬运（第 2 章）、并行（第 3 章）、Tensor Core（第 4 章）、控制流（第 5 章）、流水线（第 6 章）、TMA（第 7 章）、C++ 互操作（第 8 章）以及调试（本章）。下一步可打开 <code>croqtile/benchmark/</code> 目录中的基准内核，将其各区域对应到本章内容，修改一个常量，重新构建并测量。</p>
 
 
 

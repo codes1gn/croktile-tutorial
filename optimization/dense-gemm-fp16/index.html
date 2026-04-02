@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://codes1gn.github.io/croktile-tutorial/optimization/dense-gemm-fp16/">
+        <link rel="canonical" href="https://codes1gn.github.io/croqtile-tutorial/optimization/dense-gemm-fp16/">
       
       
         <link rel="prev" href="../setup-profiling/">
@@ -29,7 +29,7 @@
     
     
       
-        <title>Dense GEMM FP16 - Croktile</title>
+        <title>Dense GEMM FP16 - Croqtile</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#how-to-optimize-a-croktile-fp16-gemm-for-cublas-like-performance-a-worklog" class="md-skip">
+        <a href="#how-to-optimize-a-croqtile-fp16-gemm-for-cublas-like-performance-a-worklog" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +100,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Croktile" class="md-header__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../.." title="Croqtile" class="md-header__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../assets/images/logo-2.png" alt="logo">
 
@@ -113,7 +113,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Croktile
+            Croqtile
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -227,13 +227,13 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/codes1gn/croktile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/codes1gn/croqtile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
       </div>
@@ -263,22 +263,22 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Croktile" class="md-nav__button md-logo" aria-label="Croktile" data-md-component="logo">
+    <a href="../.." title="Croqtile" class="md-nav__button md-logo" aria-label="Croqtile" data-md-component="logo">
       
   <img src="../../assets/images/logo-2.png" alt="logo">
 
     </a>
-    Croktile
+    Croqtile
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/codes1gn/croktile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/codes1gn/croqtile-tutorial" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    codes1gn/croktile-tutorial
+    codes1gn/croqtile-tutorial
   </div>
 </a>
     </div>
@@ -326,7 +326,7 @@
   <span class="md-ellipsis">
     
   
-    What is Good in CrokTile
+    What is Good in CroqTile
   
 
     
@@ -456,14 +456,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/ch01-hello-croktile/" class="md-nav__link">
+      <a href="../../tutorial/ch01-hello-croqtile/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Ch 1: Hello Croktile
+    Ch 1: Hello Croqtile
   
 
     
@@ -1248,7 +1248,7 @@
   <span class="md-ellipsis">
     
   
-    Croktile-C++ Program Structure
+    Croqtile-C++ Program Structure
   
 
     
@@ -2727,9 +2727,9 @@
   
 
 
-<h1 id="how-to-optimize-a-croktile-fp16-gemm-for-cublas-like-performance-a-worklog">How to Optimize a Croktile FP16 GEMM for cuBLAS-like Performance: a Worklog<a class="headerlink" href="#how-to-optimize-a-croktile-fp16-gemm-for-cublas-like-performance-a-worklog" title="Permanent link">&para;</a></h1>
-<p>In this post, I'll iteratively optimize a Hopper (SM90a) half-precision matrix multiply written in Croktile. My goal is not to build a cuBLAS replacement, but to deeply understand the performance characteristics of H800 GPUs through the lens of Croktile's abstractions — warp specialization, TMA pipelining, tile geometry, and compiler-flag tuning. You can find all kernel sources under <code>benchmark/performance/matmul/</code> in the Croktile repository.</p>
-<p>Matrix multiplication on GPUs may currently be the most important algorithm that exists, considering it makes up almost all the FLOPs during training and inference of large deep-learning models. So how much work is it to push a correct Croktile SGEMM from "it runs" to "it matches cuBLAS"? Starting from a baseline and step-by-step applying optimizations, we get within 101% of cuBLAS:</p>
+<h1 id="how-to-optimize-a-croqtile-fp16-gemm-for-cublas-like-performance-a-worklog">How to Optimize a Croqtile FP16 GEMM for cuBLAS-like Performance: a Worklog<a class="headerlink" href="#how-to-optimize-a-croqtile-fp16-gemm-for-cublas-like-performance-a-worklog" title="Permanent link">&para;</a></h1>
+<p>In this post, I'll iteratively optimize a Hopper (SM90a) half-precision matrix multiply written in Croqtile. My goal is not to build a cuBLAS replacement, but to deeply understand the performance characteristics of H800 GPUs through the lens of Croqtile's abstractions — warp specialization, TMA pipelining, tile geometry, and compiler-flag tuning. You can find all kernel sources under <code>benchmark/performance/matmul/</code> in the Croqtile repository.</p>
+<p>Matrix multiplication on GPUs may currently be the most important algorithm that exists, considering it makes up almost all the FLOPs during training and inference of large deep-learning models. So how much work is it to push a correct Croqtile SGEMM from "it runs" to "it matches cuBLAS"? Starting from a baseline and step-by-step applying optimizations, we get within 101% of cuBLAS:</p>
 <table>
 <thead>
 <tr>
@@ -2779,14 +2779,14 @@
 </tbody>
 </table>
 <h2 id="step-0-the-baseline">Step 0: The Baseline<a class="headerlink" href="#step-0-the-baseline" title="Permanent link">&para;</a></h2>
-<p>In Croktile's programming model, a matmul kernel is a <code>__co__</code> function that describes operand flow through TMA, shared memory staging, and WGMMA accumulation. The Croktile compiler transpiles this into Hopper-native PTX with warp specialization, pipelining, and swizzled addressing. The important knobs are:</p>
+<p>In Croqtile's programming model, a matmul kernel is a <code>__co__</code> function that describes operand flow through TMA, shared memory staging, and WGMMA accumulation. The Croqtile compiler transpiles this into Hopper-native PTX with warp specialization, pipelining, and swizzled addressing. The important knobs are:</p>
 <ul>
 <li><code>MATMUL_WARP_N</code> — the N extent of the WGMMA tile (how wide each block's output is)</li>
 <li><code>MATMUL_STAGES</code> — operand ring slots along K (how deep the async pipeline is)</li>
 <li>Warp specialization mode — 1p1c (one producer, one consumer) or 1p2c</li>
 </ul>
 <p>The baseline kernel <code>matmul_f16_dyn_sm90.co</code> uses <strong>1p1c</strong> warp specialization (one TMA producer warpgroup, one WGMMA consumer warpgroup — roles from <a href="../../tutorial/ch05-branch-control/">Chapter 5</a>), <strong>WN=128</strong>, and <strong>4 pipeline stages</strong> (the pipelining idea from <a href="../../tutorial/ch06-synchronization/">Chapter 6</a>). Compile and run:</p>
-<pre class="highlight"><code class="language-bash">./croktile -gs -t cute -arch=sm_90a --use-warpspec --stmatrix \
+<pre class="highlight"><code class="language-bash">./croqtile -gs -t cute -arch=sm_90a --use-warpspec --stmatrix \
   benchmark/performance/matmul/matmul_f16_dyn_sm90.co \
   -o /tmp/matmul.cute.result &amp;&amp; bash /tmp/matmul.cute.result --execute</code></pre>
 <p>Result: <strong>208.7 TFLOPS</strong> at 8192³. Not bad in the abstract — but far from what the hardware can deliver.</p>
@@ -2860,7 +2860,7 @@ K-unroll:         enabled
 <p>At WN=168, shared memory exceeds 228 KB. Residency drops from 2 blocks to 1 block per SM. Throughput falls off a cliff — not a few percent, but a catastrophic loss of latency hiding. You catch this by computing <code>STAGES × tile_dimensions × element_size</code> and comparing against the 228 KB budget, not by guessing.</p>
 <hr />
 <h2 id="compiler-flags-the-last-layer">Compiler Flags: The Last Layer<a class="headerlink" href="#compiler-flags-the-last-layer" title="Permanent link">&para;</a></h2>
-<p>With function structure settled, how the compiler lowers Croktile to PTX matters. The shipped builds share a common flag bundle:</p>
+<p>With function structure settled, how the compiler lowers Croqtile to PTX matters. The shipped builds share a common flag bundle:</p>
 <table>
 <thead>
 <tr>
@@ -2898,8 +2898,8 @@ K-unroll:         enabled
 <p>Flags matter — iter023 showed +5% at 2048³ from <code>--ptx-barrier</code> and <code>--stmatrix</code> alone. But the lesson from the full log is <strong>order of operations</strong>: freeze flags while sweeping WN and STAGES, unfreeze only after split-output lands. Over-tuning flags while SMEM is wrong is a common failure mode.</p>
 <hr />
 <h2 id="shipped-checkpoints-and-reproduction">Shipped Checkpoints and Reproduction<a class="headerlink" href="#shipped-checkpoints-and-reproduction" title="Permanent link">&para;</a></h2>
-<p>From the Croktile repo root after <code>make build</code>:</p>
-<pre class="highlight"><code class="language-bash">./croktile -gs -t cute -arch=sm_90a \
+<p>From the Croqtile repo root after <code>make build</code>:</p>
+<pre class="highlight"><code class="language-bash">./croqtile -gs -t cute -arch=sm_90a \
   --use-warpspec --stmatrix --hoist-offset --hoist-scale \
   --ptx-barrier --tma-cluster-aware \
   benchmark/performance/matmul/&lt;INPUT&gt;.co \
@@ -2946,12 +2946,12 @@ K-unroll:         enabled
 </tbody>
 </table>
 <p><strong>Choosing:</strong> iter057 for peak 8192³ headline. iter061 for one binary that behaves well across sizes (100.5% cuBLAS at 2048³, 80.7% at 8192³).</p>
-<p>Harness defaults: <code>CROKTILE_TIMING_WARMUP=10</code>, <code>CROKTILE_TIMING_REPEAT=500</code>. Build from the same revision as the <code>.co</code> file to avoid codegen drift. Use <code>-arch=sm_90a</code>. When comparing to external cuBLAS figures, note driver version and clock behavior.</p>
+<p>Harness defaults: <code>CROQTILE_TIMING_WARMUP=10</code>, <code>CROQTILE_TIMING_REPEAT=500</code>. Build from the same revision as the <code>.co</code> file to avoid codegen drift. Use <code>-arch=sm_90a</code>. When comparing to external cuBLAS figures, note driver version and clock behavior.</p>
 <hr />
 <h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
 <p>Writing this took ~65 iterations across three phases. Phase 1 spent 38 iterations improving by +5%. Phase 2 spent 14 iterations improving by +83%. Phase 3 refined the last few TFLOPS and discovered the WN=168 failure. Power laws are everywhere.</p>
 <p>The largest single structural win was not a compiler flag — it was <strong>1p2c split-output</strong> moving TFLOPS into the 370–382 band. Flags like <code>--stmatrix</code> matter, but they cannot recover serialization on <code>output_s</code> if two consumers share one accumulator tile. When you face a similar ceiling in your own kernel, check whether the output path is the bottleneck before reaching for instruction-level levers.</p>
-<p>The +83% came entirely from Croktile function geometry, output staging, and compiler flags — no mixed precision, no split-K, no CUDA Graph capture.</p>
+<p>The +83% came entirely from Croqtile function geometry, output staging, and compiler flags — no mixed precision, no split-K, no CUDA Graph capture.</p>
 <p>Full iteration tables: <code>README_matmul_f16_aitune_2026-03-23.md</code>. Sources: <code>matmul_f16_dyn_sm90.co</code>, <code>matmul_f16_dyn_sm90_warpspec_1p1c.co</code>, <code>matmul_f16_dyn_sm90_warpspec_1p2c.co</code>, and dated <code>*_iter048_*</code> through <code>*_iter061_*</code> builds.</p>
 
 
