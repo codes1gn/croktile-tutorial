@@ -577,7 +577,7 @@
   <span class="md-ellipsis">
     
   
-    Ch 5: Branch & Control
+    Ch 5: Warp Specialization
   
 
     
@@ -2755,7 +2755,7 @@ int main() {   // ④
 }</code></pre>
 <p>The compiler splits this into a single intermediate <code>.cu</code> file, then hands it to <code>nvcc</code>:</p>
 <p><img alt=".co compilation: Croqtile compiler transforms __co__ and passes through __device__ and host C++, merging everything into one .cu file for nvcc" src="../../assets/images/ch08/fig1_compilation_flow_dark.png#only-dark" />
-<img alt=".co compilation: Croqtile compiler transforms __co__ and passes through __device__ and host C++, merging everything into one .cu file for nvcc" src="../../assets/images/ch08/fig1_compilation_flow_dark.png#only-light" /></p>
+<img alt=".co compilation: Croqtile compiler transforms __co__ and passes through __device__ and host C++, merging everything into one .cu file for nvcc" src="../../assets/images/ch08/fig1_compilation_flow_light.png#only-light" /></p>
 <p>What happens to each region:</p>
 <ul>
 <li><strong>① <code>__device__</code> functions</strong> are copied into the generated <code>.cu</code> file <strong>verbatim</strong>. The Croqtile compiler does not parse their bodies, does not rewrite them, does not manage their register allocation. They appear in the intermediate source exactly as you wrote them. This is the key distinction from <code>__co__</code> functions: a <code>__device__</code> function is pure CUDA that happens to live in a <code>.co</code> file.</li>

@@ -577,7 +577,7 @@
   <span class="md-ellipsis">
     
   
-    Ch 5: Branch & Control
+    Ch 5: Warp Specialization
   
 
     
@@ -2755,7 +2755,7 @@ int main() {   // ④
 }</code></pre>
 <p>编译器将所有内容合并为一个 <code>.cu</code> 中间文件，然后交由 <code>nvcc</code> 处理：</p>
 <p><img alt=".co compilation: Croqtile compiler transforms __co__ and passes through __device__ and host C++, merging everything into one .cu file for nvcc" src="../../../assets/images/ch08/fig1_compilation_flow_dark.png#only-dark" />
-<img alt=".co compilation: Croqtile compiler transforms __co__ and passes through __device__ and host C++, merging everything into one .cu file for nvcc" src="../../../assets/images/ch08/fig1_compilation_flow_dark.png#only-light" /></p>
+<img alt=".co compilation: Croqtile compiler transforms __co__ and passes through __device__ and host C++, merging everything into one .cu file for nvcc" src="../../../assets/images/ch08/fig1_compilation_flow_light.png#only-light" /></p>
 <p>各区域的处理方式：</p>
 <ul>
 <li><strong>① <code>__device__</code> 函数</strong> 被<strong>逐字拷贝</strong>到生成的 <code>.cu</code> 文件。鳄霸编译器不解析其函数体、不改写、不管理其寄存器分配。它们出现在中间源码中时与你书写时完全一致。这是与 <code>__co__</code> 函数的关键区别：<code>__device__</code> 函数是恰好住在 <code>.co</code> 文件中的纯 CUDA 代码。</li>

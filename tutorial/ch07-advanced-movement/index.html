@@ -577,7 +577,7 @@
   <span class="md-ellipsis">
     
   
-    Ch 5: Branch & Control
+    Ch 5: Warp Specialization
   
 
     
@@ -719,10 +719,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#tma-in-a-pipelined-matmul" class="md-nav__link">
+  <a href="#example-tma-in-a-pipelined-matmul" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TMA in a pipelined matmul
+        Example: TMA in a pipelined matmul
       
     </span>
   </a>
@@ -2510,10 +2510,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#tma-in-a-pipelined-matmul" class="md-nav__link">
+  <a href="#example-tma-in-a-pipelined-matmul" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TMA in a pipelined matmul
+        Example: TMA in a pipelined matmul
       
     </span>
   </a>
@@ -2710,9 +2710,9 @@ tma.copy.swiz&lt;3&gt; src =&gt; dst;       // hardware TMA with swizzle</code><
 <p>In raw CUDA, a programmer implementing data movement has enormous freedom: arbitrary pointer arithmetic, variable-stride access, hand-computed bank-conflict avoidance, custom swizzle formulas. This flexibility is a double-edged sword. The space of possible data movement patterns is vast, but the subset that actually performs well on GPU hardware is narrow — it requires coalesced global loads, conflict-free shared-memory access, and correct swizzle alignment. Getting any of these wrong silently degrades throughput by 2–32×.</p>
 <p>Croqtile takes the opposite approach: it restricts the expressible patterns to those that are <strong>guaranteed to be in the performance sweet spot</strong>. When you write <code>dma.copy</code> or <code>tma.copy</code>, the compiler automatically handles coalesced access, bank-conflict-free layout, and swizzle alignment. There is no way to accidentally write a strided, uncoalesced global load or a bank-conflicted shared-memory layout — the syntax simply does not allow it.</p>
 <p><img alt="Expressiveness vs performance: CUDA's wide range includes many slow patterns; Croqtile's restricted range maps entirely to the performance sweet spot" src="../../assets/images/ch07/fig8_expressiveness_dark.png#only-dark" />
-<img alt="Expressiveness vs performance: CUDA's wide range includes many slow patterns; Croqtile's restricted range maps entirely to the performance sweet spot" src="../../assets/images/ch07/fig8_expressiveness_dark.png#only-light" /></p>
+<img alt="Expressiveness vs performance: CUDA's wide range includes many slow patterns; Croqtile's restricted range maps entirely to the performance sweet spot" src="../../assets/images/ch07/fig8_expressiveness_light.png#only-light" /></p>
 <p>TMA's descriptor-based interface is an extreme instance of this philosophy: it supports only a few tile-aligned transfer patterns, but those patterns are exactly the ones the hardware is optimized for. Croqtile's <code>dma.copy</code> follows the same principle — it generates only patterns that are coalesced and conflict-free, even though the underlying <code>LDG</code>/<code>STS</code> instructions can express far more (including many slow patterns). The trade is explicit: you give up the ability to write arbitrary data movement, and in return, every data movement you write is fast.</p>
-<h2 id="tma-in-a-pipelined-matmul">TMA in a pipelined matmul<a class="headerlink" href="#tma-in-a-pipelined-matmul" title="Permanent link">&para;</a></h2>
+<h2 id="example-tma-in-a-pipelined-matmul">Example: TMA in a pipelined matmul<a class="headerlink" href="#example-tma-in-a-pipelined-matmul" title="Permanent link">&para;</a></h2>
 <p>The pipeline skeleton from Chapter 6 is unchanged: ring of stages, <code>wait</code> / <code>trigger</code> on events, MMA commit, consumer drains tiles while producer fills the next slot. Here the producer swaps <code>dma.copy</code> for <code>tma.copy.swiz&lt;3&gt;</code> and the consumer swaps <code>mma.load</code> for <code>mma.load.swiz&lt;3&gt;</code>:</p>
 <pre class="highlight"><code class="language-choreo">__co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
   parallel {block_m, block_n} by [cdiv(M, MATMUL_WARP_M), cdiv(N, MATMUL_WARP_N)] : block {
@@ -2757,39 +2757,44 @@ tma.copy.swiz&lt;3&gt; src =&gt; dst;       // hardware TMA with swizzle</code><
 }</code></pre>
 <p>Compared to the Chapter 6 <code>dma.copy</code> version, only the ingress and operand load lines change; events, staging indices, and commit stay the same. The writeback to global memory still uses <code>dma.copy</code> — choose TMA or DMA for stores according to your target.</p>
 <h2 id="handling-irregular-access">Handling irregular access<a class="headerlink" href="#handling-irregular-access" title="Permanent link">&para;</a></h2>
-<p>Uniform tiling with <code>chunkat</code> and <code>subspan(...).at(...)</code> covers many kernels. Real workloads also need windows at arbitrary offsets, strides between tiles, partial tiles at boundaries, and layout reinterpretation. The subsections below collect those tools.</p>
+<p>The tiling primitives introduced so far — <code>chunkat</code>, <code>subspan(...).at(...)</code> — assume tensors that divide evenly into tiles. This works for textbook GEMM where M, N, K are multiples of the tile dimensions. Production kernels are rarely so tidy. Expert batches start at dynamic offsets. Convolution windows overlap. The last K-tile is almost never an exact multiple of TILE_K. Some inputs arrive as flat buffers that need reshaping before MMA can consume them.</p>
+<p>Croqtile provides four tools for these cases. Each one modifies how the compiler interprets a tensor's addressing without touching the pipeline structure — DMA, TMA, MMA, events, swizzle all continue to work unchanged.</p>
 <h3 id="arbitrary-offset-windows-view-and-from">Arbitrary-offset windows: <code>view</code> and <code>from</code><a class="headerlink" href="#arbitrary-offset-windows-view-and-from" title="Permanent link">&para;</a></h3>
-<p><code>view(M, N).from(row, col)</code> defines an <code>M x N</code> rectangle starting at <code>(row, col)</code> — no requirement that the origin aligns to a precomputed tile grid.</p>
+<p><code>chunkat</code> divides a tensor into a regular grid of equal-sized tiles. But what if the slice you need does not start on a tile boundary? Consider a mixture-of-experts (MoE) kernel: each expert processes a different number of tokens, so the starting row for each expert's operand is determined at runtime. You cannot precompute a fixed tile grid.</p>
+<p><code>view(M, N).from(row, col)</code> defines an <code>M x N</code> rectangle starting at any <code>(row, col)</code> — no alignment requirement:</p>
 <pre class="highlight"><code class="language-choreo">patch = matrix.view(16, 16).from(37, 50);</code></pre>
-<p>This is a <code>[16, 16]</code> slice starting at row 37, column 50. Alignment is not required.</p>
+<p>This is a <code>[16, 16]</code> slice starting at row 37, column 50. The origin can be any runtime value.</p>
 <p><img alt="chunkat (aligned grid) vs view/from (arbitrary offset window)" src="../../assets/images/ch07/fig4_view_from_dark.png#only-dark" />
 <img alt="chunkat (aligned grid) vs view/from (arbitrary offset window)" src="../../assets/images/ch07/fig4_view_from_light.png#only-light" /></p>
-<p><strong>When to use it.</strong> <code>chunkat</code> needs the tensor divided evenly; <code>view(...).from(...)</code> does not. Prefer <code>chunkat</code> for regular tiling and <code>view</code> / <code>from</code> when the window is ragged or runtime-positioned.</p>
+<p>The power of <code>view</code> / <code>from</code> is composability: once you carve out a window, all downstream operations — <code>subspan</code>, <code>chunkat</code>, <code>dma.copy</code>, <code>tma.copy</code> — apply to the window as if it were a standalone tensor. The pipeline stays unchanged; only the origin shifts:</p>
 <pre class="highlight"><code class="language-choreo">expert_lhs = lhs.view(expert_M, K).from(expert_offset, 0);
 dma.copy expert_lhs.subspan(WARP_M, TILE_K).at(block_m, iv_k) =&gt; shared;</code></pre>
-<p>In mixture-of-experts stacks, each expert's token batch starts at a dynamic row <code>expert_offset</code>. Slicing with <code>view</code> / <code>from</code> rewires the operand before the rest of the pipeline — DMA, MMA, events — continues unchanged.</p>
+<p>In an MoE stack, each expert's token batch starts at a dynamic row <code>expert_offset</code>. The <code>view</code> / <code>from</code> call rewires the operand at the top of the pipeline; everything below — DMA, staging, MMA loop — runs the same code for every expert.</p>
+<p><strong>When to use it.</strong> Prefer <code>chunkat</code> when the tensor divides evenly into tiles at compile time. Use <code>view</code> / <code>from</code> when the window's origin or extent is determined at runtime, or when the geometry does not align to the tile grid.</p>
 <h3 id="strided-tiles-subspan-step-and-at">Strided tiles: <code>.subspan</code>, <code>.step</code>, and <code>.at</code><a class="headerlink" href="#strided-tiles-subspan-step-and-at" title="Permanent link">&para;</a></h3>
-<p><code>subspan(M, K).at(i, j)</code> selects the tile at logical tile indices <code>(i, j)</code> with extent <code>[M, K]</code>. Adding <code>.step(sM, sK)</code> spaces tiles <code>sM</code> rows and <code>sK</code> columns apart instead of packing them contiguously:</p>
+<p><code>subspan(M, K).at(i, j)</code> selects the tile at logical tile indices <code>(i, j)</code> with extent <code>[M, K]</code>. By default, tiles are packed contiguously: tile <code>(1, 0)</code> starts immediately after tile <code>(0, 0)</code>. But some layouts space tiles apart — either because there is padding between rows, or because a stencil kernel needs overlapping windows.</p>
+<p>Adding <code>.step(sM, sK)</code> overrides the stride: tiles are spaced <code>sM</code> rows and <code>sK</code> columns apart instead of being packed:</p>
 <pre class="highlight"><code class="language-choreo">matrix.subspan(16, 16).step(32, 32).at(i, j);</code></pre>
 <p><img alt="Packed tiling vs strided tiling with .step" src="../../assets/images/ch07/fig5_subspan_step_dark.png#only-dark" />
 <img alt="Packed tiling vs strided tiling with .step" src="../../assets/images/ch07/fig5_subspan_step_light.png#only-light" /></p>
-<p>Tile <code>(0,0)</code> starts at <code>(0,0)</code>, but tile <code>(1,0)</code> starts at <code>(32,0)</code> and <code>(0,1)</code> at <code>(0,32)</code>. Omitting <code>.step</code> uses a step equal to the tile size — the packed case.</p>
-<p><strong>Typical uses:</strong> skipping padding or guard bands, overlapping stencils where the step is smaller than the extent, or matching an outer layout that is not dense tile-major.</p>
+<p>Tile <code>(0,0)</code> starts at <code>(0,0)</code>, but tile <code>(1,0)</code> starts at row 32 (not row 16), leaving a 16-row gap. Omitting <code>.step</code> uses a step equal to the tile size — the packed case.</p>
+<p><strong>When you need this.</strong> Skipping padding or guard bands between rows. Overlapping stencil windows where the step is smaller than the tile extent (e.g., a <code>16 x 16</code> tile sliding by 8 rows). Matching an outer memory layout that is not dense tile-major — for instance, when tiles are interleaved with metadata.</p>
 <h3 id="zero-padding-zfill">Zero-padding: <code>.zfill</code><a class="headerlink" href="#zero-padding-zfill" title="Permanent link">&para;</a></h3>
-<p>When <code>M</code> or <code>K</code> is not a multiple of the tile size, the last tile along an axis is partial. Reading past the tensor's edge is undefined unless you explicitly pad.</p>
+<p>Every tiled kernel faces the same edge case: what happens when M or K is not a multiple of the tile size? The last tile along that axis is partial — some of its elements lie beyond the tensor boundary. Reading those addresses is undefined behavior on the GPU.</p>
+<p>The brute-force fix is to add a special code path for the boundary tile. But this breaks the uniformity of the MMA loop and adds branches that the compiler cannot optimize away. <code>.zfill</code> solves this elegantly:</p>
 <pre class="highlight"><code class="language-choreo">tma.copy.swiz&lt;3&gt; lhs.subspan(WARP_M, TILE_K).at(block_m, iv_k).zfill
   =&gt; lhs_load_s;</code></pre>
-<p><code>.zfill</code> applies to the source side of a copy: out-of-range elements are written as zero in the destination tile. Zeros contribute nothing to a GEMM accumulation, so the MMA loop stays uniform while remaining mathematically correct for partial edges.</p>
+<p><code>.zfill</code> applies to the source side of a copy: out-of-range elements are written as zero in the destination tile. For a GEMM, zeros contribute nothing to the accumulation (0 × anything = 0), so the MMA loop stays completely uniform — same code for interior tiles and boundary tiles — while remaining mathematically correct. No branches, no special cases, no performance penalty.</p>
 <p><img alt=".zfill: zero-padding partial tiles at the tensor boundary" src="../../assets/images/ch07/fig6_zfill_dark.png#only-dark" />
 <img alt=".zfill: zero-padding partial tiles at the tensor boundary" src="../../assets/images/ch07/fig6_zfill_light.png#only-light" /></p>
 <h3 id="layout-reinterpretation-span_as">Layout reinterpretation: <code>span_as</code><a class="headerlink" href="#layout-reinterpretation-span_as" title="Permanent link">&para;</a></h3>
-<p><code>span_as</code> reinterprets a buffer's linear storage as another shape with the same element count — no copy.</p>
+<p>Some kernels load data as a flat 1D strip but need to feed it to MMA as a 2D matrix. A naive approach would copy the data into a reshaped buffer — wasting shared memory and bandwidth. <code>span_as</code> avoids this by reinterpreting the existing buffer's shape in place:</p>
 <pre class="highlight"><code class="language-choreo">flat_buffer.span_as([rows, cols])</code></pre>
-<p>Element count is preserved; only the logical rank changes.</p>
+<p>Element count is preserved; only the logical rank changes. No data is moved.</p>
 <pre class="highlight"><code class="language-choreo">strip_load = dma.copy data.chunkat(tile) =&gt; shared;
 tile_2d = strip_load.data.span_as([tile_m, tile_k]);
 ma = mma.load tile_2d.chunkat(_, iv_warp);</code></pre>
-<p>This exposes a loaded 1D strip as a matrix for <code>chunkat</code> without an extra copy. <code>rows * cols</code> must equal the span length of the underlying storage, or the compiler rejects the program.</p>
+<p>The loaded 1D strip is exposed as a 2D matrix for <code>chunkat</code> and MMA operand loading, without an extra copy or additional shared memory. <code>rows * cols</code> must equal the span length of the underlying storage, or the compiler rejects the program — this invariant is checked at compile time, not at runtime.</p>
 <p><img alt="span_as: zero-copy shape reinterpretation from 1D to 2D" src="../../assets/images/ch07/fig7_span_as_dark.png#only-dark" />
 <img alt="span_as: zero-copy shape reinterpretation from 1D to 2D" src="../../assets/images/ch07/fig7_span_as_light.png#only-light" /></p>
 <h2 id="chapter-summary">Chapter summary<a class="headerlink" href="#chapter-summary" title="Permanent link">&para;</a></h2>
