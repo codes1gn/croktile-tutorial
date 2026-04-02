@@ -175,6 +175,23 @@ __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, 
 
 两种布局本身不会改变数学结果；在浮点结合律意义下均可一致。当 `total_tiles` 远大于 SM 数量时——大 GEMM 常见——持久化调度往往更划算。
 
+## `parallel.async` 与 `stream s`：非阻塞启动
+
+上文均在**内核**内部运行。有时你需要的控制在**宿主端**：在不阻塞宿主线程的情况下启动网格，或将不同网格绑定到不同 CUDA 流，使它们在 GPU 上并发执行。
+
+```choreo
+parallel.async {px, py} by [grid_m, grid_n] : block {
+  stream s;
+  // kernel body
+}
+```
+
+**`parallel.async`** 立即将控制权交还宿主——内核已入队，但宿主不等待其完成。这相当于在鳄霸（Croktile）中用非默认流调用 `cudaLaunchKernel` 的**非阻塞** launch。
+
+**`stream s`** 在 block 体内将内核绑定到 CUDA 流 `s`。若有足够 SM，使用不同流的多个 `parallel.async` 块可在 GPU 上重叠。若无 `stream s`，默认流会使各次 launch 串行。
+
+这是**宿主端编排**，而非内核内控制流。它不能替代用于 **warp 特化**的 `inthreads.async` 或用于运行时谓词的 `if`——它决定的是相对其他网格，*何时*、*在何处*运行某一网格。
+
 ## 本章小结
 
 | 主题 | 要点 |
@@ -183,6 +200,7 @@ __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, 
 | `inthreads.async` | 结构性：不同线程不同 body——并非共享的 `if`。 |
 | `if` | 运行时：每条线程求值条件；为假则跳过 body。 |
 | 持久化内核 | 固定 `NUM_SMS` 个 block，线性 tile id，用 `#` 条带化，用 `if` 守卫。 |
+| `parallel.async` / `stream s` | 宿主端异步 launch 与流绑定——与内核内特化正交。 |
 | `cdiv` | 向上取整除法，用于 tile 计数与循环边界（全书通用；无单独配方）。 |
 
 **新语法**
@@ -193,5 +211,7 @@ __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, 
 | `if (expr) { ... }` | 运行时条件——`expr` 为假时跳过 body |
 | `tile_id = tile_iter # block_id` | 组合迭代索引与 block 索引以实现 tile 条带化 |
 | `int total_tiles = expr` | 鳄霸函数中的局部整数 |
+| `parallel.async ... : block` | 非阻塞异步内核 launch |
+| `stream s` | 将内核 body 绑定到 CUDA 流 `s` |
 
 要使 1P1C 骨架安全，生产者与消费者仍需对“就绪”有共同约定。[第 6 章](ch06-synchronization.md) 增加 **event**、**swap** 与 **pipeline** 模式，使两侧可在时间上重叠而不在共享内存上竞态。

@@ -175,6 +175,23 @@ The inner K-loop and MMA body match the non-persistent style from Chapter 4. Onl
 
 Neither layout changes the mathematical result by itself; both can match modulo floating-point associativity. Persistent scheduling tends to pay off when `total_tiles` is much larger than the number of SMs — typical for large GEMMs.
 
+## `parallel.async` and `stream s`: Non-Blocking Launch
+
+Everything above runs inside the kernel. Sometimes the control you need is at the **host level**: launch a grid without blocking the host thread, or pin different grids to different CUDA streams so they can execute concurrently on the GPU.
+
+```choreo
+parallel.async {px, py} by [grid_m, grid_n] : block {
+  stream s;
+  // kernel body
+}
+```
+
+**`parallel.async`** returns control to the host immediately — the kernel is enqueued but the host does not wait for it to finish. This is the Croktile equivalent of `cudaLaunchKernel` with a non-default stream.
+
+**`stream s`** inside the block body pins the kernel to CUDA stream `s`. Multiple `parallel.async` blocks with different streams can overlap on the GPU if there are enough SMs. Without `stream s`, the default stream serializes launches.
+
+This is **host orchestration**, not in-kernel control flow. It does not replace `inthreads.async` for warp specialization or `if` for runtime predicates — it decides *when* and *where* a grid runs relative to other grids.
+
 ## Chapter Summary
 
 | Topic | Takeaway |
@@ -183,6 +200,7 @@ Neither layout changes the mathematical result by itself; both can match modulo 
 | `inthreads.async` | Structural: different bodies for different threads — not a shared `if`. |
 | `if` | Runtime: every thread evaluates the condition; false threads skip the body. |
 | Persistent kernels | Fixed `NUM_SMS` blocks, linear tile ids, striping with `#`, guard with `if`. |
+| `parallel.async` / `stream s` | Host-side async launch and stream assignment — orthogonal to in-kernel specialization. |
 | `cdiv` | Ceiling division for tile counts and loop bounds (used throughout; no separate recipe needed). |
 
 **New syntax**
@@ -193,5 +211,7 @@ Neither layout changes the mathematical result by itself; both can match modulo 
 | `if (expr) { ... }` | Runtime conditional — skip body when `expr` is false |
 | `tile_id = tile_iter # block_id` | Compose iteration index with block index for tile striping |
 | `int total_tiles = expr` | Local integer in a Croktile function |
+| `parallel.async ... : block` | Non-blocking async kernel launch |
+| `stream s` | Bind kernel body to CUDA stream `s` |
 
 Producer and consumer still need a shared notion of “ready” before the 1P1C skeleton is safe. [Chapter 6](ch06-synchronization.md) adds **events**, **swap**, and **pipeline** patterns so the two sides can overlap in time without racing on shared memory.

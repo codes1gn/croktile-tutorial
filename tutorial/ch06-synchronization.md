@@ -94,6 +94,8 @@ foreach tile_k(1:) {
 
 `swap(lf0, lf1)` exchanges **future handles**. Shared-memory contents stay where the hardware placed them; only Croktile-level names rotate. The same idiom in CUDA is often a `^ 1` buffer index or a boolean phase; here the intent is explicit. For triple buffering, `rotate(f0, f1, f2)` cycles three handles in one step.
 
+*Note: this example uses `s32` with scalar accumulation and `with tile_k` scoping — a deliberately simplified kernel style to isolate the `swap` mechanism. The same `swap` pattern applies verbatim to FP16/MMA kernels from Chapter 4; only the compute body changes.*
+
 ### **`auto` return type**
 
 `__co__ auto matmul(...)` lets Croktile infer the result type from `return output`, which keeps the signature aligned with shape expressions.

@@ -44,7 +44,7 @@ ma = mma.load.swiz<3> lhs_load_s.chunkat(_, iv_warp);
 
 **Swizzle levels.** The template argument sets the **granularity**: `swiz<0>` is identity, then **64 B, 128 B, and 256 B** XOR patterns for `<1>`, `<2>`, and `<3>`. Larger granularities defeat **wider** conflict patterns but require **tile extents** that line up with that granularity.
 
-**Matching rule.** The `<N>` on **`tma.copy.swiz<N>`** must match **`mma.load.swiz<N>`**. If you load with plain `mma.load` from **`swiz<3>`** data, addresses disagree and you read **garbage**. The compiler does **not** enforce the pairing—it is a **correctness invariant** you maintain.
+**Matching rule.** The `<N>` on **`tma.copy.swiz<N>`** must match **`mma.load.swiz<N>`**. If you load with plain `mma.load` from **`swiz<3>`** data, addresses disagree and you read **garbage**. The compiler does **not** enforce the pairing—it is a **correctness invariant** you maintain. (As introduced in [Chapter 4's MMA variant table](ch04-mma.md#load-variants), `mma.load.swiz<N>` is part of the MMA load family.)
 
 ![Bank conflicts without swizzle vs XOR swizzle spreading warp lanes across banks](../assets/images/ch07/fig2_swizzle_dark.png#only-dark)
 ![Bank conflicts without swizzle vs XOR swizzle spreading warp lanes across banks](../assets/images/ch07/fig2_swizzle_light.png#only-light)
@@ -98,19 +98,6 @@ __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, 
 ```
 
 **Pipeline parity.** Compared to the Chapter 6 **`dma.copy`** version, only the **ingress** and **operand load** lines change; **events**, **staging indices**, and **commit** stay the same. **TMA** removes cooperative **per-thread** address work on the loads; **swizzle** aligns shared layout with **MMA** access patterns. The **writeback** to global memory still uses **`dma.copy`** here—choose TMA or DMA for stores according to your target and compiler support.
-
-### Aside: `parallel.async` and `stream s`
-
-Host-side launch policy is **orthogonal** to TMA versus DMA. For **non-blocking** grid launches, Croktile allows:
-
-```choreo
-parallel.async {px, py} by [grid_m, grid_n] : block {
-  stream s;
-  // kernel body
-}
-```
-
-**Host streams, not tensor paths.** **`parallel.async`** returns without waiting for the kernel to finish; **`stream s`** pins the body to a **CUDA stream** so multiple async blocks can run **concurrently**. Treat this as **host orchestration**—it does not replace **in-kernel** `tma.copy` or **swizzle** decisions.
 
 ## Handling Irregular Access
 
@@ -191,7 +178,6 @@ ma = mma.load tile_2d.chunkat(_, iv_warp);
 | **`.subspan(...).step(...).at(...)`** | **Strided** tiling—overlap, padding skips, or non-packed layouts. |
 | **`.zfill`** | **Safe partial tiles** by zero-filling out-of-bounds elements on copy. |
 | **`span_as`** | **Zero-copy** shape **reinterpretation** for staging buffers. |
-| **`parallel.async` / `stream s`** | **Host-side** async launch and **stream** selection—**not** a substitute for TMA or swizzle. |
 
 ## New Syntax (quick reference)
 
@@ -204,7 +190,7 @@ ma = mma.load tile_2d.chunkat(_, iv_warp);
 | `.subspan(M, K).step(sM, sK).at(i, j)` | Strided tile selection |
 | `.zfill` | Zero-fill out-of-bounds elements on the copy source |
 | `span_as([dims])` | Reinterpret linear storage as a shaped tensor |
-| `parallel.async ... : block` | Non-blocking async kernel launch |
-| `stream s` | Bind the kernel body to CUDA stream `s` |
+| `parallel.async ... : block` | Non-blocking async kernel launch (see [Ch 5](ch05-branch-control.md)) |
+| `stream s` | Bind the kernel body to CUDA stream `s` (see [Ch 5](ch05-branch-control.md)) |
 
 The [next chapter](ch08-cpp-interop.md) steps past pure Croktile choreography into **C++ interop**: **register hints**, **preprocessor guards**, and **inline PTX** when you need to **drop down** to the metal beside generated code.

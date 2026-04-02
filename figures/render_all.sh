@@ -57,8 +57,10 @@ render_static ch02_fig_span.py SpanDimension fig_span "$DOCS/images/ch02"
 
 echo "=== Ch04 static ==="
 mkdir -p "$DOCS/images/ch04"
-render_static ch04_fig1_mma_lifecycle.py MMALifecycle fig1_mma_lifecycle "$DOCS/images/ch04"
-render_static ch04_fig2_sm86_vs_sm90.py SM86vsSM90 fig2_sm86_vs_sm90 "$DOCS/images/ch04"
+render_static ch04_fig1_tensor_contraction.py TensorContraction fig1_tensor_contraction "$DOCS/images/ch04"
+render_static ch04_fig2_register_loading.py RegisterLoading fig2_register_loading "$DOCS/images/ch04"
+render_static ch04_fig3_mma_syntax.py MMASyntax fig3_mma_syntax "$DOCS/images/ch04"
+render_static ch04_fig2_sm86_vs_sm90.py SM86vsSM90 fig4_sm86_vs_sm90 "$DOCS/images/ch04"
 
 echo "=== Ch05 static ==="
 mkdir -p "$DOCS/images/ch05"

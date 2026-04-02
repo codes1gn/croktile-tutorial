@@ -42,7 +42,7 @@ ma = mma.load.swiz<3> lhs_load_s.chunkat(_, iv_warp);
 
 **Swizzle 级别。** 模板参数控制**粒度**：`swiz<0>` 为恒等映射，`<1>`、`<2>`、`<3>` 分别对应 **64 B、128 B 和 256 B** 的 XOR 模式。更大的粒度可以消除**更宽**的冲突模式，但要求 **tile 尺寸**与该粒度对齐。
 
-**匹配规则。** **`tma.copy.swiz<N>`** 的 `<N>` 必须与 **`mma.load.swiz<N>`** 一致。如果你用 plain `mma.load` 去读 **`swiz<3>`** 布局的数据，地址不匹配，读出来的就是**垃圾**。编译器**不会**强制这一配对——这是你自行维护的**正确性不变量**。
+**匹配规则。** **`tma.copy.swiz<N>`** 的 `<N>` 必须与 **`mma.load.swiz<N>`** 一致。如果你用 plain `mma.load` 去读 **`swiz<3>`** 布局的数据，地址不匹配，读出来的就是**垃圾**。编译器**不会**强制这一配对——这是你自行维护的**正确性不变量**。(如[第 4 章 MMA 变体表](ch04-mma.md#load-variants)所述，`mma.load.swiz<N>` 属于 MMA 加载家族。)
 
 ![无 swizzle 的 bank 冲突 vs XOR swizzle 将 warp lane 分散到各 bank](../assets/images/ch07/fig2_swizzle_dark.png#only-dark)
 ![无 swizzle 的 bank 冲突 vs XOR swizzle 将 warp lane 分散到各 bank](../assets/images/ch07/fig2_swizzle_light.png#only-light)
@@ -96,19 +96,6 @@ __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, 
 ```
 
 **流水线对等性。** 与第 6 章 **`dma.copy`** 版本相比，只有 **ingress** 和**操作数载入**行发生了变化；**event**、**staging 索引**和 **commit** 保持不变。**TMA** 去除了载入上的协作式**逐线程**地址运算；**swizzle** 将共享内存布局与 **MMA** 访问模式对齐。**writeback** 到全局内存此处仍使用 **`dma.copy`**——根据目标架构和编译器支持选择 TMA 或 DMA 做 store。
-
-### 补充：`parallel.async` 和 `stream s`
-
-Host 侧的启动策略与 TMA/DMA 选择**正交**。对于**非阻塞**的 grid 启动，鳄霸提供：
-
-```choreo
-parallel.async {px, py} by [grid_m, grid_n] : block {
-  stream s;
-  // kernel body
-}
-```
-
-**Host stream，不是张量路径。** **`parallel.async`** 在内核完成前即返回；**`stream s`** 将 body 绑定到一个 **CUDA stream**，使多个 async block 可以**并发**执行。把这看作 **host 编排**——它不替代**内核内**的 `tma.copy` 或 **swizzle** 决策。
 
 ## 处理不规则访问
 
@@ -189,7 +176,6 @@ ma = mma.load tile_2d.chunkat(_, iv_warp);
 | **`.subspan(...).step(...).at(...)`** | **步长** tiling——重叠、跳过填充或非紧密布局。 |
 | **`.zfill`** | 在 copy 中对越界元素**零填充**，安全处理**部分 tile**。 |
 | **`span_as`** | **零拷贝**的形状**重解释**，用于 staging buffer。 |
-| **`parallel.async` / `stream s`** | **Host 侧**异步启动和 **stream** 选择——**不能**替代 TMA 或 swizzle。 |
 
 ## 新语法速查
 
@@ -202,7 +188,7 @@ ma = mma.load tile_2d.chunkat(_, iv_warp);
 | `.subspan(M, K).step(sM, sK).at(i, j)` | 步长 tile 选取 |
 | `.zfill` | copy 源端越界元素零填充 |
 | `span_as([dims])` | 将线性存储重解释为指定形状的张量 |
-| `parallel.async ... : block` | 非阻塞异步内核启动 |
-| `stream s` | 将 kernel body 绑定到 CUDA stream `s` |
+| `parallel.async ... : block` | 非阻塞异步内核启动（见[第 5 章](ch05-branch-control.md)） |
+| `stream s` | 将 kernel body 绑定到 CUDA stream `s`（见[第 5 章](ch05-branch-control.md)） |
 
 [下一章](ch08-cpp-interop.md)从纯鳄霸编排跨入 **C++ 互操作**：**寄存器提示**、**预处理器保护**和**内联 PTX**——当你需要在生成代码旁边**降到底层**时的手段。
