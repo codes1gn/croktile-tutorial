@@ -51,7 +51,7 @@ class TmaVsDma(Scene):
         threads = VGroup()
         for t in range(4):
             tid = Text(f"T{t}", font_size=14, color=C["elem"], font="Monospace")
-            addr = Text(f"base+{t}·stride", font_size=10, color=C["fg3"], font="Monospace")
+            addr = Text(f"base+{t}·stride", font_size=12, color=C["fg3"], font="Monospace")
             addr.next_to(tid, RIGHT, buff=0.15)
             row = VGroup(tid, addr)
             row.move_to(LEFT * 3.35 + UP * (1.15 - t * 0.52))
@@ -97,7 +97,7 @@ class TmaVsDma(Scene):
 
         note_l = Text(
             "warps cooperate; each lane issues loads",
-            font_size=11,
+            font_size=13,
             color=C["dim"],
             font="Monospace",
         )
@@ -128,7 +128,7 @@ class TmaVsDma(Scene):
         desc.move_to(RIGHT * 3.35 + UP * 0.95)
         desc_txt = Text("tensor descriptor", font_size=14, color=C["blue"], font="Monospace")
         desc_txt.move_to(desc.get_center() + UP * 0.12)
-        desc_sub = Text("(layout, tile, origin)", font_size=11, color=C["fg2"], font="Monospace")
+        desc_sub = Text("(layout, tile, origin)", font_size=13, color=C["fg2"], font="Monospace")
         desc_sub.move_to(desc.get_center() + DOWN * 0.18)
         self.add(desc, desc_txt, desc_sub)
 
@@ -143,7 +143,7 @@ class TmaVsDma(Scene):
         )
         tma_box.move_to(RIGHT * 3.35 + DOWN * 0.35)
         tma_lbl = Text("TMA unit", font_size=16, color=C["purple"], font="Monospace")
-        tma_sub = Text("multi-dim addressing in HW", font_size=11, color=C["fg2"], font="Monospace")
+        tma_sub = Text("multi-dim addressing in HW", font_size=13, color=C["fg2"], font="Monospace")
         tma_lbl.move_to(tma_box.get_center() + UP * 0.15)
         tma_sub.move_to(tma_box.get_center() + DOWN * 0.2)
         self.add(tma_box, tma_lbl, tma_sub)
@@ -157,7 +157,7 @@ class TmaVsDma(Scene):
             stroke_width=1.5,
         )
         gmem_r.move_to(RIGHT * 3.35 + UP * 2.55)
-        gmem_rl = Text("global", font_size=11, color=C["global_c"], font="Monospace")
+        gmem_rl = Text("global", font_size=14, color=C["global_c"], font="Monospace")
         gmem_rl.move_to(gmem_r)
         self.add(gmem_r, gmem_rl)
 
@@ -170,7 +170,7 @@ class TmaVsDma(Scene):
             stroke_width=1.5,
         )
         smem_r.move_to(RIGHT * 3.35 + DOWN * 1.55)
-        smem_rl = Text("shared", font_size=11, color=C["shared_c"], font="Monospace")
+        smem_rl = Text("shared", font_size=14, color=C["shared_c"], font="Monospace")
         smem_rl.move_to(smem_r)
         self.add(smem_r, smem_rl)
 
@@ -202,7 +202,7 @@ class TmaVsDma(Scene):
 
         note_r = Text(
             "one issue · bulk tile · minimal thread work",
-            font_size=11,
+            font_size=13,
             color=C["dim"],
             font="Monospace",
         )

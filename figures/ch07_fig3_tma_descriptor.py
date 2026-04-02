@@ -39,7 +39,7 @@ class TMADescriptor(Scene):
                           stroke_color=col, stroke_width=1.2)
             r.move_to(RIGHT * desc_x + UP * y)
             self.add(r)
-            t = Text(name, font_size=10, color=C["fg"], font="Monospace")
+            t = Text(name, font_size=13, color=C["fg"], font="Monospace")
             t.move_to(r)
             self.add(t)
 
@@ -60,11 +60,11 @@ class TMADescriptor(Scene):
         tma_label.move_to(tma_box.get_center() + UP * 0.35)
         self.add(tma_label)
 
-        tma_sub = Text("(near L2/SMEM)", font_size=10, color=C["dim"], font="Monospace")
+        tma_sub = Text("(near L2/SMEM)", font_size=12, color=C["dim"], font="Monospace")
         tma_sub.move_to(tma_box.get_center() + DOWN * 0.1)
         self.add(tma_sub)
 
-        tma_detail = Text("HW multi-dim addr", font_size=9, color=C["fg3"], font="Monospace")
+        tma_detail = Text("HW multi-dim addr", font_size=12, color=C["fg3"], font="Monospace")
         tma_detail.move_to(tma_box.get_center() + DOWN * 0.45)
         self.add(tma_detail)
 
@@ -74,7 +74,7 @@ class TMADescriptor(Scene):
                        color=C["arrow"], stroke_width=2, buff=0.1, max_tip_length_to_length_ratio=0.15)
         self.add(arrow2)
 
-        tile_label = Text("one tile instruction", font_size=9, color=C["dim"], font="Monospace")
+        tile_label = Text("one tile instruction", font_size=12, color=C["dim"], font="Monospace")
         tile_label.next_to(arrow2, UP, buff=0.05)
         self.add(tile_label)
 
@@ -92,12 +92,12 @@ class TMADescriptor(Scene):
                 tile_grid.add(sq)
         self.add(tile_grid)
 
-        tile_dim = Text("[WARP_M, TILE_K]", font_size=9, color=C["dim"], font="Monospace")
+        tile_dim = Text("[WARP_M, TILE_K]", font_size=12, color=C["dim"], font="Monospace")
         tile_dim.move_to(RIGHT * 4.5 + DOWN * 1.0)
         self.add(tile_dim)
 
         # Global memory (top-right)
-        gmem = Text("Global (HBM)", font_size=11, color=C["global_c"], font="Monospace")
+        gmem = Text("Global (HBM)", font_size=14, color=C["global_c"], font="Monospace")
         gmem.move_to(RIGHT * 4.5 + UP * 1.8)
         self.add(gmem)
 
@@ -108,7 +108,7 @@ class TMADescriptor(Scene):
         # Bottom note
         note = Text(
             "DMA: threads cooperate on address math     TMA: one descriptor, hardware does the rest",
-            font_size=10, color=C["fg3"], font="Monospace",
+            font_size=13, color=C["fg3"], font="Monospace",
         )
         note.to_edge(DOWN, buff=0.3)
         self.add(note)

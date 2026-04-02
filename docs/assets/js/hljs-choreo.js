@@ -90,11 +90,19 @@ hljs.registerLanguage('choreo', function(hljs) {
       },
       {
         className: 'meta',
+        begin: /\b__cpp__\s*\(\s*R"\(/,
+        end: /\)"\s*\)/,
+        contains: [
+          { begin: /[^)]*/ }
+        ]
+      },
+      {
+        className: 'meta',
         begin: /\b__cpp__\s*\(/,
-        end: /\)/,
+        end: /"\s*\)/,
+        excludeBegin: false,
         contains: [
           hljs.QUOTE_STRING_MODE,
-          { begin: /R"/, end: /"/, contains: [{ begin: /[^"]*/ }] }
         ]
       },
     ]

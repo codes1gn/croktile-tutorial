@@ -44,7 +44,7 @@ class ViewFrom(Scene):
                                 DOWN * (r0 * cell + (rh - 1) * cell / 2))
                 self.add(hl_rect)
                 if hl_label:
-                    hl_t = Text(hl_label, font_size=9, color=hl_color, font="Monospace")
+                    hl_t = Text(hl_label, font_size=12, color=hl_color, font="Monospace")
                     hl_t.next_to(hl_rect, DOWN, buff=0.08)
                     self.add(hl_t)
 
@@ -59,7 +59,7 @@ class ViewFrom(Scene):
         draw_grid(left_origin, 8, 8, "", highlight=(4, 4, 4, 4),
                   hl_color=C["purple"], hl_label=None)
 
-        left_note = Text("tiles must align to grid", font_size=10, color=C["dim"], font="Monospace")
+        left_note = Text("tiles must align to grid", font_size=13, color=C["dim"], font="Monospace")
         left_note.move_to(left_origin + DOWN * 3.4)
         self.add(left_note)
 
@@ -68,7 +68,7 @@ class ViewFrom(Scene):
         draw_grid(right_origin, 8, 8, "view(4,4).from(2,3)", highlight=(2, 3, 4, 4),
                   hl_color=C["red"], hl_label="window at (2,3)")
 
-        right_note = Text("origin is arbitrary (row=2, col=3)", font_size=10, color=C["dim"], font="Monospace")
+        right_note = Text("origin is arbitrary (row=2, col=3)", font_size=13, color=C["dim"], font="Monospace")
         right_note.move_to(right_origin + DOWN * 3.4)
         self.add(right_note)
 

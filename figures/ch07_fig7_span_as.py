@@ -36,7 +36,7 @@ class SpanAs(Scene):
                            stroke_color=row_color, stroke_width=1)
             sq.move_to(top_origin + RIGHT * i * cell_w)
             self.add(sq)
-            t = Text(str(i), font_size=7, color=C["fg"], font="Monospace")
+            t = Text(str(i), font_size=12, color=C["fg"], font="Monospace")
             t.move_to(sq)
             self.add(t)
 
@@ -63,10 +63,10 @@ class SpanAs(Scene):
                                stroke_color=row_colors[r], stroke_width=1)
                 sq.move_to(bot_origin + RIGHT * c * cell_w * 1.2 + DOWN * r * cell_h)
                 self.add(sq)
-                t = Text(str(idx), font_size=7, color=C["fg"], font="Monospace")
+                t = Text(str(idx), font_size=12, color=C["fg"], font="Monospace")
                 t.move_to(sq)
                 self.add(t)
 
-        note = Text("same memory, different logical shape -- no copy", font_size=10, color=C["fg3"], font="Monospace")
+        note = Text("same memory, different logical shape -- no copy", font_size=13, color=C["fg3"], font="Monospace")
         note.to_edge(DOWN, buff=0.3)
         self.add(note)

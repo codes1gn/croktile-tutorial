@@ -35,7 +35,7 @@ int main() {   // ④
 编译器将所有内容合并为一个 `.cu` 中间文件，然后交由 `nvcc` 处理：
 
 ![.co compilation: Croqtile compiler transforms __co__ and passes through __device__ and host C++, merging everything into one .cu file for nvcc](../assets/images/ch08/fig1_compilation_flow_dark.png#only-dark)
-![.co compilation: Croqtile compiler transforms __co__ and passes through __device__ and host C++, merging everything into one .cu file for nvcc](../assets/images/ch08/fig1_compilation_flow_dark.png#only-light)
+![.co compilation: Croqtile compiler transforms __co__ and passes through __device__ and host C++, merging everything into one .cu file for nvcc](../assets/images/ch08/fig1_compilation_flow_light.png#only-light)
 
 各区域的处理方式：
 

@@ -35,7 +35,7 @@ int main() {   // ④
 The compiler splits this into a single intermediate `.cu` file, then hands it to `nvcc`:
 
 ![.co compilation: Croqtile compiler transforms __co__ and passes through __device__ and host C++, merging everything into one .cu file for nvcc](../assets/images/ch08/fig1_compilation_flow_dark.png#only-dark)
-![.co compilation: Croqtile compiler transforms __co__ and passes through __device__ and host C++, merging everything into one .cu file for nvcc](../assets/images/ch08/fig1_compilation_flow_dark.png#only-light)
+![.co compilation: Croqtile compiler transforms __co__ and passes through __device__ and host C++, merging everything into one .cu file for nvcc](../assets/images/ch08/fig1_compilation_flow_light.png#only-light)
 
 What happens to each region:
 

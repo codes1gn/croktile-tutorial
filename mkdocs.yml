@@ -86,7 +86,7 @@ nav:
     - "Ch 2: Data Movement": tutorial/ch02-data-movement.md
     - "Ch 3: Parallelism": tutorial/ch03-parallelism.md
     - "Ch 4: MMA Operations": tutorial/ch04-mma.md
-    - "Ch 5: Branch & Control": tutorial/ch05-branch-control.md
+    - "Ch 5: Warp Specialization": tutorial/ch05-branch-control.md
     - "Ch 6: Synchronization": tutorial/ch06-synchronization.md
     - "Ch 7: Advanced Movement": tutorial/ch07-advanced-movement.md
     - "Ch 8: C++ Interop": tutorial/ch08-cpp-interop.md

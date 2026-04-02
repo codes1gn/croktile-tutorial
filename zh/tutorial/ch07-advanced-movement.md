@@ -67,11 +67,11 @@ Swizzle 并非 TMA 独有的特性。在鳄霸中，`dma.copy.swiz<N>` 与 `tma.
 鳄霸采取相反的策略：它将可表达的模式限制在**确保落入性能甜区**的范围内。当你写 `dma.copy` 或 `tma.copy` 时，编译器自动处理合并访存、无 bank 冲突的布局以及 swizzle 对齐。你不可能意外写出步长不合并的全局 load 或有 bank 冲突的 shared memory 布局——语法根本不允许。
 
 ![可表达范围 vs 性能：CUDA 的宽广范围包含大量慢模式；Croqtile 的受限范围完全映射到性能甜区](../assets/images/ch07/fig8_expressiveness_dark.png#only-dark)
-![可表达范围 vs 性能：CUDA 的宽广范围包含大量慢模式；Croqtile 的受限范围完全映射到性能甜区](../assets/images/ch07/fig8_expressiveness_dark.png#only-light)
+![可表达范围 vs 性能：CUDA 的宽广范围包含大量慢模式；Croqtile 的受限范围完全映射到性能甜区](../assets/images/ch07/fig8_expressiveness_light.png#only-light)
 
 TMA 的描述符接口正是这一哲学的极端实例：它仅支持少数 tile 对齐的传输模式，但这些模式恰是硬件优化的对象。鳄霸的 `dma.copy` 遵循同一原则——它只生成合并且无冲突的模式，尽管底层的 `LDG`/`STS` 指令可以表达远多于此（包括许多慢模式）。这一权衡是显式的：你放弃编写任意数据搬运的能力，作为回报，你写的每一次数据搬运都是快的。
 
-## 流水线矩阵乘法中的 TMA
+## 示例：流水线矩阵乘法中的 TMA
 
 第 6 章的流水线骨架不变：stage 环、`wait` / `trigger` 事件、MMA commit，消费者在生产者填充下一槽时排空 tile。此处生产者将 `dma.copy` 换为 `tma.copy.swiz<3>`，消费者将 `mma.load` 换为 `mma.load.swiz<3>`：
 
@@ -123,33 +123,41 @@ __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, 
 
 ## 处理不规则访问
 
-使用 `chunkat` 与 `subspan(...).at(...)` 的均匀 tiling 可覆盖许多内核。实际工作负载还需要任意偏移的窗口、tile 之间的步长、边界处的部分 tile 以及布局重解释。以下小节汇总这些工具。
+前面介绍的 tiling 原语——`chunkat`、`subspan(...).at(...)`——假设张量可被均匀划分为 tile。对于教科书式 GEMM（M、N、K 均为 tile 尺寸的倍数）这足够了。但生产级 kernel 很少如此整齐。Expert 批次从动态偏移开始。卷积窗口相互重叠。最后一个 K-tile 几乎从来不是 TILE_K 的整数倍。有些输入以扁平 buffer 形式到达，需要重塑后 MMA 才能消费。
+
+鳄霸为这些情况提供四种工具。每种工具都修改编译器解释张量寻址的方式，而不触碰流水线结构——DMA、TMA、MMA、事件、swizzle 全部照常工作。
 
 ### 任意偏移窗口：`view` 与 `from`
 
-`view(M, N).from(row, col)` 定义从 `(row, col)` 起算的 `M x N` 矩形——不要求原点与预先计算的 tile 网格对齐。
+`chunkat` 将张量划分为大小相等的规则网格。但如果你需要的切片不从 tile 边界开始怎么办？考虑 mixture-of-experts（MoE）kernel：每个 expert 处理不同数量的 token，因此每个 expert 的操作数起始行在运行时确定。你无法预先计算固定的 tile 网格。
+
+`view(M, N).from(row, col)` 定义从任意 `(row, col)` 起算的 `M x N` 矩形——不要求对齐：
 
 ```choreo
 patch = matrix.view(16, 16).from(37, 50);
 ```
 
-这是从第 37 行、第 50 列开始的 `[16, 16]` 切片。不要求对齐。
+这是从第 37 行、第 50 列开始的 `[16, 16]` 切片。原点可为任意运行时值。
 
 ![chunkat (aligned grid) vs view/from (arbitrary offset window)](../assets/images/ch07/fig4_view_from_dark.png#only-dark)
 ![chunkat (aligned grid) vs view/from (arbitrary offset window)](../assets/images/ch07/fig4_view_from_light.png#only-light)
 
-**何时使用。** `chunkat` 要求张量被均匀划分；`view(...).from(...)` 则不要求。规则 tiling 优先用 `chunkat`；窗口参差不齐或由运行时定位时用 `view` / `from`。
+`view` / `from` 的威力在于可组合性：切出窗口后，所有下游操作——`subspan`、`chunkat`、`dma.copy`、`tma.copy`——都把该窗口当作独立张量来处理。流水线不变；只是原点移动了：
 
 ```choreo
 expert_lhs = lhs.view(expert_M, K).from(expert_offset, 0);
 dma.copy expert_lhs.subspan(WARP_M, TILE_K).at(block_m, iv_k) => shared;
 ```
 
-在 mixture-of-experts 堆栈中，每个专家的 token 批次起始于动态行 `expert_offset`。用 `view` / `from` 切片可在流水线其余部分——DMA、MMA、事件——保持不变的情况下重接操作数。
+在 MoE 堆栈中，每个 expert 的 token 批次从动态行 `expert_offset` 开始。`view` / `from` 调用在流水线顶部重接操作数；之后的一切——DMA、staging、MMA 循环——对每个 expert 运行相同的代码。
+
+**何时使用。** 当张量在编译期可被 tile 均匀划分时，优先用 `chunkat`。当窗口的原点或范围在运行时确定，或几何形状与 tile 网格不对齐时，用 `view` / `from`。
 
 ### 步长 tile：`.subspan`、`.step` 与 `.at`
 
-`subspan(M, K).at(i, j)` 选取逻辑 tile 索引 `(i, j)` 处、范围为 `[M, K]` 的 tile。添加 `.step(sM, sK)` 可使 tile 相隔 `sM` 行与 `sK` 列，而非紧密相邻：
+`subspan(M, K).at(i, j)` 选取逻辑 tile 索引 `(i, j)` 处、范围为 `[M, K]` 的 tile。默认情况下 tile 紧密排列：tile `(1, 0)` 紧接在 tile `(0, 0)` 之后。但某些布局在 tile 之间留有间距——要么是行间有 padding，要么是 stencil kernel 需要重叠窗口。
+
+添加 `.step(sM, sK)` 覆盖步长：tile 相隔 `sM` 行与 `sK` 列，而非紧密排列：
 
 ```choreo
 matrix.subspan(16, 16).step(32, 32).at(i, j);
@@ -158,33 +166,35 @@ matrix.subspan(16, 16).step(32, 32).at(i, j);
 ![Packed tiling vs strided tiling with .step](../assets/images/ch07/fig5_subspan_step_dark.png#only-dark)
 ![Packed tiling vs strided tiling with .step](../assets/images/ch07/fig5_subspan_step_light.png#only-light)
 
-Tile `(0,0)` 从 `(0,0)` 开始，但 tile `(1,0)` 从 `(32,0)` 开始，`(0,1)` 从 `(0,32)` 开始。省略 `.step` 时步长等于 tile 尺寸——即紧密排列情形。
+Tile `(0,0)` 从 `(0,0)` 开始，但 tile `(1,0)` 从第 32 行（而非第 16 行）开始，留出 16 行间隙。省略 `.step` 时步长等于 tile 尺寸——即紧密排列情形。
 
-**典型用途：** 跳过 padding 或保护带；步长小于范围的重叠 stencil；或匹配非稠密 tile-major 的外层布局。
+**何时需要。** 跳过行间 padding 或保护带。步长小于 tile 范围的重叠 stencil 窗口（如 `16 x 16` tile 以 8 行为步进滑动）。匹配非稠密 tile-major 的外层内存布局——例如 tile 与元数据交错存放。
 
 ### 零填充：`.zfill`
 
-当 `M` 或 `K` 不是 tile 大小的整数倍时，沿某轴的最后一个 tile 为部分 tile。除非显式填充，否则越过张量边界的读取是未定义的。
+每个 tiled kernel 都面临同一边界情况：当 M 或 K 不是 tile 大小的整数倍时会怎样？沿该轴的最后一个 tile 是部分的——其中一些元素位于张量边界之外。在 GPU 上读取这些地址是未定义行为。
+
+暴力修复是为边界 tile 增加特殊代码路径。但这破坏了 MMA 循环的均匀性，并添加了编译器无法优化掉的分支。`.zfill` 优雅地解决了这个问题：
 
 ```choreo
 tma.copy.swiz<3> lhs.subspan(WARP_M, TILE_K).at(block_m, iv_k).zfill
   => lhs_load_s;
 ```
 
-`.zfill` 作用于 copy 的源侧：越界元素在目标 tile 中写为零。零对 GEMM 累加无贡献，故 MMA 循环可保持统一，同时在部分边界上仍数学正确。
+`.zfill` 作用于 copy 的源侧：越界元素在目标 tile 中写为零。对于 GEMM，零对累加无贡献（0 × 任何值 = 0），因此 MMA 循环完全统一——内部 tile 与边界 tile 使用相同的代码——同时数学上仍然正确。无分支、无特殊情况、无性能惩罚。
 
 ![.zfill: zero-padding partial tiles at the tensor boundary](../assets/images/ch07/fig6_zfill_dark.png#only-dark)
 ![.zfill: zero-padding partial tiles at the tensor boundary](../assets/images/ch07/fig6_zfill_light.png#only-light)
 
 ### 布局重解释：`span_as`
 
-`span_as` 将 buffer 的线性存储重解释为另一形状，元素个数相同——无拷贝。
+有些 kernel 将数据作为扁平一维条带载入，但需要将其作为二维矩阵喂给 MMA。朴素方法会将数据拷贝到一个重新形状的 buffer——浪费 shared memory 和带宽。`span_as` 通过就地重解释已有 buffer 的形状来避免这一问题：
 
 ```choreo
 flat_buffer.span_as([rows, cols])
 ```
 
-元素个数不变；仅逻辑秩改变。
+元素个数不变；仅逻辑秩改变。无数据移动。
 
 ```choreo
 strip_load = dma.copy data.chunkat(tile) => shared;
@@ -192,7 +202,7 @@ tile_2d = strip_load.data.span_as([tile_m, tile_k]);
 ma = mma.load tile_2d.chunkat(_, iv_warp);
 ```
 
-这样可将已载入的一维条带暴露为矩阵供 `chunkat` 使用，无需额外拷贝。`rows * cols` 必须等于底层存储的 span 长度，否则编译器拒绝该程序。
+已载入的一维条带被暴露为二维矩阵供 `chunkat` 与 MMA 操作数 load 使用，无需额外拷贝或额外 shared memory。`rows * cols` 必须等于底层存储的 span 长度，否则编译器拒绝程序——该不变量在编译期检查，而非运行时。
 
 ![span_as: zero-copy shape reinterpretation from 1D to 2D](../assets/images/ch07/fig7_span_as_dark.png#only-dark)
 ![span_as: zero-copy shape reinterpretation from 1D to 2D](../assets/images/ch07/fig7_span_as_light.png#only-light)

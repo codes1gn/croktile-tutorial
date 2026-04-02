@@ -47,7 +47,7 @@ class ZFill(Scene):
                                 stroke_color=C["red"], stroke_width=0.8)
                     sq.move_to(origin + RIGHT * gc * cell + DOWN * gr * cell)
                     self.add(sq)
-                    z = Text("0", font_size=8, color=C["red"], font="Monospace")
+                    z = Text("0", font_size=12, color=C["red"], font="Monospace")
                     z.move_to(sq)
                     self.add(z)
 
@@ -58,7 +58,7 @@ class ZFill(Scene):
                           DOWN * (tile_r0 * cell + (tile_h - 1) * cell / 2))
         self.add(tile_rect)
 
-        tile_label = Text("tile at(1,1) with .zfill", font_size=10, color=C["orange"], font="Monospace")
+        tile_label = Text("tile at(1,1) with .zfill", font_size=13, color=C["orange"], font="Monospace")
         tile_label.next_to(tile_rect, RIGHT, buff=0.15)
         self.add(tile_label)
 
@@ -73,7 +73,7 @@ class ZFill(Scene):
             color=C["dim"], stroke_width=1.5, dash_length=0.06)
         self.add(edge_v, edge_h)
 
-        edge_label = Text("tensor boundary", font_size=9, color=C["dim"], font="Monospace")
+        edge_label = Text("tensor boundary", font_size=12, color=C["dim"], font="Monospace")
         edge_label.move_to(origin + RIGHT * (data_cols + 1.5) * cell + DOWN * data_rows * cell)
         self.add(edge_label)
 
@@ -84,6 +84,6 @@ class ZFill(Scene):
         code.to_edge(DOWN, buff=0.5)
         self.add(code)
 
-        note = Text("out-of-bounds elements written as zero -- MMA stays uniform", font_size=10, color=C["fg3"], font="Monospace")
+        note = Text("out-of-bounds elements written as zero -- MMA stays uniform", font_size=13, color=C["fg3"], font="Monospace")
         note.to_edge(DOWN, buff=0.25)
         self.add(note)

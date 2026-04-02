@@ -67,11 +67,11 @@ In raw CUDA, a programmer implementing data movement has enormous freedom: arbit
 Croqtile takes the opposite approach: it restricts the expressible patterns to those that are **guaranteed to be in the performance sweet spot**. When you write `dma.copy` or `tma.copy`, the compiler automatically handles coalesced access, bank-conflict-free layout, and swizzle alignment. There is no way to accidentally write a strided, uncoalesced global load or a bank-conflicted shared-memory layout — the syntax simply does not allow it.
 
 ![Expressiveness vs performance: CUDA's wide range includes many slow patterns; Croqtile's restricted range maps entirely to the performance sweet spot](../assets/images/ch07/fig8_expressiveness_dark.png#only-dark)
-![Expressiveness vs performance: CUDA's wide range includes many slow patterns; Croqtile's restricted range maps entirely to the performance sweet spot](../assets/images/ch07/fig8_expressiveness_dark.png#only-light)
+![Expressiveness vs performance: CUDA's wide range includes many slow patterns; Croqtile's restricted range maps entirely to the performance sweet spot](../assets/images/ch07/fig8_expressiveness_light.png#only-light)
 
 TMA's descriptor-based interface is an extreme instance of this philosophy: it supports only a few tile-aligned transfer patterns, but those patterns are exactly the ones the hardware is optimized for. Croqtile's `dma.copy` follows the same principle — it generates only patterns that are coalesced and conflict-free, even though the underlying `LDG`/`STS` instructions can express far more (including many slow patterns). The trade is explicit: you give up the ability to write arbitrary data movement, and in return, every data movement you write is fast.
 
-## TMA in a pipelined matmul
+## Example: TMA in a pipelined matmul
 
 The pipeline skeleton from Chapter 6 is unchanged: ring of stages, `wait` / `trigger` on events, MMA commit, consumer drains tiles while producer fills the next slot. Here the producer swaps `dma.copy` for `tma.copy.swiz<3>` and the consumer swaps `mma.load` for `mma.load.swiz<3>`:
 
@@ -123,33 +123,41 @@ Compared to the Chapter 6 `dma.copy` version, only the ingress and operand load 
 
 ## Handling irregular access
 
-Uniform tiling with `chunkat` and `subspan(...).at(...)` covers many kernels. Real workloads also need windows at arbitrary offsets, strides between tiles, partial tiles at boundaries, and layout reinterpretation. The subsections below collect those tools.
+The tiling primitives introduced so far — `chunkat`, `subspan(...).at(...)` — assume tensors that divide evenly into tiles. This works for textbook GEMM where M, N, K are multiples of the tile dimensions. Production kernels are rarely so tidy. Expert batches start at dynamic offsets. Convolution windows overlap. The last K-tile is almost never an exact multiple of TILE_K. Some inputs arrive as flat buffers that need reshaping before MMA can consume them.
+
+Croqtile provides four tools for these cases. Each one modifies how the compiler interprets a tensor's addressing without touching the pipeline structure — DMA, TMA, MMA, events, swizzle all continue to work unchanged.
 
 ### Arbitrary-offset windows: `view` and `from`
 
-`view(M, N).from(row, col)` defines an `M x N` rectangle starting at `(row, col)` — no requirement that the origin aligns to a precomputed tile grid.
+`chunkat` divides a tensor into a regular grid of equal-sized tiles. But what if the slice you need does not start on a tile boundary? Consider a mixture-of-experts (MoE) kernel: each expert processes a different number of tokens, so the starting row for each expert's operand is determined at runtime. You cannot precompute a fixed tile grid.
+
+`view(M, N).from(row, col)` defines an `M x N` rectangle starting at any `(row, col)` — no alignment requirement:
 
 ```choreo
 patch = matrix.view(16, 16).from(37, 50);
 ```
 
-This is a `[16, 16]` slice starting at row 37, column 50. Alignment is not required.
+This is a `[16, 16]` slice starting at row 37, column 50. The origin can be any runtime value.
 
 ![chunkat (aligned grid) vs view/from (arbitrary offset window)](../assets/images/ch07/fig4_view_from_dark.png#only-dark)
 ![chunkat (aligned grid) vs view/from (arbitrary offset window)](../assets/images/ch07/fig4_view_from_light.png#only-light)
 
-**When to use it.** `chunkat` needs the tensor divided evenly; `view(...).from(...)` does not. Prefer `chunkat` for regular tiling and `view` / `from` when the window is ragged or runtime-positioned.
+The power of `view` / `from` is composability: once you carve out a window, all downstream operations — `subspan`, `chunkat`, `dma.copy`, `tma.copy` — apply to the window as if it were a standalone tensor. The pipeline stays unchanged; only the origin shifts:
 
 ```choreo
 expert_lhs = lhs.view(expert_M, K).from(expert_offset, 0);
 dma.copy expert_lhs.subspan(WARP_M, TILE_K).at(block_m, iv_k) => shared;
 ```
 
-In mixture-of-experts stacks, each expert's token batch starts at a dynamic row `expert_offset`. Slicing with `view` / `from` rewires the operand before the rest of the pipeline — DMA, MMA, events — continues unchanged.
+In an MoE stack, each expert's token batch starts at a dynamic row `expert_offset`. The `view` / `from` call rewires the operand at the top of the pipeline; everything below — DMA, staging, MMA loop — runs the same code for every expert.
+
+**When to use it.** Prefer `chunkat` when the tensor divides evenly into tiles at compile time. Use `view` / `from` when the window's origin or extent is determined at runtime, or when the geometry does not align to the tile grid.
 
 ### Strided tiles: `.subspan`, `.step`, and `.at`
 
-`subspan(M, K).at(i, j)` selects the tile at logical tile indices `(i, j)` with extent `[M, K]`. Adding `.step(sM, sK)` spaces tiles `sM` rows and `sK` columns apart instead of packing them contiguously:
+`subspan(M, K).at(i, j)` selects the tile at logical tile indices `(i, j)` with extent `[M, K]`. By default, tiles are packed contiguously: tile `(1, 0)` starts immediately after tile `(0, 0)`. But some layouts space tiles apart — either because there is padding between rows, or because a stencil kernel needs overlapping windows.
+
+Adding `.step(sM, sK)` overrides the stride: tiles are spaced `sM` rows and `sK` columns apart instead of being packed:
 
 ```choreo
 matrix.subspan(16, 16).step(32, 32).at(i, j);
@@ -158,33 +166,35 @@ matrix.subspan(16, 16).step(32, 32).at(i, j);
 ![Packed tiling vs strided tiling with .step](../assets/images/ch07/fig5_subspan_step_dark.png#only-dark)
 ![Packed tiling vs strided tiling with .step](../assets/images/ch07/fig5_subspan_step_light.png#only-light)
 
-Tile `(0,0)` starts at `(0,0)`, but tile `(1,0)` starts at `(32,0)` and `(0,1)` at `(0,32)`. Omitting `.step` uses a step equal to the tile size — the packed case.
+Tile `(0,0)` starts at `(0,0)`, but tile `(1,0)` starts at row 32 (not row 16), leaving a 16-row gap. Omitting `.step` uses a step equal to the tile size — the packed case.
 
-**Typical uses:** skipping padding or guard bands, overlapping stencils where the step is smaller than the extent, or matching an outer layout that is not dense tile-major.
+**When you need this.** Skipping padding or guard bands between rows. Overlapping stencil windows where the step is smaller than the tile extent (e.g., a `16 x 16` tile sliding by 8 rows). Matching an outer memory layout that is not dense tile-major — for instance, when tiles are interleaved with metadata.
 
 ### Zero-padding: `.zfill`
 
-When `M` or `K` is not a multiple of the tile size, the last tile along an axis is partial. Reading past the tensor's edge is undefined unless you explicitly pad.
+Every tiled kernel faces the same edge case: what happens when M or K is not a multiple of the tile size? The last tile along that axis is partial — some of its elements lie beyond the tensor boundary. Reading those addresses is undefined behavior on the GPU.
+
+The brute-force fix is to add a special code path for the boundary tile. But this breaks the uniformity of the MMA loop and adds branches that the compiler cannot optimize away. `.zfill` solves this elegantly:
 
 ```choreo
 tma.copy.swiz<3> lhs.subspan(WARP_M, TILE_K).at(block_m, iv_k).zfill
   => lhs_load_s;
 ```
 
-`.zfill` applies to the source side of a copy: out-of-range elements are written as zero in the destination tile. Zeros contribute nothing to a GEMM accumulation, so the MMA loop stays uniform while remaining mathematically correct for partial edges.
+`.zfill` applies to the source side of a copy: out-of-range elements are written as zero in the destination tile. For a GEMM, zeros contribute nothing to the accumulation (0 × anything = 0), so the MMA loop stays completely uniform — same code for interior tiles and boundary tiles — while remaining mathematically correct. No branches, no special cases, no performance penalty.
 
 ![.zfill: zero-padding partial tiles at the tensor boundary](../assets/images/ch07/fig6_zfill_dark.png#only-dark)
 ![.zfill: zero-padding partial tiles at the tensor boundary](../assets/images/ch07/fig6_zfill_light.png#only-light)
 
 ### Layout reinterpretation: `span_as`
 
-`span_as` reinterprets a buffer's linear storage as another shape with the same element count — no copy.
+Some kernels load data as a flat 1D strip but need to feed it to MMA as a 2D matrix. A naive approach would copy the data into a reshaped buffer — wasting shared memory and bandwidth. `span_as` avoids this by reinterpreting the existing buffer's shape in place:
 
 ```choreo
 flat_buffer.span_as([rows, cols])
 ```
 
-Element count is preserved; only the logical rank changes.
+Element count is preserved; only the logical rank changes. No data is moved.
 
 ```choreo
 strip_load = dma.copy data.chunkat(tile) => shared;
@@ -192,7 +202,7 @@ tile_2d = strip_load.data.span_as([tile_m, tile_k]);
 ma = mma.load tile_2d.chunkat(_, iv_warp);
 ```
 
-This exposes a loaded 1D strip as a matrix for `chunkat` without an extra copy. `rows * cols` must equal the span length of the underlying storage, or the compiler rejects the program.
+The loaded 1D strip is exposed as a 2D matrix for `chunkat` and MMA operand loading, without an extra copy or additional shared memory. `rows * cols` must equal the span length of the underlying storage, or the compiler rejects the program — this invariant is checked at compile time, not at runtime.
 
 ![span_as: zero-copy shape reinterpretation from 1D to 2D](../assets/images/ch07/fig7_span_as_dark.png#only-dark)
 ![span_as: zero-copy shape reinterpretation from 1D to 2D](../assets/images/ch07/fig7_span_as_light.png#only-light)
