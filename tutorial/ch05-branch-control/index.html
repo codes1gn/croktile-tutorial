@@ -29,7 +29,7 @@
     
     
       
-        <title>Ch 5: Warp Specialization - Croqtile</title>
+        <title>Ch 5: Control Flow - Croqtile</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#warp-specialization-concurrent-regions-and-events" class="md-skip">
+        <a href="#control-flow-divergence-concurrency-and-coordination" class="md-skip">
           Skip to content
         </a>
       
@@ -119,7 +119,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Ch 5: Warp Specialization
+              Ch 5: Control Flow
             
           </span>
         </div>
@@ -437,7 +437,7 @@
   <span class="md-ellipsis">
     
   
-    Ch 0: Installation
+    Ch 0: Installing Croqtile
   
 
     
@@ -549,7 +549,7 @@
   <span class="md-ellipsis">
     
   
-    Ch 4: MMA Operations
+    Ch 4: Tensor Contraction (MMA)
   
 
     
@@ -586,7 +586,7 @@
   <span class="md-ellipsis">
     
   
-    Ch 5: Warp Specialization
+    Ch 5: Control Flow
   
 
     
@@ -604,7 +604,7 @@
   <span class="md-ellipsis">
     
   
-    Ch 5: Warp Specialization
+    Ch 5: Control Flow
   
 
     
@@ -830,7 +830,7 @@
   <span class="md-ellipsis">
     
   
-    Ch 7: Advanced Movement
+    Ch 7: Advanced Data Movement
   
 
     
@@ -2717,7 +2717,7 @@
   
 
 
-<h1 id="warp-specialization-concurrent-regions-and-events">Warp Specialization: Concurrent Regions and Events<a class="headerlink" href="#warp-specialization-concurrent-regions-and-events" title="Permanent link">&para;</a></h1>
+<h1 id="control-flow-divergence-concurrency-and-coordination">Control Flow: Divergence, Concurrency, and Coordination<a class="headerlink" href="#control-flow-divergence-concurrency-and-coordination" title="Permanent link">&para;</a></h1>
 <p>Every programming language that targets a parallel machine must answer one question: <strong>what happens when different threads need to do different things?</strong></p>
 <p>On a CPU, the answer is trivial — each core has its own program counter, so each thread runs whatever code it likes. On a GPU, the answer is deeply constrained. The SIMT (Single Instruction, Multiple Thread) execution model groups threads into <strong>warps</strong> of 32 that share a single instruction pointer. When a branch sends some threads one way and other threads another way, the hardware cannot simply fork — it must <strong>serialize</strong> the divergent paths and mask inactive threads. This is the fundamental tension of GPU programming languages: the hardware wants uniformity, but real programs need heterogeneity.</p>
 <p>CUDA exposes exactly one control-flow primitive for this: <code>if</code>. All threads evaluate the condition; threads where it is false are masked (deactivated); both paths execute sequentially within the warp. This is <strong>predicated execution</strong> — simple, universal, and sometimes ruinously expensive. A warp that diverges on an <code>if</code> runs both sides, throwing away half its throughput on each.</p>
