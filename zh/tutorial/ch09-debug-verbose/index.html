@@ -822,7 +822,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        综合应用：系统化工作流
+        综合应用
       
     </span>
   </a>
@@ -2529,7 +2529,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        综合应用：系统化工作流
+        综合应用
       
     </span>
   </a>
@@ -2626,7 +2626,7 @@
   println!("b.span = ", b.span);
 }</code></pre>
 <p>编译该文件时，编译器会输出：</p>
-<pre class="highlight"><code>shape of b: b.span = {3, 2}</code></pre>
+<pre class="highlight"><code>shape of b: b.span = [3, 2]</code></pre>
 <p>无需 GPU。字符串字面量会被拼接（<code>"wor" "ld!"</code> 变为 <code>"world!"</code>）。在投入完整内核启动之前，可用 <code>print!</code> / <code>println!</code> 验证 <code>chunkat</code> 与 <code>subspan</code> 是否产生你期望的分块尺寸。</p>
 <h2 id="print-println_1"><code>print</code> 与 <code>println</code>：运行时设备端输出<a class="headerlink" href="#print-println_1" title="Permanent link">&para;</a></h2>
 <p>不带感叹号时，<code>print</code> 与 <code>println</code> 会在生成的 CUDA 中发出设备端 <code>printf</code> 调用：</p>
@@ -2655,8 +2655,8 @@
 <p>当你怀疑编译器向 <code>nvcc</code> 传错了标志，或需要查看生成文件的确切路径以便手动检查时，这很有用。</p>
 <h2 id="-rtc">运行时检查：<code>-rtc</code><a class="headerlink" href="#-rtc" title="Permanent link">&para;</a></h2>
 <p>编译器支持通过 <code>-rtc</code>（或 <code>--runtime-check</code>）进行分级运行时检查：</p>
-<pre class="highlight"><code class="language-bash">croqtile kernel.co -rtc high -o kernel</code></pre>
-<p>级别：<code>entry</code>、<code>low</code>、<code>medium</code>、<code>high</code>、<code>all</code>、<code>none</code>。级别越高会插入更多边界检查与校验，代价是性能。开发阶段可使用 <code>high</code> 或 <code>all</code>，生产环境使用 <code>none</code>。</p>
+<pre class="highlight"><code class="language-bash">croqtile kernel.co -rtc=high -o kernel</code></pre>
+<p>级别：<code>none</code>、<code>entry</code>（默认）、<code>low</code>、<code>medium</code>、<code>high</code>、<code>all</code>。每一级是上一级的超集。开发阶段可使用 <code>high</code> 或 <code>all</code>，生产环境使用 <code>none</code>。</p>
 <h2 id="mma">调试大量依赖 MMA 的内核<a class="headerlink" href="#mma" title="Permanent link">&para;</a></h2>
 <p>若错误答案来自 Tensor Core 路径，应<strong>先怀疑布局</strong>——行主序与列主序，以及右操作数在内存中是 <code>[N, K]</code> 还是 <code>[K, N]</code>。再检查<strong>索引</strong>（你用 <code>.at</code> / <code>chunkat</code> 绑定的 <code>block_m</code>、<code>block_n</code> 与 K 分块）。若引入了异步拷贝或拆分了生产者与消费者 warp，再检查<strong>异步顺序</strong>。</p>
 <p>常见错误包括在分阶段数据实际为列主序时误标 <code>mma.row.row</code>，或使用与 MMA 分块几何不对齐的 <code>chunkat</code> 索引。若使用打乱加载（<code>tma.copy.swiz</code> / <code>mma.load.swiz</code>），失配往往表现为误差中的规则模式（例如每第十六个元素正确，其余错位）。</p>
@@ -2709,20 +2709,15 @@ $2 = 64
 (gdb) print __dbg_lhs.data != 0
 $3 = true</code></pre>
 <p>变量名上的 <code>__dbg_</code> 前缀由编译器生成——它使 Croqtile 变量与生成的 C++ 中间代码一并可见。</p>
-<h2 id="_1">综合应用：系统化工作流<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>上述顺序是有意为之：<strong>先做廉价的编译期检查</strong>，再是<strong>收窄范围的运行时打印</strong>，然后是<strong>流水线语义</strong>、<strong>布局</strong>，最后才是<strong>调试器</strong>。</p>
+<h2 id="_1">综合应用<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><img alt="Debugging workflow: shapes -&gt; one tile -&gt; sync -&gt; layout -&gt; GDB" src="../../../assets/images/ch09/fig1_debug_workflow_dark.png#only-dark" />
 <img alt="Debugging workflow: shapes -&gt; one tile -&gt; sync -&gt; layout -&gt; GDB" src="../../../assets/images/ch09/fig1_debug_workflow_light.png#only-light" /></p>
-<p><strong>1. 检查形状。</strong> 在编译期使用 <code>println!</code>，确认所有 <code>chunkat</code>、<code>subspan</code> 与 <code>span</code> 表达式产生的分块尺寸符合预期。</p>
-<p><strong>2. 检查单个分块。</strong> 在 K 循环内添加带条件的 <code>println</code>，仅对块 <code>(0, 0)</code> 与某一个线程触发。在每次 K 迭代后打印累加器，并与手算参考值比对。</p>
-<p><strong>3. 检查同步。</strong> 若仅在 K 很大时值错误，应怀疑事件顺序。在生产者与消费者两侧打印 <code>iv_k</code> 与 <code>stage</code>，确认二者访问同一序列。常见缺陷：消费者的 <code>trigger empty[stage]</code> 触发过早。</p>
-<p><strong>4. 检查布局。</strong> 若结果呈模式性错误（例如每第十六个元素正确，其余错位），应怀疑 <code>mma.row.row</code> 中行主序与列主序失配，或 <code>tma.copy.swiz&lt;N&gt;</code> 与 <code>mma.load.swiz&lt;N&gt;</code> 之间的 swizzle 模式不一致。</p>
-<p><strong>5. 用 GDB 查指针类缺陷。</strong> 若 <code>println</code> 显示的值不合理（NaN、巨大整数、本应为非零却为零），使用 <code>-g</code> 编译并在 <code>cuda-gdb</code> 中单步执行。检查张量指针（<code>__dbg_x.data</code>）。</p>
-<p><strong>性能提示。</strong> <code>print</code> / <code>println</code> 代价很高：每次调用都经全局 <code>printf</code> 缓冲区串行化，会严重拉低吞吐。Debug RTTI 会增加寄存器压力。基准测试前应移除所有打印并去掉 <code>-g</code>。实用折衷是使用 <code>#ifdef DEBUG_PRINT</code>（第 8 章）：</p>
+<p>由廉价到昂贵依次排查：<code>println!</code>（编译期形状）→ 带条件的 <code>println</code> 只看一块（运行时数值）→ 事件/阶段打印（同步）→ 模式分析（布局）→ <code>cuda-gdb</code>（指针类缺陷）。运行时打印用 <code>#ifdef</code> 守卫，使之在生产构建中消失：</p>
 <pre class="highlight"><code class="language-choreo">#ifdef DEBUG_PRINT
   println("tile_k=", iv_k, " accum=", mc);
 #endif</code></pre>
-<p>使用 <code>croqtile kernel.co -DDEBUG_PRINT</code> 编译以启用，或不带该标志用于生产运行。</p>
+<pre class="highlight"><code class="language-bash">croqtile kernel.co -DDEBUG_PRINT -o kernel    # 调试构建
+croqtile kernel.co -o kernel                   # 生产构建</code></pre>
 <h2 id="_2">小结<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -2749,7 +2744,7 @@ $3 = true</code></pre>
 <td>中——经 <code>printf</code> 串行化</td>
 </tr>
 <tr>
-<td><code>-rtc high</code></td>
+<td><code>-rtc=high</code></td>
 <td>运行时</td>
 <td>中——边界检查</td>
 </tr>

@@ -708,6 +708,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#why-the-restricted-interface-works-expressiveness-vs-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why the restricted interface works: expressiveness vs performance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#tma-in-a-pipelined-matmul" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2488,6 +2499,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#why-the-restricted-interface-works-expressiveness-vs-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why the restricted interface works: expressiveness vs performance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#tma-in-a-pipelined-matmul" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2651,14 +2673,14 @@
 
 <h1 id="advanced-data-movement-tma-swizzle-and-irregular-access">Advanced Data Movement: TMA, Swizzle, and Irregular Access<a class="headerlink" href="#advanced-data-movement-tma-swizzle-and-irregular-access" title="Permanent link">&para;</a></h1>
 <p>Chapter 2 introduced <code>dma.copy</code> as Croqtile's general data movement primitive — a way to move rectangular tiles between memory spaces using a simple <code>src =&gt; dst</code> arrow syntax. Under the hood, DMA copies are <strong>software-driven</strong>: every thread in the warpgroup participates in address computation and load issuance. The hardware sees dozens of individual load instructions, one per thread, that collectively assemble a tile in shared memory.</p>
-<p>This works, but it leaves performance on the table. As GPUs have evolved, NVIDIA introduced dedicated hardware for bulk tensor movement: the <strong>Tensor Memory Accelerator (TMA)</strong>. TMA is not a programming abstraction — it is a physical hardware unit on Hopper (SM90+) GPUs, sitting near the L2 cache / shared memory interface. Instead of threads cooperatively issuing loads, a single thread issues one <strong>descriptor-based</strong> instruction, and the TMA hardware handles everything: multi-dimensional address computation, boundary clamping, and the actual data transfer. The software thread is free to do other work (or not exist at all — the TMA engine runs independently).</p>
-<p>Why does Croqtile need a separate abstraction for this? Because TMA is not just "faster DMA." It has fundamentally different properties:</p>
+<p>NVIDIA's Hopper GPUs (SM90+) add a second mechanism: the <strong>Tensor Memory Accelerator (TMA)</strong>. TMA is a physical hardware unit sitting near the L2 cache / shared memory interface. Instead of threads cooperatively issuing loads, a single thread issues one <strong>descriptor-based</strong> instruction, and the TMA engine handles everything: multi-dimensional address computation, boundary clamping, and the actual data transfer.</p>
+<p>A common misconception is that TMA moves data faster than DMA. It does not — both paths ultimately travel the same HBM → L2 → shared-memory data highway at the same bandwidth. The advantage is elsewhere: TMA has its own <strong>dedicated engine</strong> that runs independently of the SM's instruction pipeline. Once the descriptor-based instruction is issued, the TMA hardware performs the transfer in the background while the issuing thread (and all other threads in the warpgroup) are free to execute compute instructions. With <code>dma.copy</code>, the threads that participate in address math and load issuance are occupied for the duration of the transfer; with <code>tma.copy</code>, they can overlap the transfer with MMA or other work. In a warp-specialized pipeline (Chapter 5–6), this is the difference between a producer that blocks on loads and a producer that fires-and-forgets.</p>
+<p>The two paths differ in interface, not in throughput:</p>
 <ul>
-<li><strong>Descriptors</strong> — TMA uses a pre-built tensor descriptor that encodes base pointer, dimensions, strides, and swizzle mode. The compiler builds this from your <code>__co__</code> signature and global layout.</li>
-<li><strong>Swizzle</strong> — TMA can rearrange bytes during transfer to avoid shared-memory bank conflicts. This swizzle pattern is baked into the descriptor and must match how the MMA operand loads interpret the layout. DMA has no such coupling.</li>
-<li><strong>Single-thread issue</strong> — Unlike DMA where the entire warpgroup participates, TMA is issued by one thread. This changes the producer's register pressure and scheduling requirements.</li>
+<li><strong><code>dma.copy</code></strong> — Threads cooperatively issue loads. The programmer controls nothing about address patterns — Croqtile handles coalescing automatically. Flexible: works on any CUDA GPU since it compiles to standard load instructions.</li>
+<li><strong><code>tma.copy</code></strong> — One descriptor-based instruction. The TMA hardware expands it into multi-dimensional addressing, applies swizzle, and handles boundary clamping. Hopper (SM90+) only. The descriptor is built by the compiler from your <code>__co__</code> signature and global layout.</li>
 </ul>
-<p>Croqtile exposes TMA through the same arrow syntax as DMA — <code>tma.copy</code> instead of <code>dma.copy</code> — but the swizzle coupling and descriptor semantics make it a distinct primitive. The rest of this chapter covers TMA, swizzle, and the irregular-access utilities that handle real-world edge cases.</p>
+<p>Croqtile exposes TMA through the same arrow syntax as DMA — <code>tma.copy</code> instead of <code>dma.copy</code>. The rest of this chapter covers TMA, swizzle, the irregular-access utilities for real-world edge cases, and how Croqtile's design philosophy trades generality for guaranteed performance.</p>
 <h2 id="tmacopy-hardware-tensor-movement"><code>tma.copy</code>: hardware tensor movement<a class="headerlink" href="#tmacopy-hardware-tensor-movement" title="Permanent link">&para;</a></h2>
 <p>The surface syntax mirrors <code>dma.copy</code>:</p>
 <pre class="highlight"><code class="language-choreo">tma.copy lhs.subspan(WARP_M, TILE_K).at(block_m, iv_k) =&gt; lhs_load_s;</code></pre>
@@ -2674,15 +2696,22 @@
 <img alt="Software DMA vs TMA: cooperative thread loads vs descriptor-driven hardware tensor copy" src="../../assets/images/ch07/fig1_tma_vs_dma_light.png#only-light" /></p>
 <h2 id="swizzle-and-bank-conflicts">Swizzle and bank conflicts<a class="headerlink" href="#swizzle-and-bank-conflicts" title="Permanent link">&para;</a></h2>
 <p>Shared memory is striped into <strong>32 banks</strong> (4 bytes per bank). When multiple lanes in a warp touch different addresses that map to the same bank in the same cycle, the hardware <strong>serializes</strong> those accesses — a <strong>bank conflict</strong>. Dense row-major tiles often create 2-way, 4-way, or worse conflicts that cut effective bandwidth.</p>
-<p><strong>Swizzle</strong> applies a fixed XOR-style remapping to column indices within each row, spreading accesses across banks. Croqtile exposes it on both the copy and the MMA load so ingress and math agree:</p>
-<pre class="highlight"><code class="language-choreo">tma.copy.swiz&lt;3&gt; src =&gt; dst;</code></pre>
-<p><strong>Ingress.</strong> The copy lands bytes in shared memory using swizzle pattern <code>N</code>.</p>
+<p><strong>Swizzle</strong> applies a fixed XOR-style remapping to column indices within each row, spreading accesses across banks. Croqtile exposes it on <strong>both DMA and TMA</strong>, with the same syntax and the same effect:</p>
+<pre class="highlight"><code class="language-choreo">dma.copy.swiz&lt;3&gt; src =&gt; dst;       // software DMA with swizzle
+tma.copy.swiz&lt;3&gt; src =&gt; dst;       // hardware TMA with swizzle</code></pre>
+<p>The copy lands bytes in shared memory using swizzle pattern <code>N</code>. The MMA read path must use the same <code>swiz&lt;N&gt;</code> so addresses match the staged layout:</p>
 <pre class="highlight"><code class="language-choreo">ma = mma.load.swiz&lt;3&gt; lhs_load_s.chunkat(_, iv_warp);</code></pre>
-<p><strong>MMA read path.</strong> Operand loads must use the same <code>swiz&lt;N&gt;</code> so addresses match the staged layout.</p>
+<p>Swizzle is not a TMA-specific feature. In Croqtile, <code>dma.copy.swiz&lt;N&gt;</code> and <code>tma.copy.swiz&lt;N&gt;</code> produce identical shared-memory layouts. The difference is only in how the data gets there (thread-cooperative loads vs. descriptor-based hardware transfer), not in how the data is arranged once it arrives.</p>
 <p><strong>Swizzle levels.</strong> The template argument sets the granularity: <code>swiz&lt;0&gt;</code> is identity, then 64B, 128B, and 256B XOR patterns for <code>&lt;1&gt;</code>, <code>&lt;2&gt;</code>, and <code>&lt;3&gt;</code>. Larger granularities defeat wider conflict patterns but require tile extents that line up with that granularity.</p>
-<p><strong>Matching rule.</strong> The <code>&lt;N&gt;</code> on <code>tma.copy.swiz&lt;N&gt;</code> must match <code>mma.load.swiz&lt;N&gt;</code>. If you load with plain <code>mma.load</code> from <code>swiz&lt;3&gt;</code> data, addresses disagree and you read garbage. The compiler does not enforce the pairing — it is a correctness invariant you maintain. (As introduced in <a href="../ch04-mma/#new-syntax">Chapter 4</a>, <code>mma.load.swiz&lt;N&gt;</code> is part of the MMA load family.)</p>
+<p><strong>Matching rule.</strong> The <code>&lt;N&gt;</code> on the copy must match <code>mma.load.swiz&lt;N&gt;</code>. If you load with plain <code>mma.load</code> from <code>swiz&lt;3&gt;</code> data, addresses disagree and you read garbage. The compiler does not enforce the pairing — it is a correctness invariant you maintain. (As introduced in <a href="../ch04-mma/#new-syntax">Chapter 4</a>, <code>mma.load.swiz&lt;N&gt;</code> is part of the MMA load family.)</p>
 <p><img alt="Bank conflicts without swizzle vs XOR swizzle spreading warp lanes across banks" src="../../assets/images/ch07/fig2_swizzle_dark.png#only-dark" />
 <img alt="Bank conflicts without swizzle vs XOR swizzle spreading warp lanes across banks" src="../../assets/images/ch07/fig2_swizzle_light.png#only-light" /></p>
+<h2 id="why-the-restricted-interface-works-expressiveness-vs-performance">Why the restricted interface works: expressiveness vs performance<a class="headerlink" href="#why-the-restricted-interface-works-expressiveness-vs-performance" title="Permanent link">&para;</a></h2>
+<p>In raw CUDA, a programmer implementing data movement has enormous freedom: arbitrary pointer arithmetic, variable-stride access, hand-computed bank-conflict avoidance, custom swizzle formulas. This flexibility is a double-edged sword. The space of possible data movement patterns is vast, but the subset that actually performs well on GPU hardware is narrow — it requires coalesced global loads, conflict-free shared-memory access, and correct swizzle alignment. Getting any of these wrong silently degrades throughput by 2–32×.</p>
+<p>Croqtile takes the opposite approach: it restricts the expressible patterns to those that are <strong>guaranteed to be in the performance sweet spot</strong>. When you write <code>dma.copy</code> or <code>tma.copy</code>, the compiler automatically handles coalesced access, bank-conflict-free layout, and swizzle alignment. There is no way to accidentally write a strided, uncoalesced global load or a bank-conflicted shared-memory layout — the syntax simply does not allow it.</p>
+<p><img alt="Expressiveness vs performance: CUDA's wide range includes many slow patterns; Croqtile's restricted range maps entirely to the performance sweet spot" src="../../assets/images/ch07/fig8_expressiveness_dark.png#only-dark" />
+<img alt="Expressiveness vs performance: CUDA's wide range includes many slow patterns; Croqtile's restricted range maps entirely to the performance sweet spot" src="../../assets/images/ch07/fig8_expressiveness_dark.png#only-light" /></p>
+<p>TMA's descriptor-based interface is an extreme instance of this philosophy: it supports only a few tile-aligned transfer patterns, but those patterns are exactly the ones the hardware is optimized for. Croqtile's <code>dma.copy</code> follows the same principle — it generates only patterns that are coalesced and conflict-free, even though the underlying <code>LDG</code>/<code>STS</code> instructions can express far more (including many slow patterns). The trade is explicit: you give up the ability to write arbitrary data movement, and in return, every data movement you write is fast.</p>
 <h2 id="tma-in-a-pipelined-matmul">TMA in a pipelined matmul<a class="headerlink" href="#tma-in-a-pipelined-matmul" title="Permanent link">&para;</a></h2>
 <p>The pipeline skeleton from Chapter 6 is unchanged: ring of stages, <code>wait</code> / <code>trigger</code> on events, MMA commit, consumer drains tiles while producer fills the next slot. Here the producer swaps <code>dma.copy</code> for <code>tma.copy.swiz&lt;3&gt;</code> and the consumer swaps <code>mma.load</code> for <code>mma.load.swiz&lt;3&gt;</code>:</p>
 <pre class="highlight"><code class="language-choreo">__co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
@@ -2775,18 +2804,23 @@ ma = mma.load tile_2d.chunkat(_, iv_warp);</code></pre>
 <tbody>
 <tr>
 <td>Software DMA (Ch. 2, 6)</td>
-<td><code>dma.copy</code></td>
-<td>Thread-cooperative tile transfer; baseline</td>
+<td><code>dma.copy</code> / <code>dma.copy.swiz&lt;N&gt;</code></td>
+<td>Thread-cooperative tile transfer; works on all CUDA GPUs</td>
 </tr>
 <tr>
 <td>Hardware TMA</td>
 <td><code>tma.copy</code> / <code>tma.copy.swiz&lt;N&gt;</code></td>
-<td>Descriptor-driven Hopper ingress; minimal thread overhead</td>
+<td>Descriptor-driven Hopper ingress; dedicated engine enables async overlap</td>
 </tr>
 <tr>
 <td>Swizzle</td>
-<td><code>mma.load.swiz&lt;N&gt;</code></td>
-<td>Align SMEM layout with MMA reads; matching <code>N</code> on copy and load</td>
+<td><code>.swiz&lt;N&gt;</code> on copy + <code>mma.load.swiz&lt;N&gt;</code></td>
+<td>Bank-conflict-free SMEM layout; same effect for DMA and TMA</td>
+</tr>
+<tr>
+<td>Expressiveness trade</td>
+<td>—</td>
+<td>Croqtile restricts patterns to guarantee coalesced, conflict-free transfers</td>
 </tr>
 <tr>
 <td>Arbitrary windows</td>
@@ -2821,11 +2855,15 @@ ma = mma.load tile_2d.chunkat(_, iv_warp);</code></pre>
 <tbody>
 <tr>
 <td><code>tma.copy src =&gt; dst</code></td>
-<td>TMA hardware tensor copy</td>
+<td>TMA hardware tensor copy (Hopper SM90+)</td>
 </tr>
 <tr>
 <td><code>tma.copy.swiz&lt;N&gt; src =&gt; dst</code></td>
-<td>TMA copy with swizzle mode <code>N</code> (0-3)</td>
+<td>TMA copy with swizzle mode <code>N</code> (0–3)</td>
+</tr>
+<tr>
+<td><code>dma.copy.swiz&lt;N&gt; src =&gt; dst</code></td>
+<td>DMA copy with swizzle mode <code>N</code> (0–3); same layout as TMA</td>
 </tr>
 <tr>
 <td><code>mma.load.swiz&lt;N&gt; src</code></td>

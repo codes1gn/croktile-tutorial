@@ -725,6 +725,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#__device__-vs-ordinary-c-inline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __device__ vs ordinary C++ inline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#__device__-functions-cuda-alongside-croqtile" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2505,6 +2516,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#__device__-vs-ordinary-c-inline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __device__ vs ordinary C++ inline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#__device__-functions-cuda-alongside-croqtile" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2714,17 +2736,39 @@
 <li><strong>The preprocessor</strong> — <code>#define</code>, <code>#if</code>, <code>#ifdef</code>, <code>#error</code> for compile-time configuration, the same role <code>#define</code> plays in C/C++ codebases.</li>
 </ol>
 <p>So far the tutorial has built a stack of abstractions: tiles, parallelism, MMA, pipelines, events, TMA. That is the Croqtile you want to live in. This chapter is about the times you need to step outside.</p>
-<p><img alt="Croqtile kernel body with an embedded __cpp__ island for verbatim PTX/C++" src="../../assets/images/ch08/fig1_escape_hatch_dark.png#only-dark" />
-<img alt="Croqtile kernel body with an embedded __cpp__ island for verbatim PTX/C++" src="../../assets/images/ch08/fig1_escape_hatch_light.png#only-light" /></p>
 <h2 id="how-co-files-compile">How <code>.co</code> files compile<a class="headerlink" href="#how-co-files-compile" title="Permanent link">&para;</a></h2>
-<p>A <code>.co</code> file can contain three kinds of code: host C++ (ordinary functions, <code>main()</code>), <code>__co__</code> functions (Croqtile-managed kernels), and <code>__device__</code> functions (standard CUDA device code). The Croqtile compiler processes each differently:</p>
-<p><img alt=".co file compilation flow: source -&gt; compiler -&gt; host C++ and device CUDA -&gt; nvcc -&gt; binary" src="../../assets/images/ch08/fig2_compilation_flow_dark.png#only-dark" />
-<img alt=".co file compilation flow: source -&gt; compiler -&gt; host C++ and device CUDA -&gt; nvcc -&gt; binary" src="../../assets/images/ch08/fig2_compilation_flow_light.png#only-light" /></p>
+<p>A <code>.co</code> file mixes three kinds of code. The Croqtile compiler treats each differently — and the difference matters for understanding what you can and cannot do at each boundary. Consider this skeleton:</p>
+<pre class="highlight"><code class="language-choreo">__device__ __forceinline__ float fast_rsqrt(float x) {   // ①
+  return __frsqrt_rn(x);
+}
+
+__co__ void my_kernel(f32 [M, N] input, f32 [M, N]&amp; output) {   // ②
+  parallel {bm, bn} by [cdiv(M, 64), cdiv(N, 64)] : block {
+    // ... Croqtile orchestration: parallel, dma, mma, events ...
+    __cpp__("asm volatile(\"setmaxnreg.dec.sync.aligned.u32 40;\");");   // ③
+  }
+}
+
+int main() {   // ④
+  auto in = choreo::make_spandata&lt;choreo::f32&gt;(M, N);
+  auto out = my_kernel(in.view());
+}</code></pre>
+<p>The compiler splits this into a single intermediate <code>.cu</code> file, then hands it to <code>nvcc</code>:</p>
+<p><img alt=".co compilation: Croqtile compiler transforms __co__ and passes through __device__ and host C++, merging everything into one .cu file for nvcc" src="../../assets/images/ch08/fig1_compilation_flow_dark.png#only-dark" />
+<img alt=".co compilation: Croqtile compiler transforms __co__ and passes through __device__ and host C++, merging everything into one .cu file for nvcc" src="../../assets/images/ch08/fig1_compilation_flow_dark.png#only-light" /></p>
+<p>What happens to each region:</p>
 <ul>
-<li><strong><code>__co__</code> functions</strong> are transformed into <code>__global__</code> CUDA kernels with generated launch configurations, shared memory declarations, and register allocation.</li>
-<li><strong><code>__device__</code> functions</strong> are passed through to the device compilation unit <strong>unchanged</strong>. The Croqtile compiler does not rewrite them — they appear in the generated CUDA exactly as you wrote them.</li>
-<li><strong>Host code</strong> (everything else) becomes the host-side C++ that sets up buffers, launches kernels, and handles I/O.</li>
+<li><strong>① <code>__device__</code> functions</strong> are copied into the generated <code>.cu</code> file <strong>verbatim</strong>. The Croqtile compiler does not parse their bodies, does not rewrite them, does not manage their register allocation. They appear in the intermediate source exactly as you wrote them. This is the key distinction from <code>__co__</code> functions: a <code>__device__</code> function is pure CUDA that happens to live in a <code>.co</code> file.</li>
+<li><strong>② <code>__co__</code> functions</strong> are the heart of Croqtile. The compiler transforms them into <code>__global__</code> CUDA kernels: <code>parallel</code> becomes grid/block launch dimensions, <code>dma.copy</code> becomes cooperative load sequences (or TMA descriptor issues), <code>mma</code> becomes <code>wgmma</code> instructions, <code>shared</code> declarations become <code>__shared__</code> allocations with computed sizes, events become barrier/mbarrier synchronization. The generated code is typically hundreds of lines of CUDA for a few dozen lines of Croqtile.</li>
+<li><strong>③ <code>__cpp__</code> strings</strong> are spliced character-for-character into the generated CUDA at the point where they appear in the <code>__co__</code> body. The compiler does not parse their contents — they must be valid at the splice point in the generated code.</li>
+<li><strong>④ Host code</strong> (<code>main()</code> and any other non-annotated functions) is passed through as ordinary C++ and ends up in the host compilation path.</li>
 </ul>
+<p>All four regions merge into one <code>.cu</code> file. <code>nvcc</code> compiles the device code (<code>__global__</code>, <code>__device__</code>) into GPU machine code, compiles the host code into CPU code, and links them into a single binary. Run <code>croqtile kernel.co -v</code> (Chapter 9) to see the exact <code>nvcc</code> command the compiler issues.</p>
+<h2 id="__device__-vs-ordinary-c-inline"><code>__device__</code> vs ordinary C++ inline<a class="headerlink" href="#__device__-vs-ordinary-c-inline" title="Permanent link">&para;</a></h2>
+<p>Both <code>__device__</code> functions and ordinary C++ functions are passed through unchanged, but they land in different compilation paths — and the distinction matters.</p>
+<p>A <code>__device__</code> function compiles to <strong>GPU machine code</strong>. It can use CUDA intrinsics (<code>__shfl_xor_sync</code>, <code>__frsqrt_rn</code>, <code>atomicAdd</code>), access <code>__shared__</code> memory, and run inside a <code>__global__</code> kernel. The <code>__co__</code> body calls it with the <code>call</code> keyword, and the generated <code>__global__</code> kernel invokes it directly on the device.</p>
+<p>An ordinary C++ function (no <code>__device__</code> or <code>__co__</code> annotation) compiles to <strong>CPU code</strong>. It runs on the host — setting up buffers, launching kernels, printing results. You cannot call a host function from inside a <code>__co__</code> body; the compiler would reject it because the generated <code>__global__</code> kernel runs on the GPU.</p>
+<p>The boundary is strict: <code>__device__</code> lives on the device side of the <code>nvcc</code> split, host C++ lives on the host side. The <code>__co__</code> function is the bridge — the compiler transforms it into a <code>__global__</code> kernel (device side) and generates a host-side wrapper that launches it.</p>
 <h2 id="__device__-functions-cuda-alongside-croqtile"><code>__device__</code> functions: CUDA alongside Croqtile<a class="headerlink" href="#__device__-functions-cuda-alongside-croqtile" title="Permanent link">&para;</a></h2>
 <p>When an algorithm needs a helper function that operates at the warp or thread level — a custom reduction, a sorting network, a special math function — writing it as a standard CUDA <code>__device__</code> function is often the natural choice. Croqtile does not need to manage these; they are plain CUDA.</p>
 <p>A <code>__co__</code> function can call a <code>__device__</code> function using the <code>call</code> keyword:</p>
@@ -2885,73 +2929,51 @@ __co__ foo() {
 <table>
 <thead>
 <tr>
-<th>Topic</th>
-<th>Takeaway</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>__device__</code> functions</td>
-<td>Standard CUDA device code in <code>.co</code> files; passed through unchanged; called with <code>call</code> from <code>__co__</code></td>
-</tr>
-<tr>
-<td><code>__cpp__</code></td>
-<td>Verbatim paste into generated CUDA; raw strings for <code>asm</code>; names must match generated C++</td>
-</tr>
-<tr>
-<td><code>call</code> keyword</td>
-<td>Invoke <code>__device__</code> functions from <code>__co__</code> bodies</td>
-</tr>
-<tr>
-<td><code>setmaxnreg</code></td>
-<td>Register redistribution: <code>dec</code> on producer, <code>inc</code> on consumer</td>
-</tr>
-<tr>
-<td>Preprocessor</td>
-<td><code>#define</code> for tile geometry; <code>#if</code> / <code>#error</code> for constraints; <code>#ifdef</code> for variants; <code>-D</code> for sweeps</td>
-</tr>
-</tbody>
-</table>
-<p><strong>New syntax</strong></p>
-<table>
-<thead>
-<tr>
 <th>Syntax</th>
-<th>Meaning</th>
+<th>What it does</th>
+<th>Runs on</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>__device__ fn()</code></td>
-<td>Standard CUDA device function (pass-through)</td>
+<td>Standard CUDA device function; passed through unchanged to <code>.cu</code></td>
+<td>GPU</td>
 </tr>
 <tr>
 <td><code>call fn(args)</code></td>
-<td>Invoke a <code>__device__</code> function from <code>__co__</code></td>
+<td>Invoke a <code>__device__</code> function from a <code>__co__</code> body</td>
+<td>GPU</td>
 </tr>
 <tr>
 <td><code>__cpp__("...")</code></td>
-<td>Inject verbatim C++ (ordinary string)</td>
+<td>Inject verbatim C++ at the splice point (ordinary string)</td>
+<td>GPU</td>
 </tr>
 <tr>
 <td><code>__cpp__(R"(...)")</code></td>
-<td>Inject verbatim C++ (raw string literal)</td>
+<td>Inject verbatim C++ (raw string; use for <code>asm volatile</code>)</td>
+<td>GPU</td>
+</tr>
+<tr>
+<td><code>setmaxnreg</code></td>
+<td>Register redistribution via <code>__cpp__</code>: <code>dec</code> on producer, <code>inc</code> on consumer</td>
+<td>GPU</td>
 </tr>
 <tr>
 <td><code>#define NAME value</code></td>
-<td>Object-like macro</td>
+<td>Object-like macro; shared across <code>__co__</code> and host regions</td>
+<td>Preprocessor</td>
 </tr>
 <tr>
-<td><code>#if expr</code> / <code>#elif</code> / <code>#else</code> / <code>#endif</code></td>
-<td>Conditional compilation</td>
+<td><code>#if</code> / <code>#ifdef</code> / <code>#error</code></td>
+<td>Conditional compilation and compile-time assertions</td>
+<td>Preprocessor</td>
 </tr>
 <tr>
-<td><code>#ifdef NAME</code> / <code>#ifndef NAME</code></td>
-<td>Test whether a macro is defined</td>
-</tr>
-<tr>
-<td><code>#error "message"</code></td>
-<td>Compile-time assertion failure</td>
+<td><code>-DNAME=value</code></td>
+<td>Define macros from the command line for tile sweeps</td>
+<td>Preprocessor</td>
 </tr>
 </tbody>
 </table>
