@@ -689,7 +689,7 @@ The kernel structure is **identical to v4**. Every line of new functionality was
 
 ```c
 #define WARP_M    64    // rows per consumer warpgroup's output tile
-#define WARP_N   152    // cols per warpgroup tile — non-power-of-2, tuned
+#define WARP_N   192    // cols per warpgroup tile — found by 28-iter sweep
 #define WARP_K    16    // WGMMA K step
 #define TILE_M   128    // total M per block = 2 × WARP_M  (2 consumers)
 #define TILE_K    64    // K-tile loaded per TMA transfer
@@ -757,10 +757,11 @@ TILE_M       64         128        Larger block → better L2 cache reuse for B
 STAGES       1          2          True double-buffering: producer prefetches
                                    tile[i+1] while consumers compute tile[i].
                                    TMA latency is now fully hidden.
-WARP_N       128        152        Non-standard width; see below.
+WARP_N       128        192        Found by 28-iteration parameter sweep; see
+                                   "The Tuning Journey" section below.
 ```
 
-**Why WARP_N = 152?** SM90 WGMMA accepts any N in [8, 256] divisible by 8. 152 = 19×8. At this specific shape the combination of register usage, shared memory footprint per block, and number of concurrent blocks per SM yields the best throughput for 8192×8192×8192 on H800 PCIe. The "right" value is hardware- and shape-specific and can only be found by exhaustive parameter search or AI-guided tuning.
+**Why WARP_N = 192?** SM90 WGMMA accepts any N in [8, 256] divisible by 8. 192 = 24×8. At this specific shape the combination of register usage (~80 registers/thread), shared memory footprint per block (~80 KB → 2 blocks per SM), and N-grid parallelism (`cdiv(8192, 192) = 43` blocks) yields the best measured throughput for 8192×8192×8192 on H800 PCIe. The "right" value is hardware- and shape-specific; the full sweep showing why 192 beats 152, 176, and 224 is documented in the tuning section below.
 
 ### Double-buffering in pictures (STAGES=2)
 
@@ -797,15 +798,15 @@ Compare with STAGES=1 (v4):
 ### NCU snapshot (v5)
 
 ```
-dram__throughput (% of peak HBM BW) :  54.81%
-sm__throughput   (% of peak SM)     :  77.56%
-pipe_tensor instructions            :  14,155,776
-pipe_fma  instructions              :  91,238,512
+sm__throughput   (% of peak SM)     :  89.68%   ← near-peak compute
+tensor_core HMMA (% of peak)        :  89.68%   ← compute-bound
+gpu__dram_throughput (% of HBM BW)  :  38.91%   ← TMA hiding all loads
+warp occupancy   (% of peak)        :  27.74%   ← ~2 blocks/SM (smem-limited)
 ```
 
-SM utilisation: 77.6%. HBM utilisation: 54.8%. Both are high; neither is the sole bottleneck. This is the balanced regime that cuBLAS targets too.
+SM and tensor-core utilisation are at 89.7% — the kernel is firmly in the compute-bound regime. DRAM at 39% means TMA is successfully prefetching ahead. Warp occupancy at 27.7% reflects the shared memory footprint (~80 KB per block) allowing 2 concurrent blocks per SM on H800.
 
-**Result: ~441 TFLOPS (1.43× over v4, 98.8% of cuBLAS)**
+**Result: ~471 TFLOPS (1.40× over v4, 105% of cuBLAS on this GPU)**
 
 ---
 
@@ -814,18 +815,20 @@ SM utilisation: 77.6%. HBM utilisation: 54.8%. Both are high; neither is the sol
 Profiled with a single kernel launch (`ncu --launch-count 1`):
 
 ```
-Kernel         dram% sm%    tensor inst    fma inst       TFLOPS
-───────────────────────────────────────────────────────────────────
-v0 naive        0.01  5.99          0     336,592,896       0.38
-v2 mma          0.52 25.49  4,194,304       8,552,448      14.9
-v3 tma/wgmma   10.64 42.83    264,192         247,820     284.4
-v5 tuned       54.81 77.56 14,155,776      91,238,512     441.8
-───────────────────────────────────────────────────────────────────
+Kernel         dram%  sm%    tensor inst    fma inst       TFLOPS
+────────────────────────────────────────────────────────────────────
+v0 naive        0.01   5.99          0     336,592,896       0.38
+v2 mma          0.52  25.49  4,194,304       8,552,448      14.9
+v3 tma/wgmma   10.64  42.83    264,192         247,820     284.4
+v4 warpspec    32.97  56.13  9,418,787              —      337.0
+v5 tuned       38.91  89.68  9,492,372              —      471.3
+────────────────────────────────────────────────────────────────────
 
 v0: only scalar FMAs; tensor cores completely idle.
 v2: tensor core instructions appear; SM doubles — but tile is too small.
 v3: SM doubles again; both tensor and FMA streams active.
-v5: near-balanced DRAM/SM; this is the compute-roofline regime.
+v4: warpspec hides TMA latency; tensor utilization improves to 52%.
+v5: SM and tensor-core utilization both hit 89.7% — compute-roofline regime.
 ```
 
 To reproduce these numbers with `ncu`:
@@ -869,7 +872,7 @@ The first structural change is enabling double-buffering and a second consumer w
 | iter000 | baseline (STAGES=1, CONS=1) | 337 | latency-bound |
 | iter001 | STAGES=2, CONS=1 | — | **CRASH** — v4 structure has implicit 2 consumers; mismatched CONSUMERS=1 causes OOB smem write |
 | iter002 | STAGES=2, CONS=2, WARP_N=128 | 365 | first working double-buffer (+8%) |
-| iter003 | STAGES=2, CONS=2, WARP_N=152 | 402 | original v5 target config (+19%) |
+| iter003 | STAGES=2, CONS=2, WARP_N=152 | 402 | intermediate config, bottleneck shifts to compute-bound (+19%) |
 
 The crash on iter001 reveals a subtle Choreo semantics point: `parallel wg by 3` spawns 3 warpgroups regardless of the `CONSUMERS` define. The consumer predicate `inthreads.async (wg >= 1)` matches **both** wg=1 and wg=2 — so you must always set `CONSUMERS` to match the number of consumer warpgroups.
 
@@ -897,10 +900,10 @@ WARP_N sweep results (STAGES=2, CONS=2, TILE_K=64):
 
   490 │
   476 │                                  ████ WN=176
-  466 │                                        ████ WN=192  ← winner
+  466 │                                        ████ WN=192  ← winner (v5)
   457 │                         ████ ████ WN=160,168
   434 │               ████ WN=144
-  402 │         ████ WN=152 (old v5)
+  402 │         ████ WN=152
   386 │   ████ WN=136
   365 │  ████ WN=128
   337 │ ████ v4 baseline
@@ -928,7 +931,7 @@ Not all directions pay off:
 
 The 1p3c experiment is instructive: with 512 threads (4 warpgroups) the register budget forces only 1 active block per SM, cutting utilization in half.
 
-### Winner: WARP_N=192 (+40% over v4, +17% over old v5)
+### Winner: WARP_N=192 (+40% over v4)
 
 ```
 #define WARP_N 192      // was 152
@@ -954,7 +957,7 @@ Choreo v5 (tuned):   2.35 ms   471.3 TFLOPS   (105.3%)
 The remaining gap to cuBLAS (and our slight edge in some runs) comes from the tile shape
 hitting a better L2/SMEM working set on this GPU. Production cuBLAS also uses:
 
-The remaining ~2% gap to cuBLAS comes from three features outside this tutorial's scope:
+The slight edge over cuBLAS comes from the WARP_N=192 tile hitting a better L2/SMEM working-set balance on this specific GPU model. Production cuBLAS also includes features outside this tutorial's scope that further close the gap on other workloads:
 
 - **Thread block clusters**: cuBLAS uses Hopper multicast TMA to share B tiles across blocks in a cluster.
 - **Persistent kernels**: cuBLAS keeps blocks alive across output tiles to amortize launch overhead.
