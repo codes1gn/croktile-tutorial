@@ -4,9 +4,13 @@ In this part, we iteratively optimize three Croqtile GEMM kernels on H800 PCIe (
 
 Before diving in, skim [Setting Up: TimerOption, TFLOPS, and HW Efficiency](setup-profiling.md) for how timing and efficiency are computed — every story uses the same harness.
 
-## [Dense GEMM FP16](dense-gemm-fp16.md)
+## [Dense GEMM FP16: From Naive to Tuned](dense-gemm-fp16-from-naive.md)
 
-Half-precision matmul from **208 → 382 TFLOPS** (+83%), matching cuBLAS. Tile geometry, pipeline depth, split-output 1p2c, and the WN=168 occupancy cliff.
+A complete six-stage tutorial starting from a naive kernel (v0, ~2 TFLOPS) and progressing through shared memory tiling, Tensor Core MMA, Hopper TMA+WGMMA, warp specialization, and a 28-iteration parameter sweep that reaches **471 TFLOPS** — exceeding cuBLAS on H800 PCIe. Each stage introduces new Choreo primitives with side-by-side generated CUDA to explain what the compiler produces.
+
+## [Dense GEMM FP16: Advanced Worklog](dense-gemm-fp16.md)
+
+Half-precision matmul from **208 → 382 TFLOPS** (+83%), matching cuBLAS. Tile geometry, pipeline depth, split-output 1p2c, and the WN=168 occupancy cliff. Assumes familiarity with warp specialization basics.
 
 ## [Sparse GEMM: FP16 and E4M3](sparse-gemm.md)
 

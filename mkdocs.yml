@@ -99,7 +99,8 @@ nav:
   - "Part II — Performance Tuning Demos":
     - Overview: optimization/index.md
     - "Profiling Setup": optimization/setup-profiling.md
-    - "Dense GEMM FP16": optimization/dense-gemm-fp16.md
+    - "Dense GEMM FP16 (from naive)": optimization/dense-gemm-fp16-from-naive.md
+    - "Dense GEMM FP16 (advanced worklog)": optimization/dense-gemm-fp16.md
     - "Sparse GEMM (FP16 + E4M3)": optimization/sparse-gemm.md
     - "Block-Scaled GEMM FP8": optimization/blockscale-gemm-fp8.md
     - "Fused MoE FP8": optimization/fused-moe-fp8.md
