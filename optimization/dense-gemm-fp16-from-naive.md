@@ -358,7 +358,6 @@ __co__ void matmul(
             mb = mma.load.swiz<SWIZ> rhs_s[stage].chunkat(_, iv_wk);
             mma.row.row mc, ma, mb;
           }
-          mma.commit;
           trigger empty[stage];
         }
 
@@ -380,7 +379,7 @@ __co__ void matmul(
 | `inthreads.async (condition) { ... }` | Executes the block only in warpgroups matching `condition`. This is Croqtile's syntax for Hopper *warp specialization*: warpgroups execute different code paths simultaneously. |
 | `tma.copy.async<full[stage]> src=>dst` | Asynchronous TMA that fires the event `full[stage]` upon hardware completion. The issuing thread is not blocked. |
 | `trigger event` / `wait event` | Signal or wait on a named barrier. Maps to `mbarrier.arrive` / `mbarrier.try_wait`. |
-| `mma.commit` | Inserts `wgmma.wait_group`: waits for all outstanding WGMMA operations to retire. Required before releasing `empty[stage]` because WGMMA is pipelined. |
+
 
 ### Generated CUDA (v3) — warpgroup dispatch
 

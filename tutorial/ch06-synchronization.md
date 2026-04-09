@@ -97,20 +97,19 @@ This kernel combines `inthreads.async` (from Chapter 5) with event arrays to bui
 __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
   parallel {block_m, block_n} by [cdiv(M, MATMUL_WARP_M), cdiv(N, MATMUL_WARP_N)] : block {
     shared event full[MATMUL_STAGES], empty[MATMUL_STAGES];
-    shared f16 [MATMUL_STAGES * MATMUL_WARP_M, MATMUL_TILE_K] lhs_load_s;
-    shared f16 [MATMUL_STAGES * MATMUL_WARP_N, MATMUL_TILE_K] rhs_load_s;
+    shared f16 [MATMUL_WARP_M, MATMUL_TILE_K] lhs_load_s[MATMUL_STAGES];
+    shared f16 [MATMUL_WARP_N, MATMUL_TILE_K] rhs_load_s[MATMUL_STAGES];
     shared f16 [MATMUL_WARP_M, MATMUL_WARP_N] output_s;
 
     parallel p1 by 2 : group-4 {
-
       inthreads.async (p1 == 0) {
         foreach {iv_k} in [cdiv(K, MATMUL_TILE_K)] {
           stage = iv_k % MATMUL_STAGES;
           wait empty[stage];
           dma.copy lhs.subspan(MATMUL_WARP_M, MATMUL_TILE_K).at(block_m, iv_k)
-            => lhs_load_s.subspan(MATMUL_WARP_M, MATMUL_TILE_K).at(stage, 0);
+            => lhs_load_s[stage];
           dma.copy rhs.chunkat(block_n, iv_k)
-            => rhs_load_s.subspan(MATMUL_WARP_N, MATMUL_TILE_K).at(stage, 0);
+            => rhs_load_s[stage];
           trigger full[stage];
         }
       }
@@ -124,8 +123,8 @@ __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, 
           stage = iv_k % MATMUL_STAGES;
           wait full[stage];
           foreach {iv_warp} in [cdiv(MATMUL_TILE_K, MATMUL_WARP_K)] {
-            ma = mma.load lhs_load_s.subspan(MATMUL_WARP_M, MATMUL_TILE_K).at(stage, 0).chunkat(_, iv_warp);
-            mb = mma.load rhs_load_s.subspan(MATMUL_WARP_N, MATMUL_TILE_K).at(stage, 0).chunkat(_, iv_warp);
+            ma = mma.load lhs_load_s[stage].chunkat(_, iv_warp);
+            mb = mma.load rhs_load_s[stage].chunkat(_, iv_warp);
             mma.row.row mc, ma, mb;
           }
           mma.commit;
