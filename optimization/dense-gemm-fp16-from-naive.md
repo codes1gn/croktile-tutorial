@@ -72,7 +72,8 @@ __co__ void matmul(
 | `foreach {iv_k} in [K]` | A plain sequential loop — no parallelism, no reordering. |
 | `.at(i, j)` | Element-level accessor into a 2-D tensor. |
 
-![Memory access pattern for v0: four threads redundantly read the same rows and columns](assets/img/v0_memory_access.png)
+![Memory access pattern for v0: four threads redundantly read the same rows and columns](assets/img/v0_memory_access.png#only-dark)
+![Memory access pattern for v0: four threads redundantly read the same rows and columns](assets/img/v0_memory_access_light.png#only-light)
 
 ### Generated CUDA (v0)
 
@@ -149,7 +150,8 @@ __co__ void matmul(
 | `dma.copy src => dst` | Cooperative DMA: all threads in the block collectively transfer `src` to `dst`. Croqtile partitions the transfer across threads, generates coalesced loads, and inserts `__syncthreads()`. One line replaces ~20 lines of manual CUDA. |
 | `.subspan(TILE_M, TILE_K).at(i, j)` | Selects the tile of shape `[TILE_M, TILE_K]` at grid position `(i, j)` within the tensor. |
 
-![Tile reuse pattern: K dimension is sliced into steps; each tile is loaded once and reused by all threads in the block](assets/img/v1_tile_reuse.png)
+![Tile reuse pattern: K dimension is sliced into steps; each tile is loaded once and reused by all threads in the block](assets/img/v1_tile_reuse.png#only-dark)
+![Tile reuse pattern: K dimension is sliced into steps; each tile is loaded once and reused by all threads in the block](assets/img/v1_tile_reuse_light.png#only-light)
 
 ### Generated CUDA (v1) — what `dma.copy` expands to
 
@@ -446,7 +448,8 @@ The full kernel is identical to v3 except for these defines — same 60 lines of
 
 With two buffer slots the producer can prefetch the next tile while the consumer computes the current one:
 
-![Double-buffering timeline: producer prefetches into the alternate slot while consumers compute from the current slot](assets/img/double_buffering_timeline.png)
+![Double-buffering timeline: producer prefetches into the alternate slot while consumers compute from the current slot](assets/img/double_buffering_timeline.png#only-dark)
+![Double-buffering timeline: producer prefetches into the alternate slot while consumers compute from the current slot](assets/img/double_buffering_timeline_light.png#only-light)
 
 ### NCU snapshot (v4)
 
@@ -547,7 +550,8 @@ With the kernel compute-bound, tuning `WARP_N` changes the balance between:
 !!! warning "Hardware constraint"
     WGMMA requires `WARP_N` to be a **multiple of 8**. Values like 180 or 188 compile-fail with `MMA m64n180k16 not supported`. Discovered during iter019–020.
 
-![WARP_N sweep results: performance peaks at WARP_N=192, drops beyond 208 due to smem limits](assets/img/warpn_sweep.png)
+![WARP_N sweep results: performance peaks at WARP_N=192, drops beyond 208 due to smem limits](assets/img/warpn_sweep.png#only-dark)
+![WARP_N sweep results: performance peaks at WARP_N=192, drops beyond 208 due to smem limits](assets/img/warpn_sweep_light.png#only-light)
 
 The sweet spot is **WARP_N = 176–192**. Going beyond 192 adds shared memory without enough extra work to compensate — WARP_N=224 drops to 364 TFLOPS because the larger smem footprint prevents 2 concurrent blocks per SM.
 
@@ -602,7 +606,8 @@ All three can be expressed in Croqtile — the production-grade kernels in the r
 
 ## The optimization ladder
 
-![Optimization ladder: TFLOPS progression from v0 (0.38) through v4 (471), compared to cuBLAS (447)](assets/img/optimization_ladder.png)
+![Optimization ladder: TFLOPS progression from v0 (0.38) through v4 (471), compared to cuBLAS (447)](assets/img/optimization_ladder.png#only-dark)
+![Optimization ladder: TFLOPS progression from v0 (0.38) through v4 (471), compared to cuBLAS (447)](assets/img/optimization_ladder_light.png#only-light)
 
 | Step | Technique | Key Croqtile construct | Speedup |
 | --- | --- | --- | ---: |
