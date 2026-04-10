@@ -3276,7 +3276,8 @@ __co__ void matmul(
 </tr>
 </tbody>
 </table>
-<p><img alt="Memory access pattern for v0: four threads redundantly read the same rows and columns" src="../assets/img/v0_memory_access.png" /></p>
+<p><img alt="Memory access pattern for v0: four threads redundantly read the same rows and columns" src="../assets/img/v0_memory_access.png#only-dark" />
+<img alt="Memory access pattern for v0: four threads redundantly read the same rows and columns" src="../assets/img/v0_memory_access_light.png#only-light" /></p>
 <h3 id="generated-cuda-v0">Generated CUDA (v0)<a class="headerlink" href="#generated-cuda-v0" title="Permanent link">&para;</a></h3>
 <p><code>parallel : block</code> / <code>: thread</code> become <code>blockIdx</code> / <code>threadIdx</code> arithmetic. The <code>#</code> composition becomes a multiply-add. The whole kernel is just a loop:</p>
 <pre class="highlight"><code class="language-cuda">__global__ void matmul_kernel(f16* lhs, f16* rhs, f16* output,
@@ -3349,7 +3350,8 @@ __co__ void matmul(
 </tr>
 </tbody>
 </table>
-<p><img alt="Tile reuse pattern: K dimension is sliced into steps; each tile is loaded once and reused by all threads in the block" src="../assets/img/v1_tile_reuse.png" /></p>
+<p><img alt="Tile reuse pattern: K dimension is sliced into steps; each tile is loaded once and reused by all threads in the block" src="../assets/img/v1_tile_reuse.png#only-dark" />
+<img alt="Tile reuse pattern: K dimension is sliced into steps; each tile is loaded once and reused by all threads in the block" src="../assets/img/v1_tile_reuse_light.png#only-light" /></p>
 <h3 id="generated-cuda-v1-what-dmacopy-expands-to">Generated CUDA (v1) — what <code>dma.copy</code> expands to<a class="headerlink" href="#generated-cuda-v1-what-dmacopy-expands-to" title="Permanent link">&para;</a></h3>
 <p>One line of Croqtile expands to ~25 lines of CUTE layout construction, thread-partitioned copy, and synchronisation. The essential pattern:</p>
 <pre class="highlight"><code class="language-cuda">// dma.copy ... .at(block_m, iv_k) =&gt; lhs_s  →
@@ -3699,7 +3701,8 @@ if (wg &gt;= 1) {                                 // consumers
 <p><strong>Why WARP_N = 192?</strong> SM90 WGMMA accepts any N in [8, 256] divisible by 8. 192 = 24×8. At this shape the combination of register usage (~80 registers/thread), shared memory footprint per block (~80 KB → 2 blocks per SM), and N-grid parallelism (<code>cdiv(8192, 192) = 43</code> blocks) yields the best measured throughput for 8192³ on H800 PCIe. The full sweep is documented in the tuning section below.</p>
 <h3 id="double-buffering-in-pictures-stages2">Double-buffering in pictures (STAGES=2)<a class="headerlink" href="#double-buffering-in-pictures-stages2" title="Permanent link">&para;</a></h3>
 <p>With two buffer slots the producer can prefetch the next tile while the consumer computes the current one:</p>
-<p><img alt="Double-buffering timeline: producer prefetches into the alternate slot while consumers compute from the current slot" src="../assets/img/double_buffering_timeline.png" /></p>
+<p><img alt="Double-buffering timeline: producer prefetches into the alternate slot while consumers compute from the current slot" src="../assets/img/double_buffering_timeline.png#only-dark" />
+<img alt="Double-buffering timeline: producer prefetches into the alternate slot while consumers compute from the current slot" src="../assets/img/double_buffering_timeline_light.png#only-light" /></p>
 <h3 id="ncu-snapshot-v4">NCU snapshot (v4)<a class="headerlink" href="#ncu-snapshot-v4" title="Permanent link">&para;</a></h3>
 <pre class="highlight"><code>sm__throughput   (% of peak SM)     :  89.68%   ← near-peak compute
 tensor_core HMMA (% of peak)        :  89.68%   ← compute-bound
@@ -3845,7 +3848,8 @@ gpu__dram_throughput:    38%   ← TMA is hiding latency</code></pre>
 <p class="admonition-title">Hardware constraint</p>
 <p>WGMMA requires <code>WARP_N</code> to be a <strong>multiple of 8</strong>. Values like 180 or 188 compile-fail with <code>MMA m64n180k16 not supported</code>. Discovered during iter019–020.</p>
 </div>
-<p><img alt="WARP_N sweep results: performance peaks at WARP_N=192, drops beyond 208 due to smem limits" src="../assets/img/warpn_sweep.png" /></p>
+<p><img alt="WARP_N sweep results: performance peaks at WARP_N=192, drops beyond 208 due to smem limits" src="../assets/img/warpn_sweep.png#only-dark" />
+<img alt="WARP_N sweep results: performance peaks at WARP_N=192, drops beyond 208 due to smem limits" src="../assets/img/warpn_sweep_light.png#only-light" /></p>
 <p>The sweet spot is <strong>WARP_N = 176–192</strong>. Going beyond 192 adds shared memory without enough extra work to compensate — WARP_N=224 drops to 364 TFLOPS because the larger smem footprint prevents 2 concurrent blocks per SM.</p>
 <h3 id="phase-3-dead-ends-iter011018">Phase 3 — Dead Ends (iter011–018)<a class="headerlink" href="#phase-3-dead-ends-iter011018" title="Permanent link">&para;</a></h3>
 <p>Not all directions pay off:</p>
@@ -3938,7 +3942,8 @@ gpu__dram_throughput:    38%   ← TMA is hiding latency</code></pre>
 <p>All three can be expressed in Croqtile — the production-grade kernels in the repository implement them.</p>
 <hr />
 <h2 id="the-optimization-ladder">The optimization ladder<a class="headerlink" href="#the-optimization-ladder" title="Permanent link">&para;</a></h2>
-<p><img alt="Optimization ladder: TFLOPS progression from v0 (0.38) through v4 (471), compared to cuBLAS (447)" src="../assets/img/optimization_ladder.png" /></p>
+<p><img alt="Optimization ladder: TFLOPS progression from v0 (0.38) through v4 (471), compared to cuBLAS (447)" src="../assets/img/optimization_ladder.png#only-dark" />
+<img alt="Optimization ladder: TFLOPS progression from v0 (0.38) through v4 (471), compared to cuBLAS (447)" src="../assets/img/optimization_ladder_light.png#only-light" /></p>
 <table>
 <thead>
 <tr>

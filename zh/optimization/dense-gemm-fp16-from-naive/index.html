@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#how-to-optimize-a-matmul-kernel-with-croqtile-a-worklog" class="md-skip">
+        <a href="#croqtile" class="md-skip">
           跳转至
         </a>
       
@@ -877,10 +877,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#performance-at-a-glance" class="md-nav__link">
+  <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Performance at a glance
+        性能一览
       
     </span>
   </a>
@@ -888,22 +888,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kernel-0-naive" class="md-nav__link">
+  <a href="#0" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Kernel 0: Naive
+        内核 0：朴素版
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Kernel 0: Naive">
+    <nav class="md-nav" aria-label="内核 0：朴素版">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#generated-cuda-v0" class="md-nav__link">
+  <a href="#cuda-v0" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Generated CUDA (v0)
+        生成的 CUDA 代码 (v0)
       
     </span>
   </a>
@@ -911,10 +911,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ncu-snapshot-v0" class="md-nav__link">
+  <a href="#ncu-v0" class="md-nav__link">
     <span class="md-ellipsis">
       
-        NCU snapshot (v0)
+        NCU 快照 (v0)
       
     </span>
   </a>
@@ -927,22 +927,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kernel-1-shared-memory-cache-blocking" class="md-nav__link">
+  <a href="#1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Kernel 1: Shared Memory Cache-Blocking
+        内核 1：共享内存分块
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Kernel 1: Shared Memory Cache-Blocking">
+    <nav class="md-nav" aria-label="内核 1：共享内存分块">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#generated-cuda-v1-what-dmacopy-expands-to" class="md-nav__link">
+  <a href="#cuda-v1-dmacopy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Generated CUDA (v1) — what dma.copy expands to
+        生成的 CUDA 代码 (v1) —— dma.copy 展开为什么
       
     </span>
   </a>
@@ -955,22 +955,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kernel-2-hopper-tma-wgmma" class="md-nav__link">
+  <a href="#2hopper-tma-wgmma" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Kernel 2: Hopper TMA + WGMMA
+        内核 2：Hopper TMA + WGMMA
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Kernel 2: Hopper TMA + WGMMA">
+    <nav class="md-nav" aria-label="内核 2：Hopper TMA + WGMMA">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#how-croqtile-selects-the-hardware-mma-instruction" class="md-nav__link">
+  <a href="#croqtile-mma" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How Croqtile selects the hardware MMA instruction
+        Croqtile 如何选择硬件 MMA 指令
       
     </span>
   </a>
@@ -978,10 +978,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#tma-vs-dmacopy" class="md-nav__link">
+  <a href="#tma-dmacopy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TMA vs dma.copy
+        TMA 与 dma.copy 对比
       
     </span>
   </a>
@@ -989,10 +989,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#why-swizzle-matters" class="md-nav__link">
+  <a href="#swizzle" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why swizzle matters
+        为什么 swizzle 重要
       
     </span>
   </a>
@@ -1000,10 +1000,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#generated-cuda-v2-tma-and-wgmma" class="md-nav__link">
+  <a href="#cuda-v2-tma-wgmma" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Generated CUDA (v2) — TMA and WGMMA
+        生成的 CUDA 代码 (v2) —— TMA 和 WGMMA
       
     </span>
   </a>
@@ -1011,10 +1011,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ncu-snapshot-v2" class="md-nav__link">
+  <a href="#ncu-v2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        NCU snapshot (v2)
+        NCU 快照 (v2)
       
     </span>
   </a>
@@ -1027,22 +1027,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kernel-3-warp-specialization" class="md-nav__link">
+  <a href="#3warp" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Kernel 3: Warp Specialization
+        内核 3：Warp 特化
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Kernel 3: Warp Specialization">
+    <nav class="md-nav" aria-label="内核 3：Warp 特化">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#generated-cuda-v3-warpgroup-dispatch" class="md-nav__link">
+  <a href="#cuda-v3-warpgroup" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Generated CUDA (v3) — warpgroup dispatch
+        生成的 CUDA 代码 (v3) —— warpgroup 调度
       
     </span>
   </a>
@@ -1055,22 +1055,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kernel-4-production-tuned" class="md-nav__link">
+  <a href="#4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Kernel 4: Production-Tuned
+        内核 4：生产级调优
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Kernel 4: Production-Tuned">
+    <nav class="md-nav" aria-label="内核 4：生产级调优">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#what-changed-from-v3-and-why-it-matters" class="md-nav__link">
+  <a href="#v3-v4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What changed from v3 and why it matters
+        v3 到 v4 的变化及影响
       
     </span>
   </a>
@@ -1078,10 +1078,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#double-buffering-in-pictures-stages2" class="md-nav__link">
+  <a href="#stages2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Double-buffering in pictures (STAGES=2)
+        双缓冲图解 (STAGES=2)
       
     </span>
   </a>
@@ -1089,10 +1089,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ncu-snapshot-v4" class="md-nav__link">
+  <a href="#ncu-v4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        NCU snapshot (v4)
+        NCU 快照 (v4)
       
     </span>
   </a>
@@ -1105,10 +1105,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-full-ncu-picture" class="md-nav__link">
+  <a href="#ncu" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The full NCU picture
+        完整 NCU 数据
       
     </span>
   </a>
@@ -1116,22 +1116,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-tuning-journey-v3-v4" class="md-nav__link">
+  <a href="#v3-v4_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Tuning Journey: v3 → v4
+        调优历程：v3 → v4
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="The Tuning Journey: v3 → v4">
+    <nav class="md-nav" aria-label="调优历程：v3 → v4">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#baseline-v3-stages1-consumers1-warp_n128" class="md-nav__link">
+  <a href="#v3-stages1-consumers1-warp_n128" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Baseline: v3 (STAGES=1, CONSUMERS=1, WARP_N=128)
+        基线：v3 (STAGES=1, CONSUMERS=1, WARP_N=128)
       
     </span>
   </a>
@@ -1139,10 +1139,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#phase-1-pipeline-architecture-iter000-iter003" class="md-nav__link">
+  <a href="#1-iter000-iter003" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 1 — Pipeline Architecture (iter000 → iter003)
+        阶段 1 —— 管道架构 (iter000 → iter003)
       
     </span>
   </a>
@@ -1150,10 +1150,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#phase-2-warp_n-sweep-iter004-iter017" class="md-nav__link">
+  <a href="#2-warp_n-iter004-iter017" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 2 — WARP_N Sweep (iter004 → iter017)
+        阶段 2 —— WARP_N 搜索 (iter004 → iter017)
       
     </span>
   </a>
@@ -1161,10 +1161,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#phase-3-dead-ends-iter011018" class="md-nav__link">
+  <a href="#3-iter011018" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 3 — Dead Ends (iter011–018)
+        阶段 3 —— 死胡同 (iter011–018)
       
     </span>
   </a>
@@ -1172,10 +1172,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#winner-warp_n192-40-over-v3" class="md-nav__link">
+  <a href="#warp_n192-v3-40" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Winner: WARP_N=192 (+40% over v3)
+        获胜者：WARP_N=192（相比 v3 提升 40%）
       
     </span>
   </a>
@@ -1188,10 +1188,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sota-comparison" class="md-nav__link">
+  <a href="#sota" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SOTA comparison
+        SOTA 对比
       
     </span>
   </a>
@@ -1199,10 +1199,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-optimization-ladder" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The optimization ladder
+        优化阶梯
       
     </span>
   </a>
@@ -1210,10 +1210,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#why-croqtile" class="md-nav__link">
+  <a href="#croqtile_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why Croqtile
+        为什么选择 Croqtile
       
     </span>
   </a>
@@ -1221,10 +1221,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#running-the-kernels" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Running the kernels
+        运行内核
       
     </span>
   </a>
@@ -2735,10 +2735,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#performance-at-a-glance" class="md-nav__link">
+  <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Performance at a glance
+        性能一览
       
     </span>
   </a>
@@ -2746,22 +2746,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kernel-0-naive" class="md-nav__link">
+  <a href="#0" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Kernel 0: Naive
+        内核 0：朴素版
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Kernel 0: Naive">
+    <nav class="md-nav" aria-label="内核 0：朴素版">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#generated-cuda-v0" class="md-nav__link">
+  <a href="#cuda-v0" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Generated CUDA (v0)
+        生成的 CUDA 代码 (v0)
       
     </span>
   </a>
@@ -2769,10 +2769,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ncu-snapshot-v0" class="md-nav__link">
+  <a href="#ncu-v0" class="md-nav__link">
     <span class="md-ellipsis">
       
-        NCU snapshot (v0)
+        NCU 快照 (v0)
       
     </span>
   </a>
@@ -2785,22 +2785,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kernel-1-shared-memory-cache-blocking" class="md-nav__link">
+  <a href="#1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Kernel 1: Shared Memory Cache-Blocking
+        内核 1：共享内存分块
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Kernel 1: Shared Memory Cache-Blocking">
+    <nav class="md-nav" aria-label="内核 1：共享内存分块">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#generated-cuda-v1-what-dmacopy-expands-to" class="md-nav__link">
+  <a href="#cuda-v1-dmacopy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Generated CUDA (v1) — what dma.copy expands to
+        生成的 CUDA 代码 (v1) —— dma.copy 展开为什么
       
     </span>
   </a>
@@ -2813,22 +2813,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kernel-2-hopper-tma-wgmma" class="md-nav__link">
+  <a href="#2hopper-tma-wgmma" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Kernel 2: Hopper TMA + WGMMA
+        内核 2：Hopper TMA + WGMMA
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Kernel 2: Hopper TMA + WGMMA">
+    <nav class="md-nav" aria-label="内核 2：Hopper TMA + WGMMA">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#how-croqtile-selects-the-hardware-mma-instruction" class="md-nav__link">
+  <a href="#croqtile-mma" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How Croqtile selects the hardware MMA instruction
+        Croqtile 如何选择硬件 MMA 指令
       
     </span>
   </a>
@@ -2836,10 +2836,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#tma-vs-dmacopy" class="md-nav__link">
+  <a href="#tma-dmacopy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TMA vs dma.copy
+        TMA 与 dma.copy 对比
       
     </span>
   </a>
@@ -2847,10 +2847,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#why-swizzle-matters" class="md-nav__link">
+  <a href="#swizzle" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why swizzle matters
+        为什么 swizzle 重要
       
     </span>
   </a>
@@ -2858,10 +2858,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#generated-cuda-v2-tma-and-wgmma" class="md-nav__link">
+  <a href="#cuda-v2-tma-wgmma" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Generated CUDA (v2) — TMA and WGMMA
+        生成的 CUDA 代码 (v2) —— TMA 和 WGMMA
       
     </span>
   </a>
@@ -2869,10 +2869,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ncu-snapshot-v2" class="md-nav__link">
+  <a href="#ncu-v2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        NCU snapshot (v2)
+        NCU 快照 (v2)
       
     </span>
   </a>
@@ -2885,22 +2885,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kernel-3-warp-specialization" class="md-nav__link">
+  <a href="#3warp" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Kernel 3: Warp Specialization
+        内核 3：Warp 特化
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Kernel 3: Warp Specialization">
+    <nav class="md-nav" aria-label="内核 3：Warp 特化">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#generated-cuda-v3-warpgroup-dispatch" class="md-nav__link">
+  <a href="#cuda-v3-warpgroup" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Generated CUDA (v3) — warpgroup dispatch
+        生成的 CUDA 代码 (v3) —— warpgroup 调度
       
     </span>
   </a>
@@ -2913,22 +2913,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kernel-4-production-tuned" class="md-nav__link">
+  <a href="#4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Kernel 4: Production-Tuned
+        内核 4：生产级调优
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Kernel 4: Production-Tuned">
+    <nav class="md-nav" aria-label="内核 4：生产级调优">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#what-changed-from-v3-and-why-it-matters" class="md-nav__link">
+  <a href="#v3-v4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What changed from v3 and why it matters
+        v3 到 v4 的变化及影响
       
     </span>
   </a>
@@ -2936,10 +2936,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#double-buffering-in-pictures-stages2" class="md-nav__link">
+  <a href="#stages2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Double-buffering in pictures (STAGES=2)
+        双缓冲图解 (STAGES=2)
       
     </span>
   </a>
@@ -2947,10 +2947,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ncu-snapshot-v4" class="md-nav__link">
+  <a href="#ncu-v4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        NCU snapshot (v4)
+        NCU 快照 (v4)
       
     </span>
   </a>
@@ -2963,10 +2963,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-full-ncu-picture" class="md-nav__link">
+  <a href="#ncu" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The full NCU picture
+        完整 NCU 数据
       
     </span>
   </a>
@@ -2974,22 +2974,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-tuning-journey-v3-v4" class="md-nav__link">
+  <a href="#v3-v4_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Tuning Journey: v3 → v4
+        调优历程：v3 → v4
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="The Tuning Journey: v3 → v4">
+    <nav class="md-nav" aria-label="调优历程：v3 → v4">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#baseline-v3-stages1-consumers1-warp_n128" class="md-nav__link">
+  <a href="#v3-stages1-consumers1-warp_n128" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Baseline: v3 (STAGES=1, CONSUMERS=1, WARP_N=128)
+        基线：v3 (STAGES=1, CONSUMERS=1, WARP_N=128)
       
     </span>
   </a>
@@ -2997,10 +2997,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#phase-1-pipeline-architecture-iter000-iter003" class="md-nav__link">
+  <a href="#1-iter000-iter003" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 1 — Pipeline Architecture (iter000 → iter003)
+        阶段 1 —— 管道架构 (iter000 → iter003)
       
     </span>
   </a>
@@ -3008,10 +3008,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#phase-2-warp_n-sweep-iter004-iter017" class="md-nav__link">
+  <a href="#2-warp_n-iter004-iter017" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 2 — WARP_N Sweep (iter004 → iter017)
+        阶段 2 —— WARP_N 搜索 (iter004 → iter017)
       
     </span>
   </a>
@@ -3019,10 +3019,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#phase-3-dead-ends-iter011018" class="md-nav__link">
+  <a href="#3-iter011018" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 3 — Dead Ends (iter011–018)
+        阶段 3 —— 死胡同 (iter011–018)
       
     </span>
   </a>
@@ -3030,10 +3030,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#winner-warp_n192-40-over-v3" class="md-nav__link">
+  <a href="#warp_n192-v3-40" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Winner: WARP_N=192 (+40% over v3)
+        获胜者：WARP_N=192（相比 v3 提升 40%）
       
     </span>
   </a>
@@ -3046,10 +3046,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sota-comparison" class="md-nav__link">
+  <a href="#sota" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SOTA comparison
+        SOTA 对比
       
     </span>
   </a>
@@ -3057,10 +3057,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-optimization-ladder" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The optimization ladder
+        优化阶梯
       
     </span>
   </a>
@@ -3068,10 +3068,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#why-croqtile" class="md-nav__link">
+  <a href="#croqtile_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why Croqtile
+        为什么选择 Croqtile
       
     </span>
   </a>
@@ -3079,10 +3079,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#running-the-kernels" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Running the kernels
+        运行内核
       
     </span>
   </a>
@@ -3157,39 +3157,39 @@
   
 
 
-<h1 id="how-to-optimize-a-matmul-kernel-with-croqtile-a-worklog">How to Optimize a Matmul Kernel with Croqtile: a Worklog<a class="headerlink" href="#how-to-optimize-a-matmul-kernel-with-croqtile-a-worklog" title="Permanent link">&para;</a></h1>
-<p><em>April 2026 · GPU: NVIDIA H800 PCIe (SM90a) · Precision: FP16 · Problem: 8192×8192×8192</em></p>
+<h1 id="croqtile">如何用 Croqtile 一步步优化矩阵乘法内核<a class="headerlink" href="#croqtile" title="Permanent link">&para;</a></h1>
+<p><em>2026 年 4 月 · GPU: NVIDIA H800 PCIe (SM90a) · 精度: FP16 · 问题规模: 8192×8192×8192</em></p>
 <hr />
-<p>In this worklog I start from the most naive possible matrix multiplication and step-by-step apply every major GPU optimization technique until the kernel exceeds cuBLAS — all in a high-level DSL called <strong>Croqtile</strong>. The finished kernel is 60 lines. No hand-written CUDA, no PTX intrinsics, no manual thread-index arithmetic.</p>
-<p>This is a companion piece to Simon Boehm's excellent <a href="https://siboehm.com/articles/22/CUDA-MMM">CUDA MMM worklog</a>, but the angle is different: instead of showing the low-level details, I want to show how a well-designed kernel DSL can express the same optimizations cleanly — which means you understand <em>what</em> you are doing without losing half a week on <em>how</em> to say it in code.</p>
+<p>在这篇教程中，我从最简单的矩阵乘法开始，逐步应用 GPU 上的每一项主要优化技术，直到内核性能超越 cuBLAS —— 全部使用一种名为 <strong>Croqtile</strong> 的高层 DSL 完成。最终的内核仅 60 行代码，无需手写 CUDA，无需 PTX 内联汇编，也无需手动计算线程索引。</p>
+<p>本教程参考了 Simon Boehm 出色的 <a href="https://siboehm.com/articles/22/CUDA-MMM">CUDA MMM 系列文章</a>，但角度不同：我不展示底层细节，而是展示一个精心设计的内核 DSL 如何清晰地表达同样的优化 —— 这意味着你能理解自己在<em>做什么</em>，而无需在<em>如何编码</em>上耗费大量时间。</p>
 <div class="admonition tip">
-<p class="admonition-title">Download source code</p>
-<p>All kernel files from this tutorial are available as a single archive:
+<p class="admonition-title">下载源代码</p>
+<p>本教程所有内核文件打包为单一压缩包：
 <strong><a href="../../../optimization/assets/matmul_tutorial_kernels.tar.gz">matmul_tutorial_kernels.tar.gz</a></strong></p>
 </div>
-<p>Compile and run any kernel:</p>
+<p>编译和运行任意内核：</p>
 <pre class="highlight"><code class="language-bash">croqtile -gs -t cute -arch=sm_90a kernel.co -o kernel.cute.result
 bash kernel.cute.result --execute</code></pre>
 <hr />
-<h2 id="performance-at-a-glance">Performance at a glance<a class="headerlink" href="#performance-at-a-glance" title="Permanent link">&para;</a></h2>
+<h2 id="_1">性能一览<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Kernel</th>
-<th style="text-align: right;">Time (ms)</th>
+<th>内核</th>
+<th style="text-align: right;">时间 (ms)</th>
 <th style="text-align: right;">TFLOPS</th>
-<th style="text-align: right;">% of cuBLAS</th>
+<th style="text-align: right;">相对 cuBLAS</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>v0: Naive</td>
+<td>v0: 朴素版</td>
 <td style="text-align: right;">~2890</td>
 <td style="text-align: right;">0.38</td>
 <td style="text-align: right;">0.08%</td>
 </tr>
 <tr>
-<td>v1: Shared memory</td>
+<td>v1: 共享内存</td>
 <td style="text-align: right;">~728</td>
 <td style="text-align: right;">1.51</td>
 <td style="text-align: right;">0.34%</td>
@@ -3201,30 +3201,30 @@ bash kernel.cute.result --execute</code></pre>
 <td style="text-align: right;">63.6%</td>
 </tr>
 <tr>
-<td>v3: Warp specialization</td>
+<td>v3: Warp 特化</td>
 <td style="text-align: right;">3.26</td>
 <td style="text-align: right;">337.0</td>
 <td style="text-align: right;">75.3%</td>
 </tr>
 <tr>
-<td><strong>v4: Production-tuned</strong></td>
+<td><strong>v4: 生产级调优</strong></td>
 <td style="text-align: right;"><strong>2.35</strong></td>
 <td style="text-align: right;"><strong>471.3</strong></td>
 <td style="text-align: right;"><strong>105.3%</strong></td>
 </tr>
 <tr>
-<td>cuBLAS (reference)</td>
+<td>cuBLAS（参考基线）</td>
 <td style="text-align: right;">2.46</td>
 <td style="text-align: right;">447.5</td>
 <td style="text-align: right;">100.0%</td>
 </tr>
 </tbody>
 </table>
-<p>1240× improvement from v0 to v4 in five steps. Let's see how each one works.</p>
+<p>从 v0 到 v4，五步实现 1240 倍性能提升。下面逐一讲解每一步的原理。</p>
 <hr />
-<h2 id="kernel-0-naive">Kernel 0: Naive<a class="headerlink" href="#kernel-0-naive" title="Permanent link">&para;</a></h2>
-<p><strong>File:</strong> <code>matmul_f16_v0_naive.co</code></p>
-<p>The simplest possible formulation: one thread owns one output element and independently reads a full row of A and column of B from global memory.</p>
+<h2 id="0">内核 0：朴素版<a class="headerlink" href="#0" title="Permanent link">&para;</a></h2>
+<p><strong>文件：</strong> <code>matmul_f16_v0_naive.co</code></p>
+<p>最简单的实现方式：每个线程负责一个输出元素，独立从全局内存读取 A 的一整行和 B 的一整列。</p>
 <pre class="highlight"><code class="language-choreo">// TILE_M = 32, TILE_N = 32
 // 32×32 = 1024 threads per block.
 
@@ -3241,44 +3241,45 @@ __co__ void matmul(
     output.at(block_m#thr_m, block_n#thr_n) = acc;
   }
 }</code></pre>
-<p><strong>Croqtile concepts introduced here:</strong></p>
+<p><strong>此处引入的 Croqtile 概念：</strong></p>
 <table>
 <thead>
 <tr>
-<th>Construct</th>
-<th>Meaning</th>
+<th>构造</th>
+<th>含义</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>global f16 [M, K] lhs</code></td>
-<td>A tensor in GPU global memory (HBM). Shape is symbolic; Croqtile infers strides.</td>
+<td>GPU 全局内存 (HBM) 中的张量。形状为符号式，Croqtile 自动推断步长。</td>
 </tr>
 <tr>
 <td><code>parallel {i,j} by [X,Y] : block</code></td>
-<td>Create a 2-D grid of thread-blocks of size X×Y. <code>i</code> and <code>j</code> are block-level indices.</td>
+<td>创建 X×Y 大小的二维线程块网格。<code>i</code>、<code>j</code> 是块级索引。</td>
 </tr>
 <tr>
 <td><code>parallel {i,j} by [X,Y] : thread</code></td>
-<td>Create X×Y threads inside each block. Composes with the enclosing block partition.</td>
+<td>在每个块内创建 X×Y 个线程，与外层的块级划分组合。</td>
 </tr>
 <tr>
 <td><code>block_m # thr_m</code></td>
-<td>The <code>#</code> operator composes two parallel indices into one flat index: <code>block_m * TILE_M + thr_m</code>.</td>
+<td><code>#</code> 运算符将两个并行索引组合为一个扁平索引：<code>block_m * TILE_M + thr_m</code>。</td>
 </tr>
 <tr>
 <td><code>foreach {iv_k} in [K]</code></td>
-<td>A plain sequential loop — no parallelism, no reordering.</td>
+<td>普通顺序循环 —— 无并行，无重排。</td>
 </tr>
 <tr>
 <td><code>.at(i, j)</code></td>
-<td>Element-level accessor into a 2-D tensor.</td>
+<td>二维张量的元素级访问器。</td>
 </tr>
 </tbody>
 </table>
-<p><img alt="Memory access pattern for v0: four threads redundantly read the same rows and columns" src="../../../optimization/assets/img/v0_memory_access.png" /></p>
-<h3 id="generated-cuda-v0">Generated CUDA (v0)<a class="headerlink" href="#generated-cuda-v0" title="Permanent link">&para;</a></h3>
-<p><code>parallel : block</code> / <code>: thread</code> become <code>blockIdx</code> / <code>threadIdx</code> arithmetic. The <code>#</code> composition becomes a multiply-add. The whole kernel is just a loop:</p>
+<p><img alt="v0 的内存访问模式：四个线程冗余地读取相同的行和列" src="../../../optimization/assets/img/v0_memory_access.png#only-dark" />
+<img alt="v0 的内存访问模式：四个线程冗余地读取相同的行和列" src="../../../optimization/assets/img/v0_memory_access_light.png#only-light" /></p>
+<h3 id="cuda-v0">生成的 CUDA 代码 (v0)<a class="headerlink" href="#cuda-v0" title="Permanent link">&para;</a></h3>
+<p><code>parallel : block</code> / <code>: thread</code> 变成 <code>blockIdx</code> / <code>threadIdx</code> 运算。<code>#</code> 组合变成乘加运算。整个内核就是一个循环：</p>
 <pre class="highlight"><code class="language-cuda">__global__ void matmul_kernel(f16* lhs, f16* rhs, f16* output,
                                unsigned K, unsigned M, unsigned N) {
   int thr_m = threadIdx.x / 32, thr_n = threadIdx.x % 32;
@@ -3291,17 +3292,17 @@ __co__ void matmul(
   output[(blockIdx.x * 32 + thr_m) * N + (blockIdx.y * 32 + thr_n)] = acc;
 }
 // dim3 grid((M+31)/32, (N+31)/32, 1), block(1024, 1, 1);</code></pre>
-<h3 id="ncu-snapshot-v0">NCU snapshot (v0)<a class="headerlink" href="#ncu-snapshot-v0" title="Permanent link">&para;</a></h3>
+<h3 id="ncu-v0">NCU 快照 (v0)<a class="headerlink" href="#ncu-v0" title="Permanent link">&para;</a></h3>
 <pre class="highlight"><code>dram__throughput (% of peak HBM BW) :   0.01%
 sm__throughput   (% of peak SM)     :   5.99%
-pipe_tensor instructions            :   0          ← tensor cores completely idle
+pipe_tensor instructions            :   0          ← Tensor Core 完全空闲
 pipe_fma  instructions              :   336,592,896</code></pre>
-<p>The access pattern is so scattered that the hardware serialises HBM requests instead of coalescing them. HBM throughput is near zero even though every thread is constantly reading.</p>
-<p><strong>Result: ~0.38 TFLOPS (0.08% of cuBLAS)</strong></p>
+<p>由于访问模式极度分散，硬件无法合并 HBM 请求，HBM 吞吐量几乎为零——尽管每个线程都在不断读取数据。</p>
+<p><strong>结果：~0.38 TFLOPS（cuBLAS 的 0.08%）</strong></p>
 <hr />
-<h2 id="kernel-1-shared-memory-cache-blocking">Kernel 1: Shared Memory Cache-Blocking<a class="headerlink" href="#kernel-1-shared-memory-cache-blocking" title="Permanent link">&para;</a></h2>
-<p><strong>File:</strong> <code>matmul_f16_v1_shared_memory.co</code></p>
-<p>The classic fix: load a tile of A and B into fast on-chip shared memory (SRAM), let all threads in the block reuse that tile, then slide the tile along the K dimension.</p>
+<h2 id="1">内核 1：共享内存分块<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<p><strong>文件：</strong> <code>matmul_f16_v1_shared_memory.co</code></p>
+<p>经典解决方案：将 A 和 B 的一个分块加载到快速的片上共享内存 (SRAM)，让块内所有线程复用该分块，然后沿 K 维度滑动分块窗口。</p>
 <pre class="highlight"><code class="language-choreo">// TILE_M = TILE_N = 32, TILE_K = 128
 
 __co__ void matmul(
@@ -3326,32 +3327,33 @@ __co__ void matmul(
     output.at(block_m#thr_m, block_n#thr_n) = acc;
   }
 }</code></pre>
-<p><strong>New concepts:</strong></p>
+<p><strong>新概念：</strong></p>
 <table>
 <thead>
 <tr>
-<th>Construct</th>
-<th>Meaning</th>
+<th>构造</th>
+<th>含义</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>shared f16 [M, K] buf</code></td>
-<td>Allocates a buffer in on-chip shared memory. Scoped to the block; all threads can read and write it.</td>
+<td>在片上共享内存中分配缓冲区。作用域为线程块；所有线程均可读写。</td>
 </tr>
 <tr>
 <td><code>dma.copy src =&gt; dst</code></td>
-<td>Cooperative DMA: all threads in the block collectively transfer <code>src</code> to <code>dst</code>. Croqtile partitions the transfer across threads, generates coalesced loads, and inserts <code>__syncthreads()</code>. One line replaces ~20 lines of manual CUDA.</td>
+<td>协作式 DMA：块内所有线程协同将 <code>src</code> 传输到 <code>dst</code>。Croqtile 自动在线程间分配传输任务、生成合并访问、并插入 <code>__syncthreads()</code>。一行代码替代约 20 行手写 CUDA。</td>
 </tr>
 <tr>
 <td><code>.subspan(TILE_M, TILE_K).at(i, j)</code></td>
-<td>Selects the tile of shape <code>[TILE_M, TILE_K]</code> at grid position <code>(i, j)</code> within the tensor.</td>
+<td>在张量内选取形状为 <code>[TILE_M, TILE_K]</code>、网格位置为 <code>(i, j)</code> 的分块。</td>
 </tr>
 </tbody>
 </table>
-<p><img alt="Tile reuse pattern: K dimension is sliced into steps; each tile is loaded once and reused by all threads in the block" src="../../../optimization/assets/img/v1_tile_reuse.png" /></p>
-<h3 id="generated-cuda-v1-what-dmacopy-expands-to">Generated CUDA (v1) — what <code>dma.copy</code> expands to<a class="headerlink" href="#generated-cuda-v1-what-dmacopy-expands-to" title="Permanent link">&para;</a></h3>
-<p>One line of Croqtile expands to ~25 lines of CUTE layout construction, thread-partitioned copy, and synchronisation. The essential pattern:</p>
+<p><img alt="分块复用模式：K 维度被切分为多步；每个分块加载一次，被块内所有线程复用" src="../../../optimization/assets/img/v1_tile_reuse.png#only-dark" />
+<img alt="分块复用模式：K 维度被切分为多步；每个分块加载一次，被块内所有线程复用" src="../../../optimization/assets/img/v1_tile_reuse_light.png#only-light" /></p>
+<h3 id="cuda-v1-dmacopy">生成的 CUDA 代码 (v1) —— <code>dma.copy</code> 展开为什么<a class="headerlink" href="#cuda-v1-dmacopy" title="Permanent link">&para;</a></h3>
+<p>一行 Croqtile 展开为约 25 行 CUTE 布局构造、线程分区拷贝和同步代码。核心模式如下：</p>
 <pre class="highlight"><code class="language-cuda">// dma.copy ... .at(block_m, iv_k) =&gt; lhs_s  →
 
 auto gmem_tile = make_tensor(
@@ -3365,16 +3367,16 @@ cute::copy(tiled_copy,
     thr_copy.partition_S(gmem_tile),  // src slice
     thr_copy.partition_D(smem_tile)); // dst slice
 __syncthreads();</code></pre>
-<p>Croqtile generates this for both <code>lhs</code> and <code>rhs</code> — two lines become ~50 lines of CUTE.</p>
-<p>Scalar FMA units still do the arithmetic — the tensor cores remain idle. The bottleneck has shifted from redundant global loads to the raw compute throughput of scalar FMAs, which are orders of magnitude slower than tensor cores.</p>
-<p><strong>Result: ~1.51 TFLOPS (3.9× over v0)</strong></p>
+<p>Croqtile 为 <code>lhs</code> 和 <code>rhs</code> 各生成一份 —— 两行代码变成约 50 行 CUTE。</p>
+<p>标量 FMA 单元仍在执行运算 —— Tensor Core 保持空闲。瓶颈已从冗余的全局加载转移到标量 FMA 的原始计算吞吐量，后者比 Tensor Core 慢几个数量级。</p>
+<p><strong>结果：~1.51 TFLOPS（相比 v0 提升 3.9 倍）</strong></p>
 <hr />
-<h2 id="kernel-2-hopper-tma-wgmma">Kernel 2: Hopper TMA + WGMMA<a class="headerlink" href="#kernel-2-hopper-tma-wgmma" title="Permanent link">&para;</a></h2>
-<p><strong>File:</strong> <code>matmul_f16_v2_hopper_tma_wgmma.co</code></p>
-<p>The largest single jump: <strong>~188× over v1</strong>. Two hardware features specific to Hopper (SM90a) replace both bottlenecks at once:</p>
+<h2 id="2hopper-tma-wgmma">内核 2：Hopper TMA + WGMMA<a class="headerlink" href="#2hopper-tma-wgmma" title="Permanent link">&para;</a></h2>
+<p><strong>文件：</strong> <code>matmul_f16_v2_hopper_tma_wgmma.co</code></p>
+<p>最大的单次跳跃：<strong>相比 v1 提升约 188 倍</strong>。Hopper (SM90a) 特有的两项硬件特性同时解决了两个瓶颈：</p>
 <ol>
-<li><strong>TMA</strong> (Tensor Memory Accelerator) replaces <code>dma.copy</code> — data movement becomes a single-thread hardware operation instead of a cooperative thread-wide copy.</li>
-<li><strong>WGMMA</strong> (Warpgroup MMA) replaces scalar FMA — the compute tile is 64×128×16, executing on dedicated tensor core hardware at throughput orders of magnitude beyond scalar arithmetic.</li>
+<li><strong>TMA</strong>（张量内存加速器）取代 <code>dma.copy</code> —— 数据搬运变成单线程发出的硬件操作，而非全体线程的协作拷贝。</li>
+<li><strong>WGMMA</strong>（线程组矩阵乘累加）取代标量 FMA —— 计算分块为 64×128×16，在专用 Tensor Core 硬件上执行，吞吐量远超标量运算。</li>
 </ol>
 <pre class="highlight"><code class="language-choreo">// WARP_M=64, WARP_N=128, WARP_K=16, TILE_K=64, SWIZ=128
 
@@ -3405,67 +3407,67 @@ __co__ void matmul(
         .at(block_m, block_n);
   }
 }</code></pre>
-<p><strong>New concepts:</strong></p>
+<p><strong>新概念：</strong></p>
 <table>
 <thead>
 <tr>
-<th>Construct</th>
-<th>Meaning</th>
+<th>构造</th>
+<th>含义</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>by 1 : group-4</code></td>
-<td>One <strong>warpgroup</strong> (4 warps = 128 threads) per block. <code>group-4</code> is the Hopper WGMMA execution granularity.</td>
+<td>每个块分配一个 <strong>warpgroup</strong>（4 个 warp = 128 个线程）。<code>group-4</code> 是 Hopper WGMMA 的执行粒度。</td>
 </tr>
 <tr>
 <td><code>tma.copy.swiz&lt;128&gt; src =&gt; dst</code></td>
-<td>Hopper Tensor Memory Accelerator: one thread issues a hardware bulk-copy. <code>.swiz&lt;128&gt;</code> sets 128-byte XOR swizzle in the destination layout — required for bank-conflict-free WGMMA loads.</td>
+<td>Hopper 张量内存加速器：单线程发出硬件批量拷贝。<code>.swiz&lt;128&gt;</code> 设置目标布局的 128 字节 XOR swizzle —— WGMMA 加载所需的无 bank 冲突布局。</td>
 </tr>
 <tr>
 <td><code>mma.load.swiz&lt;128&gt;</code></td>
-<td>Load a WGMMA A/B fragment from swizzled shared memory. The <code>.swiz&lt;128&gt;</code> on <code>mma.load</code> is the <strong>source of truth</strong> — Croqtile propagates it to <code>tma.copy</code> so the DMA engine writes the layout that WGMMA expects.</td>
+<td>从 swizzle 布局的共享内存加载 WGMMA A/B 片段。<code>mma.load</code> 上的 <code>.swiz&lt;128&gt;</code> 是<strong>基准声明</strong> —— Croqtile 将其反向传播到 <code>tma.copy</code>，使 DMA 引擎按 WGMMA 期望的布局写入数据。</td>
 </tr>
 <tr>
 <td><code>mma.fill.f16 0.0f</code></td>
-<td>Accumulator in f16 precision. WGMMA can accumulate into f16 or f32; f16 uses less register space.</td>
+<td>f16 精度累加器。WGMMA 可在 f16 或 f32 中累加；f16 使用更少的寄存器。</td>
 </tr>
 <tr>
 <td><code>.chunkat(_, iv_wk)</code></td>
-<td>The underscore fills in the single warpgroup's dimension automatically.</td>
+<td>下划线自动填充单个 warpgroup 的维度。</td>
 </tr>
 </tbody>
 </table>
-<h3 id="how-croqtile-selects-the-hardware-mma-instruction">How Croqtile selects the hardware MMA instruction<a class="headerlink" href="#how-croqtile-selects-the-hardware-mma-instruction" title="Permanent link">&para;</a></h3>
-<p>The key decision is made from the shape that <code>.chunkat()</code> infers at the <code>: group</code> / <code>: group-4</code> boundary:</p>
+<h3 id="croqtile-mma">Croqtile 如何选择硬件 MMA 指令<a class="headerlink" href="#croqtile-mma" title="Permanent link">&para;</a></h3>
+<p>关键决策来自 <code>.chunkat()</code> 在 <code>: group</code> / <code>: group-4</code> 边界推断出的形状：</p>
 <table>
 <thead>
 <tr>
-<th>Fragment shape (inferred)</th>
-<th>Hardware instruction</th>
-<th>Thread granularity</th>
+<th>推断的片段形状</th>
+<th>硬件指令</th>
+<th>线程粒度</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>16 × 16 × 16 (f16, <code>: group</code>)</td>
 <td><code>wmma::mma_sync</code></td>
-<td>1 warp (32 threads)</td>
+<td>1 个 warp（32 线程）</td>
 </tr>
 <tr>
 <td>16 × 8 × 16 (f16, <code>: group</code>)</td>
 <td><code>mma.sync</code></td>
-<td>1 warp (32 threads)</td>
+<td>1 个 warp（32 线程）</td>
 </tr>
 <tr>
 <td>64 × N × 16 (f16, <code>: group-4</code>)</td>
 <td><code>wgmma.mma_async</code></td>
-<td>1 warpgroup (128 threads)</td>
+<td>1 个 warpgroup（128 线程）</td>
 </tr>
 </tbody>
 </table>
-<p>You never name the instruction. You declare the parallelism level and write the tile shapes; Croqtile maps them to hardware.</p>
-<h3 id="tma-vs-dmacopy">TMA vs <code>dma.copy</code><a class="headerlink" href="#tma-vs-dmacopy" title="Permanent link">&para;</a></h3>
+<p>你无需指定指令名称。声明并行层级和分块形状，Croqtile 自动映射到硬件。</p>
+<h3 id="tma-dmacopy">TMA 与 <code>dma.copy</code> 对比<a class="headerlink" href="#tma-dmacopy" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -3476,32 +3478,32 @@ __co__ void matmul(
 </thead>
 <tbody>
 <tr>
-<td><strong>Who moves data</strong></td>
-<td>ALL threads participate (1024 threads in lockstep)</td>
-<td>ONE thread issues; hardware does the rest (128 threads free to compute)</td>
+<td><strong>谁搬运数据</strong></td>
+<td>所有线程参与（1024 个线程同步执行）</td>
+<td>单个线程发出；硬件完成其余工作（128 个线程可自由计算）</td>
 </tr>
 <tr>
-<td><strong>Addressing</strong></td>
-<td>Thread computes element index, issues load, writes to smem, repeats per element</td>
-<td>Thread writes coordinates into a <code>CUtensorMap</code> descriptor; TMA DMA engine handles addressing, coalescing, swizzle</td>
+<td><strong>寻址方式</strong></td>
+<td>线程计算元素索引、发出加载、写入 smem，逐元素重复</td>
+<td>线程将坐标写入 <code>CUtensorMap</code> 描述符；TMA DMA 引擎处理寻址、合并和 swizzle</td>
 </tr>
 <tr>
-<td><strong>Sync</strong></td>
-<td><code>__syncthreads()</code> — blocks entire block</td>
-<td><code>mbarrier</code> — lightweight, per-warpgroup; other warpgroups unaffected</td>
+<td><strong>同步机制</strong></td>
+<td><code>__syncthreads()</code> —— 阻塞整个线程块</td>
+<td><code>mbarrier</code> —— 轻量级、按 warpgroup 独立；其他 warpgroup 不受影响</td>
 </tr>
 <tr>
-<td><strong>Bandwidth</strong></td>
-<td>Limited by register pressure and instruction throughput</td>
-<td>Near theoretical HBM peak (hardware-optimized DMA path)</td>
+<td><strong>带宽</strong></td>
+<td>受限于寄存器压力和指令吞吐</td>
+<td>接近理论 HBM 峰值（硬件优化的 DMA 路径）</td>
 </tr>
 </tbody>
 </table>
-<h3 id="why-swizzle-matters">Why swizzle matters<a class="headerlink" href="#why-swizzle-matters" title="Permanent link">&para;</a></h3>
-<p>WGMMA reads shared memory across 128 threads simultaneously. Without swizzle, all 128 threads in a warpgroup map to the same 32-bit bank for a given row — a 32-way bank conflict that serialises every load.</p>
-<p>The <code>.swiz&lt;128&gt;</code> annotation on <code>mma.load</code> declares the swizzle layout that WGMMA requires. Croqtile propagates this requirement <strong>backwards</strong> to <code>tma.copy</code>, so the TMA engine writes data into smem in the swizzled format that WGMMA expects. The compiler checks consistency at compile time — no manual XOR tables or descriptor bit fields in user code.</p>
-<h3 id="generated-cuda-v2-tma-and-wgmma">Generated CUDA (v2) — TMA and WGMMA<a class="headerlink" href="#generated-cuda-v2-tma-and-wgmma" title="Permanent link">&para;</a></h3>
-<p>The two Croqtile lines below map to very different hardware paths. Here is the representative output, condensed:</p>
+<h3 id="swizzle">为什么 swizzle 重要<a class="headerlink" href="#swizzle" title="Permanent link">&para;</a></h3>
+<p>WGMMA 同时通过 128 个线程读取共享内存。如果不使用 swizzle，同一 warpgroup 中 128 个线程对于给定行会映射到相同的 32 位 bank —— 产生 32 路 bank 冲突，将每次加载串行化。</p>
+<p><code>mma.load</code> 上的 <code>.swiz&lt;128&gt;</code> 声明了 WGMMA 所需的 swizzle 布局。Croqtile 将此需求<strong>反向传播</strong>到 <code>tma.copy</code>，使 TMA 引擎以 WGMMA 期望的 swizzle 格式写入 smem 数据。编译器在编译时检查一致性 —— 用户代码中无需手动编写 XOR 表或描述符位字段。</p>
+<h3 id="cuda-v2-tma-wgmma">生成的 CUDA 代码 (v2) —— TMA 和 WGMMA<a class="headerlink" href="#cuda-v2-tma-wgmma" title="Permanent link">&para;</a></h3>
+<p>以下两行 Croqtile 代码映射到截然不同的硬件路径。精简后的代表性输出：</p>
 <pre class="highlight"><code class="language-cuda">// ── tma.copy.swiz&lt;128&gt; ... =&gt; lhs_s ─────────────
 //    Kernel receives CUtensorMap descriptors as
 //    __grid_constant__ args. Only thread 0 issues
@@ -3529,17 +3531,17 @@ SM90::GMMA::MMA_64x128x16_F16F16F16_SS::fma(
     desc_a, desc_b, mc[0..31]);
 warpgroup_commit_batch();
 warpgroup_wait&lt;0&gt;();</code></pre>
-<h3 id="ncu-snapshot-v2">NCU snapshot (v2)<a class="headerlink" href="#ncu-snapshot-v2" title="Permanent link">&para;</a></h3>
+<h3 id="ncu-v2">NCU 快照 (v2)<a class="headerlink" href="#ncu-v2" title="Permanent link">&para;</a></h3>
 <pre class="highlight"><code>dram__throughput (% of peak HBM BW) :  10.64%
 sm__throughput   (% of peak SM)     :  42.83%
 pipe_tensor instructions            :    264,192
 pipe_fma  instructions              :    247,820</code></pre>
-<p>SM utilisation jumped from 6% to 43%. The kernel is past the compute roofline crossover for this problem (~70 FLOPs/byte). But 57% of SM peak is missing — because TMA and WGMMA are serialised: each K-step waits for the copy to finish before computing.</p>
-<p><strong>Result: ~284 TFLOPS (188× over v1, 63.6% of cuBLAS)</strong></p>
+<p>SM 利用率从 6% 跃升到 43%。该内核已越过此问题规模的计算屋顶线交叉点（约 70 FLOPs/byte）。但仍有 57% 的 SM 峰值缺失 —— 因为 TMA 和 WGMMA 是串行的：每个 K 步都要等待拷贝完成后才能计算。</p>
+<p><strong>结果：~284 TFLOPS（相比 v1 提升 188 倍，cuBLAS 的 63.6%）</strong></p>
 <hr />
-<h2 id="kernel-3-warp-specialization">Kernel 3: Warp Specialization<a class="headerlink" href="#kernel-3-warp-specialization" title="Permanent link">&para;</a></h2>
-<p><strong>File:</strong> <code>matmul_f16_v3_warpspec.co</code></p>
-<p>The insight from v2's profile: producer (TMA) and consumer (WGMMA) stall each other. Fix this by giving them separate warpgroups that run concurrently, connected by a software ring buffer in shared memory.</p>
+<h2 id="3warp">内核 3：Warp 特化<a class="headerlink" href="#3warp" title="Permanent link">&para;</a></h2>
+<p><strong>文件：</strong> <code>matmul_f16_v3_warpspec.co</code></p>
+<p>v2 的性能剖析揭示了问题：生产者 (TMA) 和消费者 (WGMMA) 互相阻塞。解决方案是让它们在不同的 warpgroup 中并发运行，通过共享内存中的软件环形缓冲区连接。</p>
 <pre class="highlight"><code class="language-choreo">// WARP_M=64, WARP_N=128, WARP_K=16
 // TILE_M=128, TILE_K=64, STAGES=1, CONSUMERS=1
 
@@ -3555,7 +3557,7 @@ __co__ void matmul(
 
     // 3 warpgroups × 128 threads = 384 threads/block
     parallel wg by 3 : group-4, t by 128 : thread {
-      // ── Producer (wg=0): one thread drives TMA ──
+      // ── 生产者 (wg=0)：单线程驱动 TMA ──
       inthreads.async (wg == 0 &amp;&amp; t == 0) {
         foreach {iv_k} in [cdiv(K, TILE_K)] {
           stage = iv_k % STAGES;
@@ -3568,7 +3570,7 @@ __co__ void matmul(
         }
       }
 
-      // ── Consumers (wg&gt;=1): compute WGMMA ──
+      // ── 消费者 (wg&gt;=1)：执行 WGMMA 计算 ──
       inthreads.async (wg &gt;= 1) {
         cidx = wg - 1;
         foreach {s} in [STAGES]
@@ -3596,40 +3598,40 @@ __co__ void matmul(
     }
   }
 }</code></pre>
-<p><strong>New concepts:</strong></p>
+<p><strong>新概念：</strong></p>
 <table>
 <thead>
 <tr>
-<th>Construct</th>
-<th>Meaning</th>
+<th>构造</th>
+<th>含义</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>shared event full[N], empty[N]</code></td>
-<td>Named pipeline barriers backed by Hopper <code>mbarrier</code>. Individual warpgroups can wait on or signal them independently. Croqtile generates the mbarrier init, arrive, and wait sequences.</td>
+<td>由 Hopper <code>mbarrier</code> 支持的命名管道屏障。各 warpgroup 可独立等待或发信号。Croqtile 自动生成 mbarrier 的初始化、到达和等待序列。</td>
 </tr>
 <tr>
 <td><code>inthreads.async (condition) { ... }</code></td>
-<td>Executes the block only in warpgroups matching <code>condition</code>. This is Croqtile's syntax for Hopper <em>warp specialization</em>: warpgroups execute different code paths simultaneously.</td>
+<td>仅在满足 <code>condition</code> 的 warpgroup 中执行该代码块。这是 Croqtile 的 Hopper <em>warp 特化</em>语法：warpgroup 同时执行不同的代码路径。</td>
 </tr>
 <tr>
 <td><code>tma.copy.async&lt;full[stage]&gt; src=&gt;dst</code></td>
-<td>Asynchronous TMA that fires the event <code>full[stage]</code> upon hardware completion. The issuing thread is not blocked.</td>
+<td>异步 TMA，在硬件完成时触发事件 <code>full[stage]</code>。发出指令的线程不会被阻塞。</td>
 </tr>
 <tr>
 <td><code>trigger event</code> / <code>wait event</code></td>
-<td>Signal or wait on a named barrier. Maps to <code>mbarrier.arrive</code> / <code>mbarrier.try_wait</code>.</td>
+<td>信号或等待命名屏障。分别映射到 <code>mbarrier.arrive</code> / <code>mbarrier.try_wait</code>。</td>
 </tr>
 </tbody>
 </table>
-<h3 id="generated-cuda-v3-warpgroup-dispatch">Generated CUDA (v3) — warpgroup dispatch<a class="headerlink" href="#generated-cuda-v3-warpgroup-dispatch" title="Permanent link">&para;</a></h3>
-<p><code>shared event</code> becomes <code>cuda::barrier</code> arrays; <code>inthreads.async</code> becomes a plain <code>if</code> on warpgroup index. The core dispatch:</p>
+<h3 id="cuda-v3-warpgroup">生成的 CUDA 代码 (v3) —— warpgroup 调度<a class="headerlink" href="#cuda-v3-warpgroup" title="Permanent link">&para;</a></h3>
+<p><code>shared event</code> 变成 <code>cuda::barrier</code> 数组；<code>inthreads.async</code> 变成基于 warpgroup 索引的 <code>if</code> 判断。核心调度逻辑：</p>
 <pre class="highlight"><code class="language-cuda">__shared__ cuda::barrier&lt;cuda::thread_scope_block&gt;
     full[STAGES], empty[STAGES];
 int wg = threadIdx.x / 128;
 
-if (wg == 0 &amp;&amp; threadIdx.x % 128 == 0) {      // producer
+if (wg == 0 &amp;&amp; threadIdx.x % 128 == 0) {      // 生产者
   for (int iv_k = 0; ...) {
     empty[iv_k % STAGES].wait(...);            // wait empty
     cp_async_bulk_tensor_2d_global_to_shared(
@@ -3638,35 +3640,35 @@ if (wg == 0 &amp;&amp; threadIdx.x % 128 == 0) {      // producer
         full[iv_k % STAGES], 1, bytes);        // trigger full
   }
 }
-if (wg &gt;= 1) {                                 // consumers
+if (wg &gt;= 1) {                                 // 消费者
   for (int iv_k = 0; ...) {
     full[iv_k % STAGES].wait(...);             // wait full
-    /* WGMMA (same as v2) */
+    /* WGMMA（同 v2） */
     empty[iv_k % STAGES].arrive();             // trigger empty
   }
 }</code></pre>
-<p><strong>Result: ~337 TFLOPS (1.19× over v2, 75.3% of cuBLAS)</strong></p>
+<p><strong>结果：~337 TFLOPS（相比 v2 提升 1.19 倍，cuBLAS 的 75.3%）</strong></p>
 <hr />
-<h2 id="kernel-4-production-tuned">Kernel 4: Production-Tuned<a class="headerlink" href="#kernel-4-production-tuned" title="Permanent link">&para;</a></h2>
-<p><strong>File:</strong> <code>matmul_f16_v4_auto_tuned.co</code></p>
-<p>The kernel structure is <strong>identical to v3</strong>. Every line of new functionality was introduced in v3. What changes here are the macro parameters that determine tile shape and pipeline depth:</p>
-<pre class="highlight"><code class="language-choreo">#define WARP_M    64    // rows per consumer warpgroup's output tile
-#define WARP_N   192    // cols per warpgroup tile — found by 28-iter sweep
-#define WARP_K    16    // WGMMA K step
-#define TILE_M   128    // total M per block = 2 × WARP_M  (2 consumers)
-#define TILE_K    64    // K-tile loaded per TMA transfer
-#define SWIZ     128    // swizzle byte width
-#define STAGES     2    // double-buffered ring buffer  (was 1 in v3)
-#define CONSUMERS  2    // consumer warpgroups per block (was 1 in v3)</code></pre>
-<p>The full kernel is identical to v3 except for these defines — same 60 lines of Croqtile.</p>
-<h3 id="what-changed-from-v3-and-why-it-matters">What changed from v3 and why it matters<a class="headerlink" href="#what-changed-from-v3-and-why-it-matters" title="Permanent link">&para;</a></h3>
+<h2 id="4">内核 4：生产级调优<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
+<p><strong>文件：</strong> <code>matmul_f16_v4_auto_tuned.co</code></p>
+<p>内核结构与 v3 <strong>完全相同</strong>。v3 引入了所有新功能。这里变化的只是决定分块形状和管道深度的宏参数：</p>
+<pre class="highlight"><code class="language-choreo">#define WARP_M    64    // 每个消费者 warpgroup 的输出分块行数
+#define WARP_N   192    // 每个 warpgroup 的列分块 — 28 轮搜索得出
+#define WARP_K    16    // WGMMA K 步长
+#define TILE_M   128    // 每个块的总 M = 2 × WARP_M（2 个消费者）
+#define TILE_K    64    // 每次 TMA 传输的 K 分块
+#define SWIZ     128    // swizzle 字节宽度
+#define STAGES     2    // 双缓冲环形缓冲区（v3 中为 1）
+#define CONSUMERS  2    // 每个块的消费者 warpgroup 数（v3 中为 1）</code></pre>
+<p>完整内核与 v3 相同，仅更改这些宏定义 —— 同样 60 行 Croqtile。</p>
+<h3 id="v3-v4">v3 到 v4 的变化及影响<a class="headerlink" href="#v3-v4" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Parameter</th>
+<th>参数</th>
 <th style="text-align: right;">v3</th>
 <th style="text-align: right;">v4</th>
-<th>Effect</th>
+<th>效果</th>
 </tr>
 </thead>
 <tbody>
@@ -3674,56 +3676,57 @@ if (wg &gt;= 1) {                                 // consumers
 <td><code>CONSUMERS</code></td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">2</td>
-<td>2 consumer WGs → 2× output M-rows per block</td>
+<td>2 个消费者 WG → 每个块输出 2 倍的 M 行</td>
 </tr>
 <tr>
 <td><code>TILE_M</code></td>
 <td style="text-align: right;">64</td>
 <td style="text-align: right;">128</td>
-<td>Larger block → better L2 cache reuse for B</td>
+<td>更大的块 → B 矩阵更好的 L2 缓存复用</td>
 </tr>
 <tr>
 <td><code>STAGES</code></td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">2</td>
-<td>True double-buffering: producer prefetches tile[i+1] while consumers compute tile[i]. TMA latency is now fully hidden.</td>
+<td>真正的双缓冲：生产者预取 tile[i+1]，消费者同时计算 tile[i]。TMA 延迟完全隐藏。</td>
 </tr>
 <tr>
 <td><code>WARP_N</code></td>
 <td style="text-align: right;">128</td>
 <td style="text-align: right;">192</td>
-<td>Found by 28-iteration parameter sweep; see the tuning journey below.</td>
+<td>通过 28 轮参数搜索找到；参见下方调优历程。</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Why WARP_N = 192?</strong> SM90 WGMMA accepts any N in [8, 256] divisible by 8. 192 = 24×8. At this shape the combination of register usage (~80 registers/thread), shared memory footprint per block (~80 KB → 2 blocks per SM), and N-grid parallelism (<code>cdiv(8192, 192) = 43</code> blocks) yields the best measured throughput for 8192³ on H800 PCIe. The full sweep is documented in the tuning section below.</p>
-<h3 id="double-buffering-in-pictures-stages2">Double-buffering in pictures (STAGES=2)<a class="headerlink" href="#double-buffering-in-pictures-stages2" title="Permanent link">&para;</a></h3>
-<p>With two buffer slots the producer can prefetch the next tile while the consumer computes the current one:</p>
-<p><img alt="Double-buffering timeline: producer prefetches into the alternate slot while consumers compute from the current slot" src="../../../optimization/assets/img/double_buffering_timeline.png" /></p>
-<h3 id="ncu-snapshot-v4">NCU snapshot (v4)<a class="headerlink" href="#ncu-snapshot-v4" title="Permanent link">&para;</a></h3>
-<pre class="highlight"><code>sm__throughput   (% of peak SM)     :  89.68%   ← near-peak compute
-tensor_core HMMA (% of peak)        :  89.68%   ← compute-bound
-gpu__dram_throughput (% of HBM BW)  :  38.91%   ← TMA hiding all loads
-warp occupancy   (% of peak)        :  27.74%   ← ~2 blocks/SM (smem-limited)</code></pre>
-<p>SM and tensor-core utilisation are at 89.7% — the kernel is firmly in the compute-bound regime. DRAM at 39% means TMA is successfully prefetching ahead. Warp occupancy at 27.7% reflects the shared memory footprint (~80 KB per block) allowing 2 concurrent blocks per SM on H800.</p>
-<p><strong>Result: ~471 TFLOPS (1.40× over v3, 105% of cuBLAS on this GPU)</strong></p>
+<p><strong>为什么 WARP_N = 192？</strong> SM90 WGMMA 接受 [8, 256] 范围内 8 的倍数作为 N。192 = 24×8。在此形状下，寄存器使用量（约 80 个寄存器/线程）、每块共享内存占用（约 80 KB → 每 SM 2 个块）和 N 维网格并行度（<code>cdiv(8192, 192) = 43</code> 个块）的组合在 H800 PCIe 上产生了 8192³ 问题的最佳实测吞吐量。完整搜索过程记录在下方的调优章节中。</p>
+<h3 id="stages2">双缓冲图解 (STAGES=2)<a class="headerlink" href="#stages2" title="Permanent link">&para;</a></h3>
+<p>使用两个缓冲槽位后，生产者可以在消费者计算当前分块时预取下一个分块：</p>
+<p><img alt="双缓冲时间线：生产者在交替槽位预取，消费者同时从当前槽位计算" src="../../../optimization/assets/img/double_buffering_timeline.png#only-dark" />
+<img alt="双缓冲时间线：生产者在交替槽位预取，消费者同时从当前槽位计算" src="../../../optimization/assets/img/double_buffering_timeline_light.png#only-light" /></p>
+<h3 id="ncu-v4">NCU 快照 (v4)<a class="headerlink" href="#ncu-v4" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code>sm__throughput   (% of peak SM)     :  89.68%   ← 接近峰值计算
+tensor_core HMMA (% of peak)        :  89.68%   ← 计算受限
+gpu__dram_throughput (% of HBM BW)  :  38.91%   ← TMA 隐藏了所有加载
+warp occupancy   (% of peak)        :  27.74%   ← 约 2 块/SM（受 smem 限制）</code></pre>
+<p>SM 和 Tensor Core 利用率达到 89.7% —— 内核已处于计算受限区域。DRAM 为 39% 意味着 TMA 成功进行了预取。Warp 占用率 27.7% 反映了共享内存占用（每块约 80 KB），使得 H800 上每 SM 只能容纳 2 个并发块。</p>
+<p><strong>结果：~471 TFLOPS（相比 v3 提升 1.40 倍，cuBLAS 的 105%）</strong></p>
 <hr />
-<h2 id="the-full-ncu-picture">The full NCU picture<a class="headerlink" href="#the-full-ncu-picture" title="Permanent link">&para;</a></h2>
-<p>Profiled with a single kernel launch (<code>ncu --launch-count 1</code>):</p>
+<h2 id="ncu">完整 NCU 数据<a class="headerlink" href="#ncu" title="Permanent link">&para;</a></h2>
+<p>使用单次内核启动进行分析（<code>ncu --launch-count 1</code>）：</p>
 <table>
 <thead>
 <tr>
-<th>Kernel</th>
+<th>内核</th>
 <th style="text-align: right;">dram%</th>
 <th style="text-align: right;">sm%</th>
-<th style="text-align: right;">tensor inst</th>
-<th style="text-align: right;">fma inst</th>
+<th style="text-align: right;">tensor 指令数</th>
+<th style="text-align: right;">fma 指令数</th>
 <th style="text-align: right;">TFLOPS</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>v0 naive</td>
+<td>v0 朴素版</td>
 <td style="text-align: right;">0.01</td>
 <td style="text-align: right;">5.99</td>
 <td style="text-align: right;">0</td>
@@ -3731,7 +3734,7 @@ warp occupancy   (% of peak)        :  27.74%   ← ~2 blocks/SM (smem-limited)<
 <td style="text-align: right;">0.38</td>
 </tr>
 <tr>
-<td>v1 smem</td>
+<td>v1 共享内存</td>
 <td style="text-align: right;">0.02</td>
 <td style="text-align: right;">6.12</td>
 <td style="text-align: right;">0</td>
@@ -3755,7 +3758,7 @@ warp occupancy   (% of peak)        :  27.74%   ← ~2 blocks/SM (smem-limited)<
 <td style="text-align: right;">337.0</td>
 </tr>
 <tr>
-<td>v4 tuned</td>
+<td>v4 调优版</td>
 <td style="text-align: right;">38.91</td>
 <td style="text-align: right;">89.68</td>
 <td style="text-align: right;">9,492,372</td>
@@ -3765,12 +3768,12 @@ warp occupancy   (% of peak)        :  27.74%   ← ~2 blocks/SM (smem-limited)<
 </tbody>
 </table>
 <ul>
-<li><strong>v0→v1</strong>: same scalar FMAs; shared memory fixes redundant reads but compute is unchanged.</li>
-<li><strong>v2</strong>: tensor core instructions appear; SM jumps from 6% to 43% — but TMA and WGMMA serialise.</li>
-<li><strong>v3</strong>: warpspec decouples producer/consumer; tensor utilization improves to 56%.</li>
-<li><strong>v4</strong>: double-buffer + WARP_N=192 → both SM and tensor utilization hit 89.7%, compute-roofline regime.</li>
+<li><strong>v0→v1</strong>：相同的标量 FMA；共享内存消除了冗余读取但计算未变。</li>
+<li><strong>v2</strong>：Tensor Core 指令出现；SM 从 6% 跃升到 43% —— 但 TMA 和 WGMMA 串行执行。</li>
+<li><strong>v3</strong>：warp 特化解耦生产者/消费者；Tensor 利用率提升至 56%。</li>
+<li><strong>v4</strong>：双缓冲 + WARP_N=192 → SM 和 Tensor 利用率均达 89.7%，计算屋顶线区域。</li>
 </ul>
-<p>To reproduce these numbers:</p>
+<p>复现这些数据：</p>
 <pre class="highlight"><code class="language-bash">ncu --target-processes all --launch-count 1 \
     --kernel-name-base demangled \
     --kernel-name regex:__croqtile_device_matmul \
@@ -3781,137 +3784,138 @@ warp occupancy   (% of peak)        :  27.74%   ← ~2 blocks/SM (smem-limited)<
       smsp__inst_executed_pipe_fma.sum \
     &lt;compiled-kernel-binary&gt;</code></pre>
 <hr />
-<h2 id="the-tuning-journey-v3-v4">The Tuning Journey: v3 → v4<a class="headerlink" href="#the-tuning-journey-v3-v4" title="Permanent link">&para;</a></h2>
-<p>v4 was not designed upfront — it was found by a systematic 28-iteration parameter sweep starting from v3. Here is the actual log. This is the core of the tutorial: the techniques above give you a structurally correct kernel, but the last 40% comes from tuning.</p>
-<h3 id="baseline-v3-stages1-consumers1-warp_n128">Baseline: v3 (STAGES=1, CONSUMERS=1, WARP_N=128)<a class="headerlink" href="#baseline-v3-stages1-consumers1-warp_n128" title="Permanent link">&para;</a></h3>
-<p>NCU on the v3 baseline reveals the kernel is <strong>latency-bound</strong>:</p>
-<pre class="highlight"><code>sm__throughput:          56%   ← SM underutilized
-tensor_core (HMMA):      52%   ← compute barely half active
-gpu__dram_throughput:    33%   ← DRAM not the problem
-warp occupancy:          28%   ← many warps stall on barriers</code></pre>
-<p>The single-stage pipeline (<code>STAGES=1</code>) forces the producer to wait for the consumer to drain before it can load the next K tile. The CPU-visible pattern: <code>sm__pipe_tensor_op_hmma_cycles</code> stalls every <code>TILE_K/WARP_K = 4</code> WGMMA instructions.</p>
-<h3 id="phase-1-pipeline-architecture-iter000-iter003">Phase 1 — Pipeline Architecture (iter000 → iter003)<a class="headerlink" href="#phase-1-pipeline-architecture-iter000-iter003" title="Permanent link">&para;</a></h3>
-<p>The first structural change is enabling double-buffering and a second consumer warpgroup:</p>
+<h2 id="v3-v4_1">调优历程：v3 → v4<a class="headerlink" href="#v3-v4_1" title="Permanent link">&para;</a></h2>
+<p>v4 不是预先设计的 —— 它是从 v3 开始，通过系统化的 28 轮参数搜索找到的。以下是实际记录。这是本教程的核心：上述技术为你提供了结构正确的内核，但最后 40% 的性能提升来自调优。</p>
+<h3 id="v3-stages1-consumers1-warp_n128">基线：v3 (STAGES=1, CONSUMERS=1, WARP_N=128)<a class="headerlink" href="#v3-stages1-consumers1-warp_n128" title="Permanent link">&para;</a></h3>
+<p>v3 基线的 NCU 分析显示内核处于<strong>延迟受限</strong>状态：</p>
+<pre class="highlight"><code>sm__throughput:          56%   ← SM 利用不足
+tensor_core (HMMA):      52%   ← 计算仅半数活跃
+gpu__dram_throughput:    33%   ← DRAM 不是问题
+warp occupancy:          28%   ← 大量 warp 在屏障上阻塞</code></pre>
+<p>单级管道（<code>STAGES=1</code>）迫使生产者在消费者消耗完数据前等待，才能加载下一个 K 分块。CPU 可见的表现：<code>sm__pipe_tensor_op_hmma_cycles</code> 每 <code>TILE_K/WARP_K = 4</code> 条 WGMMA 指令就会暂停。</p>
+<h3 id="1-iter000-iter003">阶段 1 —— 管道架构 (iter000 → iter003)<a class="headerlink" href="#1-iter000-iter003" title="Permanent link">&para;</a></h3>
+<p>第一个结构性变化是启用双缓冲和第二个消费者 warpgroup：</p>
 <table>
 <thead>
 <tr>
-<th>Iter</th>
-<th>Change</th>
+<th>迭代</th>
+<th>变更</th>
 <th style="text-align: right;">TFLOPS</th>
-<th>Notes</th>
+<th>备注</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>iter000</td>
-<td>baseline (STAGES=1, CONS=1)</td>
+<td>基线 (STAGES=1, CONS=1)</td>
 <td style="text-align: right;">337</td>
-<td>latency-bound</td>
+<td>延迟受限</td>
 </tr>
 <tr>
 <td>iter001</td>
 <td>STAGES=2, CONS=1</td>
 <td style="text-align: right;">—</td>
-<td><strong>CRASH</strong> — <code>parallel wg by 3</code> spawns 3 warpgroups regardless of <code>CONSUMERS</code>; mismatch causes OOB smem write</td>
+<td><strong>崩溃</strong> — <code>parallel wg by 3</code> 始终生成 3 个 warpgroup，不受 <code>CONSUMERS</code> 影响；不匹配导致 smem 越界写入</td>
 </tr>
 <tr>
 <td>iter002</td>
 <td>STAGES=2, CONS=2, WARP_N=128</td>
 <td style="text-align: right;">365</td>
-<td>first working double-buffer (+8%)</td>
+<td>首个可用的双缓冲版本（+8%）</td>
 </tr>
 <tr>
 <td>iter003</td>
 <td>STAGES=2, CONS=2, WARP_N=152</td>
 <td style="text-align: right;">402</td>
-<td>intermediate config, bottleneck shifts to compute-bound (+19%)</td>
+<td>中间配置，瓶颈转为计算受限（+19%）</td>
 </tr>
 </tbody>
 </table>
-<p>The crash on iter001 reveals a subtle Croqtile semantics point: <code>parallel wg by 3</code> always spawns 3 warpgroups. The consumer predicate <code>inthreads.async (wg &gt;= 1)</code> matches <strong>both</strong> wg=1 and wg=2 — so you must always set <code>CONSUMERS</code> to match the actual number of consumer warpgroups.</p>
-<p>After iter003 NCU shows the bottleneck has shifted:</p>
-<pre class="highlight"><code>sm__throughput:          89%   ← near-peak!
-tensor_core (HMMA):      89%   ← compute-bound
-gpu__dram_throughput:    38%   ← TMA is hiding latency</code></pre>
-<p>We are now <strong>compute-bound</strong> at 89% tensor utilization. The remaining gap: warp occupancy is only 28%, limited by shared memory per block (~80 KB) allowing at most 2 blocks per SM on H800.</p>
-<h3 id="phase-2-warp_n-sweep-iter004-iter017">Phase 2 — WARP_N Sweep (iter004 → iter017)<a class="headerlink" href="#phase-2-warp_n-sweep-iter004-iter017" title="Permanent link">&para;</a></h3>
-<p>With the kernel compute-bound, tuning <code>WARP_N</code> changes the balance between:</p>
+<p>iter001 的崩溃揭示了一个微妙的 Croqtile 语义点：<code>parallel wg by 3</code> 始终生成 3 个 warpgroup。消费者谓词 <code>inthreads.async (wg &gt;= 1)</code> 同时匹配 wg=1 和 wg=2 —— 因此必须始终设置 <code>CONSUMERS</code> 与实际消费者 warpgroup 数量一致。</p>
+<p>iter003 之后 NCU 显示瓶颈已转移：</p>
+<pre class="highlight"><code>sm__throughput:          89%   ← 接近峰值！
+tensor_core (HMMA):      89%   ← 计算受限
+gpu__dram_throughput:    38%   ← TMA 隐藏了延迟</code></pre>
+<p>我们现在处于<strong>计算受限</strong>状态，Tensor 利用率 89%。剩余差距：warp 占用率仅 28%，受共享内存限制（每块约 80 KB），H800 上每 SM 最多容纳 2 个块。</p>
+<h3 id="2-warp_n-iter004-iter017">阶段 2 —— WARP_N 搜索 (iter004 → iter017)<a class="headerlink" href="#2-warp_n-iter004-iter017" title="Permanent link">&para;</a></h3>
+<p>在内核计算受限时，调整 <code>WARP_N</code> 改变以下因素之间的平衡：</p>
 <ul>
-<li><strong>N-tile arithmetic intensity</strong> (larger WARP_N = more WGMMA work per TMA load)</li>
-<li><strong>shared memory footprint</strong> (<code>rhs_s[STAGES]</code> grows linearly with WARP_N)</li>
-<li><strong>grid parallelism</strong> (<code>cdiv(N, WARP_N)</code> determines how many blocks cover the N dimension)</li>
+<li><strong>N 分块算术强度</strong>（更大的 WARP_N = 每次 TMA 加载更多 WGMMA 计算量）</li>
+<li><strong>共享内存占用</strong>（<code>rhs_s[STAGES]</code> 随 WARP_N 线性增长）</li>
+<li><strong>网格并行度</strong>（<code>cdiv(N, WARP_N)</code> 决定覆盖 N 维度所需的块数）</li>
 </ul>
 <div class="admonition warning">
-<p class="admonition-title">Hardware constraint</p>
-<p>WGMMA requires <code>WARP_N</code> to be a <strong>multiple of 8</strong>. Values like 180 or 188 compile-fail with <code>MMA m64n180k16 not supported</code>. Discovered during iter019–020.</p>
+<p class="admonition-title">硬件约束</p>
+<p>WGMMA 要求 <code>WARP_N</code> 为 <strong>8 的倍数</strong>。如 180 或 188 等值在编译时失败：<code>MMA m64n180k16 not supported</code>。在 iter019–020 中发现。</p>
 </div>
-<p><img alt="WARP_N sweep results: performance peaks at WARP_N=192, drops beyond 208 due to smem limits" src="../../../optimization/assets/img/warpn_sweep.png" /></p>
-<p>The sweet spot is <strong>WARP_N = 176–192</strong>. Going beyond 192 adds shared memory without enough extra work to compensate — WARP_N=224 drops to 364 TFLOPS because the larger smem footprint prevents 2 concurrent blocks per SM.</p>
-<h3 id="phase-3-dead-ends-iter011018">Phase 3 — Dead Ends (iter011–018)<a class="headerlink" href="#phase-3-dead-ends-iter011018" title="Permanent link">&para;</a></h3>
-<p>Not all directions pay off:</p>
+<p><img alt="WARP_N 搜索结果：性能在 WARP_N=192 时达到峰值，超过 208 后因 smem 限制下降" src="../../../optimization/assets/img/warpn_sweep.png#only-dark" />
+<img alt="WARP_N 搜索结果：性能在 WARP_N=192 时达到峰值，超过 208 后因 smem 限制下降" src="../../../optimization/assets/img/warpn_sweep_light.png#only-light" /></p>
+<p>最佳区间是 <strong>WARP_N = 176–192</strong>。超过 192 后，增加的共享内存无法被额外的计算量补偿 —— WARP_N=224 降至 364 TFLOPS，因为更大的 smem 占用阻止了每 SM 运行 2 个并发块。</p>
+<h3 id="3-iter011018">阶段 3 —— 死胡同 (iter011–018)<a class="headerlink" href="#3-iter011018" title="Permanent link">&para;</a></h3>
+<p>并非所有方向都有回报：</p>
 <table>
 <thead>
 <tr>
-<th>Attempt</th>
-<th>Result</th>
-<th>Why</th>
+<th>尝试</th>
+<th>结果</th>
+<th>原因</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>STAGES=3, WARP_N=192</td>
-<td>correctness fail</td>
-<td>Compiler bug with 3-stage pipeline</td>
+<td>正确性失败</td>
+<td>3 级管道的编译器 bug</td>
 </tr>
 <tr>
 <td>STAGES=3, WARP_N=176</td>
-<td>373 TFLOPS (worse)</td>
-<td>Extra barrier overhead dominates</td>
+<td>373 TFLOPS（更差）</td>
+<td>额外的屏障开销占主导</td>
 </tr>
 <tr>
 <td>TILE_K=32, WARP_N=192</td>
-<td>403 TFLOPS (worse)</td>
-<td>Shorter K-tiles shrink the overlap window</td>
+<td>403 TFLOPS（更差）</td>
+<td>更短的 K 分块缩小了重叠窗口</td>
 </tr>
 <tr>
 <td>TILE_K=128, WARP_N=192</td>
 <td>CUDA invalid arg</td>
-<td>smem 163 KB exceeds kernel limit</td>
+<td>smem 163 KB 超出内核限制</td>
 </tr>
 <tr>
-<td>1p3c (3 consumers), TILE_M=192</td>
+<td>1p3c（3 消费者），TILE_M=192</td>
 <td>156 TFLOPS</td>
-<td>512 threads × 80 regs = only 1 block/SM</td>
+<td>512 线程 × 80 寄存器 = 每 SM 仅 1 个块</td>
 </tr>
 <tr>
 <td>SWIZ=64, WARP_N=192</td>
 <td>CUDA invalid arg</td>
-<td>WGMMA N=192 requires SWIZ=128 layout</td>
+<td>WGMMA N=192 需要 SWIZ=128 布局</td>
 </tr>
 <tr>
 <td>WARP_N=256</td>
 <td>396 TFLOPS</td>
-<td>Larger smem, fewer blocks/SM</td>
+<td>更大 smem，更少块/SM</td>
 </tr>
 </tbody>
 </table>
-<p>The 1p3c experiment is instructive: with 512 threads (4 warpgroups) the register budget forces only 1 active block per SM, cutting utilization in half.</p>
-<h3 id="winner-warp_n192-40-over-v3">Winner: WARP_N=192 (+40% over v3)<a class="headerlink" href="#winner-warp_n192-40-over-v3" title="Permanent link">&para;</a></h3>
+<p>1p3c 实验很有启发性：512 个线程（4 个 warpgroup）的寄存器预算迫使每 SM 仅有 1 个活跃块，利用率减半。</p>
+<h3 id="warp_n192-v3-40">获胜者：WARP_N=192（相比 v3 提升 40%）<a class="headerlink" href="#warp_n192-v3-40" title="Permanent link">&para;</a></h3>
 <pre class="highlight"><code class="language-choreo">#define WARP_N 192
 #define STAGES 2
 #define CONSUMERS 2</code></pre>
-<p>That is the <strong>only change</strong> in v4's Croqtile source. The compiler handles the rest — regenerating the correct TMA tensor descriptors, swizzle layouts, and mbarrier counts automatically for the new tile shape.</p>
+<p>这是 v4 Croqtile 源码中<strong>唯一的变更</strong>。编译器处理其余一切 —— 为新的分块形状自动重新生成正确的 TMA 张量描述符、swizzle 布局和 mbarrier 计数。</p>
 <hr />
-<h2 id="sota-comparison">SOTA comparison<a class="headerlink" href="#sota-comparison" title="Permanent link">&para;</a></h2>
-<p>Running cuBLAS via PyTorch's <code>torch.mm</code> on the same 8192×8192×8192 f16 problem:</p>
-<p><em>NVIDIA H800 PCIe — FP16 Tensor Core peak: 1513 TFLOPS</em></p>
+<h2 id="sota">SOTA 对比<a class="headerlink" href="#sota" title="Permanent link">&para;</a></h2>
+<p>在相同的 8192×8192×8192 f16 问题上，通过 PyTorch 的 <code>torch.mm</code> 运行 cuBLAS：</p>
+<p><em>NVIDIA H800 PCIe — FP16 Tensor Core 峰值：1513 TFLOPS</em></p>
 <table>
 <thead>
 <tr>
-<th>Implementation</th>
-<th style="text-align: right;">Time (ms)</th>
+<th>实现方案</th>
+<th style="text-align: right;">时间 (ms)</th>
 <th style="text-align: right;">TFLOPS</th>
-<th style="text-align: right;">%</th>
+<th style="text-align: right;">百分比</th>
 </tr>
 </thead>
 <tbody>
@@ -3922,123 +3926,124 @@ gpu__dram_throughput:    38%   ← TMA is hiding latency</code></pre>
 <td style="text-align: right;">100%</td>
 </tr>
 <tr>
-<td><strong>Croqtile v4 (tuned)</strong></td>
+<td><strong>Croqtile v4（调优版）</strong></td>
 <td style="text-align: right;"><strong>2.35</strong></td>
 <td style="text-align: right;"><strong>471.3</strong></td>
 <td style="text-align: right;"><strong>105.3%</strong></td>
 </tr>
 </tbody>
 </table>
-<p>The slight edge over cuBLAS comes from the WARP_N=192 tile hitting a better L2/SMEM working-set balance on this specific GPU model. Production cuBLAS also includes features outside this tutorial's scope:</p>
+<p>Croqtile 相对 cuBLAS 的微小优势来自 WARP_N=192 分块在该特定 GPU 型号上命中了更好的 L2/SMEM 工作集平衡。生产级 cuBLAS 还包含本教程范围之外的特性：</p>
 <ul>
-<li><strong>Thread block clusters</strong>: cuBLAS uses Hopper multicast TMA to share B tiles across blocks in a cluster.</li>
-<li><strong>Persistent kernels</strong>: cuBLAS keeps blocks alive across output tiles to amortize launch overhead.</li>
-<li><strong>Epilogue fusion</strong>: cuBLAS merges the MMA store and output write, avoiding one SMEM round-trip.</li>
+<li><strong>线程块集群</strong>：cuBLAS 使用 Hopper 多播 TMA 在集群内的块间共享 B 分块。</li>
+<li><strong>持久内核</strong>：cuBLAS 使块在输出分块间保持存活，以摊销启动开销。</li>
+<li><strong>Epilogue 融合</strong>：cuBLAS 合并 MMA 存储和输出写入，避免一次 SMEM 往返。</li>
 </ul>
-<p>All three can be expressed in Croqtile — the production-grade kernels in the repository implement them.</p>
+<p>这三项都可以在 Croqtile 中表达 —— 代码库中的生产级内核实现了它们。</p>
 <hr />
-<h2 id="the-optimization-ladder">The optimization ladder<a class="headerlink" href="#the-optimization-ladder" title="Permanent link">&para;</a></h2>
-<p><img alt="Optimization ladder: TFLOPS progression from v0 (0.38) through v4 (471), compared to cuBLAS (447)" src="../../../optimization/assets/img/optimization_ladder.png" /></p>
+<h2 id="_2">优化阶梯<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p><img alt="优化阶梯：TFLOPS 从 v0 (0.38) 到 v4 (471) 的进展，与 cuBLAS (447) 对比" src="../../../optimization/assets/img/optimization_ladder.png#only-dark" />
+<img alt="优化阶梯：TFLOPS 从 v0 (0.38) 到 v4 (471) 的进展，与 cuBLAS (447) 对比" src="../../../optimization/assets/img/optimization_ladder_light.png#only-light" /></p>
 <table>
 <thead>
 <tr>
-<th>Step</th>
-<th>Technique</th>
-<th>Key Croqtile construct</th>
-<th style="text-align: right;">Speedup</th>
+<th>步骤</th>
+<th>技术</th>
+<th>关键 Croqtile 构造</th>
+<th style="text-align: right;">加速比</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>v0 → v1</td>
-<td>SMEM tiling</td>
-<td><code>shared</code>, <code>dma.copy</code>, <code>.subspan().at()</code></td>
+<td>SMEM 分块</td>
+<td><code>shared</code>、<code>dma.copy</code>、<code>.subspan().at()</code></td>
 <td style="text-align: right;">3.9×</td>
 </tr>
 <tr>
 <td>v1 → v2</td>
 <td>TMA + WGMMA</td>
-<td><code>: group-4</code>, <code>tma.copy.swiz&lt;&gt;</code>, <code>mma.load.swiz&lt;&gt;</code></td>
+<td><code>: group-4</code>、<code>tma.copy.swiz&lt;&gt;</code>、<code>mma.load.swiz&lt;&gt;</code></td>
 <td style="text-align: right;">188×</td>
 </tr>
 <tr>
 <td>v2 → v3</td>
-<td>Warp specialization</td>
-<td><code>inthreads.async</code>, <code>shared event</code>, <code>wait/trigger</code></td>
+<td>Warp 特化</td>
+<td><code>inthreads.async</code>、<code>shared event</code>、<code>wait/trigger</code></td>
 <td style="text-align: right;">1.19×</td>
 </tr>
 <tr>
 <td>v3 → v4</td>
-<td>Pipeline tuning</td>
-<td>STAGES=2, CONSUMERS=2, WARP_N=192 (28-iter sweep)</td>
+<td>管道调优</td>
+<td>STAGES=2, CONSUMERS=2, WARP_N=192（28 轮搜索）</td>
 <td style="text-align: right;">1.40×</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="why-croqtile">Why Croqtile<a class="headerlink" href="#why-croqtile" title="Permanent link">&para;</a></h2>
-<p>The five kernels above express <em>what</em> data moves and <em>what</em> computation runs — not the mechanics of how to make it happen. That gap is significant:</p>
+<h2 id="croqtile_1">为什么选择 Croqtile<a class="headerlink" href="#croqtile_1" title="Permanent link">&para;</a></h2>
+<p>以上五个内核表达的是<em>什么</em>数据在移动、<em>什么</em>计算在执行 —— 而非如何实现的机制。这个差距非常显著：</p>
 <table>
 <thead>
 <tr>
-<th>Raw CUDA requirement</th>
-<th>Croqtile equivalent</th>
-<th>What the compiler handles</th>
+<th>原始 CUDA 需求</th>
+<th>Croqtile 等价表达</th>
+<th>编译器处理的内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>blockIdx/threadIdx arithmetic</td>
+<td>blockIdx/threadIdx 运算</td>
 <td><code>parallel {i,j} by [...] : block/thread</code></td>
-<td>All index math, bounds, tile sizes</td>
+<td>所有索引运算、边界、分块大小</td>
 </tr>
 <tr>
-<td>Cooperative copy loop + <code>__syncthreads()</code></td>
+<td>协作拷贝循环 + <code>__syncthreads()</code></td>
 <td><code>dma.copy src =&gt; dst</code></td>
-<td>Thread partition, coalescing, barriers</td>
+<td>线程分区、合并访问、屏障</td>
 </tr>
 <tr>
-<td>TMA descriptor (<code>CUtensorMap</code>) setup</td>
+<td>TMA 描述符 (<code>CUtensorMap</code>) 设置</td>
 <td><code>tma.copy[.async][.swiz&lt;N&gt;]</code></td>
-<td>Tensor map construction, mbarrier wiring</td>
+<td>张量映射构造、mbarrier 连接</td>
 </tr>
 <tr>
-<td>WGMMA smem descriptor encoding</td>
+<td>WGMMA smem 描述符编码</td>
 <td><code>mma.load.swiz&lt;N&gt; s.chunkat(i,j)</code></td>
-<td>Descriptor encoding, swizzle alignment</td>
+<td>描述符编码、swizzle 对齐</td>
 </tr>
 <tr>
-<td>mbarrier init / arrive / wait code</td>
-<td><code>shared event</code>, <code>wait</code>, <code>trigger</code></td>
-<td>Full mbarrier lifecycle</td>
+<td>mbarrier 初始化 / arrive / wait 代码</td>
+<td><code>shared event</code>、<code>wait</code>、<code>trigger</code></td>
+<td>完整的 mbarrier 生命周期</td>
 </tr>
 <tr>
-<td>Warpgroup-dispatch predication</td>
+<td>Warpgroup 调度谓词</td>
 <td><code>inthreads.async (wg==0)</code></td>
-<td>Warpgroup dispatch, register allocation hints</td>
+<td>Warpgroup 调度、寄存器分配提示</td>
 </tr>
 <tr>
-<td>XOR swizzle table construction</td>
-<td><code>.swiz&lt;128&gt;</code> on <code>mma.load</code></td>
-<td>Backward propagation to <code>tma.copy</code>, compile-time consistency check</td>
+<td>XOR swizzle 表构造</td>
+<td><code>mma.load</code> 上的 <code>.swiz&lt;128&gt;</code></td>
+<td>反向传播到 <code>tma.copy</code>、编译时一致性检查</td>
 </tr>
 </tbody>
 </table>
-<p>Writing the v4 kernel correctly in raw CUDA would require several hundred lines: TMA tensor-map construction, mbarrier initialisation, warpgroup predication, WGMMA smem descriptor encoding, explicit swizzle XOR tables, and careful synchronisation ordering. One mistake anywhere causes incorrect results or silent deadlock.</p>
-<p><strong>The Croqtile version is 60 lines, and a 28-iteration parameter sweep found a configuration that exceeds cuBLAS on this GPU.</strong> The entire tuning process — including dead ends — took under 4 hours of wall time. In raw CUDA, the same exploration would require rewriting hundreds of lines for each configuration.</p>
+<p>用原始 CUDA 正确编写 v4 内核需要数百行代码：TMA 张量映射构造、mbarrier 初始化、warpgroup 谓词、WGMMA smem 描述符编码、显式的 swizzle XOR 表，以及精心的同步顺序。任何一处错误都会导致结果不正确或静默死锁。</p>
+<p><strong>Croqtile 版本仅 60 行，28 轮参数搜索找到了在该 GPU 上超越 cuBLAS 的配置。</strong> 整个调优过程 —— 包括死胡同 —— 耗时不到 4 小时。用原始 CUDA 进行同样的探索，需要为每个配置重写数百行代码。</p>
 <hr />
-<h2 id="running-the-kernels">Running the kernels<a class="headerlink" href="#running-the-kernels" title="Permanent link">&para;</a></h2>
-<pre class="highlight"><code class="language-bash"># Compile — produces a self-contained script wrapping nvcc
+<h2 id="_3">运行内核<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="highlight"><code class="language-bash"># 编译 — 生成包装 nvcc 的自包含脚本
 croqtile -gs -t cute -arch=sm_90a \
     matmul_f16_v4_auto_tuned.co -o v4.cute.result
 
-# Run (compile + link + execute in one step)
+# 运行（编译 + 链接 + 执行一步完成）
 bash v4.cute.result --execute
 
-# Correctness check without timing output
+# 正确性检查（不输出计时信息）
 CHOREO_DISABLE_TIMING=1 bash v4.cute.result --execute
 
-# Profile with Nsight Compute (single launch)
+# 使用 Nsight Compute 分析（单次启动）
 ncu --launch-count 1 \
     --kernel-name regex:__croqtile_device_matmul \
     --metrics \
