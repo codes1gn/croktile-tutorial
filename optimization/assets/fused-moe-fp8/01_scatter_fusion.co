@@ -1,0 +1,955 @@
+// REQUIRES: TARGET-SM_90
+//
+// =============================================================================
+// 01_scatter_fusion — Phase 1a: Scatter Fused into WGMMA Epilogue
+// =============================================================================
+// Tuning stage: iter007 (scatter fusion)
+// End-to-end TFLOPS: ~8.22 (H800 PCIe)
+// Compilation: ./choreo -es -t cute -arch=sm_90a 01_scatter_fusion.co -o /tmp/out.cu
+//
+// Key optimization: The separate scatter kernel (kernel 7 in baseline) is fused
+// into the WGMMA epilogue. Instead of writing GEMM results to global memory
+// and reading them back in a separate kernel, the scatter reads directly from
+// MMA accumulator registers via __cpp__ blocks and does atomicAdd to the output.
+//
+// This eliminates:
+//   - One full kernel launch (fused_moe_scatter_rows_to_output)
+//   - The rep_out intermediate buffer (global memory round-trip)
+//   - 16KB shared memory previously used for staging
+//
+// The fused_moe_grouped_wgmma_fp8 kernel now takes scatter_output as a parameter
+// and performs the weighted atomicAdd scatter in its epilogue after mma.store.
+// The old fused_moe_scatter_rows_to_output kernel remains in the file but is
+// no longer called in the serving path.
+//
+// Pipeline: route → count → build → quant → sort → WGMMA+scatter (6 kernels)
+// Problem: M=128, N=512, K=2048, 256 experts, topk=8, FP8 E4M3, SM_90 (H100).
+// =============================================================================
+
+#include <algorithm>
+#include <cmath>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+#include <vector>
+
+#define QWEN35_DEFAULT_M 128
+#define QWEN35_MAX_M 1024
+#define QWEN35_DEFAULT_N 512
+#define QWEN35_DEFAULT_K 2048
+#define QWEN35_DEFAULT_NUM_EXPERTS 256
+#define QWEN35_TOPK 8
+#define QWEN35_RENORMALIZE true
+#define QWEN35_SOFTCAP 2.5f
+
+#define QWEN35_ROUTE_THREADS 32
+#define QWEN35_ROUTE_VALUES_PER_THREAD 8
+#define QWEN35_PACK_THREADS 128
+
+#define QWEN35_WARP_M 64
+#define QWEN35_WARP_N 128
+#define QWEN35_WARP_K 32
+#define QWEN35_TILE_K 128
+#define QWEN35_SWIZZLE 128
+
+#define QWEN35_BLOCK_N 128
+#define QWEN35_BLOCK_K 128
+#define QWEN35_K_BLOCKS 16
+#define QWEN35_N_BLOCKS 4
+
+#define QWEN35_MAX_SORTED_ROUTES 8192
+#define QWEN35_EXPERT_WEIGHT_ROWS 131072
+
+#if QWEN35_DEFAULT_NUM_EXPERTS != QWEN35_ROUTE_THREADS * QWEN35_ROUTE_VALUES_PER_THREAD
+  #error "QWEN35 routing decomposition must cover all experts"
+#endif
+
+#if QWEN35_DEFAULT_N % QWEN35_WARP_N != 0
+  #error "QWEN35_DEFAULT_N must be divisible by QWEN35_WARP_N"
+#endif
+
+#if QWEN35_DEFAULT_K % QWEN35_TILE_K != 0
+  #error "QWEN35_DEFAULT_K must be divisible by QWEN35_TILE_K"
+#endif
+
+#if QWEN35_TILE_K % QWEN35_WARP_K != 0
+  #error "QWEN35_TILE_K must be divisible by QWEN35_WARP_K"
+#endif
+
+template <typename T>
+__device__ __forceinline__ T SHFL_XOR(T var, int lane_mask, int width) {
+  return __shfl_xor_sync(uint32_t(-1), var, lane_mask, width);
+}
+
+template <typename T, typename C>
+__device__ __forceinline__ T ATOMIC_ADD(T* a, C b) {
+  return atomicAdd(a, b);
+}
+
+__device__ __forceinline__ float ABS_F32(float value) {
+  return value < 0.0f ? -value : value;
+}
+
+struct TopkSoftmaxResult {
+  std::vector<float> weights;
+  std::vector<int32_t> indices;
+};
+
+static float fp8MaxAbs() { return 448.0f; }
+
+static float quantScaleFromMax(float max_abs) {
+  float scale = max_abs / fp8MaxAbs();
+  return scale > 1.0e-6f ? scale : 1.0e-6f;
+}
+
+static TopkSoftmaxResult topkSoftmaxCpuReference(const float* gating_output,
+                                                 int num_tokens,
+                                                 int num_experts, int topk,
+                                                 bool renormalize,
+                                                 float moe_softcapping) {
+  TopkSoftmaxResult result;
+  result.weights.resize(static_cast<size_t>(num_tokens) * topk);
+  result.indices.resize(static_cast<size_t>(num_tokens) * topk);
+
+  std::vector<float> probs(static_cast<size_t>(num_experts));
+  for (int token = 0; token < num_tokens; ++token) {
+    float row_max = 0.0f;
+    for (int expert = 0; expert < num_experts; ++expert) {
+      float value = gating_output[token * num_experts + expert];
+      if (moe_softcapping != 0.0f) {
+        value = std::tanh(value / moe_softcapping) * moe_softcapping;
+      }
+      probs[expert] = value;
+      if (expert == 0 || value > row_max) row_max = value;
+    }
+
+    float row_sum = 0.0f;
+    for (int expert = 0; expert < num_experts; ++expert) {
+      probs[expert] = std::exp(probs[expert] - row_max);
+      row_sum += probs[expert];
+    }
+
+    float inv_sum = row_sum > 0.0f ? 1.0f / row_sum : 0.0f;
+    for (int expert = 0; expert < num_experts; ++expert) probs[expert] *= inv_sum;
+
+    float selected_sum = 0.0f;
+    for (int selected = 0; selected < topk; ++selected) {
+      int best_idx = 0;
+      float best_val = probs[0];
+      for (int expert = 1; expert < num_experts; ++expert) {
+        float val = probs[expert];
+        if (val > best_val || (val == best_val && expert < best_idx)) {
+          best_val = val;
+          best_idx = expert;
+        }
+      }
+      result.weights[token * topk + selected] = best_val;
+      result.indices[token * topk + selected] = best_idx;
+      selected_sum += best_val;
+      if (selected + 1 < topk) probs[best_idx] = -1.0f;
+    }
+
+    if (renormalize && selected_sum > 0.0f) {
+      float inv_selected_sum = 1.0f / selected_sum;
+      for (int selected = 0; selected < topk; ++selected) {
+        result.weights[token * topk + selected] *= inv_selected_sum;
+      }
+    }
+  }
+
+  return result;
+}
+
+static bool nearlyEqual(float lhs, float rhs, float atol = 4e-2f,
+                        float rtol = 1.2e-1f) {
+  float diff = std::abs(lhs - rhs);
+  float scale = std::max(std::abs(lhs), std::abs(rhs));
+  return diff <= atol + rtol * scale;
+}
+
+static choreo::f8_e4m3 quantizeFp8(float value, float scale) {
+  float scaled = value / scale;
+  float clamped = std::max(-fp8MaxAbs(), std::min(fp8MaxAbs(), scaled));
+  return choreo::utils::from_f32<choreo::f8_e4m3>(clamped);
+}
+
+static void initExpertWeightsQwenFp8(choreo::f8_e4m3* expert_weights_h,
+                                     float* expert_scales_h) {
+  for (int expert = 0; expert < QWEN35_DEFAULT_NUM_EXPERTS; ++expert) {
+    for (int block_n = 0; block_n < QWEN35_N_BLOCKS; ++block_n) {
+      for (int block_k = 0; block_k < QWEN35_K_BLOCKS; ++block_k) {
+        float max_abs = 0.0f;
+        for (int nn = 0; nn < QWEN35_BLOCK_N; ++nn) {
+          int out_col = block_n * QWEN35_BLOCK_N + nn;
+          for (int kk = 0; kk < QWEN35_BLOCK_K; ++kk) {
+            int k_col = block_k * QWEN35_BLOCK_K + kk;
+            float pattern =
+                static_cast<float>(((expert + 1) * 13 + (out_col + 1) * 7 +
+                                    (k_col + 1) * 5) % 23) - 11.0f;
+            float value = 0.0625f * pattern;
+            max_abs = std::max(max_abs, std::abs(value));
+          }
+        }
+
+        float scale = quantScaleFromMax(max_abs);
+        size_t scale_offset =
+            (static_cast<size_t>(expert) * QWEN35_N_BLOCKS + block_n) *
+                QWEN35_K_BLOCKS +
+            block_k;
+        expert_scales_h[scale_offset] = scale;
+
+        for (int nn = 0; nn < QWEN35_BLOCK_N; ++nn) {
+          int out_col = block_n * QWEN35_BLOCK_N + nn;
+          for (int kk = 0; kk < QWEN35_BLOCK_K; ++kk) {
+            int k_col = block_k * QWEN35_BLOCK_K + kk;
+            float pattern =
+                static_cast<float>(((expert + 1) * 13 + (out_col + 1) * 7 +
+                                    (k_col + 1) * 5) % 23) - 11.0f;
+            float value = 0.0625f * pattern;
+            size_t weight_offset =
+                (static_cast<size_t>(expert) * QWEN35_DEFAULT_N + out_col) *
+                    QWEN35_DEFAULT_K +
+                k_col;
+            expert_weights_h[weight_offset] = quantizeFp8(value, scale);
+          }
+        }
+      }
+    }
+  }
+}
+
+static void fusedMoeCpuReferenceFp8(
+    const choreo::bf16* input, const float* gating_output,
+    const choreo::f8_e4m3* expert_weights, const float* expert_scales,
+    int num_tokens, int n_dim, int k_dim, int num_experts, int topk,
+    bool renormalize, float moe_softcapping, int32_t* ref_topk_indices,
+    float* ref_topk_weights, float* ref_output) {
+  TopkSoftmaxResult routing =
+      topkSoftmaxCpuReference(gating_output, num_tokens, num_experts, topk,
+                              renormalize, moe_softcapping);
+
+  for (int token = 0; token < num_tokens; ++token) {
+    for (int selected = 0; selected < topk; ++selected) {
+      ref_topk_indices[token * topk + selected] =
+          routing.indices[token * topk + selected];
+      ref_topk_weights[token * topk + selected] =
+          routing.weights[token * topk + selected];
+    }
+  }
+
+  const int k_blocks = k_dim / QWEN35_BLOCK_K;
+  const int n_blocks = n_dim / QWEN35_BLOCK_N;
+  std::vector<choreo::f8_e4m3> quant_input(static_cast<size_t>(num_tokens) * k_dim);
+  std::vector<float> quant_scales(static_cast<size_t>(num_tokens) * k_blocks);
+
+  for (int token = 0; token < num_tokens; ++token) {
+    for (int block_k = 0; block_k < k_blocks; ++block_k) {
+      float max_abs = 0.0f;
+      for (int kk = 0; kk < QWEN35_BLOCK_K; ++kk) {
+        int k_col = block_k * QWEN35_BLOCK_K + kk;
+        float value = choreo::to_f32(input[token * k_dim + k_col]);
+        max_abs = std::max(max_abs, std::abs(value));
+      }
+      float scale = quantScaleFromMax(max_abs);
+      quant_scales[token * k_blocks + block_k] = scale;
+      for (int kk = 0; kk < QWEN35_BLOCK_K; ++kk) {
+        int k_col = block_k * QWEN35_BLOCK_K + kk;
+        float value = choreo::to_f32(input[token * k_dim + k_col]);
+        quant_input[token * k_dim + k_col] = quantizeFp8(value, scale);
+      }
+    }
+  }
+
+  for (int token = 0; token < num_tokens; ++token) {
+    for (int out_col = 0; out_col < n_dim; ++out_col) {
+      float acc = 0.0f;
+      int block_n = out_col / QWEN35_BLOCK_N;
+      for (int selected = 0; selected < topk; ++selected) {
+        int expert = routing.indices[token * topk + selected];
+        float route_weight = routing.weights[token * topk + selected];
+        float dot = 0.0f;
+        for (int kk = 0; kk < k_dim; ++kk) {
+          int block_k = kk / QWEN35_BLOCK_K;
+          float a_deq = choreo::to_f32(quant_input[token * k_dim + kk]) *
+                        quant_scales[token * k_blocks + block_k];
+          size_t w_offset =
+              (static_cast<size_t>(expert) * n_dim + out_col) * k_dim + kk;
+          size_t s_offset =
+              (static_cast<size_t>(expert) * n_blocks + block_n) * k_blocks + block_k;
+          float b_deq =
+              choreo::to_f32(expert_weights[w_offset]) * expert_scales[s_offset];
+          dot += a_deq * b_deq;
+        }
+        acc += route_weight * dot;
+      }
+      ref_output[token * n_dim + out_col] = acc;
+    }
+  }
+}
+
+__co__ void fused_moe_route(global f32 [M, QWEN35_DEFAULT_NUM_EXPERTS] gating_output,
+                            global s32 [M, QWEN35_TOPK] topk_ids,
+                            global f32 [M, QWEN35_TOPK] topk_weights) {
+  parallel token by M : block {
+    parallel tid by QWEN35_ROUTE_THREADS : thread {
+      local f32 [QWEN35_ROUTE_VALUES_PER_THREAD] probs_chunk;
+      f32 thread_max = -1000000.0f;
+      foreach v in [QWEN35_ROUTE_VALUES_PER_THREAD] {
+        s32 expert_idx = tid * QWEN35_ROUTE_VALUES_PER_THREAD + v;
+        f32 logit = -1000000.0f;
+        if (expert_idx < QWEN35_DEFAULT_NUM_EXPERTS) {
+          logit = gating_output.at(token, expert_idx);
+        }
+        if (QWEN35_SOFTCAP != 0.0f) {
+          logit = __tanh(logit / QWEN35_SOFTCAP) * QWEN35_SOFTCAP;
+        }
+        probs_chunk.at(v) = logit;
+        if (logit > thread_max) thread_max = logit;
+      }
+
+      mutable mask = QWEN35_ROUTE_THREADS >> 1;
+      foreach idx in 10 {
+        f32 other_tmax = call SHFL_XOR(thread_max, mask, QWEN35_ROUTE_THREADS);
+        if (other_tmax > thread_max) thread_max = other_tmax;
+        mask = mask >> 1;
+        if (mask == 0) break;
+      }
+
+      f32 row_sum = 0.0f;
+      foreach v in [QWEN35_ROUTE_VALUES_PER_THREAD] {
+        f32 prob = __exp(probs_chunk.at(v) - thread_max);
+        probs_chunk.at(v) = prob;
+        row_sum += prob;
+      }
+
+      mask = QWEN35_ROUTE_THREADS >> 1;
+      foreach idx in 10 {
+        f32 temp = call SHFL_XOR(row_sum, mask, QWEN35_ROUTE_THREADS);
+        row_sum += temp;
+        mask = mask >> 1;
+        if (mask == 0) break;
+      }
+
+      f32 inv_sum = 0.0f;
+      if (row_sum > 0.0f) inv_sum = 1.0f / row_sum;
+      foreach v in [QWEN35_ROUTE_VALUES_PER_THREAD]
+        probs_chunk.at(v) = probs_chunk.at(v) * inv_sum;
+
+      mutable f32 selected_sum = 0.0f;
+      foreach selected in [QWEN35_TOPK] {
+        f32 max_val = -1.0f;
+        mutable s32 expert = QWEN35_DEFAULT_NUM_EXPERTS;
+        foreach v in [QWEN35_ROUTE_VALUES_PER_THREAD] {
+          s32 expert_idx = tid * QWEN35_ROUTE_VALUES_PER_THREAD + v;
+          f32 val = probs_chunk.at(v);
+          if (expert_idx < QWEN35_DEFAULT_NUM_EXPERTS &&
+              (val > max_val || (val == max_val && expert_idx < expert))) {
+            max_val = val;
+            expert = expert_idx;
+          }
+        }
+
+        mask = QWEN35_ROUTE_THREADS >> 1;
+        foreach idx in 10 {
+          f32 other_max = call SHFL_XOR(max_val, mask, QWEN35_ROUTE_THREADS);
+          s32 other_expert = call SHFL_XOR(expert, mask, QWEN35_ROUTE_THREADS);
+          if (other_max > max_val ||
+              (other_max == max_val && other_expert < expert)) {
+            max_val = other_max;
+            expert = other_expert;
+          }
+          mask = mask >> 1;
+          if (mask == 0) break;
+        }
+
+        inthreads (tid == 0) {
+          topk_ids.at(token, selected) = expert;
+          topk_weights.at(token, selected) = max_val;
+          
+          selected_sum += max_val;
+        }
+
+        if (selected + 1 < QWEN35_TOPK) {
+          if (expert < QWEN35_DEFAULT_NUM_EXPERTS &&
+              expert / QWEN35_ROUTE_VALUES_PER_THREAD == tid) {
+            probs_chunk.at(expert % QWEN35_ROUTE_VALUES_PER_THREAD) = -1.0f;
+          }
+        }
+      }
+
+      if (QWEN35_RENORMALIZE) {
+        inthreads (tid == 0) {
+          if (selected_sum > 0.0f) {
+            f32 inv_selected_sum = 1.0f / selected_sum;
+            foreach selected in [QWEN35_TOPK]
+              topk_weights.at(token, selected) =
+                  topk_weights.at(token, selected) * inv_selected_sum;
+          }
+        }
+      }
+    }
+  }
+}
+
+__co__ void fused_moe_count_experts(global s32 [M, QWEN35_TOPK] topk_ids,
+                                    global s32 [QWEN35_DEFAULT_NUM_EXPERTS] expert_counts) {
+  parallel token by M : block {
+    parallel selected by QWEN35_TOPK : thread {
+      expert = topk_ids.at(token, selected);
+      call ATOMIC_ADD(&expert_counts.at(expert), 1);
+    }
+  }
+}
+
+__co__ void fused_moe_build_layout(global s32 [QWEN35_DEFAULT_NUM_EXPERTS] expert_counts,
+                                   global s32 [QWEN35_DEFAULT_NUM_EXPERTS + 1] expert_offsets,
+                                   global s32 [QWEN35_DEFAULT_NUM_EXPERTS] expert_write_offsets) {
+  parallel tid by QWEN35_DEFAULT_NUM_EXPERTS : thread {
+    inthreads (tid == 0) {
+      s32 prefix = 0;
+      expert_offsets.at(0) = 0;
+      foreach expert in [QWEN35_DEFAULT_NUM_EXPERTS] {
+        s32 count = expert_counts.at(expert);
+        expert_offsets.at(expert + 1) = prefix + count;
+        expert_write_offsets.at(expert) = prefix;
+        prefix = prefix + count;
+      }
+    }
+  }
+}
+
+__co__ void fused_moe_quantize_input(global bf16 [M, K] input,
+                                     global f8_e4m3 [M, K] input_q,
+                                     global f32 [M, QWEN35_K_BLOCKS] input_scales) {
+  parallel token by M : block {
+    shared f32 [4] warp_max;
+    parallel lane by QWEN35_PACK_THREADS : thread {
+      warp_id = lane / 32;
+      lane_id = lane % 32;
+      foreach block_k in [QWEN35_K_BLOCKS] {
+        kk = block_k * QWEN35_BLOCK_K + lane;
+        f32 value = 0.0f;
+        if (kk < K) value = input.at(token, kk);
+        mutable f32 local_max = call ABS_F32(value);
+
+        mutable mask = 16;
+        foreach idx in 5 {
+          f32 other = call SHFL_XOR(local_max, mask, 32);
+          if (other > local_max) local_max = other;
+          mask = mask >> 1;
+          if (mask == 0) break;
+        }
+
+        if (lane_id == 0) warp_max.at(warp_id) = local_max;
+        sync.shared;
+
+        if (lane == 0) {
+          f32 block_max = warp_max.at(0);
+          foreach w in 3 {
+            f32 other = warp_max.at(w + 1);
+            if (other > block_max) block_max = other;
+          }
+          input_scales.at(token, block_k) = 0.000001f;
+          if (block_max > 0.000001f) {
+            input_scales.at(token, block_k) = block_max / 448.0f;
+          }
+        }
+        sync.shared;
+
+        if (kk < K) {
+          f32 inv_scale = 1.0f / input_scales.at(token, block_k);
+          input_q.at(token, kk) = value * inv_scale;
+        }
+        sync.shared;
+      }
+    }
+  }
+}
+
+__co__ void fused_moe_sort_and_gather_quant_input(
+    global f8_e4m3 [M, K] input_q,
+    global f32 [M, QWEN35_K_BLOCKS] input_scales,
+    global s32 [M, QWEN35_TOPK] topk_ids,
+    global s32 [QWEN35_DEFAULT_NUM_EXPERTS] expert_write_offsets,
+    global s32 [QWEN35_MAX_SORTED_ROUTES] sorted_route_ids,
+    global f8_e4m3 [QWEN35_MAX_SORTED_ROUTES, K] rep_a_q,
+    global f32 [QWEN35_MAX_SORTED_ROUTES, QWEN35_K_BLOCKS] rep_a_scales) {
+  parallel token by M : block {
+    shared s32 [QWEN35_TOPK] route_slots;
+    parallel lane by QWEN35_PACK_THREADS : thread {
+      foreach selected in [QWEN35_TOPK] {
+        inthreads (lane == 0) {
+          expert = topk_ids.at(token, selected);
+          s32 slot = call ATOMIC_ADD(&expert_write_offsets.at(expert), 1);
+          route_slots.at(selected) = slot;
+          sorted_route_ids.at(slot) = token # selected;
+        }
+        sync.shared;
+
+        s32 slot = route_slots.at(selected);
+        foreach block_k in [QWEN35_K_BLOCKS] {
+          kk = block_k * QWEN35_BLOCK_K + lane;
+          if (lane < QWEN35_K_BLOCKS && block_k == 0) {
+            rep_a_scales.at(slot, lane) = input_scales.at(token, lane);
+          }
+          if (kk < K) {
+            rep_a_q.at(slot, kk) = input_q.at(token, kk);
+          }
+        }
+        sync.shared;
+      }
+    }
+  }
+}
+
+__co__ void fused_moe_grouped_wgmma_fp8(
+    global f8_e4m3 [M, K] lhs, global f32 [M, QWEN35_K_BLOCKS] scale_a,
+    global f8_e4m3 [EXPERT_N, K] rhs,
+    global f32 [QWEN35_DEFAULT_NUM_EXPERTS * QWEN35_N_BLOCKS, QWEN35_K_BLOCKS] scale_b,
+    global s32 [QWEN35_DEFAULT_NUM_EXPERTS + 1] expert_offsets,
+    global s32 [QWEN35_MAX_SORTED_ROUTES] sorted_route_ids,
+    global f32 [QWEN35_MAX_M, QWEN35_TOPK] topk_weights,
+    global f32 [QWEN35_MAX_M, N] scatter_output) {
+  parallel.async {eid, block_n}
+      by [QWEN35_DEFAULT_NUM_EXPERTS, cdiv(N, QWEN35_WARP_N)] : block
+  parallel by 1 : group-4
+  parallel t by 128 : thread {
+    shared f8_e4m3 [QWEN35_WARP_M, QWEN35_TILE_K] sA;
+    shared f8_e4m3 [QWEN35_WARP_N, QWEN35_TILE_K] sB;
+    shared bf16 [QWEN35_WARP_M, QWEN35_WARP_N] output_s;
+
+    s32 seg_start = expert_offsets.at(eid);
+    s32 seg_end = expert_offsets.at(eid + 1);
+    s32 seg_length = seg_end - seg_start;
+    if (seg_end - seg_start <= 0) yield;
+
+    foreach iv_m in [cdiv(seg_length, QWEN35_WARP_M)] {
+      tile_rows = (QWEN35_WARP_M < (seg_length - iv_m * QWEN35_WARP_M))
+                      ? QWEN35_WARP_M
+                      : seg_length - iv_m * QWEN35_WARP_M;
+      mc = mma.fill.f32 0.0f;
+      foreach iv_k in [QWEN35_K_BLOCKS] {
+        dma.copy.swiz<QWEN35_SWIZZLE>.zfill
+            lhs.view(QWEN35_WARP_M, QWEN35_TILE_K).from(
+                seg_start + iv_m * QWEN35_WARP_M, iv_k * QWEN35_TILE_K)
+            => sA.subspan(tile_rows, QWEN35_TILE_K);
+        tma.copy.swiz<QWEN35_SWIZZLE>
+            rhs.subspan(QWEN35_WARP_N, QWEN35_TILE_K).at(eid # block_n, iv_k) => sB;
+
+        foreach iv_warp in [QWEN35_TILE_K / QWEN35_WARP_K] {
+          ma = mma.load.swiz<QWEN35_SWIZZLE> sA.chunkat(_, iv_warp);
+          mb = mma.load.swiz<QWEN35_SWIZZLE> sB.chunkat(_, iv_warp);
+          mma.row.row mc, ma, mb;
+        }
+
+        sc_a = scale_a.view(QWEN35_WARP_M, 1).from(
+            seg_start + iv_m * QWEN35_WARP_M, iv_k);
+        sc_b = scale_b.at(eid # block_n, iv_k);
+        mma.scale mc, sc_a, sc_b;
+      }
+
+      mma.store mc, output_s;
+      sync.shared;
+      foreach row in [tile_rows] {
+        actual_row = seg_start + iv_m * QWEN35_WARP_M + row;
+        route_id = sorted_route_ids.at(actual_row);
+        token = route_id / QWEN35_TOPK;
+        selected = route_id % QWEN35_TOPK;
+        weight = topk_weights.at(token, selected);
+        out_col = block_n * QWEN35_WARP_N + t;
+        f32 val = output_s.at(row, t) * weight;
+        call ATOMIC_ADD(&scatter_output.at(token, out_col), val);
+      }
+      sync.shared;
+    }
+  }
+}
+
+__co__ void fused_moe_scatter_rows_to_output(
+    global bf16 [QWEN35_MAX_SORTED_ROUTES, N] rep_out,
+    global s32 [QWEN35_MAX_SORTED_ROUTES] sorted_route_ids,
+    global f32 [M, QWEN35_TOPK] topk_weights,
+    global f32 [M, N] output) {
+  parallel sorted_row by M * QWEN35_TOPK : block {
+    route_id = sorted_route_ids.at(sorted_row);
+    if (route_id >= 0 && route_id < M * QWEN35_TOPK) {
+      token = route_id / QWEN35_TOPK;
+      selected = route_id % QWEN35_TOPK;
+      weight = topk_weights.at(token, selected);
+      parallel lane by QWEN35_WARP_N : thread {
+        col = lane;
+        foreach block_n in [cdiv(N, QWEN35_WARP_N)] {
+          out_col = block_n * QWEN35_WARP_N + col;
+          if (out_col < N) {
+            val = rep_out.at(sorted_row, out_col) * weight;
+            call ATOMIC_ADD(&output.at(token, out_col), val);
+          }
+        }
+      }
+    }
+  }
+}
+
+extern "C" void moe_fp8_grouped_gemm_bf16(
+    const uint8_t* a, const uint8_t* b, const float* a_scales,
+    const float* b_scales, const int32_t* expert_offsets, int num_experts,
+    int m, int n, int k, int block_size_n, int block_size_k, int sm_version,
+    const int32_t* sorted_route_ids, const float* topk_weights_ptr,
+    int num_tokens, float* scatter_out, cudaStream_t stream) {
+  if (sm_version != 90) {
+    std::printf("moe_fp8_grouped_gemm_bf16 unsupported sm_version %d\n",
+                sm_version);
+    return;
+  }
+  if (num_experts != QWEN35_DEFAULT_NUM_EXPERTS || n != QWEN35_DEFAULT_N ||
+      k != QWEN35_DEFAULT_K || block_size_n != QWEN35_BLOCK_N ||
+      block_size_k != QWEN35_BLOCK_K) {
+    std::printf("moe_fp8_grouped_gemm_bf16 unsupported shape e=%d n=%d k=%d bn=%d bk=%d\n",
+                num_experts, n, k, block_size_n, block_size_k);
+    return;
+  }
+
+  int32_t total_rows_h = 0;
+  choreo::abend_true(cudaMemcpy(&total_rows_h, expert_offsets + num_experts,
+                                sizeof(int32_t), cudaMemcpyDeviceToHost));
+  if (total_rows_h < 0 || total_rows_h > QWEN35_MAX_SORTED_ROUTES) {
+    std::printf("moe_fp8_grouped_gemm_bf16 invalid routed rows %d\n", total_rows_h);
+    return;
+  }
+  if (m != total_rows_h) {
+    std::printf("moe_fp8_grouped_gemm_bf16 mismatched m=%d total_rows=%d\n",
+                m, total_rows_h);
+    return;
+  }
+
+  auto a_ptr = choreo::make_spanview<choreo::f8_e4m3, 2>(
+      a, {size_t(total_rows_h), size_t(k)});
+  auto a_scales_ptr = choreo::make_spanview<choreo::f32, 2>(
+      a_scales, {size_t(total_rows_h), size_t(QWEN35_K_BLOCKS)});
+  auto b_ptr = choreo::make_spanview<choreo::f8_e4m3, 2>(
+      b, {size_t(num_experts) * size_t(n), size_t(k)});
+  auto b_scales_ptr = choreo::make_spanview<choreo::f32, 2>(
+      b_scales,
+      {size_t(num_experts) * size_t(QWEN35_N_BLOCKS), size_t(QWEN35_K_BLOCKS)});
+  auto expert_offsets_ptr =
+      choreo::make_spanview<choreo::s32, 1>(expert_offsets, {size_t(num_experts + 1)});
+  auto sorted_ids_ptr = choreo::make_spanview<choreo::s32, 1>(
+      sorted_route_ids, {size_t(QWEN35_MAX_SORTED_ROUTES)});
+  auto topk_w_ptr = choreo::make_spanview<choreo::f32, 2>(
+      topk_weights_ptr, {size_t(QWEN35_MAX_M), size_t(QWEN35_TOPK)});
+  auto scatter_ptr = choreo::make_spanview<choreo::f32, 2>(
+      scatter_out, {size_t(QWEN35_MAX_M), size_t(n)});
+  fused_moe_grouped_wgmma_fp8(a_ptr, a_scales_ptr, b_ptr, b_scales_ptr,
+                  expert_offsets_ptr, sorted_ids_ptr, topk_w_ptr, scatter_ptr);
+}
+
+int main(int argc, char** argv) {
+  bool enable_timing = false;
+  bool skip_verify = false;
+  int runtime_m = QWEN35_DEFAULT_M;
+
+  for (int i = 1; i < argc; ++i) {
+    if (std::strcmp(argv[i], "--enable-timing") == 0) {
+      enable_timing = true;
+      continue;
+    }
+    if (std::strcmp(argv[i], "--skip-verify") == 0) {
+      skip_verify = true;
+      continue;
+    }
+    if (std::strcmp(argv[i], "--verify") == 0) {
+      skip_verify = false;
+      continue;
+    }
+    if (std::strncmp(argv[i], "--m=", 4) == 0) {
+      int value = std::atoi(argv[i] + 4);
+      if (value > 0) runtime_m = value;
+    }
+  }
+
+  const char* timing_env = std::getenv("CHOREO_ENABLE_TIMING");
+  if (timing_env && timing_env[0] == '1' && timing_env[1] == '\0') {
+    enable_timing = true;
+  }
+
+  const char* skip_verify_env = std::getenv("CHOREO_SKIP_VERIFY");
+  if (skip_verify_env && skip_verify_env[0] == '1' && skip_verify_env[1] == '\0') {
+    skip_verify = true;
+  }
+
+  if (runtime_m > QWEN35_MAX_M) {
+    std::cerr << "runtime m exceeds QWEN35_MAX_M=" << QWEN35_MAX_M << "\n";
+    return 1;
+  }
+
+  size_t M = static_cast<size_t>(runtime_m);
+  size_t N = QWEN35_DEFAULT_N;
+  size_t K = QWEN35_DEFAULT_K;
+  size_t num_experts = QWEN35_DEFAULT_NUM_EXPERTS;
+  size_t expanded_m = M * QWEN35_TOPK;
+
+  auto input_h = choreo::make_spandata<choreo::bf16>(M, K);
+  auto gating_h = choreo::make_spandata<choreo::f32>(M, num_experts);
+  auto expert_weights_h = choreo::make_spandata<choreo::f8_e4m3>(num_experts, N, K);
+  auto expert_scales_h =
+      choreo::make_spandata<choreo::f32>(num_experts, QWEN35_N_BLOCKS, QWEN35_K_BLOCKS);
+  auto topk_ids_h = choreo::make_spandata<choreo::s32>(M, QWEN35_TOPK);
+  auto topk_weights_h = choreo::make_spandata<choreo::f32>(M, QWEN35_TOPK);
+  auto output_h = choreo::make_spandata<choreo::f32>(M, N);
+
+  for (size_t token = 0; token < M; ++token) {
+    for (size_t kk = 0; kk < K; ++kk) {
+      float pattern =
+          static_cast<float>(((token + 1) * 17 + (kk + 3) * 11) % 41) - 20.0f;
+      input_h[token][kk] = choreo::utils::from_f32<choreo::bf16>(0.0625f * pattern);
+    }
+  }
+
+  for (size_t token = 0; token < M; ++token) {
+    for (size_t expert = 0; expert < num_experts; ++expert) {
+      float pattern =
+          static_cast<float>(((token + 3) * 19 + (expert + 5) * 7) % 43) - 21.0f;
+      gating_h[token][expert] = 0.125f * pattern;
+    }
+  }
+
+  initExpertWeightsQwenFp8(expert_weights_h.data(), expert_scales_h.data());
+
+  topk_ids_h.fill(-1);
+  topk_weights_h.fill(0.0f);
+  output_h.fill(0.0f);
+
+  choreo::bf16* input_d = nullptr;
+  float* gating_d = nullptr;
+  choreo::f8_e4m3* expert_weights_d = nullptr;
+  float* expert_scales_d = nullptr;
+  int32_t* topk_ids_d = nullptr;
+  float* topk_weights_d = nullptr;
+  int32_t* expert_counts_d = nullptr;
+  int32_t* expert_offsets_d = nullptr;
+  int32_t* expert_write_offsets_d = nullptr;
+  choreo::f8_e4m3* input_q_d = nullptr;
+  float* input_scales_d = nullptr;
+  int32_t* sorted_route_ids_d = nullptr;
+  choreo::f8_e4m3* rep_a_q_d = nullptr;
+  float* rep_a_scales_d = nullptr;
+  choreo::bf16* rep_out_d = nullptr;
+  float* output_d = nullptr;
+
+  choreo::abend_true(cudaMalloc(&input_d, M * K * sizeof(choreo::bf16)));
+  choreo::abend_true(cudaMalloc(&gating_d, M * num_experts * sizeof(float)));
+  choreo::abend_true(cudaMalloc(&expert_weights_d,
+                                num_experts * N * K * sizeof(choreo::f8_e4m3)));
+  choreo::abend_true(cudaMalloc(&expert_scales_d,
+                                num_experts * QWEN35_N_BLOCKS * QWEN35_K_BLOCKS *
+                                    sizeof(float)));
+  choreo::abend_true(cudaMalloc(&topk_ids_d, expanded_m * sizeof(int32_t)));
+  choreo::abend_true(cudaMalloc(&topk_weights_d, QWEN35_MAX_M * QWEN35_TOPK * sizeof(float)));
+  choreo::abend_true(cudaMalloc(&expert_counts_d,
+                                num_experts * sizeof(int32_t)));
+  choreo::abend_true(cudaMalloc(&expert_offsets_d,
+                                (num_experts + 1) * sizeof(int32_t)));
+  choreo::abend_true(cudaMalloc(&expert_write_offsets_d,
+                                num_experts * sizeof(int32_t)));
+  choreo::abend_true(cudaMalloc(&input_q_d,
+                                M * K * sizeof(choreo::f8_e4m3)));
+  choreo::abend_true(cudaMalloc(&input_scales_d,
+                                M * QWEN35_K_BLOCKS * sizeof(float)));
+  choreo::abend_true(cudaMalloc(&sorted_route_ids_d,
+                                QWEN35_MAX_SORTED_ROUTES * sizeof(int32_t)));
+  choreo::abend_true(cudaMalloc(&rep_a_q_d,
+                                QWEN35_MAX_SORTED_ROUTES * K * sizeof(choreo::f8_e4m3)));
+  choreo::abend_true(cudaMalloc(&rep_a_scales_d,
+                                QWEN35_MAX_SORTED_ROUTES * QWEN35_K_BLOCKS *
+                                    sizeof(float)));
+  choreo::abend_true(cudaMalloc(&rep_out_d,
+                                QWEN35_MAX_SORTED_ROUTES * N * sizeof(choreo::bf16)));
+  choreo::abend_true(cudaMalloc(&output_d, QWEN35_MAX_M * N * sizeof(float)));
+
+  choreo::abend_true(cudaMemcpy(input_d, input_h.data(),
+                                M * K * sizeof(choreo::bf16),
+                                cudaMemcpyHostToDevice));
+  choreo::abend_true(cudaMemcpy(gating_d, gating_h.data(),
+                                M * num_experts * sizeof(float),
+                                cudaMemcpyHostToDevice));
+  choreo::abend_true(cudaMemcpy(expert_weights_d, expert_weights_h.data(),
+                                num_experts * N * K * sizeof(choreo::f8_e4m3),
+                                cudaMemcpyHostToDevice));
+  choreo::abend_true(cudaMemcpy(expert_scales_d, expert_scales_h.data(),
+                                num_experts * QWEN35_N_BLOCKS * QWEN35_K_BLOCKS *
+                                    sizeof(float),
+                                cudaMemcpyHostToDevice));
+  choreo::abend_true(cudaDeviceSynchronize());
+
+  auto input_d_view = choreo::make_spanview<choreo::bf16, 2>(input_d, {M, K});
+  auto gating_d_view =
+      choreo::make_spanview<choreo::f32, 2>(gating_d, {M, num_experts});
+  auto expert_weights_d_view =
+      choreo::make_spanview<choreo::f8_e4m3, 2>(expert_weights_d,
+                                                {num_experts * N, K});
+  auto expert_scales_d_view = choreo::make_spanview<choreo::f32, 2>(
+      expert_scales_d, {num_experts * QWEN35_N_BLOCKS, QWEN35_K_BLOCKS});
+  auto topk_ids_d_view =
+      choreo::make_spanview<choreo::s32, 2>(topk_ids_d, {M, QWEN35_TOPK});
+  auto topk_weights_d_view =
+      choreo::make_spanview<choreo::f32, 2>(topk_weights_d, {M, QWEN35_TOPK});
+  auto topk_weights_wgmma_view =
+      choreo::make_spanview<choreo::f32, 2>(topk_weights_d, {QWEN35_MAX_M, QWEN35_TOPK});
+  auto expert_counts_d_view =
+      choreo::make_spanview<choreo::s32, 1>(expert_counts_d, {num_experts});
+  auto expert_offsets_d_view =
+      choreo::make_spanview<choreo::s32, 1>(expert_offsets_d, {num_experts + 1});
+  auto expert_write_offsets_d_view = choreo::make_spanview<choreo::s32, 1>(
+      expert_write_offsets_d, {num_experts});
+  auto input_q_d_view =
+      choreo::make_spanview<choreo::f8_e4m3, 2>(input_q_d, {M, K});
+  auto input_scales_d_view =
+      choreo::make_spanview<choreo::f32, 2>(input_scales_d,
+                                            {M, QWEN35_K_BLOCKS});
+  auto sorted_route_ids_d_view = choreo::make_spanview<choreo::s32, 1>(
+      sorted_route_ids_d, {QWEN35_MAX_SORTED_ROUTES});
+  auto rep_a_q_d_view = choreo::make_spanview<choreo::f8_e4m3, 2>(
+      rep_a_q_d, {QWEN35_MAX_SORTED_ROUTES, K});
+  auto rep_a_scales_d_view = choreo::make_spanview<choreo::f32, 2>(
+      rep_a_scales_d, {QWEN35_MAX_SORTED_ROUTES, QWEN35_K_BLOCKS});
+  auto rep_out_d_view = choreo::make_spanview<choreo::bf16, 2>(
+      rep_out_d, {QWEN35_MAX_SORTED_ROUTES, N});
+  auto output_d_view = choreo::make_spanview<choreo::f32, 2>(output_d, {QWEN35_MAX_M, N});
+
+  auto launch_serving_path = [&]() {
+    choreo::abend_true(cudaMemset(expert_counts_d, 0, num_experts * sizeof(int32_t)));
+    choreo::abend_true(cudaMemset(output_d, 0, M * N * sizeof(float)));
+
+    fused_moe_count_experts(topk_ids_d_view, expert_counts_d_view);
+    fused_moe_build_layout(expert_counts_d_view, expert_offsets_d_view,
+                           expert_write_offsets_d_view);
+    fused_moe_quantize_input(input_d_view, input_q_d_view, input_scales_d_view);
+    fused_moe_sort_and_gather_quant_input(input_q_d_view, input_scales_d_view,
+                                          topk_ids_d_view,
+                                          expert_write_offsets_d_view,
+                                          sorted_route_ids_d_view,
+                                          rep_a_q_d_view,
+                                          rep_a_scales_d_view);
+    fused_moe_grouped_wgmma_fp8(rep_a_q_d_view, rep_a_scales_d_view,
+                                expert_weights_d_view, expert_scales_d_view,
+                                expert_offsets_d_view, sorted_route_ids_d_view,
+                                topk_weights_wgmma_view, output_d_view);
+    choreo::abend_true(cudaDeviceSynchronize());
+  };
+
+  auto launch_end_to_end = [&]() {
+    fused_moe_route(gating_d_view, topk_ids_d_view, topk_weights_d_view);
+    launch_serving_path();
+  };
+
+  std::cout << "Qwen3.5 FP8 fused MoE benchmark"
+            << " m=" << M
+            << " n=" << N
+            << " k=" << K
+            << " experts=" << num_experts
+            << " topk=" << QWEN35_TOPK
+            << " block_shape=" << QWEN35_BLOCK_N << "x" << QWEN35_BLOCK_K
+            << "\n";
+
+  if (enable_timing) {
+    int warmup = 10;
+    int repeat = 100;
+    const char* warmup_env = std::getenv("CHOREO_TIMING_WARMUP");
+    const char* repeat_env = std::getenv("CHOREO_TIMING_REPEAT");
+    if (warmup_env) {
+      int value = std::atoi(warmup_env);
+      if (value >= 0) warmup = value;
+    }
+    if (repeat_env) {
+      int value = std::atoi(repeat_env);
+      if (value > 0) repeat = value;
+    }
+
+    choreo::TimerOption topt;
+    topt.warmup = warmup;
+    topt.repeat = repeat;
+
+    auto full_ms = choreo::timing([&]() { launch_end_to_end(); }, topt);
+    std::cout << "End-to-end avg ms: " << full_ms << "\n";
+    double flops = 2.0 * double(expanded_m) * double(N) * double(K);
+    double full_tflops = (flops / (full_ms / 1000.0)) / 1e12;
+    std::cout << "End-to-end TFLOPS: " << full_tflops << "\n";
+  } else {
+    launch_end_to_end();
+  }
+
+  choreo::abend_true(cudaMemcpy(topk_ids_h.data(), topk_ids_d,
+                                expanded_m * sizeof(int32_t),
+                                cudaMemcpyDeviceToHost));
+  choreo::abend_true(cudaMemcpy(topk_weights_h.data(), topk_weights_d,
+                                expanded_m * sizeof(float),
+                                cudaMemcpyDeviceToHost));
+  choreo::abend_true(cudaMemcpy(output_h.data(), output_d,
+                                M * N * sizeof(float),
+                                cudaMemcpyDeviceToHost));
+  choreo::abend_true(cudaDeviceSynchronize());
+
+  if (skip_verify) {
+    std::cout << "Test Passed (verify skipped)\n";
+    return 0;
+  }
+
+  std::vector<int32_t> ref_topk_ids(expanded_m);
+  std::vector<float> ref_topk_weights(expanded_m);
+  std::vector<float> ref_output(M * N);
+  fusedMoeCpuReferenceFp8(input_h.data(), gating_h.data(), expert_weights_h.data(),
+                          expert_scales_h.data(), static_cast<int>(M),
+                          static_cast<int>(N), static_cast<int>(K),
+                          static_cast<int>(num_experts), QWEN35_TOPK,
+                          QWEN35_RENORMALIZE, QWEN35_SOFTCAP,
+                          ref_topk_ids.data(), ref_topk_weights.data(),
+                          ref_output.data());
+
+  for (size_t token = 0; token < M; ++token) {
+    for (size_t selected = 0; selected < QWEN35_TOPK; ++selected) {
+      choreo::choreo_assert(
+          topk_ids_h[token][selected] ==
+              ref_topk_ids[token * QWEN35_TOPK + selected],
+          "top-k indices are not equal.");
+      choreo::choreo_assert(
+          nearlyEqual(topk_weights_h[token][selected],
+                      ref_topk_weights[token * QWEN35_TOPK + selected],
+                      2e-5f, 2e-5f),
+          "top-k weights are not equal.");
+    }
+  }
+
+  for (size_t token = 0; token < M; ++token) {
+    for (size_t out_col = 0; out_col < N; ++out_col) {
+      float got = output_h[token][out_col];
+      float ref = ref_output[token * N + out_col];
+      if (!nearlyEqual(got, ref)) {
+        std::cout << "Output mismatch at [" << token << ", " << out_col
+                  << "]: got " << got << ", ref " << ref << "\n";
+      }
+      choreo::choreo_assert(nearlyEqual(got, ref),
+                            "fused moe outputs are not equal.");
+    }
+  }
+
+  choreo::abend_true(cudaFree(input_d));
+  choreo::abend_true(cudaFree(gating_d));
+  choreo::abend_true(cudaFree(expert_weights_d));
+  choreo::abend_true(cudaFree(expert_scales_d));
+  choreo::abend_true(cudaFree(topk_ids_d));
+  choreo::abend_true(cudaFree(topk_weights_d));
+  choreo::abend_true(cudaFree(expert_counts_d));
+  choreo::abend_true(cudaFree(expert_offsets_d));
+  choreo::abend_true(cudaFree(expert_write_offsets_d));
+  choreo::abend_true(cudaFree(input_q_d));
+  choreo::abend_true(cudaFree(input_scales_d));
+  choreo::abend_true(cudaFree(sorted_route_ids_d));
+  choreo::abend_true(cudaFree(rep_a_q_d));
+  choreo::abend_true(cudaFree(rep_a_scales_d));
+  choreo::abend_true(cudaFree(rep_out_d));
+  choreo::abend_true(cudaFree(output_d));
+
+  std::cout << "Test Passed\n";
+  return 0;
+}

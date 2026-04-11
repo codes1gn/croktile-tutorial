@@ -1471,6 +1471,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Comparison with vLLM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#head-to-head-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Head-to-head results
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-kernel-fusion-eliminates-pipeline-overhead" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why: kernel fusion eliminates pipeline overhead
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reference-vllm-full-mlp-different-workload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reference: vLLM full MLP (different workload)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1501,6 +1540,17 @@
     <span class="md-ellipsis">
       
         Milestone .co Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reproducing-the-vllm-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reproducing the vLLM comparison
       
     </span>
   </a>
@@ -3440,6 +3490,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Comparison with vLLM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#head-to-head-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Head-to-head results
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-kernel-fusion-eliminates-pipeline-overhead" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why: kernel fusion eliminates pipeline overhead
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reference-vllm-full-mlp-different-workload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reference: vLLM full MLP (different workload)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -3470,6 +3559,17 @@
     <span class="md-ellipsis">
       
         Milestone .co Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reproducing-the-vllm-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reproducing the vLLM comparison
       
     </span>
   </a>
@@ -3576,25 +3676,25 @@
 <tbody>
 <tr>
 <td>Baseline (7 kernels)</td>
-<td><code>00_baseline.co</code></td>
+<td><a href="../assets/fused-moe-fp8/00_baseline.co"><code>00_baseline.co</code></a></td>
 <td style="text-align: right;">8.09</td>
 <td>Naive pipeline: route → count → build → quant → sort → WGMMA → scatter</td>
 </tr>
 <tr>
 <td><strong>Phase 1: Kernel Fusion</strong></td>
-<td><code>03_all_fusions.co</code></td>
+<td><a href="../assets/fused-moe-fp8/03_all_fusions.co"><code>03_all_fusions.co</code></a></td>
 <td style="text-align: right;">9.45</td>
 <td>Fuse scatter into WGMMA, quant+sort, count+build</td>
 </tr>
 <tr>
 <td><strong>Phase 2–3: Host + Micro</strong></td>
-<td><code>04_host_micro.co</code></td>
+<td><a href="../assets/fused-moe-fp8/04_host_micro.co"><code>04_host_micro.co</code></a></td>
 <td style="text-align: right;">9.89</td>
 <td><code>parallel.async</code>, CUDA Graphs, vectorize scatter, batch quantization, <code>yield</code>, <code>mma.store</code> scatter</td>
 </tr>
 <tr>
 <td><strong>Phase 4–5: Memory + Peripheral</strong></td>
-<td><code>05_cuda_optimized.co</code></td>
+<td><a href="../assets/fused-moe-fp8/05_cuda_optimized.co"><code>05_cuda_optimized.co</code></a></td>
 <td style="text-align: right;"><strong>13.18</strong></td>
 <td>Grid swap, L2 persist, QSG pipelining, prefix scan, <code>__cpp__</code> scatter</td>
 </tr>
@@ -3658,7 +3758,7 @@
 <hr />
 <h2 id="baseline-7-kernels-809-tflops">Baseline: 7 Kernels, 8.09 TFLOPS<a class="headerlink" href="#baseline-7-kernels-809-tflops" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Source:</strong> <code>00_baseline.co</code> — fully reproducible from <code>.co</code></p>
+<p><strong>Source:</strong> <a href="../assets/fused-moe-fp8/00_baseline.co"><code>00_baseline.co</code></a> — fully reproducible from <code>.co</code></p>
 </blockquote>
 <p>The baseline implements the fused MoE pipeline as <strong>7 separate kernel launches</strong>:</p>
 <pre class="highlight"><code>route → count → build_layout → quantize → sort_gather → WGMMA → scatter</code></pre>
@@ -3758,7 +3858,7 @@ __co__ void fused_moe_grouped_wgmma_fp8(
 <hr />
 <h2 id="phase-1-kernel-fusion-809-945-tflops">Phase 1: Kernel Fusion (8.09 → 9.45 TFLOPS)<a class="headerlink" href="#phase-1-kernel-fusion-809-945-tflops" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Source:</strong> <code>01_scatter_fusion.co</code>, <code>02_qsg_fusion.co</code>, <code>03_all_fusions.co</code> — fully reproducible from <code>.co</code></p>
+<p><strong>Source:</strong> <a href="../assets/fused-moe-fp8/01_scatter_fusion.co"><code>01_scatter_fusion.co</code></a>, <a href="../assets/fused-moe-fp8/02_qsg_fusion.co"><code>02_qsg_fusion.co</code></a>, <a href="../assets/fused-moe-fp8/03_all_fusions.co"><code>03_all_fusions.co</code></a> — fully reproducible from <code>.co</code></p>
 </blockquote>
 <p>The first major optimization phase focuses on reducing the 7 kernels down to fewer, fused kernels. Each fusion eliminates kernel launch overhead, <code>cudaDeviceSynchronize()</code> calls, and intermediate global memory traffic.</p>
 <h3 id="fusion-1-scatter-into-wgmma-iter007-822-tflops-16">Fusion 1: Scatter into WGMMA · iter007 · 8.22 TFLOPS (+1.6%)<a class="headerlink" href="#fusion-1-scatter-into-wgmma-iter007-822-tflops-16" title="Permanent link">&para;</a></h3>
@@ -3912,7 +4012,7 @@ __co__ void fused_moe_scatter_rows_to_output(
 }</code></pre>
 <p>This is fully native Croqtile — each of the 256 threads strides over the flat <code>M*TOPK</code> array using <code>foreach</code>, atomically counting expert assignments into shared memory, then thread 0 does the serial prefix sum.</p>
 <h3 id="compiler-flags-the-easy-wins-iter015019">Compiler Flags: The Easy Wins · iter015–019<a class="headerlink" href="#compiler-flags-the-easy-wins-iter015019" title="Permanent link">&para;</a></h3>
-<p>These flags are applied at compile time. Their effect is small at the Phase 1 milestone (03_all_fusions.co with flags: 9.47 vs without: 9.45 = +0.2%), but becomes significant in later phases when the WGMMA kernel dominates runtime:</p>
+<p>These flags are applied at compile time. Their effect is small at the Phase 1 milestone (<a href="../assets/fused-moe-fp8/03_all_fusions.co">03_all_fusions.co</a> with flags: 9.47 vs without: 9.45 = +0.2%), but becomes significant in later phases when the WGMMA kernel dominates runtime:</p>
 <table>
 <thead>
 <tr>
@@ -3953,7 +4053,7 @@ __co__ void fused_moe_scatter_rows_to_output(
 <hr />
 <h2 id="phase-2-host-pipeline-cuda-graphs-945-989-tflops">Phase 2: Host Pipeline &amp; CUDA Graphs (9.45 → 9.89 TFLOPS)<a class="headerlink" href="#phase-2-host-pipeline-cuda-graphs-945-989-tflops" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Source:</strong> <code>04_host_micro.co</code> — measured at <strong>9.89 TFLOPS</strong>. This milestone also includes Phase 3 micro-optimizations (local arrays, yield, mma.store scatter).</p>
+<p><strong>Source:</strong> <a href="../assets/fused-moe-fp8/04_host_micro.co"><code>04_host_micro.co</code></a> — measured at <strong>9.89 TFLOPS</strong>. This milestone also includes Phase 3 micro-optimizations (local arrays, yield, mma.store scatter).</p>
 </blockquote>
 <h3 id="remove-host-device-synchronization-iter021023-47">Remove Host-Device Synchronization · iter021–023 · +4.7%<a class="headerlink" href="#remove-host-device-synchronization-iter021023-47" title="Permanent link">&para;</a></h3>
 <p>This was the single largest improvement after kernel fusion, and it came from a surprisingly mundane source.</p>
@@ -4030,7 +4130,7 @@ cudaGraphLaunch(serving_graph_exec, cudaStreamPerThread);</code></pre>
 <hr />
 <h2 id="phase-3-micro-optimizations-included-in-phase-2-milestone-989-tflops">Phase 3: Micro-optimizations (included in Phase 2 milestone · 9.89 TFLOPS)<a class="headerlink" href="#phase-3-micro-optimizations-included-in-phase-2-milestone-989-tflops" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Source:</strong> Micro-opts are included in <code>04_host_micro.co</code> (9.89 TFLOPS). The improvements below were originally measured as A/B deltas.</p>
+<p><strong>Source:</strong> Micro-opts are included in <a href="../assets/fused-moe-fp8/04_host_micro.co"><code>04_host_micro.co</code></a> (9.89 TFLOPS). The improvements below were originally measured as A/B deltas.</p>
 </blockquote>
 <p>At this point, the low-hanging fruit is gone. The next 16 iterations (iter026–040) squeeze out 2.7% total. Most attempts are flat or negative. Here are the survivors:</p>
 <h3 id="vectorized-qsg-scatter-iter034-077">Vectorized QSG Scatter · iter034 · +0.77%<a class="headerlink" href="#vectorized-qsg-scatter-iter034-077" title="Permanent link">&para;</a></h3>
@@ -4073,7 +4173,7 @@ foreach k in [K_BLOCKS] {
 <hr />
 <h2 id="phase-4-memory-hierarchy-989-1318-tflops-combined-with-phase-5">Phase 4: Memory Hierarchy (9.89 → 13.18 TFLOPS, combined with Phase 5)<a class="headerlink" href="#phase-4-memory-hierarchy-989-1318-tflops-combined-with-phase-5" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Source:</strong> <code>05_cuda_optimized.co</code> — measured at <strong>13.18 TFLOPS</strong>. This milestone includes all Phase 4 and Phase 5 optimizations. Grid swap uses native <code>parallel</code> reordering; L2 persistence uses <code>cudaAccessPolicyWindow</code> via a <code>__cpp__</code> host block.</p>
+<p><strong>Source:</strong> <a href="../assets/fused-moe-fp8/05_cuda_optimized.co"><code>05_cuda_optimized.co</code></a> — measured at <strong>13.18 TFLOPS</strong>. This milestone includes all Phase 4 and Phase 5 optimizations. Grid swap uses native <code>parallel</code> reordering; L2 persistence uses <code>cudaAccessPolicyWindow</code> via a <code>__cpp__</code> host block.</p>
 </blockquote>
 <p>After Phase 3, the WGMMA kernel is firmly DRAM-bound at ~78% throughput. Micro-optimizations can't break through. The next gains come from smarter use of the memory hierarchy — specifically, making the GPU's L2 cache work harder.</p>
 <h3 id="tmadma-overlap-iter046-114">TMA/DMA Overlap · iter046 · +1.14%<a class="headerlink" href="#tmadma-overlap-iter046-114" title="Permanent link">&para;</a></h3>
@@ -4112,7 +4212,7 @@ parallel.async {block_n, eid} by [cdiv(N, WARP_N), NUM_EXPERTS] : block</code></
 <hr />
 <h2 id="phase-5-peripheral-kernel-optimization-included-in-phase-4-milestone-1318-tflops">Phase 5: Peripheral Kernel Optimization (included in Phase 4 milestone · 13.18 TFLOPS)<a class="headerlink" href="#phase-5-peripheral-kernel-optimization-included-in-phase-4-milestone-1318-tflops" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Source:</strong> <code>05_cuda_optimized.co</code> — measured at <strong>13.18 TFLOPS</strong>. Load pipelining via <code>local</code> arrays, parallel prefix scan, and pipelined count loads.</p>
+<p><strong>Source:</strong> <a href="../assets/fused-moe-fp8/05_cuda_optimized.co"><code>05_cuda_optimized.co</code></a> — measured at <strong>13.18 TFLOPS</strong>. Load pipelining via <code>local</code> arrays, parallel prefix scan, and pipelined count loads.</p>
 </blockquote>
 <p>With the WGMMA kernel near its DRAM throughput ceiling, further GEMM improvements are nearly impossible. But the QSG and count_and_build kernels still have room. This is where the optimization shifts from the "main act" to the "supporting cast." Native Croqtile constructs — <code>local</code> arrays for register buffering, <code>foreach</code> for parallel scans, <code>call ATOMIC_ADD</code> for shared-memory atomics — handle most of the work.</p>
 <h3 id="qsg-load-pipelining-iter065-197">QSG Load Pipelining · iter065 · +1.97%<a class="headerlink" href="#qsg-load-pipelining-iter065-197" title="Permanent link">&para;</a></h3>
@@ -4192,12 +4292,12 @@ foreach i in [4] {
 <h3 id="fused-memset-iter099-071">Fused Memset · iter099 · +0.71%<a class="headerlink" href="#fused-memset-iter099-071" title="Permanent link">&para;</a></h3>
 <p>Eliminate the <code>cudaMemsetAsync(output_d)</code> node from the CUDA Graph by having each QSG thread zero one output float at kernel start.</p>
 <h3 id="register-direct-scatter-epilogue-__cpp__-iter014-168">Register-Direct Scatter Epilogue (<code>__cpp__</code>) · iter014 · +16.8%<a class="headerlink" href="#register-direct-scatter-epilogue-__cpp__-iter014-168" title="Permanent link">&para;</a></h3>
-<p>Eliminates shared-memory bank conflicts on <code>mma.store</code> and the <code>sync.shared</code> barrier by reading MMA accumulator fragments directly from registers. Measured on the fully-optimized <code>05_cuda_optimized.co</code> kernel: <strong>13.18 TFLOPS</strong> with <code>__cpp__</code> scatter vs <strong>11.28 TFLOPS</strong> with native <code>mma.store</code> scatter (<strong>+16.8%</strong>). In earlier iterations the gain was &lt;1% because the K-loop dominated; once memory optimizations (grid swap, L2, QSG pipelining) reduced K-loop time, the epilogue became a significant bottleneck.</p>
-<p>The native Croqtile scatter (used in <code>04_host_micro.co</code>) goes through shared memory:</p>
+<p>Eliminates shared-memory bank conflicts on <code>mma.store</code> and the <code>sync.shared</code> barrier by reading MMA accumulator fragments directly from registers. Measured on the fully-optimized <a href="../assets/fused-moe-fp8/05_cuda_optimized.co"><code>05_cuda_optimized.co</code></a> kernel: <strong>13.18 TFLOPS</strong> with <code>__cpp__</code> scatter vs <strong>11.28 TFLOPS</strong> with native <code>mma.store</code> scatter (<strong>+16.8%</strong>). In earlier iterations the gain was &lt;1% because the K-loop dominated; once memory optimizations (grid swap, L2, QSG pipelining) reduced K-loop time, the epilogue became a significant bottleneck.</p>
+<p>The native Croqtile scatter (used in <a href="../assets/fused-moe-fp8/04_host_micro.co"><code>04_host_micro.co</code></a>) goes through shared memory:</p>
 <pre class="highlight"><code>MMA accumulators → mma.store → shared memory → sync.shared → foreach scatter → atomicAdd</code></pre>
-<p>The <code>__cpp__</code> scatter (used in <code>05_cuda_optimized.co</code>) bypasses shared memory entirely by accessing the MMA accumulator fragment registers directly:</p>
+<p>The <code>__cpp__</code> scatter (used in <a href="../assets/fused-moe-fp8/05_cuda_optimized.co"><code>05_cuda_optimized.co</code></a>) bypasses shared memory entirely by accessing the MMA accumulator fragment registers directly:</p>
 <pre class="highlight"><code>MMA accumulators → __cpp__ register read → atomicAdd (no shared memory, no sync)</code></pre>
-<p><strong>Before — native Croqtile (04_host_micro.co):</strong></p>
+<p><strong>Before — native Croqtile (<a href="../assets/fused-moe-fp8/04_host_micro.co">04_host_micro.co</a>):</strong></p>
 <pre class="highlight"><code class="language-co">// mma.store dumps accumulators to shared, then foreach scatters
 shared f32 [WARP_M, WARP_N] sOut;
 mma.store mc, sOut;
@@ -4213,7 +4313,7 @@ foreach local_row in [WARP_M] {
     call ATOMIC_ADD(&amp;scatter_output.at(token, block_n * WARP_N + t), val);
   }
 }</code></pre>
-<p><strong>After — <code>__cpp__</code> register-direct (05_cuda_optimized.co):</strong></p>
+<p><strong>After — <code>__cpp__</code> register-direct (<a href="../assets/fused-moe-fp8/05_cuda_optimized.co">05_cuda_optimized.co</a>):</strong></p>
 <pre class="highlight"><code class="language-co">// Access MMA accumulator fragments directly via __cpp__
 // mc[] is the compiler-generated accumulator array (64 floats per thread)
 __cpp__("  warpgroup_commit_batch();\n");
@@ -4247,7 +4347,7 @@ __cpp__("  }\n");</code></pre>
 </div>
 <div class="admonition success">
 <p class="admonition-title">Final result</p>
-<p><strong>13.18 TFLOPS</strong> — 1.63× over baseline. Measured from <code>05_cuda_optimized.co</code>, compiled with the Croqtile compiler, no CUDA post-processing required. Confirmed with 500-rep timing on H800 PCIe.</p>
+<p><strong>13.18 TFLOPS</strong> — 1.63× over baseline. Measured from <a href="../assets/fused-moe-fp8/05_cuda_optimized.co"><code>05_cuda_optimized.co</code></a>, compiled with the Croqtile compiler, no CUDA post-processing required. Confirmed with 500-rep timing on H800 PCIe.</p>
 </div>
 <hr />
 <h2 id="what-didnt-work-a-wall-of-negative-results">What Didn't Work: A Wall of Negative Results<a class="headerlink" href="#what-didnt-work-a-wall-of-negative-results" title="Permanent link">&para;</a></h2>
@@ -4460,47 +4560,126 @@ __cpp__("  }\n");</code></pre>
 <p>The compiler currently emits plain <code>T*</code> pointer parameters for kernel functions. Adding <code>__restrict__</code> qualifiers would let <code>nvcc</code> eliminate redundant loads by guaranteeing no pointer aliasing. This is a straightforward codegen change in the <code>DeviceParamTypeStringify</code> function.</p>
 <hr />
 <h2 id="comparison-with-vllm">Comparison with vLLM<a class="headerlink" href="#comparison-with-vllm" title="Permanent link">&para;</a></h2>
-<p>For context, here's how the Croqtile kernel (compiled from <code>.co</code> source) compares to <a href="https://github.com/vllm-project/vllm">vLLM</a>'s fused MoE implementation on the same hardware (H800 PCIe, SM90) with the same Qwen3.5 dimensions:</p>
+<p>To put the numbers in perspective, we compare directly against <a href="https://github.com/vllm-project/vllm">vLLM</a>'s Triton <code>fused_moe_kernel</code> on the same hardware (H800 PCIe, SM90), same Qwen3.5 dimensions (M=128, N=512, K=2048, 256 experts, top-8), and same pipeline — a single FP8 grouped GEMM with routing, quantization, and scatter.</p>
+<h3 id="head-to-head-results">Head-to-head results<a class="headerlink" href="#head-to-head-results" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
 <th>Metric</th>
-<th>Croqtile (ours)</th>
-<th>vLLM</th>
+<th style="text-align: center;">Croqtile</th>
+<th style="text-align: center;">vLLM (default)</th>
+<th style="text-align: center;">vLLM (tuned)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Raw latency</td>
-<td><strong>0.164 ms</strong></td>
-<td>0.867 ms</td>
+<td>GEMM-only latency</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">0.216 ms</td>
+<td style="text-align: center;">0.172 ms</td>
 </tr>
 <tr>
-<td>Latency speedup</td>
-<td><strong>5.29×</strong></td>
-<td>1.00×</td>
+<td>End-to-end latency</td>
+<td style="text-align: center;"><strong>0.164 ms</strong></td>
+<td style="text-align: center;">0.295 ms</td>
+<td style="text-align: center;">0.252 ms</td>
 </tr>
 <tr>
-<td>Workload</td>
-<td>1 FP8 GEMM</td>
-<td>2 BF16 GEMMs + SiLU (full MLP)</td>
+<td>End-to-end TFLOPS</td>
+<td style="text-align: center;"><strong>13.18</strong></td>
+<td style="text-align: center;">7.29</td>
+<td style="text-align: center;">8.54</td>
 </tr>
 <tr>
-<td>Total FLOPs</td>
-<td>2.15 GFLOP</td>
-<td>6.44 GFLOP</td>
-</tr>
-<tr>
-<td>Per-GEMM TFLOPS</td>
-<td><strong>13.18</strong></td>
-<td>2.48</td>
+<td><strong>Croqtile speedup</strong></td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;"><strong>1.81×</strong></td>
+<td style="text-align: center;"><strong>1.54×</strong></td>
 </tr>
 </tbody>
 </table>
+<p>Both sides perform identical work: route (softmax + top-k) → quantize (BF16→FP8) → align/sort → grouped GEMM → scatter/reduce, with the same FLOPs formula <code>2 × (M × topk) × N × K = 2.147 GFLOP</code>.</p>
+<p>vLLM ships no tuned Triton config for this shape (E=256, H800), so the "default" column uses its built-in fallback (<code>BLOCK_SIZE_M=64</code>). The "tuned" column uses the best config found by an 864-point grid search (<code>BLOCK_SIZE_M=16, N=64, K=128, GROUP_SIZE_M=4, num_warps=4, num_stages=3</code>), which cuts GEMM-only latency by 20%. Even with this tuned config, Croqtile's entire end-to-end pipeline (0.164 ms) still runs faster than vLLM's GEMM-only kernel (0.172 ms).</p>
+<p>Two factors contribute to the gap: (1) Croqtile's WGMMA kernel with hand-tuned TMA pipelines is inherently faster than vLLM's Triton-generated GEMM for this shape, and (2) the fused pipeline stages (routing, quantization, scatter) overlap with the GEMM's memory access, adding near-zero additional latency — whereas in vLLM each stage is a separate kernel launch with its own overhead.</p>
+<h3 id="why-kernel-fusion-eliminates-pipeline-overhead">Why: kernel fusion eliminates pipeline overhead<a class="headerlink" href="#why-kernel-fusion-eliminates-pipeline-overhead" title="Permanent link">&para;</a></h3>
+<p>Despite the name, vLLM's <code>fused_experts</code> is a Python orchestrator that launches <strong>separate GPU kernels</strong> for each stage:</p>
+<table>
+<thead>
+<tr>
+<th>Pipeline stage</th>
+<th>vLLM</th>
+<th>Croqtile</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Router + top-k</td>
+<td><code>fused_topk</code> (1 kernel)</td>
+<td>Compiled into <code>fused_moe_route</code></td>
+</tr>
+<tr>
+<td>Align / sort / pad</td>
+<td><code>moe_align_block_size</code> (1 CUDA kernel)</td>
+<td>Compiled into <code>fused_moe_count_and_build</code></td>
+</tr>
+<tr>
+<td>Input quantize BF16→FP8</td>
+<td><code>moe_kernel_quantize_input</code> (~1 kernel)</td>
+<td>Compiled into <code>fused_moe_quant_sort_gather</code></td>
+</tr>
+<tr>
+<td>Grouped GEMM</td>
+<td><code>fused_moe_kernel</code> (1 Triton kernel)</td>
+<td>Compiled into <code>fused_moe_grouped_wgmma_fp8</code></td>
+</tr>
+<tr>
+<td>Scatter / reduce</td>
+<td><code>moe_sum</code> (1 kernel)</td>
+<td>Compiled into <code>fused_moe_grouped_wgmma_fp8</code> epilogue</td>
+</tr>
+</tbody>
+</table>
+<p>The speedup comes from two independent factors:</p>
+<p><strong>Factor 1: A faster GEMM.</strong> Even comparing GEMM-only, Croqtile's hand-tuned WGMMA kernel outperforms vLLM's Triton-generated kernel (the tuned vLLM GEMM-only takes 0.172 ms, while Croqtile's entire end-to-end pipeline takes 0.164 ms). This is a code quality advantage from Hopper-native TMA pipelines and register-level tuning that Triton's auto-tuner does not reach.</p>
+<p><strong>Factor 2: Fused pipeline stages add near-zero overhead.</strong> The scatter/reduce is compiled into the GEMM epilogue (no extra kernel), and the remaining pre-GEMM stages (route, count+build, quant+sort+gather) use <code>parallel.async</code> launches that overlap with each other and with the GEMM's memory loads. In vLLM, each of the 5 stages is a separate kernel with <code>cudaDeviceSynchronize</code> + Python dispatch + global memory write/read between every pair — at M=128, this per-kernel overhead dominates the total latency.</p>
 <div class="admonition info">
-<p class="admonition-title">Apples-to-oranges caveat</p>
-<p>vLLM's <code>fused_experts</code> performs a full 2-layer MLP (gate_up projection + SiLU activation + down projection), which involves roughly 3× the FLOPs of our single grouped GEMM. The raw latency comparison isn't perfectly fair. However, the per-GEMM TFLOPS (normalizing for total FLOP count) shows Croqtile achieving <strong>5.28× higher throughput efficiency</strong> — from a <code>.co</code> source file that can be compiled in one step.</p>
+<p class="admonition-title">Fair-play note</p>
+<p>vLLM ships no tuned config for this shape (E=256 on H800). We ran an 864-config grid search to find the best Triton config — it improves GEMM-only by ~20%, but the end-to-end gap remains 1.54× because the pipeline overhead is structural and independent of GEMM tuning. Benchmark script: <a href="../assets/fused-moe-fp8/bench_vllm_single_gemm.py"><code>bench_vllm_single_gemm.py</code></a>.</p>
 </div>
+<h3 id="reference-vllm-full-mlp-different-workload">Reference: vLLM full MLP (different workload)<a class="headerlink" href="#reference-vllm-full-mlp-different-workload" title="Permanent link">&para;</a></h3>
+<p>For completeness, vLLM's production <code>fused_experts</code> computes the full 2-layer MLP (gate+up projection + SiLU + down projection = ~3× the FLOPs):</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th style="text-align: center;">Croqtile</th>
+<th style="text-align: center;">vLLM full MLP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Latency</td>
+<td style="text-align: center;"><strong>0.164 ms</strong></td>
+<td style="text-align: center;">0.867 ms</td>
+</tr>
+<tr>
+<td>Workload</td>
+<td style="text-align: center;">1 FP8 GEMM</td>
+<td style="text-align: center;">2 BF16 GEMMs + SiLU</td>
+</tr>
+<tr>
+<td>Total FLOPs</td>
+<td style="text-align: center;">2.15 GFLOP</td>
+<td style="text-align: center;">6.44 GFLOP</td>
+</tr>
+<tr>
+<td>Per-GEMM TFLOPS</td>
+<td style="text-align: center;"><strong>13.18</strong></td>
+<td style="text-align: center;">2.48</td>
+</tr>
+</tbody>
+</table>
+<p>This comparison is not apples-to-apples since vLLM performs ~3× the compute, but the per-GEMM efficiency (13.18 vs 2.48 TFLOPS) still reflects the impact of pipeline fragmentation across many separate kernel launches.</p>
 <hr />
 <h2 id="conclusion-lessons-learned">Conclusion &amp; Lessons Learned<a class="headerlink" href="#conclusion-lessons-learned" title="Permanent link">&para;</a></h2>
 <p>Here's the summary across all 99 iterations: <strong>40 were kept, 59 were discarded.</strong> The hit rate dropped from ~50% in the first 20 iterations to ~10% in the last 60.</p>
@@ -4514,8 +4693,9 @@ __cpp__("  }\n");</code></pre>
 <p><strong>7. There's still room to grow.</strong> The <a href="#rescale-accumulator-estimated-267">rescale-accumulator</a> optimization (168→96 registers, 3→5 CTAs/SM) would add an estimated +2.67% but requires a compiler codegen change. As the Croqtile compiler evolves, more patterns will become native, and the remaining <code>__cpp__</code> blocks will shrink.</p>
 <hr />
 <h2 id="appendix-reproduction-guide">Appendix: Reproduction Guide<a class="headerlink" href="#appendix-reproduction-guide" title="Permanent link">&para;</a></h2>
-<p>All <code>.co</code> milestone files and benchmarking scripts are in <code>benchmark/performance/fused_moe_op/tuning_worklog/</code>.</p>
+<p>All <code>.co</code> milestone files are available for download from the links in the table below. The original sources are in <code>benchmark/performance/fused_moe_op/tuning_worklog/</code>.</p>
 <h3 id="milestone-co-files">Milestone <code>.co</code> Files<a class="headerlink" href="#milestone-co-files" title="Permanent link">&para;</a></h3>
+<p><a class="md-button" href="../assets/fused-moe-fp8/fused-moe-fp8-sources.zip">⬇ Download all sources (ZIP)</a></p>
 <table>
 <thead>
 <tr>
@@ -4527,44 +4707,44 @@ __cpp__("  }\n");</code></pre>
 </thead>
 <tbody>
 <tr>
-<td><code>00_baseline.co</code></td>
+<td><a href="../assets/fused-moe-fp8/00_baseline.co"><code>00_baseline.co</code></a></td>
 <td><code>-gs -t cute -arch=sm_90a</code></td>
 <td>7 separate kernels (baseline)</td>
 <td style="text-align: right;">8.09</td>
 </tr>
 <tr>
-<td><code>01_scatter_fusion.co</code></td>
+<td><a href="../assets/fused-moe-fp8/01_scatter_fusion.co"><code>01_scatter_fusion.co</code></a></td>
 <td><code>-gs -t cute -arch=sm_90a</code></td>
 <td>Scatter fused into WGMMA</td>
 <td style="text-align: right;">8.22</td>
 </tr>
 <tr>
-<td><code>02_qsg_fusion.co</code></td>
+<td><a href="../assets/fused-moe-fp8/02_qsg_fusion.co"><code>02_qsg_fusion.co</code></a></td>
 <td><code>-gs -t cute -arch=sm_90a</code></td>
 <td>Quant+Sort+Gather fused</td>
 <td style="text-align: right;">8.92</td>
 </tr>
 <tr>
-<td><code>03_all_fusions.co</code></td>
+<td><a href="../assets/fused-moe-fp8/03_all_fusions.co"><code>03_all_fusions.co</code></a></td>
 <td><code>-gs -t cute -arch=sm_90a</code></td>
 <td>Count+Build fused (3 kernels, end of Phase 1)</td>
 <td style="text-align: right;">9.45</td>
 </tr>
 <tr>
-<td><code>04_host_micro.co</code></td>
+<td><a href="../assets/fused-moe-fp8/04_host_micro.co"><code>04_host_micro.co</code></a></td>
 <td><code>-gs -t cute -arch=sm_90a</code></td>
 <td>Host pipeline + micro-opts (end of Phase 2+3)</td>
 <td style="text-align: right;">9.89</td>
 </tr>
 <tr>
-<td><strong><code>05_cuda_optimized.co</code></strong></td>
+<td><a href="../assets/fused-moe-fp8/05_cuda_optimized.co"><strong><code>05_cuda_optimized.co</code></strong></a></td>
 <td><code>-gs -t cute -arch=sm_90a --disable-runtime-check --hoist-offset --hoist-scale</code></td>
 <td>Grid swap, L2, QSG pipelining, <code>__cpp__</code> scatter (end of Phase 4+5)</td>
 <td style="text-align: right;"><strong>13.18</strong></td>
 </tr>
 </tbody>
 </table>
-<p>All files compile with the Croqtile compiler (<code>./choreo -gs</code>) and produce correct results on H800 PCIe. The <code>-gs</code> flag auto-generates a build script that handles all nvcc flags (<code>-D__USE_CUDA_TYPE__</code>, <code>--default-stream per-thread</code>, etc.). TFLOPS measured on H800 PCIe (SM90), serving-path, 500 repetitions.</p>
+<p>All files compile with the Croqtile compiler (<code>./choreo -gs</code>) and produce correct results on H800 PCIe. The <code>-gs</code> flag auto-generates a build script that handles all nvcc flags (<code>-D__USE_CUDA_TYPE__</code>, <code>--default-stream per-thread</code>, etc.). TFLOPS measured on H800 PCIe (SM90), end-to-end, 500 repetitions.</p>
 <p>To reproduce any measurement:</p>
 <pre class="highlight"><code class="language-bash"># All milestones use -gs (auto-generated build script):
 ./choreo -gs -t cute -arch=sm_90a [choreo-flags] &lt;file&gt;.co -o /tmp/&lt;file&gt;.cute.result
@@ -4578,7 +4758,16 @@ CUDA_VISIBLE_DEVICES=1 CHOREO_ENABLE_TIMING=1 \
 CUDA_VISIBLE_DEVICES=1 CHOREO_ENABLE_TIMING=1 \
     EXTRA_TARGET_CFLAGS="-DRUNMAIN --use_fast_math" \
     bash /tmp/05.cute.result --execute</code></pre>
-<p>See <code>README.md</code> in the same directory for full details.</p>
+<h3 id="reproducing-the-vllm-comparison">Reproducing the vLLM comparison<a class="headerlink" href="#reproducing-the-vllm-comparison" title="Permanent link">&para;</a></h3>
+<p>The vLLM benchmark script is included in the ZIP above.</p>
+<p><strong>Prerequisites:</strong> vLLM ≥ 0.17 with FP8 support, PyTorch, Triton.</p>
+<pre class="highlight"><code class="language-bash"># Default config (vLLM's built-in fallback):
+python bench_vllm_single_gemm.py --gpu 0
+
+# Tuned config (864-point grid search best result):
+python bench_vllm_single_gemm.py --gpu 0 \
+    --config '{"BLOCK_SIZE_M":16,"BLOCK_SIZE_N":64,"BLOCK_SIZE_K":128,"GROUP_SIZE_M":4,"SPLIT_K":1,"num_warps":4,"num_stages":3}'</code></pre>
+<p>The script prints GEMM-only and end-to-end latencies with TFLOPS, matching the same FLOPs formula (<code>2 × M × topk × N × K</code>) used by the Croqtile benchmark.</p>
 <hr />
 <p><em>Built with the Croqtile compiler targeting NVIDIA H800 PCIe (SM90a). All timing measured with CUDA events over 500 repetitions with 50 warmup iterations.</em></p>
 

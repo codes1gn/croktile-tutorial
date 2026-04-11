@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Optimizing a fused Mixture-of-Experts end-to-end kernel from 8.09 to 13.18 TFLOPS (1.63×) on H800 PCIe.">
+        <meta name="description" content="在 H800 PCIe 上将 fused Mixture-of-Experts 端到端 kernel 从 8.09 优化到 13.18 TFLOPS（1.63×）。">
       
       
       
@@ -86,7 +86,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#fused-moe-fp8-809-1318-tflops-163" class="md-skip">
+        <a href="#fused-moe-fp8809-1318-tflops163" class="md-skip">
           跳转至
         </a>
       
@@ -963,10 +963,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-pipeline-at-a-glance" class="md-nav__link">
+  <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Pipeline at a Glance
+        流水线一览
       
     </span>
   </a>
@@ -974,10 +974,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#optimization-roadmap" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Optimization Roadmap
+        优化路线图
       
     </span>
   </a>
@@ -985,22 +985,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-problem-fused-moe-for-qwen35" class="md-nav__link">
+  <a href="#qwen35-fused-moe" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Problem: Fused MoE for Qwen3.5
+        问题：面向 Qwen3.5 的 Fused MoE
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="The Problem: Fused MoE for Qwen3.5">
+    <nav class="md-nav" aria-label="问题：面向 Qwen3.5 的 Fused MoE">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#about-croqtile" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        About Croqtile
+        关于鳄霸
       
     </span>
   </a>
@@ -1013,22 +1013,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#baseline-7-kernels-809-tflops" class="md-nav__link">
+  <a href="#baseline7-kernel809-tflops" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Baseline: 7 Kernels, 8.09 TFLOPS
+        Baseline：7 个 kernel，8.09 TFLOPS
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Baseline: 7 Kernels, 8.09 TFLOPS">
+    <nav class="md-nav" aria-label="Baseline：7 个 kernel，8.09 TFLOPS">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#lower-bounding-the-fastest-possible-runtime" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Lower Bounding the Fastest Possible Runtime
+        最快可能运行时间的下界
       
     </span>
   </a>
@@ -1041,22 +1041,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-1-kernel-fusion-809-945-tflops" class="md-nav__link">
+  <a href="#phase-1kernel-fusion809-945-tflops" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 1: Kernel Fusion (8.09 → 9.45 TFLOPS)
+        Phase 1：Kernel Fusion（8.09 → 9.45 TFLOPS）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Phase 1: Kernel Fusion (8.09 → 9.45 TFLOPS)">
+    <nav class="md-nav" aria-label="Phase 1：Kernel Fusion（8.09 → 9.45 TFLOPS）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#fusion-1-scatter-into-wgmma-iter007-822-tflops-16" class="md-nav__link">
+  <a href="#fusion-1scatter-wgmma-iter007-822-tflops16" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Fusion 1: Scatter into WGMMA · iter007 · 8.22 TFLOPS (+1.6%)
+        Fusion 1：Scatter 并入 WGMMA · iter007 · 8.22 TFLOPS（+1.6%）
       
     </span>
   </a>
@@ -1064,10 +1064,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#fusion-2-quantize-sort-single-qsg-kernel-iter009-892-tflops-85" class="md-nav__link">
+  <a href="#fusion-2quantize-sort-qsg-kernel-iter009-892-tflops85" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Fusion 2: Quantize + Sort → Single QSG Kernel · iter009 · 8.92 TFLOPS (+8.5%)
+        Fusion 2：Quantize + Sort → 单一 QSG kernel · iter009 · 8.92 TFLOPS（+8.5%）
       
     </span>
   </a>
@@ -1075,10 +1075,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#fusion-3-count-build-layout-iter017018-945-tflops-59" class="md-nav__link">
+  <a href="#fusion-3count-build-layout-iter017018-945-tflops59" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Fusion 3: Count + Build Layout · iter017–018 · 9.45 TFLOPS (+5.9%)
+        Fusion 3：Count + Build Layout · iter017–018 · 9.45 TFLOPS（+5.9%）
       
     </span>
   </a>
@@ -1086,10 +1086,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#compiler-flags-the-easy-wins-iter015019" class="md-nav__link">
+  <a href="#iter015019" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Compiler Flags: The Easy Wins · iter015–019
+        编译器选项：容易拿到的收益 · iter015–019
       
     </span>
   </a>
@@ -1102,22 +1102,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-2-host-pipeline-cuda-graphs-945-989-tflops" class="md-nav__link">
+  <a href="#phase-2host-cuda-graph945-989-tflops" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 2: Host Pipeline &amp; CUDA Graphs (9.45 → 9.89 TFLOPS)
+        Phase 2：Host 流水线与 CUDA Graph（9.45 → 9.89 TFLOPS）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Phase 2: Host Pipeline &amp; CUDA Graphs (9.45 → 9.89 TFLOPS)">
+    <nav class="md-nav" aria-label="Phase 2：Host 流水线与 CUDA Graph（9.45 → 9.89 TFLOPS）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#remove-host-device-synchronization-iter021023-47" class="md-nav__link">
+  <a href="#host-device-iter021023-47" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Remove Host-Device Synchronization · iter021–023 · +4.7%
+        去掉 Host-Device 同步 · iter021–023 · +4.7%
       
     </span>
   </a>
@@ -1125,10 +1125,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cuda-graphs-iter024025-22" class="md-nav__link">
+  <a href="#cuda-graph-iter024025-22" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CUDA Graphs · iter024–025 · +2.2%
+        CUDA Graph · iter024–025 · +2.2%
       
     </span>
   </a>
@@ -1141,22 +1141,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-3-micro-optimizations-included-in-phase-2-milestone-989-tflops" class="md-nav__link">
+  <a href="#phase-3-phase-2-989-tflops" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 3: Micro-optimizations (included in Phase 2 milestone · 9.89 TFLOPS)
+        Phase 3：微优化（计入 Phase 2 里程碑 · 9.89 TFLOPS）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Phase 3: Micro-optimizations (included in Phase 2 milestone · 9.89 TFLOPS)">
+    <nav class="md-nav" aria-label="Phase 3：微优化（计入 Phase 2 里程碑 · 9.89 TFLOPS）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#vectorized-qsg-scatter-iter034-077" class="md-nav__link">
+  <a href="#qsg-scatter-iter034-077" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Vectorized QSG Scatter · iter034 · +0.77%
+        QSG scatter 向量化 · iter034 · +0.77%
       
     </span>
   </a>
@@ -1164,10 +1164,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#batched-quantization-iter037-11" class="md-nav__link">
+  <a href="#iter037-11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Batched Quantization · iter037 · +1.1%
+        批量量化 · iter037 · +1.1%
       
     </span>
   </a>
@@ -1180,22 +1180,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-4-memory-hierarchy-989-1318-tflops-combined-with-phase-5" class="md-nav__link">
+  <a href="#phase-4989-1318-tflops-phase-5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 4: Memory Hierarchy (9.89 → 13.18 TFLOPS, combined with Phase 5)
+        Phase 4：内存层次（9.89 → 13.18 TFLOPS，与 Phase 5 合并统计）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Phase 4: Memory Hierarchy (9.89 → 13.18 TFLOPS, combined with Phase 5)">
+    <nav class="md-nav" aria-label="Phase 4：内存层次（9.89 → 13.18 TFLOPS，与 Phase 5 合并统计）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#tmadma-overlap-iter046-114" class="md-nav__link">
+  <a href="#tmadma-iter046-114" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TMA/DMA Overlap · iter046 · +1.14%
+        TMA/DMA 重叠 · iter046 · +1.14%
       
     </span>
   </a>
@@ -1230,15 +1230,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-5-peripheral-kernel-optimization-included-in-phase-4-milestone-1318-tflops" class="md-nav__link">
+  <a href="#phase-5-kernel-phase-4-1318-tflops" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 5: Peripheral Kernel Optimization (included in Phase 4 milestone · 13.18 TFLOPS)
+        Phase 5：周边 kernel 优化（计入 Phase 4 里程碑 · 13.18 TFLOPS）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Phase 5: Peripheral Kernel Optimization (included in Phase 4 milestone · 13.18 TFLOPS)">
+    <nav class="md-nav" aria-label="Phase 5：周边 kernel 优化（计入 Phase 4 里程碑 · 13.18 TFLOPS）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1319,10 +1319,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#register-direct-scatter-epilogue-__cpp__-iter014-168" class="md-nav__link">
+  <a href="#register-direct-scatter-epilogue__cpp__-iter014-168" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Register-Direct Scatter Epilogue (__cpp__) · iter014 · +16.8%
+        Register-Direct Scatter Epilogue（__cpp__）· iter014 · +16.8%
       
     </span>
   </a>
@@ -1335,22 +1335,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-didnt-work-a-wall-of-negative-results" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What Didn't Work: A Wall of Negative Results
+        无效尝试：一墙负结果
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="What Didn&#39;t Work: A Wall of Negative Results">
+    <nav class="md-nav" aria-label="无效尝试：一墙负结果">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#double-buffering-always-worse" class="md-nav__link">
+  <a href="#double-buffering" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Double-Buffering: Always Worse
+        Double-Buffering：总是更差
       
     </span>
   </a>
@@ -1358,10 +1358,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#occupancy-tricks-diminishing-returns" class="md-nav__link">
+  <a href="#occupancy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Occupancy Tricks: Diminishing Returns
+        Occupancy 技巧：收益递减
       
     </span>
   </a>
@@ -1369,10 +1369,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#warp-specialization-persistence-too-much-overhead" class="md-nav__link">
+  <a href="#warp-specialization-persistence" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Warp Specialization &amp; Persistence: Too Much Overhead
+        Warp Specialization 与 Persistence：开销过大
       
     </span>
   </a>
@@ -1380,10 +1380,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#the-longest-plateau-iter052065" class="md-nav__link">
+  <a href="#iter052065" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Longest Plateau: iter052–065
+        最长平台期：iter052–065
       
     </span>
   </a>
@@ -1396,22 +1396,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-croqtile-can-express" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What Croqtile Can Express
+        鳄霸能表达什么
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="What Croqtile Can Express">
+    <nav class="md-nav" aria-label="鳄霸能表达什么">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#native-vs-__cpp__-the-trade-off" class="md-nav__link">
+  <a href="#vs-__cpp__" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Native vs __cpp__: The trade-off
+        原生 vs __cpp__：取舍
       
     </span>
   </a>
@@ -1424,22 +1424,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#future-compiler-improvements" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Future Compiler Improvements
+        未来编译器改进
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Future Compiler Improvements">
+    <nav class="md-nav" aria-label="未来编译器改进">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#rescale-accumulator-estimated-267" class="md-nav__link">
+  <a href="#rescale-accumulator-267" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Rescale-Accumulator (estimated +2.67%)
+        Rescale-Accumulator（估计 +2.67%）
       
     </span>
   </a>
@@ -1447,10 +1447,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#__restrict__-qualifiers-estimated-021" class="md-nav__link">
+  <a href="#__restrict__-021" class="md-nav__link">
     <span class="md-ellipsis">
       
-        __restrict__ Qualifiers (estimated +0.21%)
+        __restrict__ 限定符（估计 +0.21%）
       
     </span>
   </a>
@@ -1463,44 +1463,94 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#comparison-with-vllm" class="md-nav__link">
+  <a href="#vllm" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Comparison with vLLM
+        与 vLLM 的对比
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#conclusion-lessons-learned" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Conclusion &amp; Lessons Learned
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#appendix-reproduction-guide" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Appendix: Reproduction Guide
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Appendix: Reproduction Guide">
+    <nav class="md-nav" aria-label="与 vLLM 的对比">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#milestone-co-files" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Milestone .co Files
+        同场竞技结果
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kernel-fusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        原因：kernel fusion 消除流水线开销
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vllm-mlp-workload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考：vLLM 完整 MLP（不同 workload）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        结论与经验总结
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        附录：复现指南
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="附录：复现指南">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#milestone-co" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Milestone .co 文件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vllm_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        复现与 vLLM 的对比
       
     </span>
   </a>
@@ -2932,10 +2982,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-pipeline-at-a-glance" class="md-nav__link">
+  <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Pipeline at a Glance
+        流水线一览
       
     </span>
   </a>
@@ -2943,10 +2993,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#optimization-roadmap" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Optimization Roadmap
+        优化路线图
       
     </span>
   </a>
@@ -2954,22 +3004,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-problem-fused-moe-for-qwen35" class="md-nav__link">
+  <a href="#qwen35-fused-moe" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Problem: Fused MoE for Qwen3.5
+        问题：面向 Qwen3.5 的 Fused MoE
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="The Problem: Fused MoE for Qwen3.5">
+    <nav class="md-nav" aria-label="问题：面向 Qwen3.5 的 Fused MoE">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#about-croqtile" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        About Croqtile
+        关于鳄霸
       
     </span>
   </a>
@@ -2982,22 +3032,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#baseline-7-kernels-809-tflops" class="md-nav__link">
+  <a href="#baseline7-kernel809-tflops" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Baseline: 7 Kernels, 8.09 TFLOPS
+        Baseline：7 个 kernel，8.09 TFLOPS
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Baseline: 7 Kernels, 8.09 TFLOPS">
+    <nav class="md-nav" aria-label="Baseline：7 个 kernel，8.09 TFLOPS">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#lower-bounding-the-fastest-possible-runtime" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Lower Bounding the Fastest Possible Runtime
+        最快可能运行时间的下界
       
     </span>
   </a>
@@ -3010,22 +3060,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-1-kernel-fusion-809-945-tflops" class="md-nav__link">
+  <a href="#phase-1kernel-fusion809-945-tflops" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 1: Kernel Fusion (8.09 → 9.45 TFLOPS)
+        Phase 1：Kernel Fusion（8.09 → 9.45 TFLOPS）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Phase 1: Kernel Fusion (8.09 → 9.45 TFLOPS)">
+    <nav class="md-nav" aria-label="Phase 1：Kernel Fusion（8.09 → 9.45 TFLOPS）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#fusion-1-scatter-into-wgmma-iter007-822-tflops-16" class="md-nav__link">
+  <a href="#fusion-1scatter-wgmma-iter007-822-tflops16" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Fusion 1: Scatter into WGMMA · iter007 · 8.22 TFLOPS (+1.6%)
+        Fusion 1：Scatter 并入 WGMMA · iter007 · 8.22 TFLOPS（+1.6%）
       
     </span>
   </a>
@@ -3033,10 +3083,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#fusion-2-quantize-sort-single-qsg-kernel-iter009-892-tflops-85" class="md-nav__link">
+  <a href="#fusion-2quantize-sort-qsg-kernel-iter009-892-tflops85" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Fusion 2: Quantize + Sort → Single QSG Kernel · iter009 · 8.92 TFLOPS (+8.5%)
+        Fusion 2：Quantize + Sort → 单一 QSG kernel · iter009 · 8.92 TFLOPS（+8.5%）
       
     </span>
   </a>
@@ -3044,10 +3094,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#fusion-3-count-build-layout-iter017018-945-tflops-59" class="md-nav__link">
+  <a href="#fusion-3count-build-layout-iter017018-945-tflops59" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Fusion 3: Count + Build Layout · iter017–018 · 9.45 TFLOPS (+5.9%)
+        Fusion 3：Count + Build Layout · iter017–018 · 9.45 TFLOPS（+5.9%）
       
     </span>
   </a>
@@ -3055,10 +3105,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#compiler-flags-the-easy-wins-iter015019" class="md-nav__link">
+  <a href="#iter015019" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Compiler Flags: The Easy Wins · iter015–019
+        编译器选项：容易拿到的收益 · iter015–019
       
     </span>
   </a>
@@ -3071,22 +3121,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-2-host-pipeline-cuda-graphs-945-989-tflops" class="md-nav__link">
+  <a href="#phase-2host-cuda-graph945-989-tflops" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 2: Host Pipeline &amp; CUDA Graphs (9.45 → 9.89 TFLOPS)
+        Phase 2：Host 流水线与 CUDA Graph（9.45 → 9.89 TFLOPS）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Phase 2: Host Pipeline &amp; CUDA Graphs (9.45 → 9.89 TFLOPS)">
+    <nav class="md-nav" aria-label="Phase 2：Host 流水线与 CUDA Graph（9.45 → 9.89 TFLOPS）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#remove-host-device-synchronization-iter021023-47" class="md-nav__link">
+  <a href="#host-device-iter021023-47" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Remove Host-Device Synchronization · iter021–023 · +4.7%
+        去掉 Host-Device 同步 · iter021–023 · +4.7%
       
     </span>
   </a>
@@ -3094,10 +3144,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cuda-graphs-iter024025-22" class="md-nav__link">
+  <a href="#cuda-graph-iter024025-22" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CUDA Graphs · iter024–025 · +2.2%
+        CUDA Graph · iter024–025 · +2.2%
       
     </span>
   </a>
@@ -3110,22 +3160,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-3-micro-optimizations-included-in-phase-2-milestone-989-tflops" class="md-nav__link">
+  <a href="#phase-3-phase-2-989-tflops" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 3: Micro-optimizations (included in Phase 2 milestone · 9.89 TFLOPS)
+        Phase 3：微优化（计入 Phase 2 里程碑 · 9.89 TFLOPS）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Phase 3: Micro-optimizations (included in Phase 2 milestone · 9.89 TFLOPS)">
+    <nav class="md-nav" aria-label="Phase 3：微优化（计入 Phase 2 里程碑 · 9.89 TFLOPS）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#vectorized-qsg-scatter-iter034-077" class="md-nav__link">
+  <a href="#qsg-scatter-iter034-077" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Vectorized QSG Scatter · iter034 · +0.77%
+        QSG scatter 向量化 · iter034 · +0.77%
       
     </span>
   </a>
@@ -3133,10 +3183,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#batched-quantization-iter037-11" class="md-nav__link">
+  <a href="#iter037-11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Batched Quantization · iter037 · +1.1%
+        批量量化 · iter037 · +1.1%
       
     </span>
   </a>
@@ -3149,22 +3199,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-4-memory-hierarchy-989-1318-tflops-combined-with-phase-5" class="md-nav__link">
+  <a href="#phase-4989-1318-tflops-phase-5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 4: Memory Hierarchy (9.89 → 13.18 TFLOPS, combined with Phase 5)
+        Phase 4：内存层次（9.89 → 13.18 TFLOPS，与 Phase 5 合并统计）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Phase 4: Memory Hierarchy (9.89 → 13.18 TFLOPS, combined with Phase 5)">
+    <nav class="md-nav" aria-label="Phase 4：内存层次（9.89 → 13.18 TFLOPS，与 Phase 5 合并统计）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#tmadma-overlap-iter046-114" class="md-nav__link">
+  <a href="#tmadma-iter046-114" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TMA/DMA Overlap · iter046 · +1.14%
+        TMA/DMA 重叠 · iter046 · +1.14%
       
     </span>
   </a>
@@ -3199,15 +3249,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-5-peripheral-kernel-optimization-included-in-phase-4-milestone-1318-tflops" class="md-nav__link">
+  <a href="#phase-5-kernel-phase-4-1318-tflops" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 5: Peripheral Kernel Optimization (included in Phase 4 milestone · 13.18 TFLOPS)
+        Phase 5：周边 kernel 优化（计入 Phase 4 里程碑 · 13.18 TFLOPS）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Phase 5: Peripheral Kernel Optimization (included in Phase 4 milestone · 13.18 TFLOPS)">
+    <nav class="md-nav" aria-label="Phase 5：周边 kernel 优化（计入 Phase 4 里程碑 · 13.18 TFLOPS）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -3288,10 +3338,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#register-direct-scatter-epilogue-__cpp__-iter014-168" class="md-nav__link">
+  <a href="#register-direct-scatter-epilogue__cpp__-iter014-168" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Register-Direct Scatter Epilogue (__cpp__) · iter014 · +16.8%
+        Register-Direct Scatter Epilogue（__cpp__）· iter014 · +16.8%
       
     </span>
   </a>
@@ -3304,22 +3354,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-didnt-work-a-wall-of-negative-results" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What Didn't Work: A Wall of Negative Results
+        无效尝试：一墙负结果
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="What Didn&#39;t Work: A Wall of Negative Results">
+    <nav class="md-nav" aria-label="无效尝试：一墙负结果">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#double-buffering-always-worse" class="md-nav__link">
+  <a href="#double-buffering" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Double-Buffering: Always Worse
+        Double-Buffering：总是更差
       
     </span>
   </a>
@@ -3327,10 +3377,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#occupancy-tricks-diminishing-returns" class="md-nav__link">
+  <a href="#occupancy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Occupancy Tricks: Diminishing Returns
+        Occupancy 技巧：收益递减
       
     </span>
   </a>
@@ -3338,10 +3388,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#warp-specialization-persistence-too-much-overhead" class="md-nav__link">
+  <a href="#warp-specialization-persistence" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Warp Specialization &amp; Persistence: Too Much Overhead
+        Warp Specialization 与 Persistence：开销过大
       
     </span>
   </a>
@@ -3349,10 +3399,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#the-longest-plateau-iter052065" class="md-nav__link">
+  <a href="#iter052065" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Longest Plateau: iter052–065
+        最长平台期：iter052–065
       
     </span>
   </a>
@@ -3365,22 +3415,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-croqtile-can-express" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What Croqtile Can Express
+        鳄霸能表达什么
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="What Croqtile Can Express">
+    <nav class="md-nav" aria-label="鳄霸能表达什么">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#native-vs-__cpp__-the-trade-off" class="md-nav__link">
+  <a href="#vs-__cpp__" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Native vs __cpp__: The trade-off
+        原生 vs __cpp__：取舍
       
     </span>
   </a>
@@ -3393,22 +3443,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#future-compiler-improvements" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Future Compiler Improvements
+        未来编译器改进
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Future Compiler Improvements">
+    <nav class="md-nav" aria-label="未来编译器改进">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#rescale-accumulator-estimated-267" class="md-nav__link">
+  <a href="#rescale-accumulator-267" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Rescale-Accumulator (estimated +2.67%)
+        Rescale-Accumulator（估计 +2.67%）
       
     </span>
   </a>
@@ -3416,10 +3466,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#__restrict__-qualifiers-estimated-021" class="md-nav__link">
+  <a href="#__restrict__-021" class="md-nav__link">
     <span class="md-ellipsis">
       
-        __restrict__ Qualifiers (estimated +0.21%)
+        __restrict__ 限定符（估计 +0.21%）
       
     </span>
   </a>
@@ -3432,44 +3482,94 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#comparison-with-vllm" class="md-nav__link">
+  <a href="#vllm" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Comparison with vLLM
+        与 vLLM 的对比
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#conclusion-lessons-learned" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Conclusion &amp; Lessons Learned
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#appendix-reproduction-guide" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Appendix: Reproduction Guide
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Appendix: Reproduction Guide">
+    <nav class="md-nav" aria-label="与 vLLM 的对比">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#milestone-co-files" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Milestone .co Files
+        同场竞技结果
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kernel-fusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        原因：kernel fusion 消除流水线开销
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vllm-mlp-workload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考：vLLM 完整 MLP（不同 workload）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        结论与经验总结
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        附录：复现指南
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="附录：复现指南">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#milestone-co" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Milestone .co 文件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vllm_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        复现与 vLLM 的对比
       
     </span>
   </a>
@@ -3549,10 +3649,10 @@
   
 
 
-<h1 id="fused-moe-fp8-809-1318-tflops-163">Fused MoE FP8: 8.09 → 13.18 TFLOPS (1.63×)<a class="headerlink" href="#fused-moe-fp8-809-1318-tflops-163" title="Permanent link">&para;</a></h1>
-<p>In this tutorial, we walk through the process of optimizing a <strong>fused Mixture-of-Experts (MoE) end-to-end kernel</strong> written in <a href="https://codes1gn.github.io/croktile-tutorial/">Croqtile</a>. The target workload is real-world inference from <strong>Qwen3.5-35B-A3B</strong>, a model that routes each token through 8 of 256 experts. Our goal: make the full pipeline — routing, quantization, grouped GEMM, and scatter — as fast as possible on an NVIDIA H800 PCIe (SM90), using only Croqtile <code>.co</code> source code.</p>
-<h3 id="the-pipeline-at-a-glance">The Pipeline at a Glance<a class="headerlink" href="#the-pipeline-at-a-glance" title="Permanent link">&para;</a></h3>
-<p>Unlike a standard matrix multiplication, a fused MoE kernel is an <em>ensemble</em> of data-dependent stages. Here's the full forward pass for one inference step:</p>
+<h1 id="fused-moe-fp8809-1318-tflops163">Fused MoE FP8：8.09 → 13.18 TFLOPS（1.63×）<a class="headerlink" href="#fused-moe-fp8809-1318-tflops163" title="Permanent link">&para;</a></h1>
+<p>本教程逐步展示如何优化用 <a href="https://codes1gn.github.io/croktile-tutorial/">鳄霸</a> 编写的 <strong>fused Mixture-of-Experts（MoE）端到端 kernel</strong>。目标 workload 来自真实推理场景 <strong>Qwen3.5-35B-A3B</strong>：每个 token 从 256 个 expert 中路由到 8 个。目标：在 NVIDIA H800 PCIe（SM90）上让整个流水线——路由、量化、grouped GEMM 与 scatter——尽可能快，且仅使用鳄霸 <code>.co</code> 源码。</p>
+<h3 id="_1">流水线一览<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<p>与标准矩阵乘法不同，fused MoE kernel 是一组 <strong>数据相关</strong> 阶段的组合。下面是单次推理前向的完整路径：</p>
 <pre class="mermaid"><code>graph TD
     A["Input tokens"] --&gt; B["Route&lt;br/&gt;softmax top-8"]
     B --&gt;|topk_ids| C["Count +&lt;br/&gt;Build Layout"]
@@ -3562,8 +3662,8 @@
     F["Expert weights"] --&gt; E
     E --&gt; G["Scatter&lt;br/&gt;weighted atomicAdd"]
     G --&gt; H["Output"]</code></pre>
-<p>The grouped GEMM uses FP8 Tensor Cores via WGMMA, but the surrounding "glue" — routing, quantization, sorting, scatter — dominates at small batch sizes. With 256 experts and only 128 tokens, most experts see just ~4 tokens. That's where the real optimization happens.</p>
-<h3 id="optimization-roadmap">Optimization Roadmap<a class="headerlink" href="#optimization-roadmap" title="Permanent link">&para;</a></h3>
+<p>grouped GEMM 通过 WGMMA 使用 FP8 Tensor Core，但在小 batch 下，周围的「胶水」——路由、量化、排序、scatter——占主导。256 个 expert、仅 128 个 token 时，多数 expert 大约只看到 ~4 个 token；真正的优化空间在这里。</p>
+<h3 id="_2">优化路线图<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -3575,34 +3675,34 @@
 </thead>
 <tbody>
 <tr>
-<td>Baseline (7 kernels)</td>
-<td><code>00_baseline.co</code></td>
+<td>Baseline（7 个 kernel）</td>
+<td><a href="../assets/fused-moe-fp8/00_baseline.co"><code>00_baseline.co</code></a></td>
 <td style="text-align: right;">8.09</td>
-<td>Naive pipeline: route → count → build → quant → sort → WGMMA → scatter</td>
+<td>朴素流水线：route → count → build → quant → sort → WGMMA → scatter</td>
 </tr>
 <tr>
-<td><strong>Phase 1: Kernel Fusion</strong></td>
-<td><code>03_all_fusions.co</code></td>
+<td><strong>Phase 1：Kernel Fusion</strong></td>
+<td><a href="../assets/fused-moe-fp8/03_all_fusions.co"><code>03_all_fusions.co</code></a></td>
 <td style="text-align: right;">9.45</td>
-<td>Fuse scatter into WGMMA, quant+sort, count+build</td>
+<td>将 scatter 与 WGMMA 融合，quant+sort、count+build 融合</td>
 </tr>
 <tr>
-<td><strong>Phase 2–3: Host + Micro</strong></td>
-<td><code>04_host_micro.co</code></td>
+<td><strong>Phase 2–3：Host + Micro</strong></td>
+<td><a href="../assets/fused-moe-fp8/04_host_micro.co"><code>04_host_micro.co</code></a></td>
 <td style="text-align: right;">9.89</td>
-<td><code>parallel.async</code>, CUDA Graphs, vectorize scatter, batch quantization, <code>yield</code>, <code>mma.store</code> scatter</td>
+<td><code>parallel.async</code>、CUDA Graphs、scatter 向量化、批量量化、<code>yield</code>、<code>mma.store</code> scatter</td>
 </tr>
 <tr>
-<td><strong>Phase 4–5: Memory + Peripheral</strong></td>
-<td><code>05_cuda_optimized.co</code></td>
+<td><strong>Phase 4–5：Memory + Peripheral</strong></td>
+<td><a href="../assets/fused-moe-fp8/05_cuda_optimized.co"><code>05_cuda_optimized.co</code></a></td>
 <td style="text-align: right;"><strong>13.18</strong></td>
-<td>Grid swap, L2 persist, QSG pipelining, prefix scan, <code>__cpp__</code> scatter</td>
+<td>Grid swap、L2 persist、QSG 流水线、prefix scan、<code>__cpp__</code> scatter</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="the-problem-fused-moe-for-qwen35">The Problem: Fused MoE for Qwen3.5<a class="headerlink" href="#the-problem-fused-moe-for-qwen35" title="Permanent link">&para;</a></h2>
-<p><strong>Mixture-of-Experts (MoE)</strong> is a sparsity technique where each token is routed to a small subset of "expert" sub-networks. Qwen3.5-35B-A3B uses a particularly aggressive configuration:</p>
+<h2 id="qwen35-fused-moe">问题：面向 Qwen3.5 的 Fused MoE<a class="headerlink" href="#qwen35-fused-moe" title="Permanent link">&para;</a></h2>
+<p><strong>Mixture-of-Experts（MoE）</strong> 是一种稀疏化技术：每个 token 只路由到一小部分「expert」子网络。Qwen3.5-35B-A3B 的配置尤其激进：</p>
 <table>
 <thead>
 <tr>
@@ -3613,64 +3713,64 @@
 </thead>
 <tbody>
 <tr>
-<td>Tokens (M)</td>
+<td>Tokens（M）</td>
 <td>128</td>
-<td>Typical inference batch</td>
+<td>典型推理 batch</td>
 </tr>
 <tr>
-<td>Output dim (N)</td>
+<td>Output dim（N）</td>
 <td>512</td>
-<td>Expert FFN hidden size</td>
+<td>Expert FFN 隐层宽度</td>
 </tr>
 <tr>
-<td>Input dim (K)</td>
+<td>Input dim（K）</td>
 <td>2048</td>
-<td>Expert FFN input size</td>
+<td>Expert FFN 输入维度</td>
 </tr>
 <tr>
 <td>Experts</td>
 <td>256</td>
-<td>Unusually large expert pool</td>
+<td>Expert 池规模偏大</td>
 </tr>
 <tr>
 <td>Top-K</td>
 <td>8</td>
-<td>Active experts per token</td>
+<td>每 token 激活的 expert 数</td>
 </tr>
 <tr>
 <td>Precision</td>
-<td>FP8 (E4M3)</td>
-<td>Blockwise quantized inputs + weights</td>
+<td>FP8（E4M3）</td>
+<td>Blockwise 量化的输入与权重</td>
 </tr>
 <tr>
 <td>Block shape</td>
 <td>128×128</td>
-<td>FP8 quantization granularity</td>
+<td>FP8 量化粒度</td>
 </tr>
 </tbody>
 </table>
-<p>The total FLOPs per forward pass: <code>2 × 128 × 8 × 512 × 2048 ≅ 2.15 GFLOP</code>. At the theoretical peak of ~30 TFLOPS for FP8 WGMMA on H800, this should take about 72µs. Our baseline takes ~265µs. That's a <strong>3.7× gap</strong> from roofline — and unlike dense GEMM, you can't close it by just tiling better.</p>
-<p>The challenge is that with 256 experts and only 128 tokens, most experts see just 4 tokens on average. The grouped GEMM tiles are tiny (4×512×2048), and the "glue" around the GEMM — routing, quantization, sorting, scatter — becomes a significant fraction of total runtime. This is fundamentally different from optimizing a large matmul.</p>
-<h3 id="about-croqtile">About Croqtile<a class="headerlink" href="#about-croqtile" title="Permanent link">&para;</a></h3>
-<p>All kernel code in this post is written in <strong>Croqtile's <code>.co</code> format</strong> — a C++ Embedded Domain-Specific Language (EDSL) that compiles to CUDA/CuTe C++. You write high-level GPU kernels using Croqtile primitives, and the compiler generates optimized CUDA code. When the EDSL doesn't yet express a pattern, <code>__cpp__("...")</code> blocks let you embed raw CUDA inline — you stay in the same <code>.co</code> file, no post-processing needed. The workflow is:</p>
+<p>单次前向的总 FLOPs：<code>2 × 128 × 8 × 512 × 2048 ≅ 2.15 GFLOP</code>。在 H800 上 FP8 WGMMA 理论峰值约 ~30 TFLOPS 时，理想耗时约 72µs；我们的 baseline 约 ~265µs，相对 roofline 存在 <strong>3.7× 差距</strong>——且与 dense GEMM 不同，仅靠更好 tiling 无法抹平。</p>
+<p>难点在于：256 个 expert、仅 128 个 token 时，平均每个 expert 大约只有 4 个 token。grouped GEMM 的 tile 极小（4×512×2048），而 GEMM 周围的「胶水」——路由、量化、排序、scatter——在总时间中占比显著。这与优化大型 matmul 根本不同。</p>
+<h3 id="_3">关于鳄霸<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>本文所有 kernel 代码均使用 <strong>鳄霸的 <code>.co</code> 格式</strong>编写——一种编译到 CUDA/CuTe C++ 的 C++ 嵌入式领域专用语言（EDSL）。你用鳄霸原语编写高层 GPU kernel，编译器生成优化后的 CUDA 代码。当 EDSL 尚不能表达某种模式时，<code>__cpp__("...")</code> 块可内嵌原始 CUDA——仍留在同一 <code>.co</code> 文件中，无需后处理。工作流为：</p>
 <pre class="highlight"><code>.co source  →  Croqtile compiler  →  .cute.result (CUDA C++)  →  nvcc  →  binary</code></pre>
-<p>Every optimization in this post is <strong>reproducible from <code>.co</code> source</strong> by compiling with the Croqtile compiler. No manual editing of generated CUDA is required. The vast majority of optimizations use native Croqtile primitives; a few use <code>__cpp__</code> escape-hatch blocks for patterns not yet in the language (like <code>cudaAccessPolicyWindow</code> for L2 cache control or 128-bit SIMD stores). These are part of the Croqtile language, not external post-processing.</p>
+<p>本文每一项优化均可通过鳄霸编译器从 <strong><code>.co</code> 源码</strong>复现，无需手工改生成 CUDA。绝大多数优化使用鳄霸原生原语；少数使用 <code>__cpp__</code> 逃生舱以覆盖语言尚未支持的模式（例如用于 L2 cache 控制的 <code>cudaAccessPolicyWindow</code> 或 128-bit SIMD store）。这些属于鳄霸语言的一部分，而非外部后处理。</p>
 <hr />
-<h2 id="baseline-7-kernels-809-tflops">Baseline: 7 Kernels, 8.09 TFLOPS<a class="headerlink" href="#baseline-7-kernels-809-tflops" title="Permanent link">&para;</a></h2>
+<h2 id="baseline7-kernel809-tflops">Baseline：7 个 kernel，8.09 TFLOPS<a class="headerlink" href="#baseline7-kernel809-tflops" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Source:</strong> <code>00_baseline.co</code> — fully reproducible from <code>.co</code></p>
+<p><strong>Source：</strong> <a href="../assets/fused-moe-fp8/00_baseline.co"><code>00_baseline.co</code></a> — 可从 <code>.co</code> 完全复现</p>
 </blockquote>
-<p>The baseline implements the fused MoE pipeline as <strong>7 separate kernel launches</strong>:</p>
+<p>Baseline 将 fused MoE 流水线实现为 <strong>7 次独立的 kernel launch</strong>：</p>
 <pre class="highlight"><code>route → count → build_layout → quantize → sort_gather → WGMMA → scatter</code></pre>
-<p>Each kernel launch incurs overhead: TMA descriptor creation, parameter packing, and a CPU-GPU synchronization. Plus, intermediate buffers must be materialized in global memory between kernels. Here's what each kernel does:</p>
-<p><strong>1. Route</strong> (<code>fused_moe_route</code>) — Softmax over 256 experts with softcapping (tanh), then top-8 selection via warp-level shuffle reductions. One warp (32 threads) processes all 256 experts per token, with 8 values per thread.</p>
-<p><strong>2. Count Experts</strong> (<code>fused_moe_count_experts</code>) — Each of M×topk threads atomically increments the count for its assigned expert. Simple but requires a separate kernel launch.</p>
-<p><strong>3. Build Layout</strong> (<code>fused_moe_build_layout</code>) — Exclusive prefix sum over expert counts to compute expert offsets. This runs on <em>a single thread</em> doing a serial O(256) scan. Yes, one thread.</p>
-<p><strong>4. Quantize Input</strong> (<code>fused_moe_quantize_input</code>) — Per-block-of-128 FP8 quantization: find max absolute value via warp shuffles across 4 warps, compute scale = max/448, then quantize each element.</p>
-<p><strong>5. Sort &amp; Gather</strong> (<code>fused_moe_sort_and_gather_quant_input</code>) — For each token, assign expert slots via <code>atomicAdd</code>, then copy quantized data to the sorted position.</p>
-<p><strong>6. Grouped WGMMA</strong> (<code>fused_moe_grouped_wgmma_fp8</code>) — The actual FP8 GEMM using Hopper's Warp Group Matrix Multiply Accumulate instruction. Grid of 1024 CTAs (256 experts × 4 N-blocks), 128 threads each.</p>
-<p><strong>7. Scatter to Output</strong> (<code>fused_moe_scatter_rows_to_output</code>) — Reads the BF16 WGMMA output from global memory, multiplies by routing weight, and does a weighted <code>atomicAdd</code> scatter back to the original token positions.</p>
-<p>The baseline host code launches all 7 kernels sequentially from <code>main()</code>. In Croqtile, <code>__co__</code> functions are called like regular C++ functions — the compiler generates CUDA launch wrappers:</p>
+<p>每次 launch 都有开销：TMA descriptor 创建、参数打包、以及 CPU-GPU 同步。此外，kernel 之间必须在 global memory 中物化中间 buffer。各 kernel 职责如下：</p>
+<p><strong>1. Route</strong>（<code>fused_moe_route</code>）——对 256 个 expert 做 softmax（含 softcapping / tanh），再通过 warp 级 shuffle 规约做 top-8。每个 token 由一个 warp（32 线程）处理全部 256 个 expert，每线程 8 个值。</p>
+<p><strong>2. Count Experts</strong>（<code>fused_moe_count_experts</code>）——M×topk 个线程各自对其对应 expert 的计数做 atomic increment。实现简单，但需要单独一次 launch。</p>
+<p><strong>3. Build Layout</strong>（<code>fused_moe_build_layout</code>）——对 expert 计数做 exclusive prefix sum，得到 expert offset。在 <strong>单一线程</strong> 上串行 O(256) scan。是的，就一个线程。</p>
+<p><strong>4. Quantize Input</strong>（<code>fused_moe_quantize_input</code>）——按 128 大小的 block 做 FP8 量化：跨 4 个 warp 用 warp shuffle 找最大绝对值，scale = max/448，再逐元素量化。</p>
+<p><strong>5. Sort &amp; Gather</strong>（<code>fused_moe_sort_and_gather_quant_input</code>）——对每个 token 用 <code>atomicAdd</code> 分配 expert 槽位，再把量化数据拷到排序后的位置。</p>
+<p><strong>6. Grouped WGMMA</strong>（<code>fused_moe_grouped_wgmma_fp8</code>）——真正的 FP8 GEMM，使用 Hopper 的 Warp Group Matrix Multiply Accumulate。Grid 为 1024 个 CTA（256 experts × 4 N-blocks），每 CTA 128 线程。</p>
+<p><strong>7. Scatter to Output</strong>（<code>fused_moe_scatter_rows_to_output</code>）——从 global memory 读取 BF16 的 WGMMA 输出，乘以路由权重，再以加权 <code>atomicAdd</code> scatter 回原始 token 位置。</p>
+<p>Baseline 的 host 代码在 <code>main()</code> 中顺序 launch 上述 7 个 kernel。在鳄霸中，<code>__co__</code> 函数像普通 C++ 函数一样调用——编译器生成 CUDA launch 封装：</p>
 <pre class="highlight"><code class="language-cpp">// Baseline main() — 7 kernel launches + 3 memsets
 choreo::abend_true(cudaMemset(expert_counts_d, 0, ...));
 choreo::abend_true(cudaMemset(output_d, 0, ...));
@@ -3687,7 +3787,7 @@ fused_moe_grouped_wgmma_fp8(
     expert_scales_d, expert_offsets_d, rep_out_d);
 fused_moe_scatter_rows_to_output(
     rep_out_d, sorted_route_ids_d, topk_weights_d, output_d);</code></pre>
-<p>Here's the baseline <code>build_layout</code> kernel — the single-threaded serial prefix sum:</p>
+<p>下面是 baseline 的 <code>build_layout</code> kernel——单线程串行 prefix sum：</p>
 <pre class="highlight"><code class="language-co">__co__ void fused_moe_build_layout(
     global s32 [NUM_EXPERTS] expert_counts,
     global s32 [NUM_EXPERTS + 1] expert_offsets,
@@ -3705,7 +3805,7 @@ fused_moe_scatter_rows_to_output(
     }
   }
 }</code></pre>
-<p>And the WGMMA kernel — the core grouped GEMM that dominates runtime:</p>
+<p>以及 WGMMA kernel——占 runtime 主体的 grouped GEMM：</p>
 <pre class="highlight"><code class="language-co">// Baseline: grouped WGMMA with separate mma.store to global memory
 __co__ void fused_moe_grouped_wgmma_fp8(
     global f8_e4m3 [M, K] lhs, global f32 [M, K_BLOCKS] scale_a,
@@ -3749,20 +3849,20 @@ __co__ void fused_moe_grouped_wgmma_fp8(
     }
   }
 }</code></pre>
-<h3 id="lower-bounding-the-fastest-possible-runtime">Lower Bounding the Fastest Possible Runtime<a class="headerlink" href="#lower-bounding-the-fastest-possible-runtime" title="Permanent link">&para;</a></h3>
+<h3 id="_4">最快可能运行时间的下界<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Compute:</strong> 2.15 GFLOP at ~30 TFLOPS FP8 = 72µs</li>
-<li><strong>Memory:</strong> LHS data: 1024 rows × 2KB = 2MB. RHS data: per CTA 128×128 bytes × 16 K-blocks = 256KB (but shared across CTAs via L2). Minimum traffic ~4MB at 2TB/s = 2µs.</li>
-<li><strong>The real bottleneck</strong> is neither pure compute nor pure memory: it's the tiny tile sizes per expert and the overhead of the surrounding kernels.</li>
+<li><strong>Compute：</strong> 2.15 GFLOP，按 ~30 TFLOPS FP8 ≈ 72µs</li>
+<li><strong>Memory：</strong> LHS：1024 行 × 2KB = 2MB。RHS：每 CTA 128×128 字节 × 16 个 K-block = 256KB（经 L2 在 CTA 间共享）。最小流量约 ~4MB，按 2TB/s ≈ 2µs。</li>
+<li><strong>真正的瓶颈</strong> 既不是纯 compute 也不是纯 memory：而是每个 expert 的 tile 过小，以及周围 kernel 的开销。</li>
 </ul>
 <hr />
-<h2 id="phase-1-kernel-fusion-809-945-tflops">Phase 1: Kernel Fusion (8.09 → 9.45 TFLOPS)<a class="headerlink" href="#phase-1-kernel-fusion-809-945-tflops" title="Permanent link">&para;</a></h2>
+<h2 id="phase-1kernel-fusion809-945-tflops">Phase 1：Kernel Fusion（8.09 → 9.45 TFLOPS）<a class="headerlink" href="#phase-1kernel-fusion809-945-tflops" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Source:</strong> <code>01_scatter_fusion.co</code>, <code>02_qsg_fusion.co</code>, <code>03_all_fusions.co</code> — fully reproducible from <code>.co</code></p>
+<p><strong>Source：</strong> <a href="../assets/fused-moe-fp8/01_scatter_fusion.co"><code>01_scatter_fusion.co</code></a>、<a href="../assets/fused-moe-fp8/02_qsg_fusion.co"><code>02_qsg_fusion.co</code></a>、<a href="../assets/fused-moe-fp8/03_all_fusions.co"><code>03_all_fusions.co</code></a> — 可从 <code>.co</code> 完全复现</p>
 </blockquote>
-<p>The first major optimization phase focuses on reducing the 7 kernels down to fewer, fused kernels. Each fusion eliminates kernel launch overhead, <code>cudaDeviceSynchronize()</code> calls, and intermediate global memory traffic.</p>
-<h3 id="fusion-1-scatter-into-wgmma-iter007-822-tflops-16">Fusion 1: Scatter into WGMMA · iter007 · 8.22 TFLOPS (+1.6%)<a class="headerlink" href="#fusion-1-scatter-into-wgmma-iter007-822-tflops-16" title="Permanent link">&para;</a></h3>
-<p>The baseline runs WGMMA and scatter as <strong>two separate kernels</strong>, with a global memory round-trip between them:</p>
+<p>第一阶段主要优化目标是把 7 个 kernel 减到更少、已融合的 kernel。每次融合都会削减 launch 开销、<code>cudaDeviceSynchronize()</code> 调用，以及中间 global memory 流量。</p>
+<h3 id="fusion-1scatter-wgmma-iter007-822-tflops16">Fusion 1：Scatter 并入 WGMMA · iter007 · 8.22 TFLOPS（+1.6%）<a class="headerlink" href="#fusion-1scatter-wgmma-iter007-822-tflops16" title="Permanent link">&para;</a></h3>
+<p>Baseline 将 WGMMA 与 scatter 作为 <strong>两个独立 kernel</strong> 运行，中间经历一次 global memory 往返：</p>
 <pre class="mermaid"><code>graph LR
     subgraph K1["WGMMA kernel"]
         A["K-loop"] --&gt; B["mma.store&lt;br/&gt;to GMEM"]
@@ -3771,8 +3871,8 @@ __co__ void fused_moe_grouped_wgmma_fp8(
         C["read rep_out&lt;br/&gt;weight x atomicAdd"]
     end
     B --&gt;|GMEM| C</code></pre>
-<p>The WGMMA kernel stores its result to <code>rep_out</code> in global memory. Then a separate scatter kernel reads it back, multiplies by the routing weight, and does <code>atomicAdd</code> to the final output. This costs one full kernel launch + a global memory write/read round-trip.</p>
-<p><strong>Before — the baseline WGMMA epilogue</strong> stores to an intermediate global buffer:</p>
+<p>WGMMA kernel 先把结果写到 global 的 <code>rep_out</code>，再由单独的 scatter kernel 读回、乘以路由权重并对最终输出做 <code>atomicAdd</code>。代价是一次完整 launch，外加 global 写/读往返。</p>
+<p><strong>Before — baseline WGMMA epilogue</strong> 写到中间 global buffer：</p>
 <pre class="highlight"><code class="language-co">// Baseline WGMMA: store result to global memory
 // A separate scatter kernel will read this later
       mma.store mc, output.view(tile_rows, WARP_N).from(...);
@@ -3799,7 +3899,7 @@ __co__ void fused_moe_scatter_rows_to_output(
     }
   }
 }</code></pre>
-<p><strong>After — fused epilogue</strong> replaces <code>mma.store → GMEM</code> with <code>mma.store → shared</code>, then scatters directly inside the same kernel:</p>
+<p><strong>After — fused epilogue</strong> 将 <code>mma.store → GMEM</code> 换成 <code>mma.store → shared</code>，并在同一 kernel 内直接 scatter：</p>
 <pre class="highlight"><code class="language-co">// Fused WGMMA+scatter: store to shared, scatter to output in one kernel
 // Replaces both the GMEM store AND the separate scatter kernel
       shared f32 [WARP_M, WARP_N] sOut;
@@ -3820,11 +3920,11 @@ __co__ void fused_moe_scatter_rows_to_output(
     }  // end foreach iv_m
   }
 }</code></pre>
-<p>The fused version is pure native Croqtile — no <code>__cpp__</code> needed. <code>mma.store</code> handles the hardware-specific accumulator fragment layout, and the <code>foreach</code> + <code>call ATOMIC_ADD</code> loop is straightforward. The data flows from MMA registers → shared memory → global output without ever touching the intermediate <code>rep_out</code> buffer in DRAM.</p>
-<p>A later iteration (iter014) further optimized this by accessing MMA registers directly via <code>__cpp__</code>, eliminating the shared memory staging — but the native version shown here is the simpler starting point.</p>
-<p>Scatter fusion alone gives a modest +1.6% because the scatter isn't on the critical path at this stage. But it eliminates the <code>rep_out</code> intermediate buffer and one full kernel launch. The real payoff comes when combined with other fusions.</p>
-<h3 id="fusion-2-quantize-sort-single-qsg-kernel-iter009-892-tflops-85">Fusion 2: Quantize + Sort → Single QSG Kernel · iter009 · 8.92 TFLOPS (+8.5%)<a class="headerlink" href="#fusion-2-quantize-sort-single-qsg-kernel-iter009-892-tflops-85" title="Permanent link">&para;</a></h3>
-<p>The quantize and sort-gather kernels both iterate over all M tokens. Fusing them into a single kernel (QSG — Quantize, Sort, Gather) eliminates one kernel launch and the intermediate <code>input_q</code> global memory buffer. Each block processes one token through three phases: quantize to FP8 via shared memory, assign sorted slots via atomicAdd, then copy quantized data to sorted positions.</p>
+<p>融合版本纯鳄霸原生实现，无需 <code>__cpp__</code>。<code>mma.store</code> 处理硬件相关的累加器 fragment 布局，<code>foreach</code> + <code>call ATOMIC_ADD</code> 循环也很直接。数据从 MMA 寄存器 → shared memory → global output，全程不经过 DRAM 上的中间 <code>rep_out</code> buffer。</p>
+<p>后续迭代（iter014）进一步通过 <code>__cpp__</code> 直接访问 MMA 寄存器，去掉 shared staging——但此处展示的原生版本是更简单的起点。</p>
+<p>仅 scatter 融合带来的提升约 +1.6%，因为此阶段 scatter 尚不在关键路径上。但它消除了中间 <code>rep_out</code> buffer 与一次完整 kernel launch；与其它融合组合后收益才明显。</p>
+<h3 id="fusion-2quantize-sort-qsg-kernel-iter009-892-tflops85">Fusion 2：Quantize + Sort → 单一 QSG kernel · iter009 · 8.92 TFLOPS（+8.5%）<a class="headerlink" href="#fusion-2quantize-sort-qsg-kernel-iter009-892-tflops85" title="Permanent link">&para;</a></h3>
+<p>quantize 与 sort-gather 两个 kernel 都会遍历全部 M 个 token。将它们融合为单个 kernel（QSG — Quantize, Sort, Gather）可省掉一次 kernel launch，以及中间的 <code>input_q</code> 全局内存缓冲。每个 block 对一个 token 分三阶段处理：经 shared memory 量化为 FP8，用 atomicAdd 分配排序后的槽位，再把量化后的数据拷到排序后的位置。</p>
 <pre class="highlight"><code class="language-co">__co__ void fused_moe_quant_sort_gather(
     global bf16 [M, K] input,
     global s32 [M, TOPK] topk_ids,
@@ -3871,8 +3971,8 @@ __co__ void fused_moe_scatter_rows_to_output(
     }
   }
 }</code></pre>
-<h3 id="fusion-3-count-build-layout-iter017018-945-tflops-59">Fusion 3: Count + Build Layout · iter017–018 · 9.45 TFLOPS (+5.9%)<a class="headerlink" href="#fusion-3-count-build-layout-iter017018-945-tflops-59" title="Permanent link">&para;</a></h3>
-<p>The count_experts and build_layout kernels are tiny — just counting and prefix-summing expert assignments. Fusing them into <code>fused_moe_count_and_build</code> using shared-memory atomics eliminates one kernel launch plus the <code>cudaDeviceSynchronize</code> + <code>cudaMemset</code> that separated them:</p>
+<h3 id="fusion-3count-build-layout-iter017018-945-tflops59">Fusion 3：Count + Build Layout · iter017–018 · 9.45 TFLOPS（+5.9%）<a class="headerlink" href="#fusion-3count-build-layout-iter017018-945-tflops59" title="Permanent link">&para;</a></h3>
+<p><code>count_experts</code> 与 <code>build_layout</code> 两个 kernel 很小——只是对 expert 分配做计数与前缀和。将它们融合为 <code>fused_moe_count_and_build</code>，并用 shared memory 上的 atomics，可省掉一次 kernel launch，以及原先夹在两者之间的 <code>cudaDeviceSynchronize</code> + <code>cudaMemset</code>：</p>
 <pre class="highlight"><code class="language-co">__co__ void fused_moe_count_and_build(
     global s32 [M, TOPK] topk_ids,
     global s32 [NUM_EXPERTS + 1] expert_offsets,
@@ -3910,54 +4010,54 @@ __co__ void fused_moe_scatter_rows_to_output(
     expert_offsets.at(tid) = s_offsets.at(tid);
   }
 }</code></pre>
-<p>This is fully native Croqtile — each of the 256 threads strides over the flat <code>M*TOPK</code> array using <code>foreach</code>, atomically counting expert assignments into shared memory, then thread 0 does the serial prefix sum.</p>
-<h3 id="compiler-flags-the-easy-wins-iter015019">Compiler Flags: The Easy Wins · iter015–019<a class="headerlink" href="#compiler-flags-the-easy-wins-iter015019" title="Permanent link">&para;</a></h3>
-<p>These flags are applied at compile time. Their effect is small at the Phase 1 milestone (03_all_fusions.co with flags: 9.47 vs without: 9.45 = +0.2%), but becomes significant in later phases when the WGMMA kernel dominates runtime:</p>
+<p>这是纯原生鳄霸写法——256 个线程各自用 <code>foreach</code> 在展平后的 <code>M*TOPK</code> 数组上跨步遍历，把对 expert 分配的计数原子累加到 shared memory，再由 thread 0 做串行前缀和。</p>
+<h3 id="iter015019">编译器选项：容易拿到的收益 · iter015–019<a class="headerlink" href="#iter015019" title="Permanent link">&para;</a></h3>
+<p>这些 flag 在编译期生效。在 Phase 1 里程碑上影响很小（<a href="../assets/fused-moe-fp8/03_all_fusions.co">03_all_fusions.co</a> 有 flag：9.47，无 flag：9.45，约 +0.2%），但在后续阶段 WGMMA kernel 主导运行时间后，差异会明显起来：</p>
 <table>
 <thead>
 <tr>
 <th>Flag</th>
-<th>Effect</th>
-<th>Δ (original A/B)</th>
+<th>作用</th>
+<th>Δ（原始 A/B）</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>--use_fast_math</code></td>
-<td>Faster expf/divf in routing softmax, FTZ mode</td>
+<td>routing softmax 中更快的 expf/divf，FTZ 模式</td>
 <td>+0.5%</td>
 </tr>
 <tr>
 <td><code>--disable-runtime-check</code></td>
-<td>Remove choreo_assert() function boundaries serializing WGMMA pipeline</td>
+<td>去掉 <code>choreo_assert()</code> 的函数边界，避免拖住 WGMMA 流水</td>
 <td>+2.4%</td>
 </tr>
 <tr>
 <td><code>--hoist-offset --hoist-scale</code></td>
-<td>Hoist loop-invariant address/scale calculations out of K-loop</td>
+<td>把 K 循环中不变的地址/scale 计算提到循环外</td>
 <td>+0.9%</td>
 </tr>
 <tr>
-<td>Transpose <code>rep_a_scales</code> layout</td>
-<td>Coalesced WGMMA reads: [routes, K_blocks] → [K_blocks, routes]</td>
+<td>转置 <code>rep_a_scales</code> 布局</td>
+<td>WGMMA 合并读：[routes, K_blocks] → [K_blocks, routes]</td>
 <td>+1.3%</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition info">
-<p class="admonition-title">The <code>--disable-runtime-check</code> story</p>
-<p>The Croqtile compiler inserts <code>choreo_assert()</code> for bounds checking. On GPU, these create function call boundaries that prevent <code>ptxas</code> from scheduling WGMMA instructions across loop iterations (emitting warning C7510: "register-register dependency for WGMMA"). Removing them gave a surprisingly large 2.4% speedup. Lesson: compiler infrastructure can silently break GPU instruction pipelining.</p>
+<p class="admonition-title">关于 <code>--disable-runtime-check</code></p>
+<p>鳄霸编译器会插入 <code>choreo_assert()</code> 做边界检查。在 GPU 上，这些会形成函数调用边界，使 <code>ptxas</code> 无法把 WGMMA 指令跨循环迭代调度（会报 C7510："register-register dependency for WGMMA"）。去掉它们带来了约 2.4% 的意外提速。教训：编译器基础设施可能在不知不觉中破坏 GPU 指令流水。</p>
 </div>
-<p>After this phase, the serving-path pipeline is down to <strong>4 kernels</strong> (3 in the graph-captured path):</p>
+<p>这一阶段之后，serving 路径上的流水线只剩 <strong>4 个 kernel</strong>（graph capture 路径里为 3 个）：</p>
 <pre class="highlight"><code>route → count+build → QSG → WGMMA+scatter</code></pre>
 <hr />
-<h2 id="phase-2-host-pipeline-cuda-graphs-945-989-tflops">Phase 2: Host Pipeline &amp; CUDA Graphs (9.45 → 9.89 TFLOPS)<a class="headerlink" href="#phase-2-host-pipeline-cuda-graphs-945-989-tflops" title="Permanent link">&para;</a></h2>
+<h2 id="phase-2host-cuda-graph945-989-tflops">Phase 2：Host 流水线与 CUDA Graph（9.45 → 9.89 TFLOPS）<a class="headerlink" href="#phase-2host-cuda-graph945-989-tflops" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Source:</strong> <code>04_host_micro.co</code> — measured at <strong>9.89 TFLOPS</strong>. This milestone also includes Phase 3 micro-optimizations (local arrays, yield, mma.store scatter).</p>
+<p><strong>来源：</strong> <a href="../assets/fused-moe-fp8/04_host_micro.co"><code>04_host_micro.co</code></a> —— 测得 <strong>9.89 TFLOPS</strong>。该里程碑还包含 Phase 3 的微优化（local 数组、yield、mma.store scatter）。</p>
 </blockquote>
-<h3 id="remove-host-device-synchronization-iter021023-47">Remove Host-Device Synchronization · iter021–023 · +4.7%<a class="headerlink" href="#remove-host-device-synchronization-iter021023-47" title="Permanent link">&para;</a></h3>
-<p>This was the single largest improvement after kernel fusion, and it came from a surprisingly mundane source.</p>
-<p>In the <code>.co</code> source, the fix is a single keyword: change <code>parallel</code> to <code>parallel.async</code> in the kernel's top-level decomposition:</p>
+<h3 id="host-device-iter021023-47">去掉 Host-Device 同步 · iter021–023 · +4.7%<a class="headerlink" href="#host-device-iter021023-47" title="Permanent link">&para;</a></h3>
+<p>这是 kernel fusion 之后单次提升最大的一项，来源却出乎意料地平常。</p>
+<p>在 <code>.co</code> 源码里，改动只是一个关键字：把 kernel 顶层分解里的 <code>parallel</code> 改成 <code>parallel.async</code>：</p>
 <pre class="highlight"><code class="language-co">// Before: plain parallel — compiler emits cudaDeviceSynchronize after launch
 __co__ void fused_moe_quant_sort_gather(...) {
   parallel token by M : block {
@@ -3971,7 +4071,7 @@ __co__ void fused_moe_quant_sort_gather(...) {
     // ...
   }
 }</code></pre>
-<p>This one-keyword change affects the <strong>generated CUDA wrapper</strong> — the compiler no longer emits <code>cudaDeviceSynchronize()</code> after the kernel launch:</p>
+<p>这一个关键字影响的是<strong>生成的 CUDA wrapper</strong>——编译器不再在 kernel launch 之后发出 <code>cudaDeviceSynchronize()</code>：</p>
 <pre class="highlight"><code class="language-cpp">// Generated WITHOUT parallel.async:
 void launch_fused_moe_qsg(...) {
   fused_moe_qsg_kernel&lt;&lt;&lt;grid, block&gt;&gt;&gt;(...);
@@ -3984,11 +4084,11 @@ void launch_fused_moe_qsg(...) {
   // CPU immediately returns to submit next kernel
 }</code></pre>
 <div class="admonition success">
-<p class="admonition-title">Result</p>
-<p>+4.7% from removing host-device synchronization between kernel launches. The CPU was blocking for ~30µs per kernel — three times per iteration. The lesson: <em>never block the CPU between kernel launches on the same stream unless you need the result.</em> In Croqtile, <code>parallel.async</code> makes this a zero-effort change.</p>
+<p class="admonition-title">结果</p>
+<p>去掉各次 kernel launch 之间的 host-device 同步带来 +4.7%。CPU 每个 kernel 会阻塞约 30µs——每轮迭代三次。教训：<em>除非确实需要结果，否则不要在同一 stream 上两次 launch 之间阻塞 CPU。</em> 在鳄霸里，<code>parallel.async</code> 让这件事几乎零成本。</p>
 </div>
-<h3 id="cuda-graphs-iter024025-22">CUDA Graphs · iter024–025 · +2.2%<a class="headerlink" href="#cuda-graphs-iter024025-22" title="Permanent link">&para;</a></h3>
-<p>With 3 kernels in the serving path (count_and_build, QSG, WGMMA), kernel launch overhead is still meaningful at these sub-200µs timescales. CUDA Graphs capture the entire 3-kernel sequence and replay it with a single <code>cudaGraphLaunch</code>, eliminating per-kernel CPU-side parameter packing and TMA descriptor recreation:</p>
+<h3 id="cuda-graph-iter024025-22">CUDA Graph · iter024–025 · +2.2%<a class="headerlink" href="#cuda-graph-iter024025-22" title="Permanent link">&para;</a></h3>
+<p>serving 路径上只有 3 个 kernel（count_and_build、QSG、WGMMA）时，在这种亚 200µs 的时间尺度上，launch 开销仍然可观。CUDA Graph 把整个 3-kernel 序列 capture 下来，用单次 <code>cudaGraphLaunch</code> 重放，省掉每个 kernel 在 CPU 侧打包参数和重建 TMA descriptor 的开销：</p>
 <pre class="highlight"><code class="language-cpp">// In main() — define the serving-path as a lambda
 auto launch_serving_path = [&amp;]() {
   choreo::abend_true(cudaMemsetAsync(
@@ -4022,19 +4122,19 @@ choreo::abend_true(cudaGraphInstantiate(
 
 // Each iteration: single launch replays all 3 kernels
 cudaGraphLaunch(serving_graph_exec, cudaStreamPerThread);</code></pre>
-<p>Note the Croqtile-specific pattern: <code>__co__</code> functions are called directly from C++ host code. The Croqtile compiler generates CUDA wrapper functions, so the host code reads like regular function calls while the compiler handles grid/block configuration.</p>
+<p>注意鳄霸特有的写法：C++ host 代码里直接调用 <code>__co__</code> 函数。鳄霸编译器会生成 CUDA wrapper，因此 host 侧读起来像普通函数调用，而 grid/block 配置由编译器处理。</p>
 <div class="admonition info">
-<p class="admonition-title">CUDA Graph gotcha</p>
-<p>Graphs require <code>--default-stream per-thread</code> compilation flag. Also, any <code>cudaMemsetAsync</code> nodes in the graph add fixed overhead — we eliminate the last memset by fusing it into the QSG kernel.</p>
+<p class="admonition-title">CUDA Graph 注意点</p>
+<p>Graph 需要 <code>--default-stream per-thread</code> 编译选项。另外，graph 里若有 <code>cudaMemsetAsync</code> 节点会有固定开销——我们通过把最后的 memset 融进 QSG kernel 来去掉它。</p>
 </div>
 <hr />
-<h2 id="phase-3-micro-optimizations-included-in-phase-2-milestone-989-tflops">Phase 3: Micro-optimizations (included in Phase 2 milestone · 9.89 TFLOPS)<a class="headerlink" href="#phase-3-micro-optimizations-included-in-phase-2-milestone-989-tflops" title="Permanent link">&para;</a></h2>
+<h2 id="phase-3-phase-2-989-tflops">Phase 3：微优化（计入 Phase 2 里程碑 · 9.89 TFLOPS）<a class="headerlink" href="#phase-3-phase-2-989-tflops" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Source:</strong> Micro-opts are included in <code>04_host_micro.co</code> (9.89 TFLOPS). The improvements below were originally measured as A/B deltas.</p>
+<p><strong>来源：</strong> 微优化包含在 <a href="../assets/fused-moe-fp8/04_host_micro.co"><code>04_host_micro.co</code></a>（9.89 TFLOPS）中。下面各项最初是按 A/B 差值测的。</p>
 </blockquote>
-<p>At this point, the low-hanging fruit is gone. The next 16 iterations (iter026–040) squeeze out 2.7% total. Most attempts are flat or negative. Here are the survivors:</p>
-<h3 id="vectorized-qsg-scatter-iter034-077">Vectorized QSG Scatter · iter034 · +0.77%<a class="headerlink" href="#vectorized-qsg-scatter-iter034-077" title="Permanent link">&para;</a></h3>
-<p>The QSG kernel's output copy loop stored FP8 data one element at a time — 16 stores per thread per K-block. Vectorizing with 16-byte stores reduces 128 store instructions to 8:</p>
+<p>到这一步，低垂的果实已经摘完。接下来 16 轮迭代（iter026–040）总共挤出约 2.7%；多数尝试持平或更差。下面是留下来的几项：</p>
+<h3 id="qsg-scatter-iter034-077">QSG scatter 向量化 · iter034 · +0.77%<a class="headerlink" href="#qsg-scatter-iter034-077" title="Permanent link">&para;</a></h3>
+<p>QSG kernel 的输出拷贝循环按元素写 FP8——每个线程每个 K-block 16 次 store。改用 16 字节 store 向量化后，128 条 store 指令减到 8 条：</p>
 <pre class="highlight"><code class="language-co">// Before: byte-by-byte FP8 copy to sorted positions
 foreach block_k in [K_BLOCKS] {
   kk = block_k * BLOCK_K + lane;
@@ -4047,8 +4147,8 @@ foreach block_k in [K_BLOCKS] {
   __cpp__("  *(uint4*)&amp;rep_a_q[slot*K + block_k*128 + lane*16]");
   __cpp__("    = *(uint4*)&amp;sq[block_k*128 + lane*16];\n");
 }</code></pre>
-<h3 id="batched-quantization-iter037-11">Batched Quantization · iter037 · +1.1%<a class="headerlink" href="#batched-quantization-iter037-11" title="Permanent link">&para;</a></h3>
-<p>The baseline QSG quantizes one K-block at a time, requiring <code>sync.shared</code> between each block's load → max-reduce → quantize phases (48 syncs total). The fix: load all 16 input values into <code>local</code> registers first, compute all 16 warp-max values from registers, then quantize in bulk:</p>
+<h3 id="iter037-11">批量量化 · iter037 · +1.1%<a class="headerlink" href="#iter037-11" title="Permanent link">&para;</a></h3>
+<p>基线 QSG 一次只量化一个 K-block，每个 block 的 load → max-reduce → quantize 之间都要 <code>sync.shared</code>（共 48 次 sync）。改法：先把全部 16 个输入值载入 <code>local</code> 寄存器，在寄存器上算完 16 个 warp-max，再一次性量化：</p>
 <pre class="highlight"><code class="language-co">// Before: per-K-block quantize (3 syncs × 16 blocks = 48 syncs)
 foreach block_k in [K_BLOCKS] {
   f32 value = input.at(token, kk);     // load
@@ -4067,23 +4167,23 @@ foreach k in [K_BLOCKS] {
 // then quantize all 16 blocks from registers
 // Sync count: 48 → 7</code></pre>
 <div class="admonition info">
-<p class="admonition-title">The plateau is real</p>
-<p>Between iter026 and iter040, I tried: K-loop load reordering (flat), removing unused shared memory (flat), maxrregcount=128 (-4.4%), K-loop unroll (flat), ptxas opt-level=4 (flat), K-loop double-buffering (-6.8%), TMA for both matrices (-0.5%), __launch_bounds__ (flat), red.relaxed epilogue (flat), and swizzle-64 (crash). The WGMMA kernel sits at 77.8% DRAM throughput with 168 registers and 3 CTAs per SM. No micro-optimization can break through this ceiling.</p>
+<p class="admonition-title">平台期是真实存在的</p>
+<p>在 iter026 到 iter040 之间我试过：K 循环 load 重排（持平）、删掉未用 shared memory（持平）、maxrregcount=128（-4.4%）、K 循环展开（持平）、ptxas opt-level=4（持平）、K 循环双缓冲（-6.8%）、两个矩阵都用 TMA（-0.5%）、<code>__launch_bounds__</code>（持平）、red.relaxed epilogue（持平）、swizzle-64（崩溃）。WGMMA kernel 约 77.8% DRAM 吞吐，168 个寄存器，每 SM 3 个 CTA。没有哪项微优化能突破这层天花板。</p>
 </div>
 <hr />
-<h2 id="phase-4-memory-hierarchy-989-1318-tflops-combined-with-phase-5">Phase 4: Memory Hierarchy (9.89 → 13.18 TFLOPS, combined with Phase 5)<a class="headerlink" href="#phase-4-memory-hierarchy-989-1318-tflops-combined-with-phase-5" title="Permanent link">&para;</a></h2>
+<h2 id="phase-4989-1318-tflops-phase-5">Phase 4：内存层次（9.89 → 13.18 TFLOPS，与 Phase 5 合并统计）<a class="headerlink" href="#phase-4989-1318-tflops-phase-5" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Source:</strong> <code>05_cuda_optimized.co</code> — measured at <strong>13.18 TFLOPS</strong>. This milestone includes all Phase 4 and Phase 5 optimizations. Grid swap uses native <code>parallel</code> reordering; L2 persistence uses <code>cudaAccessPolicyWindow</code> via a <code>__cpp__</code> host block.</p>
+<p><strong>来源：</strong> <a href="../assets/fused-moe-fp8/05_cuda_optimized.co"><code>05_cuda_optimized.co</code></a> — 测得 <strong>13.18 TFLOPS</strong>。该里程碑包含 Phase 4 与 Phase 5 的全部优化。Grid swap 使用原生 <code>parallel</code> 重排；L2 persistence 通过 host 侧 <code>__cpp__</code> 块调用 <code>cudaAccessPolicyWindow</code> 实现。</p>
 </blockquote>
-<p>After Phase 3, the WGMMA kernel is firmly DRAM-bound at ~78% throughput. Micro-optimizations can't break through. The next gains come from smarter use of the memory hierarchy — specifically, making the GPU's L2 cache work harder.</p>
-<h3 id="tmadma-overlap-iter046-114">TMA/DMA Overlap · iter046 · +1.14%<a class="headerlink" href="#tmadma-overlap-iter046-114" title="Permanent link">&para;</a></h3>
-<p>The WGMMA kernel uses two different memory engines: <strong>TMA</strong> (Tensor Memory Accelerator, a dedicated hardware unit) for the RHS weight matrix, and <strong>DMA</strong> (<code>cp.async</code> through the LSU pipeline) for the LHS activations. By reordering the K-loop to issue the TMA copy <em>before</em> the DMA copy, both hardware units run in parallel.</p>
+<p>Phase 3 之后，WGMMA kernel 已牢牢卡在约 78% 的 DRAM 吞吐上，微观指令级优化难以突破。后续收益来自更聪明地利用内存层次 —— 具体而言，是让 GPU 的 L2 cache 多干活。</p>
+<h3 id="tmadma-iter046-114">TMA/DMA 重叠 · iter046 · +1.14%<a class="headerlink" href="#tmadma-iter046-114" title="Permanent link">&para;</a></h3>
+<p>WGMMA kernel 使用两套不同的访存引擎：<strong>TMA</strong>（Tensor Memory Accelerator，专用硬件单元）负责 RHS 权重矩阵，<strong>DMA</strong>（经 LSU 流水线的 <code>cp.async</code>）负责 LHS 激活。把 K 循环重排为先发起 TMA 拷贝、再发起 DMA 拷贝，两套硬件可并行工作。</p>
 <div class="admonition info">
-<p class="admonition-title">Why not TMA for both matrices?</p>
-<p>I tried this (iter049, iter091). Both regressed ~1%. The reason: when both A and B use TMA, they serialize through the <em>same TMA engine</em>. When one uses DMA (<code>cp.async</code>), they go through <em>separate hardware datapaths</em> (LSU vs TMA engine) and truly run in parallel. Asymmetric is better here.</p>
+<p class="admonition-title">为什么不用 TMA 搬两边矩阵？</p>
+<p>我试过（iter049、iter091），都回退约 1%。原因是：A、B 都用 TMA 时，会串行争用<em>同一个 TMA 引擎</em>；一侧用 DMA（<code>cp.async</code>）时，走<em>不同硬件通路</em>（LSU 对 TMA 引擎），才能真正并行。这里非对称更好。</p>
 </div>
 <h3 id="grid-swap-iter051-20">Grid Swap · iter051 · +2.0%<a class="headerlink" href="#grid-swap-iter051-20" title="Permanent link">&para;</a></h3>
-<p>A deceptively simple change: swap the WGMMA grid dimensions from <code>(256, 4)</code> to <code>(4, 256)</code>.</p>
+<p>一个看似简单但影响很大的改动：把 WGMMA grid 维度从 <code>(256, 4)</code> 换成 <code>(4, 256)</code>。</p>
 <pre class="highlight"><code>Before: grid (256, 4) — consecutive blocks = different experts
 Block scheduler assigns:  (0,0) (1,0) (2,0) (3,0) ... (255,0) (0,1) ...
                            eid=0 eid=1 eid=2 eid=3       eid=255
@@ -4097,26 +4197,26 @@ Block scheduler assigns:  (0,0) (1,0) (2,0) (3,0) (0,1) (1,1) ...
                            eid=0 eid=0 eid=0 eid=0 eid=1 eid=1
                            ↓     ↓     ↓     ↓
                            LHS₀  LHS₀  LHS₀  LHS₀  ← SHARED in L2!</code></pre>
-<p>The CUDA block scheduler assigns consecutive <code>blockIdx</code> values to the same SM. In the swapped grid, the 4 N-tile blocks of the <em>same expert</em> run together, sharing the same LHS data in L2. In Croqtile, this is a one-line change — swap the order of the <code>parallel</code> decomposition:</p>
+<p>CUDA block 调度器会把连续的 <code>blockIdx</code> 派到同一块 SM。交换 grid 后，同一 expert 的 4 个 N-tile block 会一起跑，在 L2 中复用同一份 LHS 数据。在鳄霸里，这只需改一行 —— 交换 <code>parallel</code> 分解的顺序：</p>
 <pre class="highlight"><code class="language-co">// Before: (256, 4) — expert-major
 parallel.async {eid, block_n} by [NUM_EXPERTS, cdiv(N, WARP_N)] : block
 
 // After: (4, 256) — N-tile-major → same expert's blocks colocated
 parallel.async {block_n, eid} by [cdiv(N, WARP_N), NUM_EXPERTS] : block</code></pre>
 <h3 id="l2-persistence-iter052-16">L2 Persistence · iter052 · +1.6%<a class="headerlink" href="#l2-persistence-iter052-16" title="Permanent link">&para;</a></h3>
-<p>Pin the LHS matrix (<code>rep_a_q_d</code>, ~2MB) in L2 cache using <code>cudaAccessPolicyWindow</code> with <code>hitProp=Persisting</code>.</p>
+<p>用 <code>cudaAccessPolicyWindow</code> 且 <code>hitProp=Persisting</code>，把 LHS 矩阵（<code>rep_a_q_d</code>，约 2MB）钉在 L2 cache 中。</p>
 <div class="admonition success">
-<p class="admonition-title">Combined result</p>
-<p>Grid swap (+2.0%) + L2 persistence (+1.6%) = ~3.6% combined improvement. Both optimizations are expressed directly in <code>.co</code> source.</p>
+<p class="admonition-title">合并效果</p>
+<p>Grid swap（+2.0%）+ L2 persistence（+1.6%）≈ 合计 <strong>3.6%</strong>。两项优化都直接写在 <code>.co</code> 源码里。</p>
 </div>
 <hr />
-<h2 id="phase-5-peripheral-kernel-optimization-included-in-phase-4-milestone-1318-tflops">Phase 5: Peripheral Kernel Optimization (included in Phase 4 milestone · 13.18 TFLOPS)<a class="headerlink" href="#phase-5-peripheral-kernel-optimization-included-in-phase-4-milestone-1318-tflops" title="Permanent link">&para;</a></h2>
+<h2 id="phase-5-kernel-phase-4-1318-tflops">Phase 5：周边 kernel 优化（计入 Phase 4 里程碑 · 13.18 TFLOPS）<a class="headerlink" href="#phase-5-kernel-phase-4-1318-tflops" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Source:</strong> <code>05_cuda_optimized.co</code> — measured at <strong>13.18 TFLOPS</strong>. Load pipelining via <code>local</code> arrays, parallel prefix scan, and pipelined count loads.</p>
+<p><strong>来源：</strong> <a href="../assets/fused-moe-fp8/05_cuda_optimized.co"><code>05_cuda_optimized.co</code></a> — 测得 <strong>13.18 TFLOPS</strong>。通过 <code>local</code> 数组做 load pipelining、并行 prefix scan，以及对 count 的 load 做流水化。</p>
 </blockquote>
-<p>With the WGMMA kernel near its DRAM throughput ceiling, further GEMM improvements are nearly impossible. But the QSG and count_and_build kernels still have room. This is where the optimization shifts from the "main act" to the "supporting cast." Native Croqtile constructs — <code>local</code> arrays for register buffering, <code>foreach</code> for parallel scans, <code>call ATOMIC_ADD</code> for shared-memory atomics — handle most of the work.</p>
+<p>WGMMA kernel 已贴近 DRAM 吞吐天花板，GEMM 本身再难挖。但 QSG 与 count_and_build 仍有空间。优化重心从「主角」转向「配角」。原生鳄霸构造 —— 用 <code>local</code> 数组做寄存器缓冲、<code>foreach</code> 做并行扫描、<code>call ATOMIC_ADD</code> 做 shared-memory 原子 —— 承担了大部分工作。</p>
 <h3 id="qsg-load-pipelining-iter065-197">QSG Load Pipelining · iter065 · +1.97%<a class="headerlink" href="#qsg-load-pipelining-iter065-197" title="Permanent link">&para;</a></h3>
-<p>The QSG kernel's quantization loop loaded input data one K-block at a time, stalling on DRAM latency before each reduction. By separating the load phase from the reduction phase, we enable <strong>memory-level parallelism</strong> — all 16 DRAM loads can be in flight simultaneously:</p>
+<p>QSG kernel 的量化循环原先按 K-block 逐个 load 输入，每次归约前都在 DRAM 延迟上空转。把 load 阶段与归约阶段拆开，可启用 <strong>memory-level parallelism</strong> —— 16 次 DRAM load 可同时在路上：</p>
 <pre class="highlight"><code class="language-co">// Before (baseline QSG): serial load-reduce per K-block
 foreach block_k in [K_BLOCKS] {           // 16 iterations
     f32 value = input.at(token, kk);      // DRAM stall ~400 cycles!
@@ -4136,13 +4236,13 @@ foreach block_k in [K_BLOCKS] {
     // warp shuffle reduction for block max, then quantize...
 }</code></pre>
 <div class="admonition success">
-<p class="admonition-title">Result</p>
-<p>+1.97% from QSG load pipelining alone. The technique hides most of the ~400-cycle DRAM latency behind the 16 outstanding memory requests. In Croqtile, <code>local</code> arrays map to registers, and the compiler issues all loads before any reductions begin.</p>
+<p class="admonition-title">结果</p>
+<p>仅 QSG load pipelining 就带来 <strong>+1.97%</strong>。该技术把大部分约 400 cycle 的 DRAM 延迟藏在 16 个未决访存请求背后。在鳄霸中，<code>local</code> 数组映射到寄存器，编译器会在任何归约开始前先把 load 都发出去。</p>
 </div>
 <h3 id="parallel-slot-assignment-iter066-124">Parallel Slot Assignment · iter066 · +1.24%<a class="headerlink" href="#parallel-slot-assignment-iter066-124" title="Permanent link">&para;</a></h3>
-<p>The baseline QSG assigns expert slots with thread 0 doing 8 sequential <code>atomicAdd</code>s. Fix: threads 0–7 each handle one selection in parallel, reducing slot assignment from ~800 to ~100 cycles.</p>
+<p>基线 QSG 由 thread 0 顺序执行 8 次 <code>atomicAdd</code> 分配 expert slot。修复：thread 0–7 各处理一条选择，并行完成，把 slot 分配从约 800 cycle 降到约 100 cycle。</p>
 <h3 id="parallel-hillis-steele-prefix-scan-iter067-034">Parallel Hillis-Steele Prefix Scan · iter067 · +0.34%<a class="headerlink" href="#parallel-hillis-steele-prefix-scan-iter067-034" title="Permanent link">&para;</a></h3>
-<p>Replace the serial O(256) prefix sum in count_and_build (running on thread 0 alone) with a <strong>256-thread parallel inclusive scan</strong> using the Hillis-Steele algorithm in O(log 256) = 8 steps:</p>
+<p>把 count_and_build 里仅 thread 0 跑的串行 O(256) prefix sum，换成 <strong>256 线程并行 inclusive scan</strong>，用 Hillis-Steele 算法，O(log 256) = 8 步：</p>
 <pre class="highlight"><code class="language-co">// Before: single-threaded serial prefix sum (thread 0 does all 256 iterations)
 inthreads (tid == 0) {
   s32 prefix = 0;
@@ -4166,7 +4266,7 @@ foreach step in [8] {
 }
 // s_offsets now holds inclusive prefix sums; shift right by 1 for exclusive</code></pre>
 <h3 id="pipelined-topk_ids-loads-iter068-065">Pipelined topk_ids Loads · iter068 · +0.65%<a class="headerlink" href="#pipelined-topk_ids-loads-iter068-065" title="Permanent link">&para;</a></h3>
-<p>In count_and_build, batch all loads of topk_ids into <code>local</code> registers before doing the atomicAdds. Same principle as QSG load pipelining — exploit memory-level parallelism:</p>
+<p>在 count_and_build 中，先把 topk_ids 全部 batch load 到 <code>local</code> 寄存器，再执行 atomicAdds。原则与 QSG load pipelining 相同 —— 利用 memory-level parallelism：</p>
 <pre class="highlight"><code class="language-co">// Before: interleaved load + atomicAdd per iteration
 foreach i in [cdiv(M * TOPK, NUM_EXPERTS)] {
   s32 idx = tid + i * NUM_EXPERTS;
@@ -4186,18 +4286,18 @@ foreach i in [4] {
   call ATOMIC_ADD(&amp;s_counts.at(ids.at(i)), 1);
 }</code></pre>
 <h3 id="scale-load-overlap-iter069-041">Scale Load Overlap · iter069 · +0.41%<a class="headerlink" href="#scale-load-overlap-iter069-041" title="Permanent link">&para;</a></h3>
-<p>In the WGMMA K-loop, move <code>scale_a</code> and <code>scale_b</code> DRAM reads from after TMA wait to between DMA completion and TMA barrier wait, hiding scale load latency behind in-flight TMA transfer.</p>
+<p>在 WGMMA K 循环中，把 <code>scale_a</code>、<code>scale_b</code> 的 DRAM 读从 TMA wait 之后，挪到 DMA 完成与 TMA barrier wait 之间，用进行中的 TMA 传输掩盖 scale load 延迟。</p>
 <h3 id="qsg-thread-scaling-128-512-iter079080-170">QSG Thread Scaling: 128 → 512 · iter079–080 · +1.70%<a class="headerlink" href="#qsg-thread-scaling-128-512-iter079080-170" title="Permanent link">&para;</a></h3>
-<p>The original QSG kernel used 128 threads per block (1 warp group). At the Qwen3.5 problem size (128 blocks), this gives only 6.25% occupancy. Doubling to 256 then 512 threads progressively improved occupancy to 25%.</p>
+<p>原 QSG kernel 每 block 128 线程（1 个 warp group）。在 Qwen3.5 规模（128 blocks）下，occupancy 仅约 6.25%。先倍增到 256 再到 512，occupancy 逐步提升到 25%。</p>
 <h3 id="fused-memset-iter099-071">Fused Memset · iter099 · +0.71%<a class="headerlink" href="#fused-memset-iter099-071" title="Permanent link">&para;</a></h3>
-<p>Eliminate the <code>cudaMemsetAsync(output_d)</code> node from the CUDA Graph by having each QSG thread zero one output float at kernel start.</p>
-<h3 id="register-direct-scatter-epilogue-__cpp__-iter014-168">Register-Direct Scatter Epilogue (<code>__cpp__</code>) · iter014 · +16.8%<a class="headerlink" href="#register-direct-scatter-epilogue-__cpp__-iter014-168" title="Permanent link">&para;</a></h3>
-<p>Eliminates shared-memory bank conflicts on <code>mma.store</code> and the <code>sync.shared</code> barrier by reading MMA accumulator fragments directly from registers. Measured on the fully-optimized <code>05_cuda_optimized.co</code> kernel: <strong>13.18 TFLOPS</strong> with <code>__cpp__</code> scatter vs <strong>11.28 TFLOPS</strong> with native <code>mma.store</code> scatter (<strong>+16.8%</strong>). In earlier iterations the gain was &lt;1% because the K-loop dominated; once memory optimizations (grid swap, L2, QSG pipelining) reduced K-loop time, the epilogue became a significant bottleneck.</p>
-<p>The native Croqtile scatter (used in <code>04_host_micro.co</code>) goes through shared memory:</p>
+<p>让每个 QSG 线程在 kernel 开头清零一个输出 float，从而从 CUDA Graph 中去掉 <code>cudaMemsetAsync(output_d)</code> 节点。</p>
+<h3 id="register-direct-scatter-epilogue__cpp__-iter014-168">Register-Direct Scatter Epilogue（<code>__cpp__</code>）· iter014 · +16.8%<a class="headerlink" href="#register-direct-scatter-epilogue__cpp__-iter014-168" title="Permanent link">&para;</a></h3>
+<p>消除 <code>mma.store</code> 与 <code>sync.shared</code> barrier 上的 shared-memory bank conflict：直接从寄存器读 MMA accumulator fragment。在完整优化后的 <a href="../assets/fused-moe-fp8/05_cuda_optimized.co"><code>05_cuda_optimized.co</code></a> kernel 上测得：带 <code>__cpp__</code> scatter <strong>13.18 TFLOPS</strong>，原生 <code>mma.store</code> scatter <strong>11.28 TFLOPS</strong>（<strong>+16.8%</strong>）。更早迭代里增益 &lt;1%，因为 K 循环占主导；在 grid swap、L2、QSG pipelining 等内存侧优化缩短 K 循环时间后，epilogue 成为显著瓶颈。</p>
+<p>原生鳄霸 scatter（<a href="../assets/fused-moe-fp8/04_host_micro.co"><code>04_host_micro.co</code></a>）走 shared memory：</p>
 <pre class="highlight"><code>MMA accumulators → mma.store → shared memory → sync.shared → foreach scatter → atomicAdd</code></pre>
-<p>The <code>__cpp__</code> scatter (used in <code>05_cuda_optimized.co</code>) bypasses shared memory entirely by accessing the MMA accumulator fragment registers directly:</p>
+<p><code>__cpp__</code> scatter（<a href="../assets/fused-moe-fp8/05_cuda_optimized.co"><code>05_cuda_optimized.co</code></a>）通过直接访问 MMA accumulator fragment 寄存器，完全绕过 shared memory：</p>
 <pre class="highlight"><code>MMA accumulators → __cpp__ register read → atomicAdd (no shared memory, no sync)</code></pre>
-<p><strong>Before — native Croqtile (04_host_micro.co):</strong></p>
+<p><strong>之前 — 原生鳄霸（<a href="../assets/fused-moe-fp8/04_host_micro.co">04_host_micro.co</a>）：</strong></p>
 <pre class="highlight"><code class="language-co">// mma.store dumps accumulators to shared, then foreach scatters
 shared f32 [WARP_M, WARP_N] sOut;
 mma.store mc, sOut;
@@ -4213,7 +4313,7 @@ foreach local_row in [WARP_M] {
     call ATOMIC_ADD(&amp;scatter_output.at(token, block_n * WARP_N + t), val);
   }
 }</code></pre>
-<p><strong>After — <code>__cpp__</code> register-direct (05_cuda_optimized.co):</strong></p>
+<p><strong>之后 — <code>__cpp__</code> 寄存器直连（<a href="../assets/fused-moe-fp8/05_cuda_optimized.co">05_cuda_optimized.co</a>）：</strong></p>
 <pre class="highlight"><code class="language-co">// Access MMA accumulator fragments directly via __cpp__
 // mc[] is the compiler-generated accumulator array (64 floats per thread)
 __cpp__("  warpgroup_commit_batch();\n");
@@ -4240,282 +4340,362 @@ __cpp__("    };\n");
 __cpp__("    do_scatter_row(row0, 0);\n");
 __cpp__("    do_scatter_row(row1, 2);\n");
 __cpp__("  }\n");</code></pre>
-<p>This optimization requires understanding the WGMMA accumulator fragment layout: each thread in the 128-thread warp group owns 64 floats in <code>mc[]</code>, laid out as 16 columns × 4 fragment slots. The <code>__cpp__</code> code maps thread IDs to row/column positions and reads fragments at the correct offsets. This is inherently a <code>__cpp__</code> pattern — the fragment layout is hardware-specific and not expressible in native Croqtile.</p>
+<p>该优化需要理解 WGMMA accumulator fragment 布局：128-thread warp group 中每个线程在 <code>mc[]</code> 里拥有 64 个 float，排成 16 列 × 4 个 fragment slot。<code>__cpp__</code> 代码把 thread ID 映射到行列位置，并在正确偏移读取 fragment。这天然是 <code>__cpp__</code> 模式 —— fragment 布局与硬件强相关，无法用原生鳄霸表达。</p>
 <div class="admonition info">
-<p class="admonition-title">Why this matters</p>
-<p>The native version requires <code>64×128 × 4B = 32KB</code> shared memory for the output tile plus a <code>sync.shared</code> barrier. The register-direct version uses zero shared memory for the epilogue and no synchronization. At 3 CTAs per SM with 64KB shared memory budget, freeing 32KB gives more room for other shared buffers.</p>
+<p class="admonition-title">为何重要</p>
+<p>原生版本需要 <code>64×128 × 4B = 32KB</code> shared memory 存输出 tile，外加 <code>sync.shared</code> barrier。寄存器直连版本 epilogue 不占 shared memory、也无同步。在每 SM 3 个 CTA、64KB shared memory 预算下，腾出 32KB 可为其它 shared buffer 留余地。</p>
 </div>
 <div class="admonition success">
-<p class="admonition-title">Final result</p>
-<p><strong>13.18 TFLOPS</strong> — 1.63× over baseline. Measured from <code>05_cuda_optimized.co</code>, compiled with the Croqtile compiler, no CUDA post-processing required. Confirmed with 500-rep timing on H800 PCIe.</p>
+<p class="admonition-title">最终结果</p>
+<p><strong>13.18 TFLOPS</strong> — 相对基线 <strong>1.63×</strong>。由 <a href="../assets/fused-moe-fp8/05_cuda_optimized.co"><code>05_cuda_optimized.co</code></a> 测得，鳄霸编译器编译，无需 CUDA 后处理。H800 PCIe 上 500 次重复计时确认。</p>
 </div>
 <hr />
-<h2 id="what-didnt-work-a-wall-of-negative-results">What Didn't Work: A Wall of Negative Results<a class="headerlink" href="#what-didnt-work-a-wall-of-negative-results" title="Permanent link">&para;</a></h2>
-<p>Of the 99 iterations, <strong>59 were discarded</strong>. The hit rate dropped from ~50% in the first 20 iterations to ~10% in the last 60.</p>
-<h3 id="double-buffering-always-worse">Double-Buffering: Always Worse<a class="headerlink" href="#double-buffering-always-worse" title="Permanent link">&para;</a></h3>
+<h2 id="_5">无效尝试：一墙负结果<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>99 次迭代里，<strong>59 次被丢弃</strong>。命中率从前 20 次迭代的约 50%，掉到最后 60 次的约 10%。</p>
+<h3 id="double-buffering">Double-Buffering：总是更差<a class="headerlink" href="#double-buffering" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Attempt</th>
+<th>尝试</th>
 <th>Δ</th>
-<th>Why It Failed</th>
+<th>失败原因</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>K-loop double-buffer (iter032)</td>
 <td>-6.8%</td>
-<td>Register pressure 168→186, dropping 3→2 CTAs/SM. Occupancy loss &gt;&gt; overlap gain.</td>
+<td>Register pressure 168→186，3→2 CTAs/SM。Occupancy 损失 &gt;&gt; 重叠收益。</td>
 </tr>
 <tr>
 <td>TMA double-buf sB (iter071)</td>
 <td>-9.3%</td>
-<td>5 CTAs×40KB SMEM leaves only 28KB L1 (vs 108KB). Devastating L1 hit rate for cp.async.</td>
+<td>5 CTAs×40KB SMEM 仅剩 28KB L1（对比 108KB）。对 cp.async 的 L1 hit rate 打击巨大。</td>
 </tr>
 <tr>
 <td>sB-only double-buf (iter054)</td>
 <td>-2.9%</td>
-<td>Same L1 pressure mechanism.</td>
+<td>同类 L1 压力机制。</td>
 </tr>
 </tbody>
 </table>
-<h3 id="occupancy-tricks-diminishing-returns">Occupancy Tricks: Diminishing Returns<a class="headerlink" href="#occupancy-tricks-diminishing-returns" title="Permanent link">&para;</a></h3>
+<h3 id="occupancy">Occupancy 技巧：收益递减<a class="headerlink" href="#occupancy" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Attempt</th>
+<th>尝试</th>
 <th>Δ</th>
-<th>Why It Failed</th>
+<th>失败原因</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>maxrregcount=128 (iter004b, iter028)</td>
 <td>-4.4%</td>
-<td>Register spilling to local memory hurts more than occupancy helps.</td>
+<td>Register spill 到 local memory 的伤害大于 occupancy 收益。</td>
 </tr>
 <tr>
 <td>__launch_bounds__(128,4) (iter075)</td>
 <td>-0.7%</td>
-<td>Reduced occupancy (5→4 CTAs) hurts DRAM throughput.</td>
+<td>Occupancy 降低（5→4 CTAs）损害 DRAM 吞吐。</td>
 </tr>
 <tr>
 <td>WGMMA 64×64 tiles (iter057, iter094)</td>
 <td>-4.0%</td>
-<td>Doubled CTA count and TMA operations outweigh occupancy benefit.</td>
+<td>CTA 数量与 TMA 操作翻倍，盖过 occupancy 好处。</td>
 </tr>
 </tbody>
 </table>
-<h3 id="warp-specialization-persistence-too-much-overhead">Warp Specialization &amp; Persistence: Too Much Overhead<a class="headerlink" href="#warp-specialization-persistence-too-much-overhead" title="Permanent link">&para;</a></h3>
+<h3 id="warp-specialization-persistence">Warp Specialization 与 Persistence：开销过大<a class="headerlink" href="#warp-specialization-persistence" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Attempt</th>
+<th>尝试</th>
 <th>Δ</th>
-<th>Why It Failed</th>
+<th>失败原因</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Warp-spec 1p1c (iter005)</td>
 <td>-12%</td>
-<td>Producer overhead too high for small K-loop (16 iters).</td>
+<td>Producer 开销相对小 K 循环（16 次迭代）过高。</td>
 </tr>
 <tr>
 <td>Persistent kernel (iter047, iter084)</td>
 <td>-1.7%</td>
-<td>Atomic work-stealing + __syncthreads per work item &gt;&gt; tail wave savings.</td>
+<td>每 work item 的 atomic work-stealing + __syncthreads &gt;&gt; 尾部 wave 节省。</td>
 </tr>
 <tr>
 <td>Grid-level QSG+count fusion (iter038)</td>
 <td>-6.2%</td>
-<td>Grid-level atomic spin-wait overhead far exceeds eliminated kernel launch cost.</td>
+<td>Grid-level atomic 自旋等待开销远大于省下的 kernel launch 成本。</td>
 </tr>
 </tbody>
 </table>
-<h3 id="the-longest-plateau-iter052065">The Longest Plateau: iter052–065<a class="headerlink" href="#the-longest-plateau-iter052065" title="Permanent link">&para;</a></h3>
-<p>After L2 persistence (iter052), I spent <strong>13 consecutive iterations</strong> (iter053–064) trying to improve the WGMMA kernel further. Every single one was flat or negative:</p>
+<h3 id="iter052065">最长平台期：iter052–065<a class="headerlink" href="#iter052065" title="Permanent link">&para;</a></h3>
+<p>L2 persistence（iter052）之后，我连续 <strong>13 次迭代</strong>（iter053–064）试图继续推 WGMMA kernel，<strong>全部</strong>持平或回退：</p>
 <ul>
-<li>Scale caching across K-iterations (+0.15%, noise)</li>
-<li>K-loop branch normalization (+0.17%, noise)</li>
-<li>Hoisted WGMMA descriptors (+0.11%, noise)</li>
-<li>K-loop #pragma unroll 2 (+0.15%, noise)</li>
-<li>PTX mbarrier.try_wait spin-wait (+0.07%, noise)</li>
-<li>RED.relaxed epilogue (-0.05%, noise)</li>
-<li>Barrier count reduction 128→1 (-0.17%, noise)</li>
-<li>Combined micro-opts (+0.26%, noise)</li>
-<li>Software-pipelined TMA (+0.12%, noise)</li>
+<li>Scale caching across K-iterations（+0.15%，噪声）</li>
+<li>K-loop branch normalization（+0.17%，噪声）</li>
+<li>Hoisted WGMMA descriptors（+0.11%，噪声）</li>
+<li>K-loop #pragma unroll 2（+0.15%，噪声）</li>
+<li>PTX mbarrier.try_wait spin-wait（+0.07%，噪声）</li>
+<li>RED.relaxed epilogue（-0.05%，噪声）</li>
+<li>Barrier count reduction 128→1（-0.17%，噪声）</li>
+<li>Combined micro-opts（+0.26%，噪声）</li>
+<li>Software-pipelined TMA（+0.12%，噪声）</li>
 </ul>
-<p>I used 3×500-rep A/B testing (p &lt; 0.05) for every single attempt.</p>
+<p>每次尝试都用 3×500-rep A/B 测试（p &lt; 0.05）。</p>
 <div class="admonition failure">
-<p class="admonition-title">The hardest lesson</p>
-<p>The WGMMA kernel was at its DRAM throughput ceiling (85%). No amount of instruction scheduling, barrier optimization, or microarchitectural tricks could squeeze more bandwidth out of the memory subsystem. The <em>only</em> way forward was to optimize the <em>other</em> kernels — which is exactly what Phase 5 did.</p>
+<p class="admonition-title">最难的一课</p>
+<p>WGMMA kernel 已顶在 DRAM 吞吐天花板（85%）。无论指令调度、barrier 微调还是微架构小花招，都无法再从内存子系统榨出更多带宽。<em>唯一</em>出路是优化<em>其它</em> kernel —— Phase 5 做的正是这件事。</p>
 </div>
 <hr />
-<h2 id="what-croqtile-can-express">What Croqtile Can Express<a class="headerlink" href="#what-croqtile-can-express" title="Permanent link">&para;</a></h2>
-<p>Every optimization in this post is expressed in <code>.co</code> source. But the code uses a mix of <strong>native Croqtile primitives</strong> and <strong><code>__cpp__</code> escape-hatch blocks</strong>:</p>
+<h2 id="_6">鳄霸能表达什么<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>本文每项优化都写在 <code>.co</code> 源码里。但代码混合了<strong>原生鳄霸原语</strong>与 <strong><code>__cpp__</code> 逃生舱块</strong>：</p>
 <table>
 <thead>
 <tr>
-<th>Optimization</th>
-<th>Impact</th>
-<th>How It's Expressed</th>
+<th>优化</th>
+<th>影响</th>
+<th>表达方式</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Kernel fusion (scatter, QSG, count+build)</td>
+<td>Kernel fusion（scatter、QSG、count+build）</td>
 <td>+48%</td>
-<td><strong>NATIVE</strong> — Reorganize kernel functions and merge data flows</td>
+<td><strong>NATIVE</strong> — 重组 kernel 函数、合并数据流</td>
 </tr>
 <tr>
-<td><code>parallel.async</code> (remove cudaDeviceSynchronize)</td>
+<td><code>parallel.async</code>（去掉 cudaDeviceSynchronize）</td>
 <td>+4.7%</td>
-<td><strong>NATIVE</strong> — Single keyword change: <code>parallel.async</code></td>
+<td><strong>NATIVE</strong> — 单关键字：<code>parallel.async</code></td>
 </tr>
 <tr>
 <td>CUDA Graphs</td>
 <td>+2.2%</td>
-<td><strong>NATIVE</strong> — CUDA API calls in host <code>main()</code></td>
+<td><strong>NATIVE</strong> — host <code>main()</code> 里的 CUDA API 调用</td>
 </tr>
 <tr>
-<td>Compiler flags (<code>--use_fast_math</code>, <code>--hoist-*</code>)</td>
+<td>Compiler flags（<code>--use_fast_math</code>、<code>--hoist-*</code>）</td>
 <td>+5.1%</td>
-<td><strong>NATIVE</strong> — Compiler command-line flags</td>
+<td><strong>NATIVE</strong> — 编译器命令行参数</td>
 </tr>
 <tr>
-<td>Batched quantization, vectorized scatter</td>
+<td>Batched quantization、vectorized scatter</td>
 <td>+1.9%</td>
-<td><strong>NATIVE</strong> — <code>local</code> arrays, <code>foreach</code> restructuring</td>
+<td><strong>NATIVE</strong> — <code>local</code> 数组、<code>foreach</code> 重构</td>
 </tr>
 <tr>
 <td>Grid swap</td>
 <td>+2.0%</td>
-<td><strong>NATIVE</strong> — Swap <code>parallel</code> decomposition order</td>
+<td><strong>NATIVE</strong> — 交换 <code>parallel</code> 分解顺序</td>
 </tr>
 <tr>
 <td>Parallel 8-thread slot assignment</td>
 <td>+1.3%</td>
-<td><strong>NATIVE</strong> — <code>inthreads (lane &lt; 8)</code> parallel loop</td>
+<td><strong>NATIVE</strong> — <code>inthreads (lane &lt; 8)</code> 并行循环</td>
 </tr>
 <tr>
 <td>QSG load pipelining</td>
 <td>+2.0%</td>
-<td><strong>NATIVE</strong> — <code>local</code> arrays for register buffering, <code>foreach</code> for batched loads</td>
+<td><strong>NATIVE</strong> — <code>local</code> 数组寄存器缓冲、<code>foreach</code> 批量 load</td>
 </tr>
 <tr>
 <td>Parallel Hillis-Steele prefix scan</td>
 <td>+0.3%</td>
-<td><strong>NATIVE</strong> — <code>foreach</code> + shared memory scan with <code>sync.shared</code> per step</td>
+<td><strong>NATIVE</strong> — <code>foreach</code> + shared memory scan，每步 <code>sync.shared</code></td>
 </tr>
 <tr>
 <td>Pipelined topk_ids loads</td>
 <td>+0.7%</td>
-<td><strong>NATIVE</strong> — <code>local</code> arrays to batch loads before atomicAdds</td>
+<td><strong>NATIVE</strong> — <code>local</code> 数组在 atomicAdds 前批量 load</td>
 </tr>
 <tr>
 <td>L2 persistence</td>
 <td>+1.6%</td>
-<td><code>__cpp__</code> block in host <code>main()</code> for <code>cudaAccessPolicyWindow</code></td>
+<td>host <code>main()</code> 中 <code>__cpp__</code> 块调用 <code>cudaAccessPolicyWindow</code></td>
 </tr>
 <tr>
-<td>Scatter epilogue (register-direct)</td>
+<td>Scatter epilogue（register-direct）</td>
 <td>part of fusion</td>
-<td><code>__cpp__</code> block reaching into MMA accumulator registers</td>
+<td><code>__cpp__</code> 块直接触及 MMA accumulator 寄存器</td>
 </tr>
 <tr>
 <td><code>uint4</code> vectorized FP8 copy</td>
 <td>+0.8%</td>
-<td><code>__cpp__</code> block — no Croqtile type for 128-bit SIMD</td>
+<td><code>__cpp__</code> 块 — 鳄霸无 128-bit SIMD 类型</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition info">
-<p class="admonition-title">The role of <code>__cpp__</code></p>
-<p>The escape hatch is a deliberate language feature, not a workaround. It lets you exploit GPU-specific patterns (like <code>__ldg</code> read-only cache hints or warp-level <code>__shfl_xor_sync</code>) without waiting for the compiler to add native support. The key: everything stays in the <code>.co</code> file. You compile it once with the Croqtile compiler, and the generated CUDA includes your <code>__cpp__</code> code verbatim.</p>
+<p class="admonition-title"><code>__cpp__</code> 的角色</p>
+<p>逃生舱是刻意的语言特性，不是凑合方案。它让你能用 GPU 专用写法（如 <code>__ldg</code> 只读 cache hint、warp 级 <code>__shfl_xor_sync</code>）而无需等编译器加原生支持。关键：一切仍在 <code>.co</code> 文件里。用鳄霸编译器编译一次，生成的 CUDA 会原样包含你的 <code>__cpp__</code> 代码。</p>
 </div>
-<h3 id="native-vs-__cpp__-the-trade-off">Native vs <code>__cpp__</code>: The trade-off<a class="headerlink" href="#native-vs-__cpp__-the-trade-off" title="Permanent link">&para;</a></h3>
-<p>Native Croqtile is preferable because the compiler can reason about it: infer types, allocate shared memory, manage barriers, and optimize data movement. <code>__cpp__</code> blocks are opaque to the compiler — it passes them through unchanged, which means:</p>
+<h3 id="vs-__cpp__">原生 vs <code>__cpp__</code>：取舍<a class="headerlink" href="#vs-__cpp__" title="Permanent link">&para;</a></h3>
+<p>优先用原生鳄霸，因为编译器能分析：推断类型、分配 shared memory、管理 barrier、优化数据搬运。<code>__cpp__</code> 块对编译器不透明 —— 原样透传，意味着：</p>
 <ul>
-<li>You must manage variable names manually (Croqtile-generated names like <code>__choreo_vtid_x</code> for <code>threadIdx.x</code>)</li>
-<li>Shared memory liveness analysis can be affected — if <code>__cpp__</code> is the only user of a shared variable, the compiler may alias it with another</li>
-<li>No automatic bounds checking or type inference inside <code>__cpp__</code> blocks</li>
+<li>变量名需手工对齐（鳄霸生成名如 <code>threadIdx.x</code> 对应的 <code>__choreo_vtid_x</code>）</li>
+<li>Shared memory 存活期分析可能受影响 —— 若只有 <code>__cpp__</code> 使用某 shared 变量，编译器可能与其它变量别名复用</li>
+<li><code>__cpp__</code> 块内无自动边界检查或类型推断</li>
 </ul>
-<p>The goal is to minimize <code>__cpp__</code> usage over time as the compiler grows. Already, constructs like <code>parallel.async</code>, <code>local</code> arrays, <code>yield</code>, and <code>mma.store</code> have replaced patterns that once required <code>__cpp__</code> or CUDA post-processing.</p>
+<p>目标是随编译器演进逐步减少 <code>__cpp__</code>。已有 <code>parallel.async</code>、<code>local</code> 数组、<code>yield</code>、<code>mma.store</code> 等构造，替代了过去必须 <code>__cpp__</code> 或 CUDA 后处理的写法。</p>
 <hr />
-<h2 id="future-compiler-improvements">Future Compiler Improvements<a class="headerlink" href="#future-compiler-improvements" title="Permanent link">&para;</a></h2>
-<p>Two optimizations remain that <strong>cannot be expressed from <code>.co</code> source</strong> and require changes to the Croqtile compiler's code generation. Together, they represent an estimated +2.9% additional performance, which would push the result from 13.18 to ~13.5+ TFLOPS.</p>
-<h3 id="rescale-accumulator-estimated-267">Rescale-Accumulator (estimated +2.67%)<a class="headerlink" href="#rescale-accumulator-estimated-267" title="Permanent link">&para;</a></h3>
-<p>This is the most significant remaining compiler improvement. The WGMMA kernel currently uses <strong>168 registers per thread</strong>, limiting occupancy to 3 CTAs per SM (18.75%). The problem is in how <code>mma.scale</code> is compiled:</p>
-<p>FP8 WGMMA accumulates in FP32, but each K-block has its own quantization scale. The Croqtile code uses <code>mma.scale mc, sc_a, sc_b</code>, which the compiler implements as a <strong>dual accumulator pattern</strong>: 64 floats for the raw WGMMA result and 64 floats for the scaled running sum. That's 128 registers just for accumulators, leaving only 40 for addresses, indices, and temporaries.</p>
-<p>The fix: <strong>rescale the single accumulator in-place</strong> before each WGMMA, eliminating the second accumulator entirely. This would drop registers from 168 to ~96, increasing occupancy from 3 to 5 CTAs/SM.</p>
+<h2 id="_7">未来编译器改进<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>仍有两项优化<strong>无法从 <code>.co</code> 源码表达</strong>，需要修改鳄霸编译器的代码生成。二者合计约可带来 <strong>+2.9%</strong> 的额外性能，有望把结果从 13.18 推到约 <strong>13.5+ TFLOPS</strong>。</p>
+<h3 id="rescale-accumulator-267">Rescale-Accumulator（估计 +2.67%）<a class="headerlink" href="#rescale-accumulator-267" title="Permanent link">&para;</a></h3>
+<p>这是当前最显著的编译器侧改进空间。WGMMA kernel 目前每线程使用 <strong>168 个寄存器</strong>，占用率被限制为每 SM <strong>3 个 CTA</strong>（18.75%）。问题出在 <code>mma.scale</code> 的编译方式上：</p>
+<p>FP8 WGMMA 在 FP32 中累加，但每个 K-block 各有自己的量化 scale。鳄霸代码使用 <code>mma.scale mc, sc_a, sc_b</code>，编译器将其实现为<strong>双累加器模式</strong>：64 个 float 存原始 WGMMA 结果，另 64 个 float 存带 scale 的运行累加和。仅累加器就占 <strong>128 个寄存器</strong>，只剩约 40 个给地址、索引和临时变量。</p>
+<p>修复思路：在每次 WGMMA <strong>之前对单一累加器原地 rescale</strong>，彻底去掉第二个累加器。这样寄存器可从 168 降到约 96，占用率可从每 SM 3 个 CTA 提升到 <strong>5 个</strong>。</p>
 <blockquote>
-<p>After K-block <em>k</em>, the accumulator holds ∑(i≤k) AᵢBᵢ × saᵢ×sbᵢ. Before the next WGMMA, multiply by sa_k*sb_k / (sa_{k+1}*sb_{k+1}) to rescale into the new block's units. At the end, multiply by the final scale.</p>
+<p>在完成第 <em>k</em> 个 K-block 后，累加器保存的是 ∑(i≤k) AᵢBᵢ × saᵢ×sbᵢ。在下一次 WGMMA 之前，乘以 sa_k*sb_k / (sa_{k+1}*sb_{k+1})，将数值 rescale 到新 block 的尺度单位。最后在末尾再乘以最终 scale。</p>
 </blockquote>
 <div class="admonition warning">
-<p class="admonition-title">Why this requires a compiler change</p>
-<p>The <code>mma.scale</code> primitive's code generation is hardcoded to the dual-accumulator pattern inside <code>cute_codegen.cpp</code>. A <code>__cpp__</code> block cannot replace this because the accumulator variable names and layout are generated by the compiler. The fix requires modifying the <code>mma.scale</code> codegen to emit an in-place rescale loop instead of a second accumulator array.</p>
+<p class="admonition-title">为何必须改编译器</p>
+<p><code>mma.scale</code> 原语在 <code>cute_codegen.cpp</code> 中的代码生成被硬编码为双累加器模式。无法用 <code>__cpp__</code> 块替代，因为累加器变量名与布局由编译器生成。修复需要修改 <code>mma.scale</code> 的 codegen，改为发出原地 rescale 循环，而不是第二个累加器数组。</p>
 </div>
-<h3 id="__restrict__-qualifiers-estimated-021"><code>__restrict__</code> Qualifiers (estimated +0.21%)<a class="headerlink" href="#__restrict__-qualifiers-estimated-021" title="Permanent link">&para;</a></h3>
-<p>The compiler currently emits plain <code>T*</code> pointer parameters for kernel functions. Adding <code>__restrict__</code> qualifiers would let <code>nvcc</code> eliminate redundant loads by guaranteeing no pointer aliasing. This is a straightforward codegen change in the <code>DeviceParamTypeStringify</code> function.</p>
+<h3 id="__restrict__-021"><code>__restrict__</code> 限定符（估计 +0.21%）<a class="headerlink" href="#__restrict__-021" title="Permanent link">&para;</a></h3>
+<p>编译器目前为 kernel 函数发出普通的 <code>T*</code> 指针参数。加上 <code>__restrict__</code> 可让 <code>nvcc</code> 在假定无指针别名的情况下消除冗余 load。这是在 <code>DeviceParamTypeStringify</code> 中较直接的 codegen 改动。</p>
 <hr />
-<h2 id="comparison-with-vllm">Comparison with vLLM<a class="headerlink" href="#comparison-with-vllm" title="Permanent link">&para;</a></h2>
-<p>For context, here's how the Croqtile kernel (compiled from <code>.co</code> source) compares to <a href="https://github.com/vllm-project/vllm">vLLM</a>'s fused MoE implementation on the same hardware (H800 PCIe, SM90) with the same Qwen3.5 dimensions:</p>
+<h2 id="vllm">与 vLLM 的对比<a class="headerlink" href="#vllm" title="Permanent link">&para;</a></h2>
+<p>为便于理解这些数字，我们在相同硬件（H800 PCIe、SM90）、相同 Qwen3.5 维度（M=128, N=512, K=2048，256 个 expert、top-8）、以及相同流水线——<strong>单个 FP8 grouped GEMM</strong>，含 routing、量化与 scatter——下，直接与 <a href="https://github.com/vllm-project/vllm">vLLM</a> 的 Triton <code>fused_moe_kernel</code> 对比。</p>
+<h3 id="_8">同场竞技结果<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
 <th>Metric</th>
-<th>Croqtile (ours)</th>
-<th>vLLM</th>
+<th style="text-align: center;">鳄霸</th>
+<th style="text-align: center;">vLLM (default)</th>
+<th style="text-align: center;">vLLM (tuned)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Raw latency</td>
-<td><strong>0.164 ms</strong></td>
-<td>0.867 ms</td>
+<td>GEMM-only latency</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">0.216 ms</td>
+<td style="text-align: center;">0.172 ms</td>
 </tr>
 <tr>
-<td>Latency speedup</td>
-<td><strong>5.29×</strong></td>
-<td>1.00×</td>
+<td>End-to-end latency</td>
+<td style="text-align: center;"><strong>0.164 ms</strong></td>
+<td style="text-align: center;">0.295 ms</td>
+<td style="text-align: center;">0.252 ms</td>
 </tr>
 <tr>
-<td>Workload</td>
-<td>1 FP8 GEMM</td>
-<td>2 BF16 GEMMs + SiLU (full MLP)</td>
+<td>End-to-end TFLOPS</td>
+<td style="text-align: center;"><strong>13.18</strong></td>
+<td style="text-align: center;">7.29</td>
+<td style="text-align: center;">8.54</td>
 </tr>
 <tr>
-<td>Total FLOPs</td>
-<td>2.15 GFLOP</td>
-<td>6.44 GFLOP</td>
-</tr>
-<tr>
-<td>Per-GEMM TFLOPS</td>
-<td><strong>13.18</strong></td>
-<td>2.48</td>
+<td><strong>鳄霸加速比</strong></td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;"><strong>1.81×</strong></td>
+<td style="text-align: center;"><strong>1.54×</strong></td>
 </tr>
 </tbody>
 </table>
+<p>两侧完成相同工作：route（softmax + top-k）→ 量化（BF16→FP8）→ align/sort → grouped GEMM → scatter/reduce，FLOPs 公式同为 <code>2 × (M × topk) × N × K = 2.147 GFLOP</code>。</p>
+<p>vLLM 未随发行附带该 shape（E=256、H800）的 tuned Triton 配置，因此「default」列使用其内置回退（<code>BLOCK_SIZE_M=64</code>）。「tuned」列使用 864 点网格搜索得到的最优配置（<code>BLOCK_SIZE_M=16, N=64, K=128, GROUP_SIZE_M=4, num_warps=4, num_stages=3</code>），将 GEMM-only 延迟降低约 20%。即便使用该 tuned 配置，鳄霸整条端到端流水线（0.164 ms）仍快于 vLLM 的 <strong>仅 GEMM</strong> kernel（0.172 ms）。</p>
+<p>差距来自两方面：（1）鳄霸经手工调优的 WGMMA kernel 与 TMA pipeline 对该 shape 本质上快于 vLLM 的 Triton 生成 GEMM；（2）融合后的流水线阶段（routing、量化、scatter）与 GEMM 的访存重叠，几乎不增加额外延迟——而 vLLM 中每个阶段都是独立 kernel launch，各自带有开销。</p>
+<h3 id="kernel-fusion">原因：kernel fusion 消除流水线开销<a class="headerlink" href="#kernel-fusion" title="Permanent link">&para;</a></h3>
+<p>尽管名称如此，vLLM 的 <code>fused_experts</code> 实际是一个 Python 编排器，为每个阶段分别启动<strong>独立的 GPU kernel</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>Pipeline stage</th>
+<th>vLLM</th>
+<th>鳄霸</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Router + top-k</td>
+<td><code>fused_topk</code>（1 个 kernel）</td>
+<td>编译进 <code>fused_moe_route</code></td>
+</tr>
+<tr>
+<td>Align / sort / pad</td>
+<td><code>moe_align_block_size</code>（1 个 CUDA kernel）</td>
+<td>编译进 <code>fused_moe_count_and_build</code></td>
+</tr>
+<tr>
+<td>Input quantize BF16→FP8</td>
+<td><code>moe_kernel_quantize_input</code>（约 1 个 kernel）</td>
+<td>编译进 <code>fused_moe_quant_sort_gather</code></td>
+</tr>
+<tr>
+<td>Grouped GEMM</td>
+<td><code>fused_moe_kernel</code>（1 个 Triton kernel）</td>
+<td>编译进 <code>fused_moe_grouped_wgmma_fp8</code></td>
+</tr>
+<tr>
+<td>Scatter / reduce</td>
+<td><code>moe_sum</code>（1 个 kernel）</td>
+<td>编译进 <code>fused_moe_grouped_wgmma_fp8</code> epilogue</td>
+</tr>
+</tbody>
+</table>
+<p>加速来自两个彼此独立的因素：</p>
+<p><strong>因素 1：更快的 GEMM。</strong> 即便只比 GEMM-only，鳄霸手工调优的 WGMMA kernel 仍优于 vLLM 的 Triton 生成 kernel（tuned 后 vLLM 的 GEMM-only 为 0.172 ms，而鳄霸整条端到端流水线为 0.164 ms）。这是 Hopper 原生 TMA pipeline 与寄存器级调优带来的代码质量优势，Triton 自动调参尚未触及这一水平。</p>
+<p><strong>因素 2：融合的流水线阶段几乎零额外开销。</strong> scatter/reduce 被编译进 GEMM epilogue（无额外 kernel）；其余 GEMM 前阶段（route、count+build、quant+sort+gather）使用 <code>parallel.async</code> 启动，彼此以及与 GEMM 的访存可重叠。在 vLLM 中，5 个阶段各为独立 kernel，阶段之间伴随 <code>cudaDeviceSynchronize</code>、Python 调度以及 global memory 写/读——在 M=128 时，这种 per-kernel 开销在总延迟中占主导。</p>
 <div class="admonition info">
-<p class="admonition-title">Apples-to-oranges caveat</p>
-<p>vLLM's <code>fused_experts</code> performs a full 2-layer MLP (gate_up projection + SiLU activation + down projection), which involves roughly 3× the FLOPs of our single grouped GEMM. The raw latency comparison isn't perfectly fair. However, the per-GEMM TFLOPS (normalizing for total FLOP count) shows Croqtile achieving <strong>5.28× higher throughput efficiency</strong> — from a <code>.co</code> source file that can be compiled in one step.</p>
+<p class="admonition-title">公平性说明</p>
+<p>vLLM 未随发行附带该 shape（H800 上 E=256）的 tuned 配置。我们运行了 864 组配置的网格搜索以寻找最优 Triton 配置——GEMM-only 提升约 20%，但端到端差距仍有 1.54×，因为流水线开销是结构性的，与 GEMM 调参无关。基准脚本：<a href="../assets/fused-moe-fp8/bench_vllm_single_gemm.py"><code>bench_vllm_single_gemm.py</code></a>。</p>
 </div>
+<h3 id="vllm-mlp-workload">参考：vLLM 完整 MLP（不同 workload）<a class="headerlink" href="#vllm-mlp-workload" title="Permanent link">&para;</a></h3>
+<p>为完整起见，vLLM 生产路径上的 <code>fused_experts</code> 计算完整 2 层 MLP（gate+up 投影 + SiLU + down 投影，FLOPs 约为 <strong>3×</strong>）：</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th style="text-align: center;">鳄霸</th>
+<th style="text-align: center;">vLLM full MLP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Latency</td>
+<td style="text-align: center;"><strong>0.164 ms</strong></td>
+<td style="text-align: center;">0.867 ms</td>
+</tr>
+<tr>
+<td>Workload</td>
+<td style="text-align: center;">1 个 FP8 GEMM</td>
+<td style="text-align: center;">2 个 BF16 GEMM + SiLU</td>
+</tr>
+<tr>
+<td>Total FLOPs</td>
+<td style="text-align: center;">2.15 GFLOP</td>
+<td style="text-align: center;">6.44 GFLOP</td>
+</tr>
+<tr>
+<td>Per-GEMM TFLOPS</td>
+<td style="text-align: center;"><strong>13.18</strong></td>
+<td style="text-align: center;">2.48</td>
+</tr>
+</tbody>
+</table>
+<p>该对比并非严格同类比较，因为 vLLM 侧计算量约为 3×，但 per-GEMM 效率（13.18 对 2.48 TFLOPS）仍能反映多次独立 kernel launch 导致流水线碎片化带来的影响。</p>
 <hr />
-<h2 id="conclusion-lessons-learned">Conclusion &amp; Lessons Learned<a class="headerlink" href="#conclusion-lessons-learned" title="Permanent link">&para;</a></h2>
-<p>Here's the summary across all 99 iterations: <strong>40 were kept, 59 were discarded.</strong> The hit rate dropped from ~50% in the first 20 iterations to ~10% in the last 60.</p>
-<p><strong>Key takeaways:</strong></p>
-<p><strong>1. Kernel fusion is the highest-leverage optimization for small-batch MoE.</strong> Going from 7 kernels to 4 (with scatter fused into WGMMA) yielded 1.17× alone. In Croqtile, this is straightforward: restructure <code>__co__</code> functions and their data flows. At small batch sizes, kernel launch overhead and intermediate memory traffic dominate.</p>
-<p><strong>2. The CPU-GPU boundary matters more than you think.</strong> Croqtile's <code>parallel.async</code> keyword gave 4.7% alone by preventing the compiler from emitting <code>cudaDeviceSynchronize</code> after each kernel launch. CUDA Graphs added another 2.2%. If your kernels are under 100µs each, host-side overhead is a major factor.</p>
-<p><strong>3. <code>__cpp__</code> is a feature, not a workaround.</strong> The escape hatch lets you exploit GPU-specific patterns (like <code>__ldg</code> load pipelining, <code>cudaAccessPolicyWindow</code>, or warp-level reductions) while staying in the <code>.co</code> file. Over time, successful <code>__cpp__</code> patterns get promoted to native primitives (as happened with <code>parallel.async</code>, <code>local</code> arrays, and <code>yield</code>).</p>
-<p><strong>4. When the main kernel hits its ceiling, optimize everything else.</strong> The last ~10% came from the QSG and count_and_build kernels — individually 5–10× shorter than WGMMA but cumulatively significant. Profile early.</p>
-<p><strong>5. Double-buffering isn't always a win.</strong> Three separate attempts at double-buffering all made performance worse, due to increased register pressure, increased SMEM usage (reducing L1 cache), or added barrier complexity.</p>
-<p><strong>6. Most ideas don't work.</strong> 59 of 99 iterations were discarded. You need rigorous A/B testing (500+ repetitions) to distinguish real 0.5% gains from measurement noise.</p>
-<p><strong>7. There's still room to grow.</strong> The <a href="#rescale-accumulator-estimated-267">rescale-accumulator</a> optimization (168→96 registers, 3→5 CTAs/SM) would add an estimated +2.67% but requires a compiler codegen change. As the Croqtile compiler evolves, more patterns will become native, and the remaining <code>__cpp__</code> blocks will shrink.</p>
+<h2 id="_9">结论与经验总结<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>全部 99 轮迭代的概览如下：<strong>保留 40 轮，废弃 59 轮。</strong> 命中率从前 20 轮的约 50% 降到后 60 轮的约 10%。</p>
+<p><strong>要点：</strong></p>
+<p><strong>1. Kernel fusion 是小 batch MoE 上杠杆最高的优化。</strong> 从 7 个 kernel 减到 4 个（scatter 融入 WGMMA）单独带来约 1.17×。在鳄霸中这很直接：重组 <code>__co__</code> 函数及其数据流。小 batch 下，kernel launch 开销与中间内存流量占主导。</p>
+<p><strong>2. CPU-GPU 边界比你想象的更重要。</strong> 鳄霸的 <code>parallel.async</code> 关键字单独带来 4.7%，因其阻止编译器在每次 kernel launch 后发出 <code>cudaDeviceSynchronize</code>。CUDA Graphs 又带来约 2.2%。若各 kernel 都在 100µs 以下，host 侧开销是重要因素。</p>
+<p><strong>3. <code>__cpp__</code> 是特性，不是权宜之计。</strong> 该逃生舱让你能在 <code>.co</code> 文件内利用 GPU 专用模式（如 <code>__ldg</code> load 流水、<code>cudaAccessPolicyWindow</code>、warp 级归约等）。随着时间推移，成功的 <code>__cpp__</code> 模式会升格为原生原语（如已发生的 <code>parallel.async</code>、<code>local</code> 数组与 <code>yield</code>）。</p>
+<p><strong>4. 主 kernel 触顶后，要优化其余一切。</strong> 最后约 10% 来自 QSG 与 count_and_build kernel——单独看比 WGMMA 短 5–10×，但累加起来很可观。尽早 profiling。</p>
+<p><strong>5. Double-buffering 不总是正收益。</strong> 三次独立的 double-buffering 尝试均使性能变差，原因包括寄存器压力上升、SMEM 占用增加（压缩 L1 cache）、或 barrier 复杂度增加。</p>
+<p><strong>6. 多数想法行不通。</strong> 99 轮中有 59 轮被废弃。需要严格的 A/B 测试（500+ 次重复）才能把真实的 0.5% 提升与测量噪声区分开。</p>
+<p><strong>7. 仍有上升空间。</strong> <a href="#rescale-accumulator-estimated-267">rescale-accumulator</a> 优化（168→96 寄存器，3→5 CTAs/SM）估计可再带来约 +2.67%，但需要编译器 codegen 改动。随着鳄霸编译器演进，更多模式会变为原生，剩余的 <code>__cpp__</code> 块会收缩。</p>
 <hr />
-<h2 id="appendix-reproduction-guide">Appendix: Reproduction Guide<a class="headerlink" href="#appendix-reproduction-guide" title="Permanent link">&para;</a></h2>
-<p>All <code>.co</code> milestone files and benchmarking scripts are in <code>benchmark/performance/fused_moe_op/tuning_worklog/</code>.</p>
-<h3 id="milestone-co-files">Milestone <code>.co</code> Files<a class="headerlink" href="#milestone-co-files" title="Permanent link">&para;</a></h3>
+<h2 id="_10">附录：复现指南<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>所有 <code>.co</code> milestone 文件均可从下表链接下载。原始源码位于 <code>benchmark/performance/fused_moe_op/tuning_worklog/</code>。</p>
+<h3 id="milestone-co">Milestone <code>.co</code> 文件<a class="headerlink" href="#milestone-co" title="Permanent link">&para;</a></h3>
+<p><a class="md-button" href="../assets/fused-moe-fp8/fused-moe-fp8-sources.zip">⬇ Download all sources (ZIP)</a></p>
 <table>
 <thead>
 <tr>
@@ -4527,45 +4707,45 @@ __cpp__("  }\n");</code></pre>
 </thead>
 <tbody>
 <tr>
-<td><code>00_baseline.co</code></td>
+<td><a href="../assets/fused-moe-fp8/00_baseline.co"><code>00_baseline.co</code></a></td>
 <td><code>-gs -t cute -arch=sm_90a</code></td>
-<td>7 separate kernels (baseline)</td>
+<td>7 个独立 kernel（baseline）</td>
 <td style="text-align: right;">8.09</td>
 </tr>
 <tr>
-<td><code>01_scatter_fusion.co</code></td>
+<td><a href="../assets/fused-moe-fp8/01_scatter_fusion.co"><code>01_scatter_fusion.co</code></a></td>
 <td><code>-gs -t cute -arch=sm_90a</code></td>
-<td>Scatter fused into WGMMA</td>
+<td>Scatter 融入 WGMMA</td>
 <td style="text-align: right;">8.22</td>
 </tr>
 <tr>
-<td><code>02_qsg_fusion.co</code></td>
+<td><a href="../assets/fused-moe-fp8/02_qsg_fusion.co"><code>02_qsg_fusion.co</code></a></td>
 <td><code>-gs -t cute -arch=sm_90a</code></td>
-<td>Quant+Sort+Gather fused</td>
+<td>Quant+Sort+Gather 融合</td>
 <td style="text-align: right;">8.92</td>
 </tr>
 <tr>
-<td><code>03_all_fusions.co</code></td>
+<td><a href="../assets/fused-moe-fp8/03_all_fusions.co"><code>03_all_fusions.co</code></a></td>
 <td><code>-gs -t cute -arch=sm_90a</code></td>
-<td>Count+Build fused (3 kernels, end of Phase 1)</td>
+<td>Count+Build 融合（3 个 kernel，Phase 1 末）</td>
 <td style="text-align: right;">9.45</td>
 </tr>
 <tr>
-<td><code>04_host_micro.co</code></td>
+<td><a href="../assets/fused-moe-fp8/04_host_micro.co"><code>04_host_micro.co</code></a></td>
 <td><code>-gs -t cute -arch=sm_90a</code></td>
-<td>Host pipeline + micro-opts (end of Phase 2+3)</td>
+<td>Host 流水线 + 微优化（Phase 2+3 末）</td>
 <td style="text-align: right;">9.89</td>
 </tr>
 <tr>
-<td><strong><code>05_cuda_optimized.co</code></strong></td>
+<td><a href="../assets/fused-moe-fp8/05_cuda_optimized.co"><strong><code>05_cuda_optimized.co</code></strong></a></td>
 <td><code>-gs -t cute -arch=sm_90a --disable-runtime-check --hoist-offset --hoist-scale</code></td>
-<td>Grid swap, L2, QSG pipelining, <code>__cpp__</code> scatter (end of Phase 4+5)</td>
+<td>Grid swap、L2、QSG 流水、<code>__cpp__</code> scatter（Phase 4+5 末）</td>
 <td style="text-align: right;"><strong>13.18</strong></td>
 </tr>
 </tbody>
 </table>
-<p>All files compile with the Croqtile compiler (<code>./choreo -gs</code>) and produce correct results on H800 PCIe. The <code>-gs</code> flag auto-generates a build script that handles all nvcc flags (<code>-D__USE_CUDA_TYPE__</code>, <code>--default-stream per-thread</code>, etc.). TFLOPS measured on H800 PCIe (SM90), serving-path, 500 repetitions.</p>
-<p>To reproduce any measurement:</p>
+<p>上述文件均可用鳄霸编译器（<code>./choreo -gs</code>）编译，并在 H800 PCIe 上得到正确结果。<code>-gs</code> 会自动生成处理全部 nvcc 选项（<code>-D__USE_CUDA_TYPE__</code>、<code>--default-stream per-thread</code> 等）的构建脚本。TFLOPS 在 H800 PCIe（SM90）上测得，端到端，500 次重复。</p>
+<p>复现任意一次测量：</p>
 <pre class="highlight"><code class="language-bash"># All milestones use -gs (auto-generated build script):
 ./choreo -gs -t cute -arch=sm_90a [choreo-flags] &lt;file&gt;.co -o /tmp/&lt;file&gt;.cute.result
 CUDA_VISIBLE_DEVICES=1 CHOREO_ENABLE_TIMING=1 \
@@ -4578,9 +4758,18 @@ CUDA_VISIBLE_DEVICES=1 CHOREO_ENABLE_TIMING=1 \
 CUDA_VISIBLE_DEVICES=1 CHOREO_ENABLE_TIMING=1 \
     EXTRA_TARGET_CFLAGS="-DRUNMAIN --use_fast_math" \
     bash /tmp/05.cute.result --execute</code></pre>
-<p>See <code>README.md</code> in the same directory for full details.</p>
+<h3 id="vllm_1">复现与 vLLM 的对比<a class="headerlink" href="#vllm_1" title="Permanent link">&para;</a></h3>
+<p>vLLM 基准脚本已包含在上述 ZIP 中。</p>
+<p><strong>前置条件：</strong> vLLM ≥ 0.17 且支持 FP8，PyTorch，Triton。</p>
+<pre class="highlight"><code class="language-bash"># Default config (vLLM's built-in fallback):
+python bench_vllm_single_gemm.py --gpu 0
+
+# Tuned config (864-point grid search best result):
+python bench_vllm_single_gemm.py --gpu 0 \
+    --config '{"BLOCK_SIZE_M":16,"BLOCK_SIZE_N":64,"BLOCK_SIZE_K":128,"GROUP_SIZE_M":4,"SPLIT_K":1,"num_warps":4,"num_stages":3}'</code></pre>
+<p>脚本会打印 GEMM-only 与端到端延迟及 TFLOPS，FLOPs 公式与鳄霸基准一致（<code>2 × M × topk × N × K</code>）。</p>
 <hr />
-<p><em>Built with the Croqtile compiler targeting NVIDIA H800 PCIe (SM90a). All timing measured with CUDA events over 500 repetitions with 50 warmup iterations.</em></p>
+<p><em>使用鳄霸编译器，目标为 NVIDIA H800 PCIe（SM90a）。所有计时基于 CUDA event，500 次重复、50 次 warmup。</em></p>
 
 
 
