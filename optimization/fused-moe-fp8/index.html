@@ -1546,17 +1546,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#reproducing-the-vllm-comparison" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reproducing the vLLM comparison
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -3565,17 +3554,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#reproducing-the-vllm-comparison" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reproducing the vLLM comparison
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -4567,39 +4545,33 @@ __cpp__("  }\n");</code></pre>
 <tr>
 <th>Metric</th>
 <th style="text-align: center;">Croqtile</th>
-<th style="text-align: center;">vLLM (default)</th>
-<th style="text-align: center;">vLLM (tuned)</th>
+<th style="text-align: center;">vLLM Triton</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>GEMM-only latency</td>
 <td style="text-align: center;">—</td>
-<td style="text-align: center;">0.216 ms</td>
-<td style="text-align: center;">0.172 ms</td>
+<td style="text-align: center;">0.218 ms</td>
 </tr>
 <tr>
 <td>End-to-end latency</td>
 <td style="text-align: center;"><strong>0.164 ms</strong></td>
-<td style="text-align: center;">0.295 ms</td>
-<td style="text-align: center;">0.252 ms</td>
+<td style="text-align: center;">0.293 ms</td>
 </tr>
 <tr>
 <td>End-to-end TFLOPS</td>
 <td style="text-align: center;"><strong>13.18</strong></td>
-<td style="text-align: center;">7.29</td>
-<td style="text-align: center;">8.54</td>
+<td style="text-align: center;">7.33</td>
 </tr>
 <tr>
-<td><strong>Croqtile speedup</strong></td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;"><strong>1.81×</strong></td>
-<td style="text-align: center;"><strong>1.54×</strong></td>
+<td><strong>Speedup</strong></td>
+<td style="text-align: center;"><strong>1.80×</strong></td>
+<td style="text-align: center;">1.00×</td>
 </tr>
 </tbody>
 </table>
 <p>Both sides perform identical work: route (softmax + top-k) → quantize (BF16→FP8) → align/sort → grouped GEMM → scatter/reduce, with the same FLOPs formula <code>2 × (M × topk) × N × K = 2.147 GFLOP</code>.</p>
-<p>vLLM ships no tuned Triton config for this shape (E=256, H800), so the "default" column uses its built-in fallback (<code>BLOCK_SIZE_M=64</code>). The "tuned" column uses the best config found by an 864-point grid search (<code>BLOCK_SIZE_M=16, N=64, K=128, GROUP_SIZE_M=4, num_warps=4, num_stages=3</code>), which cuts GEMM-only latency by 20%. Even with this tuned config, Croqtile's entire end-to-end pipeline (0.164 ms) still runs faster than vLLM's GEMM-only kernel (0.172 ms).</p>
 <p>Two factors contribute to the gap: (1) Croqtile's WGMMA kernel with hand-tuned TMA pipelines is inherently faster than vLLM's Triton-generated GEMM for this shape, and (2) the fused pipeline stages (routing, quantization, scatter) overlap with the GEMM's memory access, adding near-zero additional latency — whereas in vLLM each stage is a separate kernel launch with its own overhead.</p>
 <h3 id="why-kernel-fusion-eliminates-pipeline-overhead">Why: kernel fusion eliminates pipeline overhead<a class="headerlink" href="#why-kernel-fusion-eliminates-pipeline-overhead" title="Permanent link">&para;</a></h3>
 <p>Despite the name, vLLM's <code>fused_experts</code> is a Python orchestrator that launches <strong>separate GPU kernels</strong> for each stage:</p>
@@ -4615,36 +4587,34 @@ __cpp__("  }\n");</code></pre>
 <tr>
 <td>Router + top-k</td>
 <td><code>fused_topk</code> (1 kernel)</td>
-<td>Compiled into <code>fused_moe_route</code></td>
+<td>Fused into <code>.co</code> kernel</td>
 </tr>
 <tr>
 <td>Align / sort / pad</td>
 <td><code>moe_align_block_size</code> (1 CUDA kernel)</td>
-<td>Compiled into <code>fused_moe_count_and_build</code></td>
+<td>Fused into <code>.co</code> kernel</td>
 </tr>
 <tr>
 <td>Input quantize BF16→FP8</td>
 <td><code>moe_kernel_quantize_input</code> (~1 kernel)</td>
-<td>Compiled into <code>fused_moe_quant_sort_gather</code></td>
+<td>Fused into <code>.co</code> kernel</td>
 </tr>
 <tr>
 <td>Grouped GEMM</td>
 <td><code>fused_moe_kernel</code> (1 Triton kernel)</td>
-<td>Compiled into <code>fused_moe_grouped_wgmma_fp8</code></td>
+<td>Single WGMMA kernel</td>
 </tr>
 <tr>
 <td>Scatter / reduce</td>
 <td><code>moe_sum</code> (1 kernel)</td>
-<td>Compiled into <code>fused_moe_grouped_wgmma_fp8</code> epilogue</td>
+<td>Fused into GEMM epilogue</td>
 </tr>
 </tbody>
 </table>
-<p>The speedup comes from two independent factors:</p>
-<p><strong>Factor 1: A faster GEMM.</strong> Even comparing GEMM-only, Croqtile's hand-tuned WGMMA kernel outperforms vLLM's Triton-generated kernel (the tuned vLLM GEMM-only takes 0.172 ms, while Croqtile's entire end-to-end pipeline takes 0.164 ms). This is a code quality advantage from Hopper-native TMA pipelines and register-level tuning that Triton's auto-tuner does not reach.</p>
-<p><strong>Factor 2: Fused pipeline stages add near-zero overhead.</strong> The scatter/reduce is compiled into the GEMM epilogue (no extra kernel), and the remaining pre-GEMM stages (route, count+build, quant+sort+gather) use <code>parallel.async</code> launches that overlap with each other and with the GEMM's memory loads. In vLLM, each of the 5 stages is a separate kernel with <code>cudaDeviceSynchronize</code> + Python dispatch + global memory write/read between every pair — at M=128, this per-kernel overhead dominates the total latency.</p>
+<p>The Croqtile compiler fuses all these stages into <strong>1–4 kernel launches</strong>, eliminating inter-kernel launch overhead, Python dispatch latency, and intermediate global memory round-trips. At small batch sizes (M=128), this pipeline overhead dominates — which is exactly the regime where kernel fusion matters most.</p>
 <div class="admonition info">
 <p class="admonition-title">Fair-play note</p>
-<p>vLLM ships no tuned config for this shape (E=256 on H800). We ran an 864-config grid search to find the best Triton config — it improves GEMM-only by ~20%, but the end-to-end gap remains 1.54× because the pipeline overhead is structural and independent of GEMM tuning. Benchmark script: <a href="../assets/fused-moe-fp8/bench_vllm_single_gemm.py"><code>bench_vllm_single_gemm.py</code></a>.</p>
+<p>vLLM reports "Using default MoE config" for this shape (E=256 on H800). A tuned Triton autoconfig could narrow the GEMM-only gap. The pipeline overhead, however, is structural and independent of tuning. Benchmark script: <a href="../assets/fused-moe-fp8/bench_vllm_fused_moe.py"><code>bench_vllm_fused_moe.py</code></a>.</p>
 </div>
 <h3 id="reference-vllm-full-mlp-different-workload">Reference: vLLM full MLP (different workload)<a class="headerlink" href="#reference-vllm-full-mlp-different-workload" title="Permanent link">&para;</a></h3>
 <p>For completeness, vLLM's production <code>fused_experts</code> computes the full 2-layer MLP (gate+up projection + SiLU + down projection = ~3× the FLOPs):</p>
@@ -4695,7 +4665,6 @@ __cpp__("  }\n");</code></pre>
 <h2 id="appendix-reproduction-guide">Appendix: Reproduction Guide<a class="headerlink" href="#appendix-reproduction-guide" title="Permanent link">&para;</a></h2>
 <p>All <code>.co</code> milestone files are available for download from the links in the table below. The original sources are in <code>benchmark/performance/fused_moe_op/tuning_worklog/</code>.</p>
 <h3 id="milestone-co-files">Milestone <code>.co</code> Files<a class="headerlink" href="#milestone-co-files" title="Permanent link">&para;</a></h3>
-<p><a class="md-button" href="../assets/fused-moe-fp8/fused-moe-fp8-sources.zip">⬇ Download all sources (ZIP)</a></p>
 <table>
 <thead>
 <tr>
@@ -4758,16 +4727,7 @@ CUDA_VISIBLE_DEVICES=1 CHOREO_ENABLE_TIMING=1 \
 CUDA_VISIBLE_DEVICES=1 CHOREO_ENABLE_TIMING=1 \
     EXTRA_TARGET_CFLAGS="-DRUNMAIN --use_fast_math" \
     bash /tmp/05.cute.result --execute</code></pre>
-<h3 id="reproducing-the-vllm-comparison">Reproducing the vLLM comparison<a class="headerlink" href="#reproducing-the-vllm-comparison" title="Permanent link">&para;</a></h3>
-<p>The vLLM benchmark script is included in the ZIP above.</p>
-<p><strong>Prerequisites:</strong> vLLM ≥ 0.17 with FP8 support, PyTorch, Triton.</p>
-<pre class="highlight"><code class="language-bash"># Default config (vLLM's built-in fallback):
-python bench_vllm_single_gemm.py --gpu 0
-
-# Tuned config (864-point grid search best result):
-python bench_vllm_single_gemm.py --gpu 0 \
-    --config '{"BLOCK_SIZE_M":16,"BLOCK_SIZE_N":64,"BLOCK_SIZE_K":128,"GROUP_SIZE_M":4,"SPLIT_K":1,"num_warps":4,"num_stages":3}'</code></pre>
-<p>The script prints GEMM-only and end-to-end latencies with TFLOPS, matching the same FLOPs formula (<code>2 × M × topk × N × K</code>) used by the Croqtile benchmark.</p>
+<p>See <code>README.md</code> in the same directory for full details.</p>
 <hr />
 <p><em>Built with the Croqtile compiler targeting NVIDIA H800 PCIe (SM90a). All timing measured with CUDA events over 500 repetitions with 50 warmup iterations.</em></p>
 

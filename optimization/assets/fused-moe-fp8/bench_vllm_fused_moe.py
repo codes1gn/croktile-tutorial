@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Benchmark vLLM's Triton fused_moe kernel for a SINGLE grouped GEMM.
+"""Benchmark vLLM's Triton fused_moe kernel for a fused MoE grouped GEMM.
 
 Matches Croqtile's workload exactly:
   M=128 tokens, N=512, K=2048, 256 experts, top-8 routing, FP8 (e4m3)
@@ -17,8 +17,8 @@ FLOP formula (same as Croqtile):
   FLOPs = 2 * expanded_m * N * K = 2 * (M * topk) * N * K
 
 Usage:
-  python bench_vllm_single_gemm.py --gpu 1
-  python bench_vllm_single_gemm.py --m 256 --gpu 0
+  python bench_vllm_fused_moe.py --gpu 1
+  python bench_vllm_fused_moe.py --m 256 --gpu 0
 """
 
 import argparse
