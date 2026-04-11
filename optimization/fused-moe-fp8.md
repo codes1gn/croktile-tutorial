@@ -29,10 +29,10 @@ The grouped GEMM uses FP8 Tensor Cores via WGMMA, but the surrounding "glue" —
 
 | Stage | Milestone `.co` | TFLOPS | Key Idea |
 |-------|----------------|-------:|--------|
-| Baseline (7 kernels) | `00_baseline.co` | 8.09 | Naive pipeline: route → count → build → quant → sort → WGMMA → scatter |
-| **Phase 1: Kernel Fusion** | `03_all_fusions.co` | 9.45 | Fuse scatter into WGMMA, quant+sort, count+build |
-| **Phase 2–3: Host + Micro** | `04_host_micro.co` | 9.89 | `parallel.async`, CUDA Graphs, vectorize scatter, batch quantization, `yield`, `mma.store` scatter |
-| **Phase 4–5: Memory + Peripheral** | `05_cuda_optimized.co` | **13.18** | Grid swap, L2 persist, QSG pipelining, prefix scan, `__cpp__` scatter |
+| Baseline (7 kernels) | [`00_baseline.co`](../assets/fused-moe-fp8/00_baseline.co) | 8.09 | Naive pipeline: route → count → build → quant → sort → WGMMA → scatter |
+| **Phase 1: Kernel Fusion** | [`03_all_fusions.co`](../assets/fused-moe-fp8/03_all_fusions.co) | 9.45 | Fuse scatter into WGMMA, quant+sort, count+build |
+| **Phase 2–3: Host + Micro** | [`04_host_micro.co`](../assets/fused-moe-fp8/04_host_micro.co) | 9.89 | `parallel.async`, CUDA Graphs, vectorize scatter, batch quantization, `yield`, `mma.store` scatter |
+| **Phase 4–5: Memory + Peripheral** | [`05_cuda_optimized.co`](../assets/fused-moe-fp8/05_cuda_optimized.co) | **13.18** | Grid swap, L2 persist, QSG pipelining, prefix scan, `__cpp__` scatter |
 
 ---
 
@@ -68,7 +68,7 @@ Every optimization in this post is **reproducible from `.co` source** by compili
 
 ## Baseline: 7 Kernels, 8.09 TFLOPS
 
-> **Source:** `00_baseline.co` — fully reproducible from `.co`
+> **Source:** [`00_baseline.co`](../assets/fused-moe-fp8/00_baseline.co) — fully reproducible from `.co`
 
 The baseline implements the fused MoE pipeline as **7 separate kernel launches**:
 
@@ -192,7 +192,7 @@ __co__ void fused_moe_grouped_wgmma_fp8(
 
 ## Phase 1: Kernel Fusion (8.09 → 9.45 TFLOPS)
 
-> **Source:** `01_scatter_fusion.co`, `02_qsg_fusion.co`, `03_all_fusions.co` — fully reproducible from `.co`
+> **Source:** [`01_scatter_fusion.co`](../assets/fused-moe-fp8/01_scatter_fusion.co), [`02_qsg_fusion.co`](../assets/fused-moe-fp8/02_qsg_fusion.co), [`03_all_fusions.co`](../assets/fused-moe-fp8/03_all_fusions.co) — fully reproducible from `.co`
 
 The first major optimization phase focuses on reducing the 7 kernels down to fewer, fused kernels. Each fusion eliminates kernel launch overhead, `cudaDeviceSynchronize()` calls, and intermediate global memory traffic.
 
@@ -376,7 +376,7 @@ This is fully native Croqtile — each of the 256 threads strides over the flat 
 
 ### Compiler Flags: The Easy Wins · iter015–019
 
-These flags are applied at compile time. Their effect is small at the Phase 1 milestone (03_all_fusions.co with flags: 9.47 vs without: 9.45 = +0.2%), but becomes significant in later phases when the WGMMA kernel dominates runtime:
+These flags are applied at compile time. Their effect is small at the Phase 1 milestone ([03_all_fusions.co](../assets/fused-moe-fp8/03_all_fusions.co) with flags: 9.47 vs without: 9.45 = +0.2%), but becomes significant in later phases when the WGMMA kernel dominates runtime:
 
 | Flag | Effect | Δ (original A/B) |
 |------|--------|---|
@@ -398,7 +398,7 @@ route → count+build → QSG → WGMMA+scatter
 
 ## Phase 2: Host Pipeline & CUDA Graphs (9.45 → 9.89 TFLOPS)
 
-> **Source:** `04_host_micro.co` — measured at **9.89 TFLOPS**. This milestone also includes Phase 3 micro-optimizations (local arrays, yield, mma.store scatter).
+> **Source:** [`04_host_micro.co`](../assets/fused-moe-fp8/04_host_micro.co) — measured at **9.89 TFLOPS**. This milestone also includes Phase 3 micro-optimizations (local arrays, yield, mma.store scatter).
 
 ### Remove Host-Device Synchronization · iter021–023 · +4.7%
 
@@ -490,7 +490,7 @@ Note the Croqtile-specific pattern: `__co__` functions are called directly from 
 
 ## Phase 3: Micro-optimizations (included in Phase 2 milestone · 9.89 TFLOPS)
 
-> **Source:** Micro-opts are included in `04_host_micro.co` (9.89 TFLOPS). The improvements below were originally measured as A/B deltas.
+> **Source:** Micro-opts are included in [`04_host_micro.co`](../assets/fused-moe-fp8/04_host_micro.co) (9.89 TFLOPS). The improvements below were originally measured as A/B deltas.
 
 At this point, the low-hanging fruit is gone. The next 16 iterations (iter026–040) squeeze out 2.7% total. Most attempts are flat or negative. Here are the survivors:
 
@@ -544,7 +544,7 @@ foreach k in [K_BLOCKS] {
 
 ## Phase 4: Memory Hierarchy (9.89 → 13.18 TFLOPS, combined with Phase 5)
 
-> **Source:** `05_cuda_optimized.co` — measured at **13.18 TFLOPS**. This milestone includes all Phase 4 and Phase 5 optimizations. Grid swap uses native `parallel` reordering; L2 persistence uses `cudaAccessPolicyWindow` via a `__cpp__` host block.
+> **Source:** [`05_cuda_optimized.co`](../assets/fused-moe-fp8/05_cuda_optimized.co) — measured at **13.18 TFLOPS**. This milestone includes all Phase 4 and Phase 5 optimizations. Grid swap uses native `parallel` reordering; L2 persistence uses `cudaAccessPolicyWindow` via a `__cpp__` host block.
 
 After Phase 3, the WGMMA kernel is firmly DRAM-bound at ~78% throughput. Micro-optimizations can't break through. The next gains come from smarter use of the memory hierarchy — specifically, making the GPU's L2 cache work harder.
 
@@ -596,7 +596,7 @@ Pin the LHS matrix (`rep_a_q_d`, ~2MB) in L2 cache using `cudaAccessPolicyWindow
 
 ## Phase 5: Peripheral Kernel Optimization (included in Phase 4 milestone · 13.18 TFLOPS)
 
-> **Source:** `05_cuda_optimized.co` — measured at **13.18 TFLOPS**. Load pipelining via `local` arrays, parallel prefix scan, and pipelined count loads.
+> **Source:** [`05_cuda_optimized.co`](../assets/fused-moe-fp8/05_cuda_optimized.co) — measured at **13.18 TFLOPS**. Load pipelining via `local` arrays, parallel prefix scan, and pipelined count loads.
 
 With the WGMMA kernel near its DRAM throughput ceiling, further GEMM improvements are nearly impossible. But the QSG and count_and_build kernels still have room. This is where the optimization shifts from the "main act" to the "supporting cast." Native Croqtile constructs — `local` arrays for register buffering, `foreach` for parallel scans, `call ATOMIC_ADD` for shared-memory atomics — handle most of the work.
 
@@ -700,21 +700,21 @@ Eliminate the `cudaMemsetAsync(output_d)` node from the CUDA Graph by having eac
 
 ### Register-Direct Scatter Epilogue (`__cpp__`) · iter014 · +16.8%
 
-Eliminates shared-memory bank conflicts on `mma.store` and the `sync.shared` barrier by reading MMA accumulator fragments directly from registers. Measured on the fully-optimized `05_cuda_optimized.co` kernel: **13.18 TFLOPS** with `__cpp__` scatter vs **11.28 TFLOPS** with native `mma.store` scatter (**+16.8%**). In earlier iterations the gain was <1% because the K-loop dominated; once memory optimizations (grid swap, L2, QSG pipelining) reduced K-loop time, the epilogue became a significant bottleneck.
+Eliminates shared-memory bank conflicts on `mma.store` and the `sync.shared` barrier by reading MMA accumulator fragments directly from registers. Measured on the fully-optimized [`05_cuda_optimized.co`](../assets/fused-moe-fp8/05_cuda_optimized.co) kernel: **13.18 TFLOPS** with `__cpp__` scatter vs **11.28 TFLOPS** with native `mma.store` scatter (**+16.8%**). In earlier iterations the gain was <1% because the K-loop dominated; once memory optimizations (grid swap, L2, QSG pipelining) reduced K-loop time, the epilogue became a significant bottleneck.
 
-The native Croqtile scatter (used in `04_host_micro.co`) goes through shared memory:
+The native Croqtile scatter (used in [`04_host_micro.co`](../assets/fused-moe-fp8/04_host_micro.co)) goes through shared memory:
 
 ```
 MMA accumulators → mma.store → shared memory → sync.shared → foreach scatter → atomicAdd
 ```
 
-The `__cpp__` scatter (used in `05_cuda_optimized.co`) bypasses shared memory entirely by accessing the MMA accumulator fragment registers directly:
+The `__cpp__` scatter (used in [`05_cuda_optimized.co`](../assets/fused-moe-fp8/05_cuda_optimized.co)) bypasses shared memory entirely by accessing the MMA accumulator fragment registers directly:
 
 ```
 MMA accumulators → __cpp__ register read → atomicAdd (no shared memory, no sync)
 ```
 
-**Before — native Croqtile (04_host_micro.co):**
+**Before — native Croqtile ([04_host_micro.co](../assets/fused-moe-fp8/04_host_micro.co)):**
 
 ```co
 // mma.store dumps accumulators to shared, then foreach scatters
@@ -734,7 +734,7 @@ foreach local_row in [WARP_M] {
 }
 ```
 
-**After — `__cpp__` register-direct (05_cuda_optimized.co):**
+**After — `__cpp__` register-direct ([05_cuda_optimized.co](../assets/fused-moe-fp8/05_cuda_optimized.co)):**
 
 ```co
 // Access MMA accumulator fragments directly via __cpp__
@@ -771,7 +771,7 @@ This optimization requires understanding the WGMMA accumulator fragment layout: 
     The native version requires `64×128 × 4B = 32KB` shared memory for the output tile plus a `sync.shared` barrier. The register-direct version uses zero shared memory for the epilogue and no synchronization. At 3 CTAs per SM with 64KB shared memory budget, freeing 32KB gives more room for other shared buffers.
 
 !!! success "Final result"
-    **13.18 TFLOPS** — 1.63× over baseline. Measured from `05_cuda_optimized.co`, compiled with the Croqtile compiler, no CUDA post-processing required. Confirmed with 500-rep timing on H800 PCIe.
+    **13.18 TFLOPS** — 1.63× over baseline. Measured from [`05_cuda_optimized.co`](../assets/fused-moe-fp8/05_cuda_optimized.co), compiled with the Croqtile compiler, no CUDA post-processing required. Confirmed with 500-rep timing on H800 PCIe.
 
 ---
 
@@ -884,18 +884,56 @@ The compiler currently emits plain `T*` pointer parameters for kernel functions.
 
 ## Comparison with vLLM
 
-For context, here's how the Croqtile kernel (compiled from `.co` source) compares to [vLLM](https://github.com/vllm-project/vllm)'s fused MoE implementation on the same hardware (H800 PCIe, SM90) with the same Qwen3.5 dimensions:
+To put the numbers in perspective, we compare directly against [vLLM](https://github.com/vllm-project/vllm)'s Triton `fused_moe_kernel` on the same hardware (H800 PCIe, SM90), same Qwen3.5 dimensions (M=128, N=512, K=2048, 256 experts, top-8), and same pipeline — a single FP8 grouped GEMM with routing, quantization, and scatter.
 
-| Metric | Croqtile (ours) | vLLM |
-|--------|-----------------|------|
-| Raw latency | **0.164 ms** | 0.867 ms |
-| Latency speedup | **5.29×** | 1.00× |
-| Workload | 1 FP8 GEMM | 2 BF16 GEMMs + SiLU (full MLP) |
+### Head-to-head results
+
+| Metric | Croqtile | vLLM (default) | vLLM (tuned) |
+|--------|:---:|:---:|:---:|
+| GEMM-only latency | — | 0.216 ms | 0.172 ms |
+| End-to-end latency | **0.164 ms** | 0.295 ms | 0.252 ms |
+| End-to-end TFLOPS | **13.18** | 7.29 | 8.54 |
+| **Croqtile speedup** | — | **1.81×** | **1.54×** |
+
+Both sides perform identical work: route (softmax + top-k) → quantize (BF16→FP8) → align/sort → grouped GEMM → scatter/reduce, with the same FLOPs formula `2 × (M × topk) × N × K = 2.147 GFLOP`.
+
+vLLM ships no tuned Triton config for this shape (E=256, H800), so the "default" column uses its built-in fallback (`BLOCK_SIZE_M=64`). The "tuned" column uses the best config found by an 864-point grid search (`BLOCK_SIZE_M=16, N=64, K=128, GROUP_SIZE_M=4, num_warps=4, num_stages=3`), which cuts GEMM-only latency by 20%. Even with this tuned config, Croqtile's entire end-to-end pipeline (0.164 ms) still runs faster than vLLM's GEMM-only kernel (0.172 ms).
+
+Two factors contribute to the gap: (1) Croqtile's WGMMA kernel with hand-tuned TMA pipelines is inherently faster than vLLM's Triton-generated GEMM for this shape, and (2) the fused pipeline stages (routing, quantization, scatter) overlap with the GEMM's memory access, adding near-zero additional latency — whereas in vLLM each stage is a separate kernel launch with its own overhead.
+
+### Why: kernel fusion eliminates pipeline overhead
+
+Despite the name, vLLM's `fused_experts` is a Python orchestrator that launches **separate GPU kernels** for each stage:
+
+| Pipeline stage | vLLM | Croqtile |
+|----------------|------|----------|
+| Router + top-k | `fused_topk` (1 kernel) | Compiled into `fused_moe_route` |
+| Align / sort / pad | `moe_align_block_size` (1 CUDA kernel) | Compiled into `fused_moe_count_and_build` |
+| Input quantize BF16→FP8 | `moe_kernel_quantize_input` (~1 kernel) | Compiled into `fused_moe_quant_sort_gather` |
+| Grouped GEMM | `fused_moe_kernel` (1 Triton kernel) | Compiled into `fused_moe_grouped_wgmma_fp8` |
+| Scatter / reduce | `moe_sum` (1 kernel) | Compiled into `fused_moe_grouped_wgmma_fp8` epilogue |
+
+The speedup comes from two independent factors:
+
+**Factor 1: A faster GEMM.** Even comparing GEMM-only, Croqtile's hand-tuned WGMMA kernel outperforms vLLM's Triton-generated kernel (the tuned vLLM GEMM-only takes 0.172 ms, while Croqtile's entire end-to-end pipeline takes 0.164 ms). This is a code quality advantage from Hopper-native TMA pipelines and register-level tuning that Triton's auto-tuner does not reach.
+
+**Factor 2: Fused pipeline stages add near-zero overhead.** The scatter/reduce is compiled into the GEMM epilogue (no extra kernel), and the remaining pre-GEMM stages (route, count+build, quant+sort+gather) use `parallel.async` launches that overlap with each other and with the GEMM's memory loads. In vLLM, each of the 5 stages is a separate kernel with `cudaDeviceSynchronize` + Python dispatch + global memory write/read between every pair — at M=128, this per-kernel overhead dominates the total latency.
+
+!!! info "Fair-play note"
+    vLLM ships no tuned config for this shape (E=256 on H800). We ran an 864-config grid search to find the best Triton config — it improves GEMM-only by ~20%, but the end-to-end gap remains 1.54× because the pipeline overhead is structural and independent of GEMM tuning. Benchmark script: [`bench_vllm_single_gemm.py`](../assets/fused-moe-fp8/bench_vllm_single_gemm.py).
+
+### Reference: vLLM full MLP (different workload)
+
+For completeness, vLLM's production `fused_experts` computes the full 2-layer MLP (gate+up projection + SiLU + down projection = ~3× the FLOPs):
+
+| Metric | Croqtile | vLLM full MLP |
+|--------|:---:|:---:|
+| Latency | **0.164 ms** | 0.867 ms |
+| Workload | 1 FP8 GEMM | 2 BF16 GEMMs + SiLU |
 | Total FLOPs | 2.15 GFLOP | 6.44 GFLOP |
 | Per-GEMM TFLOPS | **13.18** | 2.48 |
 
-!!! info "Apples-to-oranges caveat"
-    vLLM's `fused_experts` performs a full 2-layer MLP (gate_up projection + SiLU activation + down projection), which involves roughly 3× the FLOPs of our single grouped GEMM. The raw latency comparison isn't perfectly fair. However, the per-GEMM TFLOPS (normalizing for total FLOP count) shows Croqtile achieving **5.28× higher throughput efficiency** — from a `.co` source file that can be compiled in one step.
+This comparison is not apples-to-apples since vLLM performs ~3× the compute, but the per-GEMM efficiency (13.18 vs 2.48 TFLOPS) still reflects the impact of pipeline fragmentation across many separate kernel launches.
 
 ---
 
@@ -923,20 +961,22 @@ Here's the summary across all 99 iterations: **40 were kept, 59 were discarded.*
 
 ## Appendix: Reproduction Guide
 
-All `.co` milestone files and benchmarking scripts are in `benchmark/performance/fused_moe_op/tuning_worklog/`.
+All `.co` milestone files are available for download from the links in the table below. The original sources are in `benchmark/performance/fused_moe_op/tuning_worklog/`.
 
 ### Milestone `.co` Files
 
+[⬇ Download all sources (ZIP)](../assets/fused-moe-fp8/fused-moe-fp8-sources.zip){ .md-button }
+
 | File | Compile Flags | Stage | TFLOPS |
 |------|--------------|-------|-------:|
-| `00_baseline.co` | `-gs -t cute -arch=sm_90a` | 7 separate kernels (baseline) | 8.09 |
-| `01_scatter_fusion.co` | `-gs -t cute -arch=sm_90a` | Scatter fused into WGMMA | 8.22 |
-| `02_qsg_fusion.co` | `-gs -t cute -arch=sm_90a` | Quant+Sort+Gather fused | 8.92 |
-| `03_all_fusions.co` | `-gs -t cute -arch=sm_90a` | Count+Build fused (3 kernels, end of Phase 1) | 9.45 |
-| `04_host_micro.co` | `-gs -t cute -arch=sm_90a` | Host pipeline + micro-opts (end of Phase 2+3) | 9.89 |
-| **`05_cuda_optimized.co`** | `-gs -t cute -arch=sm_90a --disable-runtime-check --hoist-offset --hoist-scale` | Grid swap, L2, QSG pipelining, `__cpp__` scatter (end of Phase 4+5) | **13.18** |
+| [`00_baseline.co`](../assets/fused-moe-fp8/00_baseline.co) | `-gs -t cute -arch=sm_90a` | 7 separate kernels (baseline) | 8.09 |
+| [`01_scatter_fusion.co`](../assets/fused-moe-fp8/01_scatter_fusion.co) | `-gs -t cute -arch=sm_90a` | Scatter fused into WGMMA | 8.22 |
+| [`02_qsg_fusion.co`](../assets/fused-moe-fp8/02_qsg_fusion.co) | `-gs -t cute -arch=sm_90a` | Quant+Sort+Gather fused | 8.92 |
+| [`03_all_fusions.co`](../assets/fused-moe-fp8/03_all_fusions.co) | `-gs -t cute -arch=sm_90a` | Count+Build fused (3 kernels, end of Phase 1) | 9.45 |
+| [`04_host_micro.co`](../assets/fused-moe-fp8/04_host_micro.co) | `-gs -t cute -arch=sm_90a` | Host pipeline + micro-opts (end of Phase 2+3) | 9.89 |
+| [**`05_cuda_optimized.co`**](../assets/fused-moe-fp8/05_cuda_optimized.co) | `-gs -t cute -arch=sm_90a --disable-runtime-check --hoist-offset --hoist-scale` | Grid swap, L2, QSG pipelining, `__cpp__` scatter (end of Phase 4+5) | **13.18** |
 
-All files compile with the Croqtile compiler (`./choreo -gs`) and produce correct results on H800 PCIe. The `-gs` flag auto-generates a build script that handles all nvcc flags (`-D__USE_CUDA_TYPE__`, `--default-stream per-thread`, etc.). TFLOPS measured on H800 PCIe (SM90), serving-path, 500 repetitions.
+All files compile with the Croqtile compiler (`./choreo -gs`) and produce correct results on H800 PCIe. The `-gs` flag auto-generates a build script that handles all nvcc flags (`-D__USE_CUDA_TYPE__`, `--default-stream per-thread`, etc.). TFLOPS measured on H800 PCIe (SM90), end-to-end, 500 repetitions.
 
 To reproduce any measurement:
 
@@ -955,7 +995,22 @@ CUDA_VISIBLE_DEVICES=1 CHOREO_ENABLE_TIMING=1 \
     bash /tmp/05.cute.result --execute
 ```
 
-See `README.md` in the same directory for full details.
+### Reproducing the vLLM comparison
+
+The vLLM benchmark script is included in the ZIP above.
+
+**Prerequisites:** vLLM ≥ 0.17 with FP8 support, PyTorch, Triton.
+
+```bash
+# Default config (vLLM's built-in fallback):
+python bench_vllm_single_gemm.py --gpu 0
+
+# Tuned config (864-point grid search best result):
+python bench_vllm_single_gemm.py --gpu 0 \
+    --config '{"BLOCK_SIZE_M":16,"BLOCK_SIZE_N":64,"BLOCK_SIZE_K":128,"GROUP_SIZE_M":4,"SPLIT_K":1,"num_warps":4,"num_stages":3}'
+```
+
+The script prints GEMM-only and end-to-end latencies with TFLOPS, matching the same FLOPs formula (`2 × M × topk × N × K`) used by the Croqtile benchmark.
 
 ---
 
