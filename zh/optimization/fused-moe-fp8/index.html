@@ -4693,7 +4693,6 @@ __cpp__("  }\n");</code></pre>
 <p><strong>7. 仍有上升空间。</strong> <a href="#rescale-accumulator-estimated-267">rescale-accumulator</a> 优化（168→96 寄存器，3→5 CTAs/SM）估计可再带来约 +2.67%，但需要编译器 codegen 改动。随着鳄霸编译器演进，更多模式会变为原生，剩余的 <code>__cpp__</code> 块会收缩。</p>
 <hr />
 <h2 id="_10">附录：复现指南<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<p>所有 <code>.co</code> milestone 文件均可从下表链接下载。原始源码位于 <code>benchmark/performance/fused_moe_op/tuning_worklog/</code>。</p>
 <h3 id="milestone-co">Milestone <code>.co</code> 文件<a class="headerlink" href="#milestone-co" title="Permanent link">&para;</a></h3>
 <p><a class="md-button" href="../../../optimization/assets/fused-moe-fp8/fused-moe-fp8-sources.zip">⬇ Download all sources (ZIP)</a></p>
 <table>
