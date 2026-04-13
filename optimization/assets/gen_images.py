@@ -279,8 +279,8 @@ def fig4_warpn_sweep(t):
     bars = ax.bar([str(n) for n in valid_ns], valid_tf,
                   color=valid_colors, width=0.7, edgecolor='none')
 
-    ax.axhline(y=337, color=t["orange"], linestyle='--', lw=1.5, alpha=0.7)
-    ax.text(0.02, 340, "v3 baseline (337)", fontsize=8,
+    ax.axhline(y=288, color=t["orange"], linestyle='--', lw=1.5, alpha=0.7)
+    ax.text(0.02, 291, "v3 baseline (288)", fontsize=8,
             color=t["orange"], transform=ax.get_yaxis_transform())
 
     ax.axhline(y=447.5, color=t["yellow"], linestyle='--', lw=1.5, alpha=0.7)
@@ -324,7 +324,7 @@ def fig5_optimization_ladder(t):
 
     labels = ["v0\nnaive", "v1\nSMEM", "v2\nTMA+WGMMA",
               "v3\nwarpspec", "v4\ntuned", "cuBLAS"]
-    values = [0.38, 1.51, 284.4, 337.0, 471.3, 447.5]
+    values = [0.38, 1.51, 284.4, 288.3, 489.9, 447.5]
     colors_l = [t["red"], t["orange"], t["blue"],
                 t["purple"], t["green"], t["yellow"]]
 
@@ -343,7 +343,7 @@ def fig5_optimization_ladder(t):
         ax.text(x_pos, bar.get_y() + bar.get_height()/2, f"{val:.1f}",
                 va='center', fontsize=10, color=t["text"], fontweight='bold')
 
-    speedups = ["", "3.9×", "188×", "1.19×", "1.40×", ""]
+    speedups = ["", "3.9×", "188×", "1.01×", "1.70×", ""]
     for i, s in enumerate(speedups):
         if s:
             ax.text(max(values[i], values[i-1]) + 40, i, s,

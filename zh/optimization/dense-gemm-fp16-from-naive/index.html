@@ -3202,15 +3202,15 @@ bash kernel.cute.result --execute</code></pre>
 </tr>
 <tr>
 <td>v3: Warp 特化</td>
-<td style="text-align: right;">3.26</td>
-<td style="text-align: right;">337.0</td>
-<td style="text-align: right;">75.3%</td>
+<td style="text-align: right;">3.81</td>
+<td style="text-align: right;">288.3</td>
+<td style="text-align: right;">64.4%</td>
 </tr>
 <tr>
 <td><strong>v4: 生产级调优</strong></td>
-<td style="text-align: right;"><strong>2.35</strong></td>
-<td style="text-align: right;"><strong>471.3</strong></td>
-<td style="text-align: right;"><strong>105.3%</strong></td>
+<td style="text-align: right;"><strong>2.24</strong></td>
+<td style="text-align: right;"><strong>489.9</strong></td>
+<td style="text-align: right;"><strong>109.5%</strong></td>
 </tr>
 <tr>
 <td>cuBLAS（参考基线）</td>
@@ -3220,7 +3220,7 @@ bash kernel.cute.result --execute</code></pre>
 </tr>
 </tbody>
 </table>
-<p>从 v0 到 v4，五步实现 1240 倍性能提升。下面逐一讲解每一步的原理。</p>
+<p>从 v0 到 v4，五步实现 1289 倍性能提升。下面逐一讲解每一步的原理。</p>
 <hr />
 <h2 id="0">内核 0：朴素版<a class="headerlink" href="#0" title="Permanent link">&para;</a></h2>
 <p><strong>文件：</strong> <code>matmul_f16_v0_naive.co</code></p>
@@ -3543,7 +3543,7 @@ pipe_fma  instructions              :    247,820</code></pre>
 <p><strong>文件：</strong> <code>matmul_f16_v3_warpspec.co</code></p>
 <p>v2 的性能剖析揭示了问题：生产者 (TMA) 和消费者 (WGMMA) 互相阻塞。解决方案是让它们在不同的 warpgroup 中并发运行，通过共享内存中的软件环形缓冲区连接。</p>
 <pre class="highlight"><code class="language-choreo">// WARP_M=64, WARP_N=128, WARP_K=16
-// TILE_M=128, TILE_K=64, STAGES=1, CONSUMERS=1
+// TILE_M=64, TILE_K=64, STAGES=1, CONSUMERS=1
 
 __co__ void matmul(
     global f16 [M, K] lhs,
@@ -3555,22 +3555,24 @@ __co__ void matmul(
     shared f16 [WARP_N, TILE_K] rhs_s[STAGES];
     shared f16 [WARP_M, WARP_N] output_s[CONSUMERS];
 
-    // 3 warpgroups × 128 threads = 384 threads/block
-    parallel wg by 3 : group-4, t by 128 : thread {
+    // 2 warpgroups × 128 threads = 256 threads/block
+    parallel wg by 2 : group-4, t by 128 : thread {
       // ── 生产者 (wg=0)：单线程驱动 TMA ──
       inthreads.async (wg == 0 &amp;&amp; t == 0) {
         foreach {iv_k} in [cdiv(K, TILE_K)] {
           stage = iv_k % STAGES;
           wait empty[stage];
           tma.copy.async&lt;full[stage]&gt;.swiz&lt;SWIZ&gt;
-            lhs.subspan(TILE_M, TILE_K).at(block_m, iv_k) =&gt; lhs_s[stage];
+            lhs.subspan(TILE_M, TILE_K)
+              .at(block_m, iv_k) =&gt; lhs_s[stage];
           tma.copy.async&lt;full[stage]&gt;.swiz&lt;SWIZ&gt;
-            rhs.subspan(WARP_N, TILE_K).at(block_n, iv_k) =&gt; rhs_s[stage];
+            rhs.subspan(WARP_N, TILE_K)
+              .at(block_n, iv_k) =&gt; rhs_s[stage];
           trigger full[stage];
         }
       }
 
-      // ── 消费者 (wg&gt;=1)：执行 WGMMA 计算 ──
+      // ── 消费者 (wg=1)：执行 WGMMA 计算 ──
       inthreads.async (wg &gt;= 1) {
         cidx = wg - 1;
         foreach {s} in [STAGES]
@@ -3582,17 +3584,20 @@ __co__ void matmul(
           wait full[stage];
 
           foreach {iv_wk} in [cdiv(TILE_K, WARP_K)] {
-            ma = mma.load.swiz&lt;SWIZ&gt; 
-                  lhs_s[stage].subspan(WARP_M, WARP_K).at(cidx, iv_wk);
-            mb = mma.load.swiz&lt;SWIZ&gt; rhs_s[stage].chunkat(_, iv_wk);
+            ma = mma.load.swiz&lt;SWIZ&gt;
+              lhs_s[stage].subspan(WARP_M, WARP_K)
+                .at(cidx, iv_wk);
+            mb = mma.load.swiz&lt;SWIZ&gt;
+              rhs_s[stage].chunkat(_, iv_wk);
             mma.row.row mc, ma, mb;
           }
+          mma.commit;
           trigger empty[stage];
         }
-
         mma.store mc, output_s[cidx];
         tma.copy output_s[cidx] =&gt;
-          output.subspan(WARP_M, WARP_N).at(block_m * CONSUMERS + cidx, block_n);
+          output.subspan(WARP_M, WARP_N)
+            .at(block_m * CONSUMERS + cidx, block_n);
       }
 
     }
@@ -3640,14 +3645,14 @@ if (wg == 0 &amp;&amp; threadIdx.x % 128 == 0) {      // 生产者
         full[iv_k % STAGES], 1, bytes);        // trigger full
   }
 }
-if (wg &gt;= 1) {                                 // 消费者
+if (wg &gt;= 1) {                                 // 消费者（单个）
   for (int iv_k = 0; ...) {
     full[iv_k % STAGES].wait(...);             // wait full
     /* WGMMA（同 v2） */
     empty[iv_k % STAGES].arrive();             // trigger empty
   }
 }</code></pre>
-<p><strong>结果：~337 TFLOPS（相比 v2 提升 1.19 倍，cuBLAS 的 75.3%）</strong></p>
+<p><strong>结果：~288 TFLOPS（相比 v2 提升 1.01 倍，cuBLAS 的 64.4%）</strong></p>
 <hr />
 <h2 id="4">内核 4：生产级调优<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <p><strong>文件：</strong> <code>matmul_f16_v4_auto_tuned.co</code></p>
@@ -3709,7 +3714,7 @@ tensor_core HMMA (% of peak)        :  89.68%   ← 计算受限
 gpu__dram_throughput (% of HBM BW)  :  38.91%   ← TMA 隐藏了所有加载
 warp occupancy   (% of peak)        :  27.74%   ← 约 2 块/SM（受 smem 限制）</code></pre>
 <p>SM 和 Tensor Core 利用率达到 89.7% —— 内核已处于计算受限区域。DRAM 为 39% 意味着 TMA 成功进行了预取。Warp 占用率 27.7% 反映了共享内存占用（每块约 80 KB），使得 H800 上每 SM 只能容纳 2 个并发块。</p>
-<p><strong>结果：~471 TFLOPS（相比 v3 提升 1.40 倍，cuBLAS 的 105%）</strong></p>
+<p><strong>结果：~490 TFLOPS（相比 v3 提升 1.70 倍，cuBLAS 的 109%）</strong></p>
 <hr />
 <h2 id="ncu">完整 NCU 数据<a class="headerlink" href="#ncu" title="Permanent link">&para;</a></h2>
 <p>使用单次内核启动进行分析（<code>ncu --launch-count 1</code>）：</p>
@@ -3755,7 +3760,7 @@ warp occupancy   (% of peak)        :  27.74%   ← 约 2 块/SM（受 smem 限�
 <td style="text-align: right;">56.13</td>
 <td style="text-align: right;">9,418,787</td>
 <td style="text-align: right;">—</td>
-<td style="text-align: right;">337.0</td>
+<td style="text-align: right;">288.3</td>
 </tr>
 <tr>
 <td>v4 调优版</td>
@@ -3763,7 +3768,7 @@ warp occupancy   (% of peak)        :  27.74%   ← 约 2 块/SM（受 smem 限�
 <td style="text-align: right;">89.68</td>
 <td style="text-align: right;">9,492,372</td>
 <td style="text-align: right;">—</td>
-<td style="text-align: right;">471.3</td>
+<td style="text-align: right;">489.9</td>
 </tr>
 </tbody>
 </table>
@@ -3785,7 +3790,7 @@ warp occupancy   (% of peak)        :  27.74%   ← 约 2 块/SM（受 smem 限�
     &lt;compiled-kernel-binary&gt;</code></pre>
 <hr />
 <h2 id="v3-v4_1">调优历程：v3 → v4<a class="headerlink" href="#v3-v4_1" title="Permanent link">&para;</a></h2>
-<p>v4 不是预先设计的 —— 它是从 v3 开始，通过系统化的 28 轮参数搜索找到的。以下是实际记录。这是本教程的核心：上述技术为你提供了结构正确的内核，但最后 40% 的性能提升来自调优。</p>
+<p>v4 不是预先设计的 —— 它是从 v3 开始，通过系统化的 28 轮参数搜索找到的。以下是实际记录。这是本教程的核心：上述技术为你提供了结构正确的内核，但最后 70% 的性能提升来自调优。</p>
 <h3 id="v3-stages1-consumers1-warp_n128">基线：v3 (STAGES=1, CONSUMERS=1, WARP_N=128)<a class="headerlink" href="#v3-stages1-consumers1-warp_n128" title="Permanent link">&para;</a></h3>
 <p>v3 基线的 NCU 分析显示内核处于<strong>延迟受限</strong>状态：</p>
 <pre class="highlight"><code>sm__throughput:          56%   ← SM 利用不足
@@ -3808,7 +3813,7 @@ warp occupancy:          28%   ← 大量 warp 在屏障上阻塞</code></pre>
 <tr>
 <td>iter000</td>
 <td>基线 (STAGES=1, CONS=1)</td>
-<td style="text-align: right;">337</td>
+<td style="text-align: right;">288</td>
 <td>延迟受限</td>
 </tr>
 <tr>
@@ -3927,9 +3932,9 @@ gpu__dram_throughput:    38%   ← TMA 隐藏了延迟</code></pre>
 </tr>
 <tr>
 <td><strong>Croqtile v4（调优版）</strong></td>
-<td style="text-align: right;"><strong>2.35</strong></td>
-<td style="text-align: right;"><strong>471.3</strong></td>
-<td style="text-align: right;"><strong>105.3%</strong></td>
+<td style="text-align: right;"><strong>2.24</strong></td>
+<td style="text-align: right;"><strong>489.9</strong></td>
+<td style="text-align: right;"><strong>109.5%</strong></td>
 </tr>
 </tbody>
 </table>
@@ -3942,8 +3947,8 @@ gpu__dram_throughput:    38%   ← TMA 隐藏了延迟</code></pre>
 <p>这三项都可以在 Croqtile 中表达 —— 代码库中的生产级内核实现了它们。</p>
 <hr />
 <h2 id="_2">优化阶梯<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p><img alt="优化阶梯：TFLOPS 从 v0 (0.38) 到 v4 (471) 的进展，与 cuBLAS (447) 对比" src="../../../optimization/assets/img/optimization_ladder.png#only-dark" />
-<img alt="优化阶梯：TFLOPS 从 v0 (0.38) 到 v4 (471) 的进展，与 cuBLAS (447) 对比" src="../../../optimization/assets/img/optimization_ladder_light.png#only-light" /></p>
+<p><img alt="优化阶梯：TFLOPS 从 v0 (0.38) 到 v4 (490) 的进展，与 cuBLAS (447) 对比" src="../../../optimization/assets/img/optimization_ladder.png#only-dark" />
+<img alt="优化阶梯：TFLOPS 从 v0 (0.38) 到 v4 (490) 的进展，与 cuBLAS (447) 对比" src="../../../optimization/assets/img/optimization_ladder_light.png#only-light" /></p>
 <table>
 <thead>
 <tr>
@@ -3970,13 +3975,13 @@ gpu__dram_throughput:    38%   ← TMA 隐藏了延迟</code></pre>
 <td>v2 → v3</td>
 <td>Warp 特化</td>
 <td><code>inthreads.async</code>、<code>shared event</code>、<code>wait/trigger</code></td>
-<td style="text-align: right;">1.19×</td>
+<td style="text-align: right;">1.01×</td>
 </tr>
 <tr>
 <td>v3 → v4</td>
 <td>管道调优</td>
 <td>STAGES=2, CONSUMERS=2, WARP_N=192（28 轮搜索）</td>
-<td style="text-align: right;">1.40×</td>
+<td style="text-align: right;">1.70×</td>
 </tr>
 </tbody>
 </table>

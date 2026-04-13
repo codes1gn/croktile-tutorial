@@ -3202,15 +3202,15 @@ bash kernel.cute.result --execute</code></pre>
 </tr>
 <tr>
 <td>v3: Warp specialization</td>
-<td style="text-align: right;">3.26</td>
-<td style="text-align: right;">337.0</td>
-<td style="text-align: right;">75.3%</td>
+<td style="text-align: right;">3.81</td>
+<td style="text-align: right;">288.3</td>
+<td style="text-align: right;">64.4%</td>
 </tr>
 <tr>
 <td><strong>v4: Production-tuned</strong></td>
-<td style="text-align: right;"><strong>2.35</strong></td>
-<td style="text-align: right;"><strong>471.3</strong></td>
-<td style="text-align: right;"><strong>105.3%</strong></td>
+<td style="text-align: right;"><strong>2.24</strong></td>
+<td style="text-align: right;"><strong>489.9</strong></td>
+<td style="text-align: right;"><strong>109.5%</strong></td>
 </tr>
 <tr>
 <td>cuBLAS (reference)</td>
@@ -3220,7 +3220,7 @@ bash kernel.cute.result --execute</code></pre>
 </tr>
 </tbody>
 </table>
-<p>1240× improvement from v0 to v4 in five steps. Let's see how each one works.</p>
+<p>1289× improvement from v0 to v4 in five steps. Let's see how each one works.</p>
 <hr />
 <h2 id="kernel-0-naive">Kernel 0: Naive<a class="headerlink" href="#kernel-0-naive" title="Permanent link">&para;</a></h2>
 <p><strong>File:</strong> <code>matmul_f16_v0_naive.co</code></p>
@@ -3543,7 +3543,7 @@ pipe_fma  instructions              :    247,820</code></pre>
 <p><strong>File:</strong> <code>matmul_f16_v3_warpspec.co</code></p>
 <p>The insight from v2's profile: producer (TMA) and consumer (WGMMA) stall each other. Fix this by giving them separate warpgroups that run concurrently, connected by a software ring buffer in shared memory.</p>
 <pre class="highlight"><code class="language-choreo">// WARP_M=64, WARP_N=128, WARP_K=16
-// TILE_M=128, TILE_K=64, STAGES=1, CONSUMERS=1
+// TILE_M=64, TILE_K=64, STAGES=1, CONSUMERS=1
 
 __co__ void matmul(
     global f16 [M, K] lhs,
@@ -3553,23 +3553,26 @@ __co__ void matmul(
     shared event full[STAGES], empty[STAGES];
     shared f16 [TILE_M, TILE_K] lhs_s[STAGES];
     shared f16 [WARP_N, TILE_K] rhs_s[STAGES];
+    shared f16 [WARP_M, WARP_N] output_s[CONSUMERS];
 
-    // 3 warpgroups × 128 threads = 384 threads/block
-    parallel wg by 3 : group-4, t by 128 : thread {
+    // 2 warpgroups × 128 threads = 256 threads/block
+    parallel wg by 2 : group-4, t by 128 : thread {
       // ── Producer (wg=0): one thread drives TMA ──
       inthreads.async (wg == 0 &amp;&amp; t == 0) {
         foreach {iv_k} in [cdiv(K, TILE_K)] {
           stage = iv_k % STAGES;
           wait empty[stage];
           tma.copy.async&lt;full[stage]&gt;.swiz&lt;SWIZ&gt;
-            lhs.subspan(TILE_M, TILE_K).at(block_m, iv_k) =&gt; lhs_s[stage];
+            lhs.subspan(TILE_M, TILE_K)
+              .at(block_m, iv_k) =&gt; lhs_s[stage];
           tma.copy.async&lt;full[stage]&gt;.swiz&lt;SWIZ&gt;
-            rhs.subspan(WARP_N, TILE_K).at(block_n, iv_k) =&gt; rhs_s[stage];
+            rhs.subspan(WARP_N, TILE_K)
+              .at(block_n, iv_k) =&gt; rhs_s[stage];
           trigger full[stage];
         }
       }
 
-      // ── Consumers (wg&gt;=1): compute WGMMA ──
+      // ── Consumer (wg=1): compute WGMMA ──
       inthreads.async (wg &gt;= 1) {
         cidx = wg - 1;
         foreach {s} in [STAGES]
@@ -3581,17 +3584,20 @@ __co__ void matmul(
           wait full[stage];
 
           foreach {iv_wk} in [cdiv(TILE_K, WARP_K)] {
-            ma = mma.load.swiz&lt;SWIZ&gt; 
-                  lhs_s[stage].subspan(WARP_M, WARP_K).at(cidx, iv_wk);
-            mb = mma.load.swiz&lt;SWIZ&gt; rhs_s[stage].chunkat(_, iv_wk);
+            ma = mma.load.swiz&lt;SWIZ&gt;
+              lhs_s[stage].subspan(WARP_M, WARP_K)
+                .at(cidx, iv_wk);
+            mb = mma.load.swiz&lt;SWIZ&gt;
+              rhs_s[stage].chunkat(_, iv_wk);
             mma.row.row mc, ma, mb;
           }
+          mma.commit;
           trigger empty[stage];
         }
-        shared f16 [WARP_M, WARP_N] output_s[CONSUMERS];
         mma.store mc, output_s[cidx];
         tma.copy output_s[cidx] =&gt;
-          output.subspan(WARP_M, WARP_N).at(block_m * CONSUMERS + cidx, block_n);
+          output.subspan(WARP_M, WARP_N)
+            .at(block_m * CONSUMERS + cidx, block_n);
       }
 
     }
@@ -3639,14 +3645,14 @@ if (wg == 0 &amp;&amp; threadIdx.x % 128 == 0) {      // producer
         full[iv_k % STAGES], 1, bytes);        // trigger full
   }
 }
-if (wg &gt;= 1) {                                 // consumers
+if (wg &gt;= 1) {                                 // consumer
   for (int iv_k = 0; ...) {
     full[iv_k % STAGES].wait(...);             // wait full
     /* WGMMA (same as v2) */
     empty[iv_k % STAGES].arrive();             // trigger empty
   }
 }</code></pre>
-<p><strong>Result: ~337 TFLOPS (1.19× over v2, 75.3% of cuBLAS)</strong></p>
+<p><strong>Result: ~288 TFLOPS (1.01× over v2, 64.4% of cuBLAS)</strong></p>
 <hr />
 <h2 id="kernel-4-production-tuned">Kernel 4: Production-Tuned<a class="headerlink" href="#kernel-4-production-tuned" title="Permanent link">&para;</a></h2>
 <p><strong>File:</strong> <code>matmul_f16_v4_auto_tuned.co</code></p>
@@ -3708,7 +3714,7 @@ tensor_core HMMA (% of peak)        :  89.68%   ← compute-bound
 gpu__dram_throughput (% of HBM BW)  :  38.91%   ← TMA hiding all loads
 warp occupancy   (% of peak)        :  27.74%   ← ~2 blocks/SM (smem-limited)</code></pre>
 <p>SM and tensor-core utilisation are at 89.7% — the kernel is firmly in the compute-bound regime. DRAM at 39% means TMA is successfully prefetching ahead. Warp occupancy at 27.7% reflects the shared memory footprint (~80 KB per block) allowing 2 concurrent blocks per SM on H800.</p>
-<p><strong>Result: ~471 TFLOPS (1.40× over v3, 105% of cuBLAS on this GPU)</strong></p>
+<p><strong>Result: ~490 TFLOPS (1.70× over v3, 109% of cuBLAS on this GPU)</strong></p>
 <hr />
 <h2 id="the-full-ncu-picture">The full NCU picture<a class="headerlink" href="#the-full-ncu-picture" title="Permanent link">&para;</a></h2>
 <p>Profiled with a single kernel launch (<code>ncu --launch-count 1</code>):</p>
@@ -3754,7 +3760,7 @@ warp occupancy   (% of peak)        :  27.74%   ← ~2 blocks/SM (smem-limited)<
 <td style="text-align: right;">56.13</td>
 <td style="text-align: right;">9,418,787</td>
 <td style="text-align: right;">—</td>
-<td style="text-align: right;">337.0</td>
+<td style="text-align: right;">288.3</td>
 </tr>
 <tr>
 <td>v4 tuned</td>
@@ -3762,7 +3768,7 @@ warp occupancy   (% of peak)        :  27.74%   ← ~2 blocks/SM (smem-limited)<
 <td style="text-align: right;">89.68</td>
 <td style="text-align: right;">9,492,372</td>
 <td style="text-align: right;">—</td>
-<td style="text-align: right;">471.3</td>
+<td style="text-align: right;">489.9</td>
 </tr>
 </tbody>
 </table>
@@ -3784,7 +3790,7 @@ warp occupancy   (% of peak)        :  27.74%   ← ~2 blocks/SM (smem-limited)<
     &lt;compiled-kernel-binary&gt;</code></pre>
 <hr />
 <h2 id="the-tuning-journey-v3-v4">The Tuning Journey: v3 → v4<a class="headerlink" href="#the-tuning-journey-v3-v4" title="Permanent link">&para;</a></h2>
-<p>v4 was not designed upfront — it was found by a systematic 28-iteration parameter sweep starting from v3. Here is the actual log. This is the core of the tutorial: the techniques above give you a structurally correct kernel, but the last 40% comes from tuning.</p>
+<p>v4 was not designed upfront — it was found by a systematic 28-iteration parameter sweep starting from v3. Here is the actual log. This is the core of the tutorial: the techniques above give you a structurally correct kernel, but the last 70% comes from tuning.</p>
 <h3 id="baseline-v3-stages1-consumers1-warp_n128">Baseline: v3 (STAGES=1, CONSUMERS=1, WARP_N=128)<a class="headerlink" href="#baseline-v3-stages1-consumers1-warp_n128" title="Permanent link">&para;</a></h3>
 <p>NCU on the v3 baseline reveals the kernel is <strong>latency-bound</strong>:</p>
 <pre class="highlight"><code>sm__throughput:          56%   ← SM underutilized
@@ -3807,7 +3813,7 @@ warp occupancy:          28%   ← many warps stall on barriers</code></pre>
 <tr>
 <td>iter000</td>
 <td>baseline (STAGES=1, CONS=1)</td>
-<td style="text-align: right;">337</td>
+<td style="text-align: right;">288</td>
 <td>latency-bound</td>
 </tr>
 <tr>
@@ -3926,9 +3932,9 @@ gpu__dram_throughput:    38%   ← TMA is hiding latency</code></pre>
 </tr>
 <tr>
 <td><strong>Croqtile v4 (tuned)</strong></td>
-<td style="text-align: right;"><strong>2.35</strong></td>
-<td style="text-align: right;"><strong>471.3</strong></td>
-<td style="text-align: right;"><strong>105.3%</strong></td>
+<td style="text-align: right;"><strong>2.24</strong></td>
+<td style="text-align: right;"><strong>489.9</strong></td>
+<td style="text-align: right;"><strong>109.5%</strong></td>
 </tr>
 </tbody>
 </table>
@@ -3941,8 +3947,8 @@ gpu__dram_throughput:    38%   ← TMA is hiding latency</code></pre>
 <p>All three can be expressed in Croqtile — the production-grade kernels in the repository implement them.</p>
 <hr />
 <h2 id="the-optimization-ladder">The optimization ladder<a class="headerlink" href="#the-optimization-ladder" title="Permanent link">&para;</a></h2>
-<p><img alt="Optimization ladder: TFLOPS progression from v0 (0.38) through v4 (471), compared to cuBLAS (447)" src="../assets/img/optimization_ladder.png#only-dark" />
-<img alt="Optimization ladder: TFLOPS progression from v0 (0.38) through v4 (471), compared to cuBLAS (447)" src="../assets/img/optimization_ladder_light.png#only-light" /></p>
+<p><img alt="Optimization ladder: TFLOPS progression from v0 (0.38) through v4 (490), compared to cuBLAS (447)" src="../assets/img/optimization_ladder.png#only-dark" />
+<img alt="Optimization ladder: TFLOPS progression from v0 (0.38) through v4 (490), compared to cuBLAS (447)" src="../assets/img/optimization_ladder_light.png#only-light" /></p>
 <table>
 <thead>
 <tr>
@@ -3969,13 +3975,13 @@ gpu__dram_throughput:    38%   ← TMA is hiding latency</code></pre>
 <td>v2 → v3</td>
 <td>Warp specialization</td>
 <td><code>inthreads.async</code>, <code>shared event</code>, <code>wait/trigger</code></td>
-<td style="text-align: right;">1.19×</td>
+<td style="text-align: right;">1.01×</td>
 </tr>
 <tr>
 <td>v3 → v4</td>
 <td>Pipeline tuning</td>
 <td>STAGES=2, CONSUMERS=2, WARP_N=192 (28-iter sweep)</td>
-<td style="text-align: right;">1.40×</td>
+<td style="text-align: right;">1.70×</td>
 </tr>
 </tbody>
 </table>
