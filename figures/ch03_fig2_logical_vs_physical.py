@@ -41,12 +41,12 @@ class LogicalVsPhysical(Scene):
             t.move_to(r)
             return VGroup(r, t)
 
-        lx = LEFT * 3.5
-        b1 = log_box("parallel {px,py} by [8,16]", C["orange"], lx + UP * 1.3)
-        b2 = log_box("foreach {tile_k} in [16]", C["purple"], lx + UP * 0.4, w=2.6)
-        b3 = log_box("parallel {qx,qy} by [16,16]", C["green"], lx + DOWN * 0.5, w=2.2)
-        b4 = log_box("foreach k in [16]", C["teal"], lx + DOWN * 1.4, w=1.8)
-        b5 = log_box("compute: += a * b", C["fg2"], lx + DOWN * 2.3, w=1.5)
+        lx = LEFT * 3.8
+        b1 = log_box("parallel {px,py} by [8,16]", C["orange"], lx + UP * 1.3, w=3.2)
+        b2 = log_box("foreach {tile_k} in [16]", C["purple"], lx + UP * 0.4, w=2.8)
+        b3 = log_box("parallel {qx,qy} by [16,16]", C["green"], lx + DOWN * 0.5, w=3.2)
+        b4 = log_box("foreach k in [16]", C["teal"], lx + DOWN * 1.4, w=2.2)
+        b5 = log_box("compute: += a * b", C["fg2"], lx + DOWN * 2.3, w=1.8)
 
         for b in [b1, b2, b3, b4, b5]:
             self.add(b)
@@ -58,14 +58,15 @@ class LogicalVsPhysical(Scene):
                       max_tip_length_to_length_ratio=0.12)
             self.add(a)
 
-        lbl_p = Text("concurrent", font_size=12, color=C["orange"],
-                      font="Monospace").next_to(b1, RIGHT, buff=0.1)
-        lbl_f = Text("sequential", font_size=12, color=C["purple"],
-                      font="Monospace").next_to(b2, RIGHT, buff=0.1)
-        lbl_p2 = Text("concurrent", font_size=12, color=C["green"],
-                       font="Monospace").next_to(b3, RIGHT, buff=0.1)
-        lbl_f2 = Text("sequential", font_size=12, color=C["teal"],
-                       font="Monospace").next_to(b4, RIGHT, buff=0.1)
+        # Place concurrent/sequential labels to the left of boxes
+        lbl_p = Text("concurrent", font_size=10, color=C["orange"],
+                      font="Monospace").next_to(b1, LEFT, buff=0.1)
+        lbl_f = Text("sequential", font_size=10, color=C["purple"],
+                      font="Monospace").next_to(b2, LEFT, buff=0.1)
+        lbl_p2 = Text("concurrent", font_size=10, color=C["green"],
+                       font="Monospace").next_to(b3, LEFT, buff=0.1)
+        lbl_f2 = Text("sequential", font_size=10, color=C["teal"],
+                       font="Monospace").next_to(b4, LEFT, buff=0.1)
         self.add(lbl_p, lbl_f, lbl_p2, lbl_f2)
 
         # --- Right: Physical side ---

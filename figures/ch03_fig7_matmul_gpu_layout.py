@@ -47,7 +47,7 @@ class MatmulGpuLayout(Scene):
         self.add(gpu_title)
 
         # GPU chip outline
-        gpu_box = Rectangle(width=6.5, height=4.5, fill_color=C["fill"],
+        gpu_box = Rectangle(width=7.0, height=4.5, fill_color=C["fill"],
                              fill_opacity=0.5, stroke_color=C["fg3"], stroke_width=1)
         gpu_box.move_to(RIGHT * 3.0 + DOWN * 0.5)
         self.add(gpu_box)
@@ -59,9 +59,11 @@ class MatmulGpuLayout(Scene):
             (RIGHT * 1.0 + DOWN * 1.5, "SM 2", ["(1,0)", "(1,1)"]),
             (RIGHT * 3.5 + DOWN * 1.5, "SM 3", ["(1,2)", "(1,3)"]),
         ]
+        block_target = None
+        thread_target = None
 
         for pos, sm_name, blocks in sm_data:
-            sm = Rectangle(width=2.2, height=1.8, fill_color=C["sm_c"],
+            sm = Rectangle(width=2.6, height=2.0, fill_color=C["sm_c"],
                            fill_opacity=0.1, stroke_color=C["sm_c"], stroke_width=1)
             sm.move_to(pos)
             sm_lbl = Text(sm_name, font_size=12, color=C["sm_c"],
@@ -70,7 +72,7 @@ class MatmulGpuLayout(Scene):
             self.add(sm, sm_lbl)
 
             # Shared memory bar
-            smem = Rectangle(width=1.8, height=0.3, fill_color=C["shared_c"],
+            smem = Rectangle(width=2.2, height=0.3, fill_color=C["shared_c"],
                               fill_opacity=0.25, stroke_color=C["shared_c"],
                               stroke_width=1)
             smem.move_to(pos + DOWN * 0.0)
@@ -78,23 +80,28 @@ class MatmulGpuLayout(Scene):
                            font="Monospace").move_to(smem)
             self.add(smem, smem_l)
 
-            # Block labels
+            # Block labels — stacked vertically to avoid overlap
             for j, blk in enumerate(blocks):
-                bt = Text(f"block{blk}", font_size=12, color=C["orange"],
+                bt = Text(f"block{blk}", font_size=10, color=C["orange"],
                            font="Monospace")
-                bt.move_to(pos + LEFT * 0.4 + RIGHT * j * 0.9 + DOWN * 0.45)
+                bt.move_to(pos + LEFT * 0.55 + RIGHT * j * 1.1 + DOWN * 0.45)
                 self.add(bt)
 
             # Thread dots
             for tx in range(4):
                 for ty in range(2):
                     dot = Dot(point=pos + LEFT * 0.6 + RIGHT * tx * 0.35 +
-                              DOWN * 0.65 + DOWN * ty * 0.2,
+                              DOWN * 0.7 + DOWN * ty * 0.2,
                               radius=0.04, color=C["green"])
                     self.add(dot)
 
+            # Use SM 0 as anchor targets for mapping arrows
+            if sm_name == "SM 0":
+                block_target = pos + LEFT * 1.0 + DOWN * 0.45
+                thread_target = pos + LEFT * 0.7 + DOWN * 0.8
+
         # Arrows from code to hardware
-        arr1 = Arrow(LEFT * 1.5 + UP * 1.5, RIGHT * 0.0 + UP * 1.0,
+        arr1 = Arrow(LEFT * 3.1 + UP * 1.55, block_target,
                      buff=0.1, stroke_width=2, color=C["orange"],
                      max_tip_length_to_length_ratio=0.06)
         a1_lbl = Text(": block", font_size=12, color=C["orange"],
@@ -102,7 +109,7 @@ class MatmulGpuLayout(Scene):
         a1_lbl.next_to(arr1, UP, buff=0.03)
         self.add(arr1, a1_lbl)
 
-        arr2 = Arrow(LEFT * 1.5 + DOWN * 0.0, RIGHT * 0.0 + DOWN * 0.8,
+        arr2 = Arrow(LEFT * 2.3 + UP * 0.17, thread_target,
                      buff=0.1, stroke_width=2, color=C["green"],
                      max_tip_length_to_length_ratio=0.06)
         a2_lbl = Text(": thread", font_size=12, color=C["green"],

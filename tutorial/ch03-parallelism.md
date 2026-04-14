@@ -140,7 +140,7 @@ Before we build the matmul, two features of Croqtile's type system are worth men
 
 The `span(i)` syntax extracts one dimension: `lhs.span(0)` is 128, `rhs.span(1)` is 256. The shorthand `lhs.span` copies the entire shape.
 
-**`ituple`** — the `{px, py}` syntax in `parallel {px, py} by [8, 16]` introduces an `ituple`, a compile-time integer tuple. The compose operator `px#qx` combines two ituple elements into a global index. The extent operator `#p` extracts the range of a parallel variable. These are all resolved at compile time — no runtime overhead.
+**`ituple`** — the `{px, py}` syntax in `parallel {px, py} by [8, 16]` introduces an `ituple`, a compile-time integer tuple. The compose operator `px#qx` combines two ituple elements into a global index. The extent operator `#p` extracts the upper bound of a parallel variable. These are all resolved at compile time — no runtime overhead.
 
 For the full details, see the [mdspan reference](../documentation/shape-in-choreo.md) and the [ituple reference](../documentation/integer-ituple.md). For now, the key takeaway is: Croqtile catches shape mismatches at compile time, not at runtime.
 
@@ -158,7 +158,7 @@ Start with just `parallel` and `.at()` — global memory, no explicit data movem
 __co__ s32 [128, 256] matmul(s32 [128, 256] lhs, s32 [256, 256] rhs) {
   s32 [lhs.span(0), rhs.span(1)] output;
 
-  parallel p by 16, q by 64 {
+  parallel {p, q} by [16, 64] {
     foreach index = {m, n, k} in [128 / #p, 256 / #q, 256]
       output.at(p#m, q#n) += lhs.at(p#m, k) * rhs.at(k, q#n);
   }
@@ -176,7 +176,7 @@ This is dense — here is what each piece does.
 
 **Output shape from operand dimensions.** `s32 [lhs.span(0), rhs.span(1)] output` builds the output shape from the inputs: `lhs.span(0)` is 128 (rows of the left matrix) and `rhs.span(1)` is 256 (columns of the right matrix).
 
-**Multi-axis parallel.** `parallel p by 16, q by 64` declares two parallel indices with a comma. This creates a 16 × 64 = 1024-way parallel grid. Each `(p, q)` pair owns a tile of the output.
+**Multi-axis parallel.** `parallel {p, q} by [16, 64]` declares two parallel indices of one parallel level with a comma. This creates a 16 × 64 = 1024-way parallel grid. Each `(p, q)` pair owns a tile of the output.
 
 **Named tuple destructuring.** `foreach index = {m, n, k} in [128 / #p, 256 / #q, 256]` introduces three nested loop indices — `m`, `n`, `k` — bound to a tuple called `index`. The trip counts are:
 
@@ -246,8 +246,8 @@ The host side uses the same `make_spandata` / `.view()` pattern from earlier cha
 
 ```choreo
 int main() {
-  auto lhs = choreo::make_spandata<choreo::s32>(128, 256);
-  auto rhs = choreo::make_spandata<choreo::s32>(256, 256);
+  auto lhs = croq::make_spandata<croq::s32>(128, 256);
+  auto rhs = croq::make_spandata<croq::s32>(256, 256);
   lhs.fill_random(-10, 10);
   rhs.fill_random(-10, 10);
 
@@ -258,7 +258,7 @@ int main() {
       int ref = 0;
       for (size_t k = 0; k < lhs.shape()[1]; ++k)
         ref += lhs[i][k] * rhs[k][j];
-      choreo::choreo_assert(ref == res[i][j], "values are not equal.");
+      croq::croq_assert(ref == res[i][j], "values are not equal.");
     }
 
   std::cout << "Test Passed\n" << std::endl;
@@ -280,15 +280,15 @@ For that thread, the K-loop runs 16 iterations. On iteration `tile_k = 0`, `dma.
 | Syntax | Meaning |
 |--------|---------|
 | `parallel p by N` | N-way parallelism, index `p` runs 0..N-1 concurrently |
-| `parallel {px, py} by [M, N]` | Multi-dimensional parallel (Cartesian product) |
+| `parallel {px, py} by [M, N]` | Multi-dimensional parallel level <br> (`p` and `q` correspond to one parallel level) |
+| `parallel p by A, q by B` | Comma-separated parallel levels <br> (`p` and `q` correspond to different parallel levels) |
 | `parallel p by N : block` | Map to CUDA thread blocks |
 | `parallel q by N : thread` | Map to threads within a block |
 | `parallel w by N : group` | Map to warps (32 threads each) |
 | `parallel g by N : group-4` | Map to warpgroups (128 threads each) |
 | `=> shared` | DMA destination: block-scoped shared memory |
 | `foreach index = {m, n, k} in [a, b, c]` | Named tuple destructuring in a `foreach` |
-| `parallel p by A, q by B` | Comma-separated parallel axes |
 | `lhs.span(0)` | Extract one dimension of a tensor's shape |
-| `p#m` | Compose outer tile index `p` with inner offset `m` |
+| `p # m` | Compose outer tile index `p` with inner offset `m` |
 
 The tiled DMA matmul you built in this chapter is the structural backbone of every high-performance GPU kernel. The next chapter replaces the scalar `.at()` arithmetic in the inner loop with **tensor-core** operations — hardware-accelerated matrix multiply that processes a 16×16×16 tile in a single instruction.
