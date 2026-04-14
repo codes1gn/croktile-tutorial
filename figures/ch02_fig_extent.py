@@ -29,7 +29,7 @@ class ExtentOperator(Scene):
         ox = -n_tiles * cw / 2 + cw / 2
 
         vec_lbl = Text(f"vector [{total}]", font_size=14, color=C["fg2"], font="Monospace")
-        vec_lbl.move_to([0, vec_y + 0.5, 0])
+        vec_lbl.move_to([0, vec_y - 0.4, 0])
         self.add(vec_lbl)
 
         tiles = VGroup()
@@ -49,20 +49,14 @@ class ExtentOperator(Scene):
         brace_lbl.next_to(brace_top, UP, buff=0.1)
         self.add(brace_top, brace_lbl)
 
-        # One tile zoomed
-        one_tile_y = 0.5
-        one_brace = Brace(
-            VGroup(tiles[0][0].copy().move_to([ox, vec_y, 0])),
-            DOWN, buff=0.05, color=C["dim_c"]
-        )
-
+        # Tile size note
         tile_size_lbl = Text(f"each tile: {total} / #tile = {total} / {n_tiles} = {tile_size} elements",
                               font_size=13, color=C["fg2"], font="Monospace")
-        tile_size_lbl.move_to([0, one_tile_y, 0])
+        tile_size_lbl.move_to([0, vec_y - 0.8, 0])
         self.add(tile_size_lbl)
 
         # The two uses of #
-        box_y = -0.6
+        box_y = -1.0
         uses_box = Rectangle(width=10, height=2.8, fill_color=C["fill"],
                               fill_opacity=0.2, stroke_color=C["dim"], stroke_width=1)
         uses_box.move_to([0, box_y, 0])
@@ -95,5 +89,5 @@ class ExtentOperator(Scene):
             "#name alone = extent  |  a # b = compose  — context disambiguates",
             font_size=12, color=C["fg3"], font="Monospace"
         )
-        key.move_to(DOWN * 2.8)
+        key.move_to(DOWN * 3.2)
         self.add(key)

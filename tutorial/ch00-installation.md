@@ -52,7 +52,7 @@ __co__ s32 [4] identity(s32 [4] input) {
 }
 
 int main() {
-  auto input = choreo::make_spandata<choreo::s32>(4);
+  auto input = croq::make_spandata<croq::s32>(4);
   input[0] = 1; input[1] = 2; input[2] = 3; input[3] = 4;
   auto result = identity(input.view());
   for (int i = 0; i < 4; ++i)
@@ -77,7 +77,7 @@ The `croqtile` command works like `gcc` or `clang`:
 ```bash
 croqtile program.co                     # compile and link → a.out
 croqtile program.co -o my_kernel        # specify output name
-croqtile -es -t cuda program.co -o out.cu  # emit CUDA source only
+croqtile -es -t cute program.co -o out.cu  # emit CUDA source only
 croqtile -E program.co                  # preprocess only
 ```
 
@@ -86,7 +86,7 @@ Key flags:
 | Flag | Effect |
 |---|---|
 | `-o <file>` | Set output filename |
-| `-t <platform>` | Select target platform (e.g. `cuda`) |
+| `-t <platform>` | Select target platform (e.g. `cute`) |
 | `-es` | Emit target source code without compiling it |
 | `-E` | Preprocess only (expand macros, strip `#if 0` blocks) |
 | `-c` | Compile without linking |

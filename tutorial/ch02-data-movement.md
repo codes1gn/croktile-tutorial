@@ -47,15 +47,15 @@ __co__ s32 [128] tiled_add(s32 [128] lhs, s32 [128] rhs) {
 }
 
 int main() {
-  auto lhs = choreo::make_spandata<choreo::s32>(128);
-  auto rhs = choreo::make_spandata<choreo::s32>(128);
+  auto lhs = croq::make_spandata<croq::s32>(128);
+  auto rhs = croq::make_spandata<croq::s32>(128);
   lhs.fill_random(-10, 10);
   rhs.fill_random(-10, 10);
 
   auto res = tiled_add(lhs.view(), rhs.view());
 
   for (int i = 0; i < 128; ++i)
-    choreo::choreo_assert(lhs[i] + rhs[i] == res[i], "values are not equal.");
+    croq::croq_assert(lhs[i] + rhs[i] == res[i], "values are not equal.");
 
   std::cout << "Test Passed\n" << std::endl;
 }
@@ -233,11 +233,11 @@ __co__ s32 [64, 128] tiled_add_2d(s32 [64, 128] lhs, s32 [64, 128] rhs) {
 
 Every construct generalizes naturally to higher dimensions: `chunkat(tr, tc)` takes two tile indices, `foreach {i, j}` introduces two inner indices, `tr # i` and `tc # j` compose along each axis (outer # inner), and `#tr` / `#tc` give the tile counts (4 and 8 respectively) so the inner loop bounds compute to `16` and `16`.
 
-The host code is the same pattern as before — `make_spandata<choreo::s32>(64, 128)`, `.view()`, verify with nested loops.
+The host code is the same pattern as before — `make_spandata<croq::s32>(64, 128)`, `.view()`, verify with nested loops.
 
 ## Memory Specifiers: Where Data Lives
 
-Every `dma.copy` ends with `=> local`, `=> shared`, or `=> global`. These are **memory specifiers** — Croqtile's abstraction over the GPU's physical memory hierarchy. Understanding what they mean, and what hardware they map to, is worth a detour.
+`dma.copy` may end with `=> local`, `=> shared`, or `=> global`. These are **memory specifiers** — Croqtile's abstraction over the GPU's physical memory hierarchy. Understanding what they mean, and what hardware they map to, is worth a detour.
 
 ### The Abstraction
 

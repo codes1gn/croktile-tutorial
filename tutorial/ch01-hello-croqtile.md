@@ -26,8 +26,8 @@ __co__ s32 [4, 8] ele_add(s32 [4, 8] lhs, s32 [4, 8] rhs) {
 }
 
 int main() {
-  auto lhs = choreo::make_spandata<choreo::s32>(4, 8);
-  auto rhs = choreo::make_spandata<choreo::s32>(4, 8);
+  auto lhs = croq::make_spandata<croq::s32>(4, 8);
+  auto rhs = croq::make_spandata<croq::s32>(4, 8);
   lhs.fill_random(-10, 10);
   rhs.fill_random(-10, 10);
 
@@ -35,7 +35,7 @@ int main() {
 
   for (int i = 0; i < 4; ++i)
     for (int j = 0; j < 8; ++j)
-      choreo::choreo_assert(lhs[i][j] + rhs[i][j] == res[i][j],
+      croq::croq_assert(lhs[i][j] + rhs[i][j] == res[i][j],
                           "values are not equal.");
 
   std::cout << "Test Passed\n" << std::endl;
@@ -61,8 +61,9 @@ This is the heart of the program. Here it is piece by piece.
 __co__ s32 [4, 8] ele_add(s32 [4, 8] lhs, s32 [4, 8] rhs) {
 ```
 
-The `__co__` prefix marks this as a Croqtile function. Unlike regular C++ functions, the signature carries full shape information: `s32 [4, 8]` means "a 2D tensor of shape 4 × 8 with element type `s32` (signed 32-bit integer)." Both parameters and the return type follow this convention — `type [shape] name`. The compiler uses these shapes to verify that every indexing operation is in-bounds at compile time.
+The `__co__` prefix marks this as a Croqtile function. Unlike regular C++ functions, the signature carries full shape information: `s32 [4, 8]` means "a 2D tensor of shape 4 × 8 with element type `s32` (signed 32-bit integer)". Both parameters and the return type follow this convention — `type [shape] name`. The compiler uses these shapes to verify that every indexing operation is in-bounds at compile time.
 
+// TODO: The datatype set is not complete.
 Croqtile supports these element types: `s32` (signed 32-bit int), `f16` (half-precision float), `bf16` (brain float), `f32` (single-precision float), and `f8_e4m3` / `f8_e5m2` (8-bit floats). For now, `s32` is the simplest to reason about.
 
 **Output buffer declaration.**
@@ -90,26 +91,26 @@ If you have written CUDA before, you might wonder: are these instances CUDA thre
 return output;
 ```
 
-A `__co__` function returns its result tensor. The return type in the signature (`s32 [4, 8]`) must match what you actually return. The caller on the host side receives a `choreo::spanned_data` — an owning buffer with shape metadata that you can index into with `[i][j]`.
+A `__co__` function returns its result tensor. The return type in the signature (`s32 [4, 8]`) must match what you actually return. The caller on the host side receives a `croq::spanned_data` — an owning buffer with shape metadata that you can index into with `[i][j]`.
 
 ## The Host Program
 
 The host is plain C++ with a few Croqtile API calls:
 
 ```choreo
-auto lhs = choreo::make_spandata<choreo::s32>(4, 8);
-auto rhs = choreo::make_spandata<choreo::s32>(4, 8);
+auto lhs = croq::make_spandata<croq::s32>(4, 8);
+auto rhs = croq::make_spandata<croq::s32>(4, 8);
 lhs.fill_random(-10, 10);
 rhs.fill_random(-10, 10);
 ```
 
-`choreo::make_spandata<T>(dims...)` creates an owning tensor buffer on the host. You pass the element type as a template parameter and the dimensions as arguments. `fill_random` populates it with values in the given range.
+`croq::make_spandata<T>(dims...)` creates an owning tensor buffer on the host. You pass the element type as a template parameter and the dimensions as arguments. `fill_random` populates it with values in the given range.
 
 ```choreo
 auto res = ele_add(lhs.view(), rhs.view());
 ```
 
-Calling a `__co__` function from C++ looks like a normal function call. The `.view()` method produces a non-owning `spanned_view` from an owning `spanned_data` — this is how you pass host tensors into a Croqtile function without transferring ownership. The return value `res` is a `choreo::spanned_data` that owns its buffer.
+Calling a `__co__` function from C++ looks like a normal function call. The `.view()` method produces a non-owning `spanned_view` from an owning `spanned_data` — this is how you pass host tensors into a Croqtile function without transferring ownership. The return value `res` is a `croq::spanned_data` that owns its buffer.
 
 The rest of `main` is ordinary verification: loop over every element and assert equality. The host program is deliberately boring — the interesting work happens in the `__co__` function.
 

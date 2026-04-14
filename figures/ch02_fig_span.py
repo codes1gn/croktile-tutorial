@@ -70,17 +70,17 @@ class SpanDimension(Scene):
         # .span (full shape)
         span_full = Text("lhs.span  →  [M, N] = [4, 8]  (entire shape)",
                           font_size=13, color=C["green"], font="Monospace")
-        span_full.move_to(RIGHT * 2.5 + UP * 1.2)
+        span_full.move_to(RIGHT * 3 + UP * 1.2)
         self.add(span_full)
 
         # Use cases
-        use_y = -1.0
-        use_box = Rectangle(width=10, height=3.2, fill_color=C["fill"],
+        use_y = -2.0
+        use_box = Rectangle(width=10, height=2.6, fill_color=C["fill"],
                               fill_opacity=0.2, stroke_color=C["dim"], stroke_width=1)
         use_box.move_to([0, use_y, 0])
 
         use_title = Text("Common Patterns", font_size=16, color=C["fg"], font="Monospace")
-        use_title.move_to([0, use_y + 1.3, 0])
+        use_title.move_to([0, use_y + 1.1, 0])
 
         examples = [
             ("s32 [lhs.span] output;", "copy full shape → output is [4, 8]", C["green"]),

@@ -38,7 +38,7 @@ class TiledAdd(Scene):
         self.add(title)
 
         # --- Top: full [128] vectors (side by side) ---
-        top_y = 2.3
+        top_y = 1.6
         full_w = 0.32
         n_tiles = 8
         tile_size = 16
@@ -114,8 +114,8 @@ class TiledAdd(Scene):
             r.move_to([lhs_cx + (i - n_cells / 2 + 0.5) * (cell_w + 0.02), mid_y + 0.35, 0])
             v = Text(f"a{32+i}", font_size=11, color=C["fg"], font="Monospace").move_to(r)
             lhs_local.add(VGroup(r, v))
-        dots_l = Text("...", font_size=14, color=C["fg2"], font="Monospace")
-        dots_l.next_to(lhs_local, RIGHT, buff=0.08)
+        dots_l = Text("···", font_size=14, color=C["fg2"], font="Monospace")
+        dots_l.next_to(lhs_local, RIGHT, buff=0.06)
         lhs_local_label.next_to(lhs_local, UP, buff=0.1)
         self.add(lhs_local_label, lhs_local, dots_l)
 
@@ -129,25 +129,25 @@ class TiledAdd(Scene):
             r.move_to([rhs_cx + (i - n_cells / 2 + 0.5) * (cell_w + 0.02), mid_y + 0.35, 0])
             v = Text(f"b{32+i}", font_size=11, color=C["fg"], font="Monospace").move_to(r)
             rhs_local.add(VGroup(r, v))
-        dots_r = Text("...", font_size=14, color=C["fg2"], font="Monospace")
-        dots_r.next_to(rhs_local, RIGHT, buff=0.08)
+        dots_r = Text("···", font_size=14, color=C["fg2"], font="Monospace")
+        dots_r.next_to(rhs_local, RIGHT, buff=0.06)
         rhs_local_label.next_to(rhs_local, UP, buff=0.1)
         self.add(rhs_local_label, rhs_local, dots_r)
 
         # DMA arrows from top to local
         local_lhs_cx = -1.8
         local_rhs_cx = 1.8
-        dma_arr_l = Arrow([lhs_tile2_x, top_y - 0.25, 0],
-                          [local_lhs_cx, mid_y + 0.95, 0],
-                          buff=0.1, stroke_width=2, color=C["arrow_c"],
-                          max_tip_length_to_length_ratio=0.08)
+        dma_arr_l = Arrow([lhs_cx, top_y - 0.22, 0],
+                          [local_lhs_cx, mid_y + 0.85, 0],
+                          buff=0.05, stroke_width=2, color=C["arrow_c"],
+                          max_tip_length_to_length_ratio=0.12)
         dma_lbl_l = Text("dma.copy", font_size=11, color=C["arrow_c"], font="Monospace")
         dma_lbl_l.next_to(dma_arr_l, LEFT, buff=0.08)
 
-        dma_arr_r = Arrow([rhs_tile2_x, top_y - 0.25, 0],
-                          [local_rhs_cx, mid_y + 0.95, 0],
-                          buff=0.1, stroke_width=2, color=C["arrow_c"],
-                          max_tip_length_to_length_ratio=0.08)
+        dma_arr_r = Arrow([rhs_cx, top_y - 0.22, 0],
+                          [local_rhs_cx, mid_y + 0.85, 0],
+                          buff=0.05, stroke_width=2, color=C["arrow_c"],
+                          max_tip_length_to_length_ratio=0.12)
         dma_lbl_r = Text("dma.copy", font_size=11, color=C["arrow_c"], font="Monospace")
         dma_lbl_r.next_to(dma_arr_r, RIGHT, buff=0.08)
         self.add(dma_arr_l, dma_lbl_l, dma_arr_r, dma_lbl_r)
@@ -157,33 +157,33 @@ class TiledAdd(Scene):
         plus.move_to([0, mid_y + 0.35, 0])
         self.add(plus)
 
-        # = result row (global memory — output.at(tile # i))
+        # = sign
         res_y = mid_y - 0.6
         eq = Text("=", font_size=24, color=C["fg"], font="Monospace")
         eq.move_to([0, res_y, 0])
         self.add(eq)
 
+        # Zoomed result: c32-c36 (above output row)
+        zoom_y = res_y - 0.5
         result_cells = VGroup()
         for i in range(n_cells):
             r = Rectangle(width=cell_w, height=0.35, fill_color=C["out_c"],
                           fill_opacity=0.5, stroke_color=C["out_c"], stroke_width=1)
-            r.move_to([(i - n_cells / 2 + 0.5) * (cell_w + 0.02), res_y - 0.4, 0])
+            r.move_to([(i - n_cells / 2 + 0.5) * (cell_w + 0.02), zoom_y, 0])
             v = Text(f"c{32+i}", font_size=11, color=C["fg"], font="Monospace").move_to(r)
             result_cells.add(VGroup(r, v))
-        dots_o = Text("...", font_size=14, color=C["fg2"], font="Monospace")
+        dots_o = Text("...  (16 elements)", font_size=11, color=C["fg2"], font="Monospace")
         dots_o.next_to(result_cells, RIGHT, buff=0.08)
         res_formula = Text("cᵢ = aᵢ + bᵢ", font_size=12, color=C["out_c"], font="Monospace")
         res_formula.next_to(result_cells, LEFT, buff=0.3)
-        res_label = Text("output tile (global)", font_size=11, color=C["out_c"], font="Monospace")
-        res_label.next_to(result_cells, DOWN, buff=0.1)
-        self.add(result_cells, dots_o, res_formula, res_label)
+        self.add(result_cells, dots_o, res_formula)
 
         # --- Bottom: output [128] ---
-        bot_y = -3.0
+        bot_y = -2.8
         out_x_start = -n_tiles * full_w / 2 + full_w / 2
         out_tile2_x = out_x_start + 2 * full_w
         out_label = Text("output [128]", font_size=14, color=C["out_c"], font="Monospace")
-        out_label.move_to([0, bot_y + 0.4, 0])
+        out_label.move_to([0, bot_y - 0.4, 0])
         self.add(out_label)
 
         out_tiles = VGroup()
@@ -197,9 +197,17 @@ class TiledAdd(Scene):
             out_tiles.add(VGroup(r, lbl))
         self.add(out_tiles)
 
-        store_arr = Arrow([0, res_y - 0.75, 0], [out_tile2_x, bot_y + 0.25, 0],
-                          buff=0.1, stroke_width=2, color=C["out_c"],
-                          max_tip_length_to_length_ratio=0.08)
-        store_lbl = Text("write back", font_size=12, color=C["out_c"], font="Monospace")
-        store_lbl.next_to(store_arr, RIGHT, buff=0.08)
-        self.add(store_arr, store_lbl)
+        # Bracket lines from tile 2 edges to c32/c36 edges
+        tile2_rect = out_tiles[2][0]
+        t2_left = tile2_rect.get_left()[0]
+        t2_right = tile2_rect.get_right()[0]
+        t2_top = tile2_rect.get_top()[1]
+        c32_left = result_cells[0][0].get_left()[0]
+        c36_right = result_cells[-1][0].get_right()[0]
+        c_bottom = result_cells[0][0].get_bottom()[1]
+
+        line_l = Line([t2_left, t2_top, 0], [c32_left, c_bottom, 0],
+                      stroke_width=1.5, color=C["out_c"])
+        line_r = Line([t2_right, t2_top, 0], [c36_right+0.3, c_bottom, 0],
+                      stroke_width=1.5, color=C["out_c"])
+        self.add(line_l, line_r)

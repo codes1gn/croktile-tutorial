@@ -77,21 +77,23 @@ class ComposeOperator(Scene):
         dots_z.next_to(zoom_cells, RIGHT, buff=0.1)
         self.add(zoom_cells, dots_z)
 
-        # Arrow from tile 2 to zoom
-        arr_zoom = Arrow([ox + hl_tile * cw, vec_y - 0.3, 0],
-                          [0, zoom_y + 0.35, 0],
+        # Arrow from tile 2 left edge to cell 32's left edge
+        tile2_left_x = ox + hl_tile * cw - (cw - 0.04) / 2
+        cell32_left_x = (0 - n_show / 2 + 0.5) * (zoom_cw + 0.02) - (zoom_cw - 0.02) / 2
+        arr_zoom = Arrow([tile2_left_x, vec_y - 0.25, 0],
+                          [cell32_left_x, zoom_y + 0.2, 0],
                           buff=0.05, stroke_width=1.5, color=C["orange"],
                           max_tip_length_to_length_ratio=0.08)
         self.add(arr_zoom)
 
         # Local index labels
         for i in range(n_show):
-            il = Text(f"i={i}", font_size=12, color=C["fg3"], font="Monospace")
-            il.move_to([(i - n_show / 2 + 0.5) * (zoom_cw + 0.02), zoom_y - 0.3, 0])
+            il = Text(f"i={i}", font_size=10, color=C["fg3"], font="Monospace")
+            il.move_to([(i - n_show / 2 + 0.5) * (zoom_cw + 0.02), zoom_y - 0.28, 0])
             self.add(il)
 
         # Composition example
-        example_y = -1.0
+        example_y = -1.3
         ex_box = Rectangle(width=8, height=1.6, fill_color=C["fill"],
                             fill_opacity=0.3, stroke_color=C["dim"], stroke_width=1)
         ex_box.move_to([0, example_y, 0])
@@ -100,7 +102,7 @@ class ComposeOperator(Scene):
                           color=C["fg"], font="Monospace")
         ex_title.move_to([0, example_y + 0.5, 0])
 
-        compose_eq = Text("tile # i  =  2 # 3  =  2 × 16 + 3  =  35", font_size=16,
+        compose_eq = Text("tile # i  =  2 × 16 + 3  =  35", font_size=16,
                             color=C["blue"], font="Monospace")
         compose_eq.move_to([0, example_y, 0])
 
@@ -111,18 +113,18 @@ class ComposeOperator(Scene):
         self.add(ex_box, ex_title, compose_eq, meaning)
 
         # Visual pointer to element 35 in zoom
-        ptr_arrow = Arrow([(hl_i - n_show / 2 + 0.5) * (zoom_cw + 0.02), zoom_y - 0.5, 0],
-                           [(hl_i - n_show / 2 + 0.5) * (zoom_cw + 0.02), zoom_y - 0.22, 0],
-                           buff=0, stroke_width=2, color=C["blue"],
-                           max_tip_length_to_length_ratio=0.2)
-        ptr_lbl = Text("35", font_size=12, color=C["blue"], font="Monospace")
-        ptr_lbl.move_to([(hl_i - n_show / 2 + 0.5) * (zoom_cw + 0.02), zoom_y - 0.65, 0])
-        self.add(ptr_arrow, ptr_lbl)
+        # ptr_arrow = Arrow([(hl_i - n_show / 2 + 0.5) * (zoom_cw + 0.02), zoom_y - 0.5, 0],
+        #                    [(hl_i - n_show / 2 + 0.5) * (zoom_cw + 0.02), zoom_y - 0.22, 0],
+        #                    buff=0, stroke_width=2, color=C["blue"],
+        #                    max_tip_length_to_length_ratio=0.2)
+        # ptr_lbl = Text("35", font_size=12, color=C["blue"], font="Monospace")
+        # ptr_lbl.move_to([(hl_i - n_show / 2 + 0.5) * (zoom_cw + 0.02), zoom_y - 0.65, 0])
+        # self.add(ptr_arrow, ptr_lbl)
 
         # Key insight
         key = Text(
             "outer # inner  →  the tile index goes LEFT, element offset goes RIGHT",
             font_size=12, color=C["fg3"], font="Monospace"
         )
-        key.move_to(DOWN * 2.5)
+        key.move_to(DOWN * 2.8)
         self.add(key)

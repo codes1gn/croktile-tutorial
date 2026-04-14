@@ -23,13 +23,14 @@ class ChunkatAnim(Scene):
         self.play(Write(title), run_time=0.5)
 
         tensor_lbl = Text("tensor [64, 128]", font_size=16, color=C["fg2"], font="Monospace")
-        tensor_lbl.move_to(UP * 2.5)
+        tensor_lbl.move_to(LEFT * 0.8 + UP * 2.8)
         self.play(FadeIn(tensor_lbl), run_time=0.3)
 
         rows, cols = 4, 8
         cw, ch = 0.7, 0.6
-        ox = -cols * cw / 2 + cw / 2
-        oy = 1.2
+        grid_shift = -0.8
+        ox = -cols * cw / 2 + cw / 2 + grid_shift
+        oy = 1.8
 
         grid = VGroup()
         cell_map = {}
@@ -55,7 +56,7 @@ class ChunkatAnim(Scene):
             axis_labels.add(t)
         for c in range(cols):
             t = Text(f"{c}", font_size=12, color=C["dim_c"], font="Monospace")
-            t.move_to([ox + c * cw, oy + rows * ch / 2 + 0.05, 0])
+            t.move_to([ox + c * cw, 2.4, 0])
             axis_labels.add(t)
 
         self.play(*[FadeIn(c) for c in grid], *[FadeIn(a) for a in axis_labels],
@@ -96,33 +97,38 @@ class ChunkatAnim(Scene):
         self.wait(0.5)
 
         # Zoom panel
-        zoom_box = Rectangle(width=2.8, height=2.0,
+        mini_s = 0.5
+        zx, zy = 4.5, -2.2
+        zw = 4 * mini_s + 0.6
+        zh = 4 * mini_s + 0.6
+        zoom_box = Rectangle(width=zw, height=zh,
                              fill_color=C["hl_c"], fill_opacity=0.1,
                              stroke_color=C["hl_c"], stroke_width=2)
-        zoom_box.move_to(RIGHT * 4 + DOWN * 1.0)
+        zoom_box.move_to([zx, zy, 0])
 
         zoom_title = Text("[16, 16] sub-tensor", font_size=14,
                           color=C["tile"], font="Monospace")
         zoom_title.next_to(zoom_box, UP, buff=0.15)
 
         mini_grid = VGroup()
-        mini_cw, mini_ch = 0.35, 0.28
-        mini_ox = RIGHT * 4 + LEFT * 1.0 + UP * 0.2
+        mini_ox = zx - 3 * mini_s / 2
+        mini_oy = zy + 3 * mini_s / 2
         for mr in range(4):
             for mc in range(4):
-                r = Rectangle(width=mini_cw - 0.02, height=mini_ch - 0.02,
+                r = Rectangle(width=mini_s - 0.02, height=mini_s - 0.02,
                               fill_color=C["tile"], fill_opacity=0.4,
                               stroke_color=C["tile"], stroke_width=0.8)
-                pos = mini_ox + RIGHT * mc * mini_cw + DOWN * mr * mini_ch
-                r.move_to(pos)
+                gx = mini_ox + mc * mini_s
+                gy = mini_oy - mr * mini_s
+                r.move_to([gx, gy, 0])
                 real_r = 16 + mr
                 real_c = 48 + mc
-                v = Text(f"{real_r},{real_c}", font_size=12, color=C["fg"],
+                v = Text(f"({real_r},{real_c})", font_size=8, color=C["fg"],
                          font="Monospace").move_to(r)
                 mini_grid.add(VGroup(r, v))
 
-        dots = Text("... (16x16)", font_size=12, color=C["fg2"], font="Monospace")
-        dots.move_to(RIGHT * 4 + DOWN * 1.5)
+        dots = Text("[16, 16] sub-tensor", font_size=12, color=C["fg2"], font="Monospace")
+        dots.next_to(zoom_box, DOWN, buff=0.1)
 
         arrow = Arrow(cell_map[(1, 3)][0].get_right(),
                       zoom_box.get_left(),
@@ -137,11 +143,4 @@ class ChunkatAnim(Scene):
             run_time=0.8
         )
 
-        # Index formula
-        formula = Text(
-            "output.at(tr # i, tc # j)\n= output.at(1*16+i, 3*16+j)",
-            font_size=12, color=C["dim_c"], font="Monospace"
-        )
-        formula.move_to(RIGHT * 4 + DOWN * 2.6)
-        self.play(FadeIn(formula), run_time=0.4)
         self.wait(2.5)
