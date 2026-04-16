@@ -44,8 +44,8 @@ class TMADescriptor(Scene):
             self.add(t)
 
         # Arrow from descriptor to TMA unit
-        arrow1 = Arrow(RIGHT * (desc_x + 1.5) + DOWN * 0.4,
-                       RIGHT * -0.8 + DOWN * 0.4,
+        arrow1 = Arrow(RIGHT * (desc_x + 1.3) - DOWN * 0.2,
+                       RIGHT * -0.8 - DOWN * 0.2,
                        color=C["arrow"], stroke_width=2, buff=0.1, max_tip_length_to_length_ratio=0.15)
         self.add(arrow1)
 
@@ -53,7 +53,7 @@ class TMADescriptor(Scene):
         tma_box = RoundedRectangle(width=2.4, height=1.6, corner_radius=0.15,
                                     fill_color=C["fill"], fill_opacity=0.6,
                                     stroke_color=C["fg3"], stroke_width=1.5)
-        tma_box.move_to(RIGHT * 0.5 + DOWN * 0.4)
+        tma_box.move_to(RIGHT * 0.35 - DOWN * 0.2)
         self.add(tma_box)
 
         tma_label = Text("TMA Unit", font_size=14, color=C["fg2"], font="Monospace")
@@ -69,8 +69,8 @@ class TMADescriptor(Scene):
         self.add(tma_detail)
 
         # Arrow from TMA to SMEM tile (right)
-        arrow2 = Arrow(RIGHT * 1.9 + DOWN * 0.4,
-                       RIGHT * 3.5 + DOWN * 0.4,
+        arrow2 = Arrow(RIGHT * 1.6 - DOWN * 0.2,
+                       RIGHT * 3.5 - DOWN * 0.2,
                        color=C["arrow"], stroke_width=2, buff=0.1, max_tip_length_to_length_ratio=0.15)
         self.add(arrow2)
 
@@ -80,7 +80,7 @@ class TMADescriptor(Scene):
 
         # SMEM tile (right)
         smem_title = Text("Shared Memory", font_size=13, color=C["fg2"], font="Monospace")
-        smem_title.move_to(RIGHT * 4.5 + UP * 1.0)
+        smem_title.move_to(RIGHT * 4.6 + UP * 1.3)
         self.add(smem_title)
 
         tile_grid = VGroup()
@@ -88,20 +88,20 @@ class TMADescriptor(Scene):
             for c in range(4):
                 sq = Square(side_length=0.38, fill_color=C["smem_c"], fill_opacity=0.3,
                             stroke_color=C["smem_c"], stroke_width=1)
-                sq.move_to(RIGHT * (3.6 + c * 0.42) + UP * (0.5 - r * 0.42))
+                sq.move_to(RIGHT * (4 + c * 0.42) + UP * (0.8 - r * 0.42))
                 tile_grid.add(sq)
         self.add(tile_grid)
 
         tile_dim = Text("[WARP_M, TILE_K]", font_size=12, color=C["dim"], font="Monospace")
-        tile_dim.move_to(RIGHT * 4.5 + DOWN * 1.0)
+        tile_dim.move_to(RIGHT * 4.62 + DOWN * 1.0)
         self.add(tile_dim)
 
         # Global memory (top-right)
         gmem = Text("Global (HBM)", font_size=14, color=C["global_c"], font="Monospace")
-        gmem.move_to(RIGHT * 4.5 + UP * 1.8)
+        gmem.move_to(RIGHT * 4.5 + UP * 2.1)
         self.add(gmem)
 
-        gmem_arrow = Arrow(RIGHT * 4.5 + UP * 1.55, RIGHT * 4.5 + UP * 1.15,
+        gmem_arrow = Arrow(RIGHT * 4.5 + UP * 2, RIGHT * 4.5 + UP * 1.4,
                            color=C["dim"], stroke_width=1.5, buff=0.05, max_tip_length_to_length_ratio=0.2)
         self.add(gmem_arrow)
 

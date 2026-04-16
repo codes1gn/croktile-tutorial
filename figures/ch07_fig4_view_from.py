@@ -51,16 +51,20 @@ class ViewFrom(Scene):
         # Left: chunkat - aligned tiles
         left_origin = LEFT * 4.5 + UP * 1.0
         draw_grid(left_origin, 8, 8, "chunkat(i, j)", highlight=(0, 0, 4, 4),
-                  hl_color=C["blue"], hl_label="chunk (0,0)")
+                  hl_color=C["blue"], hl_label=None)
         draw_grid(left_origin, 8, 8, "", highlight=(0, 4, 4, 4),
                   hl_color=C["green"], hl_label=None)
         draw_grid(left_origin, 8, 8, "", highlight=(4, 0, 4, 4),
                   hl_color=C["orange"], hl_label=None)
         draw_grid(left_origin, 8, 8, "", highlight=(4, 4, 4, 4),
                   hl_color=C["purple"], hl_label=None)
+        
+        ca00_note = Text("chunk (0,0)", font_size=12, color=C["blue"], font="Monospace")
+        ca00_note.move_to(left_origin + RIGHT * 0.5 + DOWN * 0.5)
+        self.add(ca00_note)
 
         left_note = Text("tiles must align to grid", font_size=13, color=C["dim"], font="Monospace")
-        left_note.move_to(left_origin + DOWN * 3.4)
+        left_note.move_to(left_origin + DOWN * 2.7 + RIGHT * 1.1)
         self.add(left_note)
 
         # Right: view/from - arbitrary offset
@@ -69,12 +73,12 @@ class ViewFrom(Scene):
                   hl_color=C["red"], hl_label="window at (2,3)")
 
         right_note = Text("origin is arbitrary (row=2, col=3)", font_size=13, color=C["dim"], font="Monospace")
-        right_note.move_to(right_origin + DOWN * 3.4)
+        right_note.move_to(right_origin + DOWN * 2.7 + RIGHT * 1.2)
         self.add(right_note)
 
         # Code comparison at bottom
         code_left = Text('lhs.chunkat(i, j)', font_size=12, color=C["blue"], font="Monospace")
-        code_left.move_to(LEFT * 3.0 + DOWN * 2.7)
+        code_left.move_to(LEFT * 1.3 + DOWN * 2.7)
         self.add(code_left)
 
         vs = Text("vs", font_size=12, color=C["dim"], font="Monospace")
@@ -82,5 +86,5 @@ class ViewFrom(Scene):
         self.add(vs)
 
         code_right = Text('lhs.view(4,4).from(2,3)', font_size=12, color=C["red"], font="Monospace")
-        code_right.move_to(RIGHT * 3.2 + DOWN * 2.7)
+        code_right.move_to(RIGHT * 1.5 + DOWN * 2.7)
         self.add(code_right)

@@ -52,7 +52,7 @@ class SubspanStep(Scene):
         draw_matrix(left_o, "Packed: step = tile size", packed_tiles)
 
         left_code = Text(".subspan(4,4).at(i,j)", font_size=13, color=C["fg3"], font="Monospace")
-        left_code.move_to(left_o + DOWN * 2.8 + RIGHT * 0.8)
+        left_code.move_to(left_o + DOWN * 2.8 + RIGHT * 1)
         self.add(left_code)
 
         # Right: strided (step = 6, tile = 3, so gaps exist)
@@ -61,10 +61,14 @@ class SubspanStep(Scene):
         draw_matrix(right_o, "Strided: step > tile size", strided_tiles, total_r=10, total_c=10)
 
         right_code = Text(".subspan(3,3).step(5,5).at(i,j)", font_size=13, color=C["fg3"], font="Monospace")
-        right_code.move_to(right_o + DOWN * 3.5 + RIGHT * 1.0)
+        right_code.move_to(right_o + DOWN * 3.2 + RIGHT * 1.3)
         self.add(right_code)
 
         # Gap annotation
         gap_label = Text("gap", font_size=12, color=C["red"], font="Monospace")
-        gap_label.move_to(right_o + RIGHT * 3 * cell + DOWN * 1.2 * cell)
+        gap_label.move_to(right_o + RIGHT * 3.5 * cell + DOWN * 1.2 * cell)
         self.add(gap_label)
+        
+        gap_label2 = Text("gap", font_size=12, color=C["red"], font="Monospace")
+        gap_label2.move_to(right_o + RIGHT * cell + DOWN * 3.5 * cell)
+        self.add(gap_label2)

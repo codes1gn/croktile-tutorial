@@ -24,10 +24,10 @@ class SpanAs(Scene):
 
         # Top: 1D buffer (16 elements in a row)
         n_elems = 16
-        top_origin = LEFT * (n_elems * cell_w / 2) + UP * 1.2
+        top_origin = LEFT * (n_elems * cell_w / 2) + UP * 1.7
 
         top_label = Text("1D buffer (16 elements)", font_size=12, color=C["fg2"], font="Monospace")
-        top_label.move_to(UP * 2.0)
+        top_label.move_to(UP * 2.3)
         self.add(top_label)
 
         for i in range(n_elems):
@@ -41,8 +41,8 @@ class SpanAs(Scene):
             self.add(t)
 
         # Arrow
-        arrow = Arrow(DOWN * 0.0 + UP * 0.5, DOWN * 0.5,
-                      color=C["arrow"], stroke_width=2, buff=0.1, max_tip_length_to_length_ratio=0.2)
+        arrow = Arrow(DOWN * (-0.9) + UP * 0.5, DOWN * 0.4,
+                      color=C["arrow"], stroke_width=2, buff=0.1, max_tip_length_to_length_ratio=0.13)
         self.add(arrow)
 
         arrow_label = Text(".span_as([4, 4])", font_size=12, color=C["arrow"], font="Monospace")
@@ -50,9 +50,9 @@ class SpanAs(Scene):
         self.add(arrow_label)
 
         # Bottom: 2D matrix (4x4)
-        bot_origin = LEFT * 1.5 + DOWN * 1.0
+        bot_origin = LEFT * 0.65 + DOWN * 1.2
         bot_label = Text("2D view [4, 4]", font_size=12, color=C["fg2"], font="Monospace")
-        bot_label.move_to(DOWN * 0.5)
+        bot_label.move_to(DOWN * 0.6)
         self.add(bot_label)
 
         row_colors = [C["blue"], C["green"], C["orange"], C["purple"]]

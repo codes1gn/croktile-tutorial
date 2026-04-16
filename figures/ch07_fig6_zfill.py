@@ -59,23 +59,54 @@ class ZFill(Scene):
         self.add(tile_rect)
 
         tile_label = Text("tile at(1,1) with .zfill", font_size=13, color=C["orange"], font="Monospace")
-        tile_label.next_to(tile_rect, RIGHT, buff=0.15)
+        tile_label.next_to(tile_rect, RIGHT - DOWN * 0.5, buff=0.35)
+        tile_label.shift(UP * 0.55)
         self.add(tile_label)
+        tile_arrow = Arrow(
+            tile_rect.get_right() + UP * 0.75,
+            tile_label.get_left() + DOWN * 0.08,
+            buff=0.04,
+            stroke_width=2.0,
+            color=C["orange"],
+            max_tip_length_to_length_ratio=0.16,
+        )
+        self.add(tile_arrow)
 
         # Edge boundary line
         edge_v = DashedLine(
-            origin + RIGHT * data_cols * cell + UP * 0.2,
-            origin + RIGHT * data_cols * cell + DOWN * (data_rows + 2) * cell,
+            # True boundary sits between valid col=7 and out-of-bounds col=8.
+            origin + RIGHT * (data_cols - 0.5) * cell + UP * 0.2,
+            origin + RIGHT * (data_cols - 0.5) * cell + DOWN * (data_rows + 2) * cell,
             color=C["dim"], stroke_width=1.5, dash_length=0.06)
         edge_h = DashedLine(
-            origin + DOWN * data_rows * cell + LEFT * 0.2,
-            origin + DOWN * data_rows * cell + RIGHT * (data_cols + 3) * cell,
+            # True boundary sits between valid row=5 and out-of-bounds row=6.
+            origin + DOWN * (data_rows - 0.5) * cell + LEFT * 0.2,
+            origin + DOWN * (data_rows - 0.5) * cell + RIGHT * (data_cols + 3) * cell,
             color=C["dim"], stroke_width=1.5, dash_length=0.06)
         self.add(edge_v, edge_h)
 
-        edge_label = Text("tensor boundary", font_size=12, color=C["dim"], font="Monospace")
-        edge_label.move_to(origin + RIGHT * (data_cols + 1.5) * cell + DOWN * data_rows * cell)
+        edge_label = Text("tensor boundary", font_size=11, color=C["dim"], font="Monospace")
+        edge_label.move_to(
+            origin + RIGHT * (data_cols + 5.7) * cell + DOWN * (data_rows + 3) * cell
+        )
         self.add(edge_label)
+        edge_arrow_v = Arrow(
+            edge_h.get_center() + RIGHT * 2.1,
+            edge_label.get_top() + LEFT * 0.7,
+            buff=0.04,
+            stroke_width=2.4,
+            color=C["fg2"],
+            max_tip_length_to_length_ratio=0.1,
+        )
+        edge_arrow_h = Arrow(
+            edge_h.get_center() + RIGHT * 0.75 + DOWN * 0.95,
+            edge_label.get_left() + DOWN * 0.01,
+            buff=0.04,
+            stroke_width=2.4,
+            color=C["fg2"],
+            max_tip_length_to_length_ratio=0.07,
+        )
+        self.add(edge_arrow_v, edge_arrow_h)
 
         # Code at bottom
         code = Text(

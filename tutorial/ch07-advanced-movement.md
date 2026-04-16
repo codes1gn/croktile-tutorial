@@ -62,7 +62,7 @@ Swizzle is not a TMA-specific feature. In Croqtile, `dma.copy.swiz<N>` and `tma.
 
 ## Why the restricted interface works: expressiveness vs performance
 
-In raw CUDA, a programmer implementing data movement has enormous freedom: arbitrary pointer arithmetic, variable-stride access, hand-computed bank-conflict avoidance, custom swizzle formulas. This flexibility is a double-edged sword. The space of possible data movement patterns is vast, but the subset that actually performs well on GPU hardware is narrow — it requires coalesced global loads, conflict-free shared-memory access, and correct swizzle alignment. Getting any of these wrong silently degrades throughput by 2–32×.
+In raw CUDA, a programmer implementing data movement has enormous freedom: arbitrary pointer arithmetic, variable-stride access, hand-computed bank-conflict avoidance, custom swizzle formulas. This flexibility is a double-edged sword. The space of possible data movement patterns is vast, but the subset that actually performs well on GPU hardware is narrow — it requires coalesced global loads, conflict-free shared-memory access, and correct swizzle alignment. Getting any of these wrong silently degrades throughput by 2~32×.
 
 Croqtile takes the opposite approach: it restricts the expressible patterns to those that are **guaranteed to be in the performance sweet spot**. When you write `dma.copy` or `tma.copy`, the compiler automatically handles coalesced access, bank-conflict-free layout, and swizzle alignment. There is no way to accidentally write a strided, uncoalesced global load or a bank-conflicted shared-memory layout — the syntax simply does not allow it.
 
@@ -77,20 +77,20 @@ The pipeline skeleton from Chapter 6 is unchanged: ring of stages, `wait` / `tri
 
 ```choreo
 __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
-  parallel {block_m, block_n} by [cdiv(M, MATMUL_WARP_M), cdiv(N, MATMUL_WARP_N)] : block {
-    shared event full[MATMUL_STAGES], empty[MATMUL_STAGES];
-    shared f16 [MATMUL_WARP_M, MATMUL_TILE_K] lhs_load_s[MATMUL_STAGES];
-    shared f16 [MATMUL_WARP_N, MATMUL_TILE_K] rhs_load_s[MATMUL_STAGES];
-    shared f16 [MATMUL_WARP_M, MATMUL_WARP_N] output_s;
+  parallel {block_m, block_n} by [cdiv(M, WARP_M), cdiv(N, WARP_N)] : block {
+    shared event full[STAGES], empty[STAGES];
+    shared f16 [WARP_M, TILE_K] lhs_load_s[STAGES];
+    shared f16 [WARP_N, TILE_K] rhs_load_s[STAGES];
+    shared f16 [WARP_M, WARP_N] output_s;
 
     parallel p1 by 2 : group-4 {
       inthreads.async (p1 == 0) {
-        foreach {iv_k} in [cdiv(K, MATMUL_TILE_K)] {
-          stage = iv_k % MATMUL_STAGES;
+        foreach {iv_k} in [cdiv(K, TILE_K)] {
+          stage = iv_k % STAGES;
           wait empty[stage];
-          tma.copy.swiz<3> lhs.subspan(MATMUL_WARP_M, MATMUL_TILE_K).at(block_m, iv_k)
+          tma.copy.swiz<3> lhs.subspan(WARP_M, TILE_K).at(block_m, iv_k)
             => lhs_load_s[stage];
-          tma.copy.swiz<3> rhs.subspan(MATMUL_WARP_N, MATMUL_TILE_K).at(block_n, iv_k)
+          tma.copy.swiz<3> rhs.subspan(WARP_N, TILE_K).at(block_n, iv_k)
             => rhs_load_s[stage];
           trigger full[stage];
         }
@@ -98,11 +98,11 @@ __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, 
 
       inthreads.async (p1 == 1) {
         mc = mma.fill.f16 0.0f;
-        foreach {s} in [MATMUL_STAGES] { trigger empty[s]; }
-        foreach {iv_k} in [cdiv(K, MATMUL_TILE_K)] {
-          stage = iv_k % MATMUL_STAGES;
+        foreach {s} in [STAGES] { trigger empty[s]; }
+        foreach {iv_k} in [cdiv(K, TILE_K)] {
+          stage = iv_k % STAGES;
           wait full[stage];
-          foreach {iv_warp} in [cdiv(MATMUL_TILE_K, MATMUL_WARP_K)] {
+          foreach {iv_warp} in [cdiv(TILE_K, WARP_K)] {
             ma = mma.load.swiz<3> lhs_load_s[stage].chunkat(_, iv_warp);
             mb = mma.load.swiz<3> rhs_load_s[stage].chunkat(_, iv_warp);
             mma.row.row mc, ma, mb;
@@ -111,7 +111,7 @@ __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, 
           trigger empty[stage];
         }
         mma.store mc, output_s;
-        dma.copy output_s => output.subspan(MATMUL_WARP_M, MATMUL_WARP_N).at(block_m, block_n);
+        dma.copy output_s => output.subspan(WARP_M, WARP_N).at(block_m, block_n);
       }
     }
   }
@@ -208,28 +208,28 @@ The loaded 1D strip is exposed as a 2D matrix for `chunkat` and MMA operand load
 
 ## Chapter summary
 
-| Concept | Syntax | Role |
-|---------|--------|------|
-| Software DMA (Ch. 2, 6) | `dma.copy` / `dma.copy.swiz<N>` | Thread-cooperative tile transfer; works on all CUDA GPUs |
-| Hardware TMA | `tma.copy` / `tma.copy.swiz<N>` | Descriptor-driven Hopper ingress; dedicated engine enables async overlap |
-| Swizzle | `.swiz<N>` on copy + `mma.load.swiz<N>` | Bank-conflict-free SMEM layout; same effect for DMA and TMA |
-| Expressiveness trade | — | Croqtile restricts patterns to guarantee coalesced, conflict-free transfers |
-| Arbitrary windows | `view(M,N).from(r,c)` | Ragged or runtime-positioned slices |
-| Strided tiling | `.subspan().step().at()` | Non-packed layouts, overlapping stencils |
-| Partial tiles | `.zfill` | Zero-fill out-of-bounds elements |
-| Shape reinterpretation | `span_as([dims])` | Zero-copy reshape for staging buffers |
+| Concept                 | Syntax                                  | Role                                                                        |
+|-------------------------|-----------------------------------------|-----------------------------------------------------------------------------|
+| Software DMA (Ch. 2, 6) | `dma.copy` / `dma.copy.swiz<N>`         | Thread-cooperative tile transfer; works on all CUDA GPUs                    |
+| Hardware TMA            | `tma.copy` / `tma.copy.swiz<N>`         | Descriptor-driven Hopper ingress; dedicated engine enables async overlap    |
+| Swizzle                 | `.swiz<N>` on copy + `mma.load.swiz<N>` | Bank-conflict-free SMEM layout; same effect for DMA and TMA                 |
+| Expressiveness trade    | —                                       | Croqtile restricts patterns to guarantee coalesced, conflict-free transfers |
+| Arbitrary windows       | `view(M,N).from(r,c)`                   | Ragged or runtime-positioned slices                                         |
+| Strided tiling          | `.subspan().step().at()`                | Non-packed layouts, overlapping stencils                                    |
+| Partial tiles           | `.zfill`                                | Zero-fill out-of-bounds elements                                            |
+| Shape reinterpretation  | `span_as([dims])`                       | Zero-copy reshape for staging buffers                                       |
 
 ## New syntax
 
-| Syntax | Meaning |
-|--------|---------|
-| `tma.copy src => dst` | TMA hardware tensor copy (Hopper SM90+) |
-| `tma.copy.swiz<N> src => dst` | TMA copy with swizzle mode `N` (0–3) |
-| `dma.copy.swiz<N> src => dst` | DMA copy with swizzle mode `N` (0–3); same layout as TMA |
-| `mma.load.swiz<N> src` | MMA operand load consistent with swizzle `N` |
-| `tensor.view(M, N).from(r, c)` | Arbitrary-offset `M x N` window |
-| `.subspan(M, K).step(sM, sK).at(i, j)` | Strided tile selection |
-| `.zfill` | Zero-fill out-of-bounds elements on copy source |
-| `span_as([dims])` | Reinterpret linear storage as shaped tensor |
+| Syntax                                 | Meaning                                                  |
+|----------------------------------------|----------------------------------------------------------|
+| `tma.copy src => dst`                  | TMA hardware tensor copy (Hopper SM90+)                  |
+| `tma.copy.swiz<N> src => dst`          | TMA copy with swizzle mode `N` (0–3)                     |
+| `dma.copy.swiz<N> src => dst`          | DMA copy with swizzle mode `N` (0–3); same layout as TMA |
+| `mma.load.swiz<N> src`                 | MMA operand load consistent with swizzle `N`             |
+| `.view(M, N).from(r, c)`         | Arbitrary-offset `M x N` window                          |
+| `.subspan(M, K).step(sM, sK).at(i, j)` | Strided tile selection                                   |
+| `.zfill`                               | Zero-fill out-of-bounds elements on copy source          |
+| `span_as(dims)`                        | Reinterpret linear storage as shaped tensor              |
 
 The [next chapter](ch08-cpp-interop.md) steps past pure Croqtile into **C++ interop**: `__device__` functions, **register hints**, **preprocessor guards**, and **inline PTX** when you need to drop down to the metal.

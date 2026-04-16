@@ -51,32 +51,30 @@ class TmaVsDma(Scene):
         gmem_lbl.move_to(gmem_l)
         self.add(gmem_l, gmem_lbl)
 
-        # Thread rows with address computations (middle)
-        thread_y_start = 0.15
+        # Thread lanes (middle): place T0..T3 horizontally.
+        lane_y = 0.05
+        lane_centers = []
         for t in range(4):
-            y = thread_y_start - t * 0.40
-            tid = Text(f"T{t}", font_size=14, color=C["elem"], font="Monospace")
-            tid.move_to(RIGHT * (lx - 1.2) + UP * y)
-            addr = Text(f"base+{t}\u00b7stride", font_size=13, color=C["fg3"], font="Monospace")
-            addr.move_to(RIGHT * (lx + 0.15) + UP * y)
-            self.add(tid, addr)
-
-            # Arrow from global down past thread to shared
-            arr = Arrow(
-                RIGHT * (lx + 1.3) + UP * (thread_y_start - t * 0.40 + 0.1),
-                RIGHT * (lx + 1.3) + UP * (thread_y_start - t * 0.40 - 0.1),
-                buff=0, stroke_width=2, color=C["arrow"],
-                max_tip_length_to_length_ratio=0.3,
+            x = lx - 1.1 + t * 0.75
+            center = np.array([x, lane_y, 0])
+            lane_centers.append(center)
+            lane_box = RoundedRectangle(
+                corner_radius=0.05, width=0.52, height=0.28,
+                fill_color=C["fill"], fill_opacity=0.85,
+                stroke_color=C["elem"], stroke_width=1.5,
             )
-            self.add(arr)
+            lane_box.move_to(center)
+            lane_lbl = Text(f"T{t}", font_size=13, color=C["elem"], font="Monospace")
+            lane_lbl.move_to(lane_box)
+            self.add(lane_box, lane_lbl)
 
-        # Connecting arrows: global -> threads
+        # Arrows: global -> lane
         for t in range(4):
             a = Arrow(
-                gmem_l.get_bottom() + RIGHT * (-1.0 + t * 0.7),
-                RIGHT * (lx - 1.2) + UP * (thread_y_start - t * 0.40) + UP * 0.15,
-                buff=0.05, stroke_width=1.8, color=C["arrow"],
-                max_tip_length_to_length_ratio=0.12,
+                gmem_l.get_bottom() + RIGHT * (-1.0 + t * 0.68),
+                lane_centers[t] + UP * 0.2,
+                buff=0.04, stroke_width=1.9, color=C["arrow"],
+                max_tip_length_to_length_ratio=0.2,
             )
             self.add(a)
 
@@ -91,21 +89,32 @@ class TmaVsDma(Scene):
         smem_ll.move_to(smem_l)
         self.add(smem_l, smem_ll)
 
-        # Arrows: threads -> shared
+        # Arrows: lane -> shared
         for t in range(4):
             a = Arrow(
-                RIGHT * (lx - 1.2) + UP * (thread_y_start - t * 0.40) + DOWN * 0.15,
-                smem_l.get_top() + RIGHT * (-1.0 + t * 0.7),
-                buff=0.05, stroke_width=1.8, color=C["arrow"],
+                lane_centers[t] + DOWN * 0.2,
+                smem_l.get_top() + RIGHT * (-1.0 + t * 0.68),
+                buff=0.04, stroke_width=1.9, color=C["arrow"],
                 max_tip_length_to_length_ratio=0.12,
             )
             self.add(a)
+
+        # Offset explanation placed separately under the lane diagram.
+        offset_title = Text("per-lane offsets:", font_size=12, color=C["fg2"], font="Monospace")
+        offset_title.move_to(RIGHT * lx + DOWN * 1.95)
+        offsets_l = Text("T0: base+0\u00b7stride   T1: base+1\u00b7stride",
+                         font_size=11, color=C["fg3"], font="Monospace")
+        offsets_r = Text("T2: base+2\u00b7stride   T3: base+3\u00b7stride",
+                         font_size=11, color=C["fg3"], font="Monospace")
+        offsets_l.next_to(offset_title, DOWN, buff=0.08)
+        offsets_r.next_to(offsets_l, DOWN, buff=0.06)
+        self.add(offset_title, offsets_l, offsets_r)
 
         note_l = Text(
             "warps cooperate; each lane issues loads",
             font_size=13, color=C["dim"], font="Monospace",
         )
-        note_l.move_to(RIGHT * lx + DOWN * 2.15)
+        note_l.move_to(RIGHT * lx + DOWN * 2.6)
         self.add(note_l)
 
         # ═══ Right: tma.copy ═══
@@ -133,11 +142,11 @@ class TmaVsDma(Scene):
 
         # Descriptor box
         desc = RoundedRectangle(
-            corner_radius=0.08, width=2.8, height=0.80,
+            corner_radius=0.08, width=2.8, height=0.70,
             fill_color=C["fill"], fill_opacity=0.9,
             stroke_color=C["blue"], stroke_width=2,
         )
-        desc.move_to(RIGHT * rx + UP * 0.15)
+        desc.move_to(RIGHT * rx + UP * 0.1)
         desc_txt = Text("tensor descriptor", font_size=14, color=C["blue"], font="Monospace")
         desc_txt.move_to(desc.get_center() + UP * 0.12)
         desc_sub = Text("(layout, tile, origin)", font_size=13, color=C["fg2"], font="Monospace")
@@ -146,11 +155,11 @@ class TmaVsDma(Scene):
 
         # TMA unit box
         tma_box = RoundedRectangle(
-            corner_radius=0.1, width=2.6, height=0.85,
+            corner_radius=0.1, width=2.8, height=0.75,
             fill_color=C["purple"], fill_opacity=0.22,
             stroke_color=C["purple"], stroke_width=2.5,
         )
-        tma_box.move_to(RIGHT * rx + DOWN * 0.85)
+        tma_box.move_to(RIGHT * rx + DOWN * 1)
         tma_lbl = Text("TMA unit", font_size=16, color=C["purple"], font="Monospace")
         tma_sub = Text("multi-dim addressing in HW", font_size=13, color=C["fg2"], font="Monospace")
         tma_lbl.move_to(tma_box.get_center() + UP * 0.12)
@@ -163,7 +172,7 @@ class TmaVsDma(Scene):
             fill_color=C["shared_c"], fill_opacity=0.2,
             stroke_color=C["shared_c"], stroke_width=1.5,
         )
-        smem_r.move_to(RIGHT * rx + DOWN * 1.75)
+        smem_r.move_to(RIGHT * rx + DOWN * 2)
         smem_rl = Text("shared", font_size=14, color=C["shared_c"], font="Monospace")
         smem_rl.move_to(smem_r)
         self.add(smem_r, smem_rl)
@@ -172,17 +181,17 @@ class TmaVsDma(Scene):
         ar1 = Arrow(
             gmem_r.get_bottom(), desc.get_top(),
             buff=0.06, stroke_width=3, color=C["arrow"],
-            max_tip_length_to_length_ratio=0.14,
+            max_tip_length_to_length_ratio=0.4,
         )
         ar2 = Arrow(
             desc.get_bottom(), tma_box.get_top(),
             buff=0.06, stroke_width=3, color=C["arrow"],
-            max_tip_length_to_length_ratio=0.14,
+            max_tip_length_to_length_ratio=0.4,
         )
         ar3 = Arrow(
             tma_box.get_bottom(), smem_r.get_top(),
-            buff=0.06, stroke_width=3, color=C["green"],
-            max_tip_length_to_length_ratio=0.14,
+            buff=0.06, stroke_width=3, color=C["arrow"],
+            max_tip_length_to_length_ratio=0.4,
         )
         self.add(ar1, ar2, ar3)
 
@@ -190,7 +199,7 @@ class TmaVsDma(Scene):
             "one issue \u00b7 bulk tile \u00b7 minimal thread work",
             font_size=13, color=C["dim"], font="Monospace",
         )
-        note_r.move_to(RIGHT * rx + DOWN * 2.15)
+        note_r.move_to(RIGHT * rx + DOWN * 2.5)
         self.add(note_r)
 
         foot = Text(
