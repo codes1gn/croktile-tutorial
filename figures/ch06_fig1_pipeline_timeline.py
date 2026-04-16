@@ -84,8 +84,9 @@ class PipelineTimeline(Scene):
 
         axis_y = y_seq - 0.95
         time_lbl = Text("time →", font_size=12, color=C["dim"], font="Monospace")
-        time_lbl.move_to(DOWN * 2.35 + LEFT * 5.8)
-        self.add(time_lbl)
+        wL, wC = 1.0, 1.0
+        gap = 0.05
+        x0 = -4.2
 
         # Idle tint regions (sequential: other unit idle)
         idle1 = Rectangle(
@@ -95,7 +96,9 @@ class PipelineTimeline(Scene):
             fill_opacity=0.08,
             stroke_width=0,
         )
-        idle1.move_to(np.array([-0.35, axis_y - 0.05, 0]))
+        # Align idle windows with C1/C2 slots in the sequential MMA row.
+        c1_center_x = x0 + wL + wC + gap + wL + gap + wC / 2
+        idle1.move_to(np.array([c1_center_x, axis_y - 0.05, 0]))
         idle2 = Rectangle(
             width=1.15,
             height=0.95,
@@ -103,14 +106,14 @@ class PipelineTimeline(Scene):
             fill_opacity=0.08,
             stroke_width=0,
         )
-        idle2.move_to(np.array([2.05, axis_y - 0.05, 0]))
-        idle_note = Text("idle", font_size=12, color=C["dim"], font="Monospace")
-        idle_note.next_to(idle1, UP, buff=0.08)
-        self.add(idle1, idle2, idle_note)
+        c2_center_x = x0 + 2 * (wL + wC + gap) + wL + gap + wC / 2
+        idle2.move_to(np.array([c2_center_x, axis_y - 0.05, 0]))
+        idle_note1 = Text("idle", font_size=12, color=C["dim"], font="Monospace")
+        idle_note1.next_to(idle1, UP, buff=0.08)
+        idle_note2 = Text("idle", font_size=12, color=C["dim"], font="Monospace")
+        idle_note2.next_to(idle2, UP, buff=0.08)
+        self.add(idle1, idle2, idle_note1, idle_note2)
 
-        wL, wC = 1.0, 1.0
-        gap = 0.05
-        x0 = -4.2
         seq_dma = VGroup(
             bar(x0, wL, axis_y + 0.35, C["blue"], "L0"),
             bar(x0 + wL + wC + gap, wL, axis_y + 0.35, C["blue"], "L1"),
@@ -141,6 +144,9 @@ class PipelineTimeline(Scene):
         self.add(lab_db)
 
         axis_y2 = y_db - 0.95
+        # Keep the time axis hint below both rows to avoid label collisions.
+        time_lbl.move_to(np.array([-5.45, axis_y2 - 0.95, 0]))
+        self.add(time_lbl)
         x1 = -4.2
         # Pipeline: L0, then L1 overlaps C0, etc.
         db_dma = VGroup(

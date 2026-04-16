@@ -21,8 +21,8 @@ __co__ auto matmul(s32 [M, K] lhs, s32 [K, N] rhs) {
 
     with tile_k in 16 {
       // Prologue: start loading tile 0
-      lf0 = dma.copy lhs.chunkat(px, tile_k) => shared;
-      rf0 = dma.copy rhs.chunkat(tile_k, py) => shared;
+      lf0 = dma.copy.async lhs.chunkat(px, tile_k) => shared;
+      rf0 = dma.copy.async rhs.chunkat(tile_k, py) => shared;
 
       // Placeholder futures for buffer 1
       lf1 = dma.any;
@@ -30,9 +30,11 @@ __co__ auto matmul(s32 [M, K] lhs, s32 [K, N] rhs) {
 
       // Steady state: load next tile while computing on current
       foreach tile_k(1:) {
-        lf1 = dma.copy lhs.chunkat(px, tile_k) => shared;
-        rf1 = dma.copy rhs.chunkat(tile_k, py) => shared;
+        lf1 = dma.copy.async lhs.chunkat(px, tile_k) => shared;
+        rf1 = dma.copy.async rhs.chunkat(tile_k, py) => shared;
 
+        wait lf0, rf0;
+        
         foreach k in [256 / #tile_k]
           output.at(px#qx, py#qy) += lf0.data.at(qx, k) * rf0.data.at(k, qy);
 
@@ -94,19 +96,27 @@ The picture below contrasts a strict load-then-compute staircase with double-buf
 This kernel combines `inthreads.async` (from Chapter 5) with event arrays to build a complete multi-stage pipeline. The producer and consumer run as separate concurrent programs, coordinated entirely through `wait` / `trigger`:
 
 ```choreo
+#define TILE_M 128
+#define TILE_N 128
+#define TILE_K 128
+#define WARP_M 64
+#define WARP_N 64
+#define WARP_K 16
+#define STAGES 2
+
 __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, N] output) {
-  parallel {block_m, block_n} by [cdiv(M, MATMUL_WARP_M), cdiv(N, MATMUL_WARP_N)] : block {
-    shared event full[MATMUL_STAGES], empty[MATMUL_STAGES];
-    shared f16 [MATMUL_WARP_M, MATMUL_TILE_K] lhs_load_s[MATMUL_STAGES];
-    shared f16 [MATMUL_WARP_N, MATMUL_TILE_K] rhs_load_s[MATMUL_STAGES];
-    shared f16 [MATMUL_WARP_M, MATMUL_WARP_N] output_s;
+  parallel {block_m, block_n} by [cdiv(M, WARP_M), cdiv(N, WARP_N)] : block {
+    shared event full[STAGES], empty[STAGES];
+    shared f16 [WARP_M, TILE_K] lhs_load_s[STAGES];
+    shared f16 [WARP_N, TILE_K] rhs_load_s[STAGES];
+    shared f16 [WARP_M, WARP_N] output_s;
 
     parallel p1 by 2 : group-4 {
       inthreads.async (p1 == 0) {
-        foreach {iv_k} in [cdiv(K, MATMUL_TILE_K)] {
-          stage = iv_k % MATMUL_STAGES;
+        foreach {iv_k} in [cdiv(K, TILE_K)] {
+          stage = iv_k % STAGES;
           wait empty[stage];
-          dma.copy lhs.subspan(MATMUL_WARP_M, MATMUL_TILE_K).at(block_m, iv_k)
+          dma.copy lhs.subspan(WARP_M, TILE_K).at(block_m, iv_k)
             => lhs_load_s[stage];
           dma.copy rhs.chunkat(block_n, iv_k)
             => rhs_load_s[stage];
@@ -116,13 +126,12 @@ __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, 
 
       inthreads.async (p1 == 1) {
         mc = mma.fill.f16 0.0f;
-        foreach {s} in [MATMUL_STAGES] {
+        foreach {s} in [STAGES]
           trigger empty[s];
-        }
-        foreach {iv_k} in [cdiv(K, MATMUL_TILE_K)] {
-          stage = iv_k % MATMUL_STAGES;
+        foreach {iv_k} in [cdiv(K, TILE_K)] {
+          stage = iv_k % STAGES;
           wait full[stage];
-          foreach {iv_warp} in [cdiv(MATMUL_TILE_K, MATMUL_WARP_K)] {
+          foreach {iv_warp} in [cdiv(TILE_K, WARP_K)] {
             ma = mma.load lhs_load_s[stage].chunkat(_, iv_warp);
             mb = mma.load rhs_load_s[stage].chunkat(_, iv_warp);
             mma.row.row mc, ma, mb;
@@ -131,7 +140,7 @@ __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, 
           trigger empty[stage];
         }
         mma.store mc, output_s;
-        dma.copy output_s => output.subspan(MATMUL_WARP_M, MATMUL_WARP_N).at(block_m, block_n);
+        dma.copy output_s => output.subspan(WARP_M, WARP_N).at(block_m, block_n);
       }
     }
   }
@@ -140,11 +149,11 @@ __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, 
 
 ### Walking through the kernel
 
-**Ring index.** `stage = iv_k % MATMUL_STAGES` maps the unbounded K iteration to a fixed number of physical buffer slots — double buffering generalized to N buffers.
+**Ring index.** `stage = iv_k % STAGES` maps the unbounded K iteration to a fixed number of physical buffer slots — double buffering generalized to N buffers.
 
 **Producer path.** For each `iv_k`, `wait empty[stage]` acquires a free slot. The `dma.copy` lines fill `lhs_load_s` / `rhs_load_s` at that stage. Then `trigger full[stage]` hands the slot to the consumer.
 
-**Consumer bootstrap.** The loop `foreach {s} in [MATMUL_STAGES] { trigger empty[s]; }` runs **before** the K-loop so every stage starts with an `empty` credit. Without this, the producer blocks forever on its first `wait empty` — a deadlock.
+**Consumer bootstrap.** The loop `foreach {s} in [STAGES] { trigger empty[s]; }` runs **before** the K-loop so every stage starts with an `empty` credit. Without this, the producer blocks forever on its first `wait empty` — a deadlock.
 
 **Consumer path.** Each `iv_k`: `wait full[stage]` blocks until the producer has filled that slot, then MMA over the tile, `mma.commit`, and `trigger empty[stage]` to release the slot for reuse.
 
@@ -152,34 +161,34 @@ __co__ void matmul(global f16 [M, K] lhs, global f16 [N, K] rhs, global f16 [M, 
 
 ### Credit flow for one stage
 
-The diagram matches the code: bootstrap grants empty credits; the producer waits on `empty`, fills, signals `full`; the consumer waits on `full`, computes, signals `empty`. When `iv_k` wraps modulo `MATMUL_STAGES`, the same physical stage re-enters the cycle.
+The diagram matches the code: bootstrap grants empty credits; the producer waits on `empty`, fills, signals `full`; the consumer waits on `full`, computes, signals `empty`. When `iv_k` wraps modulo `STAGES`, the same physical stage re-enters the cycle.
 
 ![Event credit flow for one pipeline stage](../assets/images/ch06/fig2_event_credit_flow_dark.png#only-dark)
 ![Event credit flow for one pipeline stage](../assets/images/ch06/fig2_event_credit_flow_light.png#only-light)
 
 ### Debugging tip
 
-If something looks wrong after editing a pipeline, verify **event order and trip counts** before chasing MMA layout bugs: producer and consumer must use the same `cdiv(K, MATMUL_TILE_K)` loop bound, and too few stages shifts pressure to `wait full` when the consumer outruns the producer.
+If something looks wrong after editing a pipeline, verify **event order and trip counts** before chasing MMA layout bugs: producer and consumer must use the same `cdiv(K, TILE_K)` loop bound, and too few stages shifts pressure to `wait full` when the consumer outruns the producer.
 
 ## New syntax
 
-| Syntax | Meaning |
-|--------|---------|
-| `dma.copy.async src => dst` | Non-blocking copy (returns immediately) |
-| `dma.any` | Placeholder future (no transfer in flight yet) |
-| `swap(f0, f1)` | Exchange two future handles without copying data |
-| `rotate(f0, f1, f2)` | Cycle three future handles |
-| `with tile_k in N { ... }` | Scoped tile axis binding with extent N |
-| `foreach tile_k(1:)` | Iterate starting from index 1 |
-| `mma.commit` | Fence between pipeline stages for WGMMA |
-| `__co__ auto fn(...)` | Return type inferred from `return` statement |
+| Syntax                      | Meaning                                          |
+|-----------------------------|--------------------------------------------------|
+| `dma.copy.async src => dst` | Non-blocking copy (returns immediately)          |
+| `dma.any`                   | Placeholder future (no transfer in flight yet)   |
+| `swap(f0, f1)`              | Exchange two future handles without copying data |
+| `rotate(f0, f1, f2)`        | Cycle three future handles                       |
+| `with tile_k in N { ... }`  | Scoped tile axis binding with extent N           |
+| `foreach tile_k(1:)`        | Iterate starting from index 1                    |
+| `mma.commit`                | Fence between pipeline stages for WGMMA          |
+| `__co__ auto fn(...)`       | Return type inferred from `return` statement     |
 
 ## Summary
 
-| Pattern | Primitives used | When to use |
-|---------|----------------|-------------|
-| `swap` double buffering | `dma.copy`, `dma.any`, `swap`, `with` | Single thread group interleaving load and compute |
-| 1P1C event pipeline | `inthreads.async`, `shared event[]`, `wait`, `trigger`, `mma.commit` | Separate producer/consumer warpgroups with multi-stage pipeline |
+| Pattern                 | Primitives used                                                      | When to use                                                     |
+|-------------------------|----------------------------------------------------------------------|-----------------------------------------------------------------|
+| `swap` double buffering | `dma.any`, `swap`                                                    | Single thread group interleaving load and compute               |
+| 1P1C event pipeline     | `inthreads.async`, `shared event[]`, `wait`, `trigger`, `mma.commit` | Separate producer/consumer warpgroups with multi-stage pipeline |
 
 Both patterns achieve the same goal — overlapping memory and compute — but at different levels of complexity. Start with `swap` for simpler kernels; graduate to events when you need warp specialization.
 
